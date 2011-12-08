@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+	<context-param>
+		<param-name>appPropertyFile</param-name>
+		<param-value>belphegor.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.iplantc.initial-page</param-name>
+		<param-value></param-value>
+	</context-param>
+	<context-param>
+		<!-- max size of the upload request -->
+		<param-name>maxSize</param-name>
+		<param-value>268435456</param-value>
+	</context-param>
+
+	<!-- Filters 
+	<filter>
+		<filter-name>authenticationFilter</filter-name>
+		<filter-class>org.iplantc.de.server.AuthFilter</filter-class>
+	</filter>
+        -->
+
+	<!-- Filter Mapping Definitions
+	<filter-mapping>
+		<filter-name>authenticationFilter</filter-name>
+		<url-pattern>/jsintegrate/sessionmanagement</url-pattern>
+	</filter-mapping>
+         -->
+
+	<!-- Servlets
+	<servlet>
+		<servlet-name>toolSubmitServlet</servlet-name>
+		<servlet-class>org.iplantc.js.integrate.server.NewToolRequestServlet</servlet-class>
+	</servlet>
+         -->
+
+        <!-- Servlet Mapping Examples
+	<servlet-mapping>
+		<servlet-name>toolSubmitServlet</servlet-name>
+		<url-pattern>/jsintegrate/new_tool_request</url-pattern>
+	</servlet-mapping>
+        -->
+
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>console.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

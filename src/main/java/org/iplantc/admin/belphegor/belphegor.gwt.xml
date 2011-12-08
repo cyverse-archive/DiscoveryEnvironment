@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='jsintegrate'>
+	<!-- Inherit the core Web Toolkit stuff. -->
+	<inherits name='com.google.gwt.user.User' />
+
+	<!-- Inherit the default GWT style sheet. You can change -->
+	<!-- the theme of your GWT application by uncommenting -->
+	<!-- any one of the following lines. -->
+	<inherits name='com.google.gwt.user.theme.standard.Standard' />
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
+
+	<!-- Other module inherits -->
+
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name="com.google.gwt.resources.Resources" />
+	<inherits name='com.extjs.gxt.ui.GXT' />
+	<inherits name="org.iplantc.core.JsonUtil" />
+
+	<!-- Specify the app entry point class. -->
+	<entry-point class='org.iplantc.admin.belphegor.client.Belphegor' />
+
+	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
+	<inherits name="org.iplantc.core.ui-commons"/>
+	<inherits name="org.iplantc.core.ui-applications"/>
+	
+	<script src="/scripts/json2.js" />
+
+	<!-- Specify the paths for translatable code -->
+	<source path='client' />
+	<source path='shared' />
+</module>

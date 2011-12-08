@@ -1,0 +1,130 @@
+/** Add css rules here for your application. */
+.nsf_text {
+	font-size: 10px;
+	position: absolute;
+	right: 10px;
+}
+
+.copyright {
+	font-size: 10px;
+	padding-left: 10px;
+}
+
+.iplantc_center_layout_horizontal {
+    top: 0px !important;
+}
+
+.iplantc_portal_component {
+    background-color: transparent;
+}
+
+.iplantc_header_actions {
+    position: fixed;
+    top: 15px;
+    right: 40px;
+}
+
+.iplantc_logo {
+	cursor: pointer;
+}
+
+.iplantc_background {
+	background: url(./images/background.png) repeat-x top center !important;
+}
+
+.required_marker {
+	font-size: 14px;
+	color: #ff4000;
+	top: -5px;
+}
+
+.iplantc_header_menu_panel {
+    padding: 3px;
+}
+
+.iplantc_header_menu_body {
+	background-color: white;
+	outline: none;
+	border-color: #0098AA;
+	border-width: 3px;
+}
+
+.iplantc_hyperlink {
+	cursor: pointer;
+	color: #0098AA;
+	text-decoration: none;
+	font-size: 11px;
+}
+
+.iplantc_header_hyperlink_hover {
+	background-color: #ededed;
+}
+
+.iplantc_header_menu_button {
+	background-image: url('./gxt/images/default/button/arrow.gif');
+	height: 13px;
+	width: 7px;
+	position: relative;
+	top: 5px;
+	padding-left: 5px;
+}
+
+.iplantc_header_menu_label {
+	color: black;
+	padding-left:3px;
+}
+
+.iplantc_header_menu_label_hover {
+	cursor: pointer;
+}
+
+.iplantc_header_menu_selected {
+	background-color: #fff;
+	border-style: solid;
+    border-color: #0098AA #0098AA white;
+	border-width: 1px 1px 2px;
+	padding: 2px;
+}
+
+.accordianbody {
+	background-color: #EDEDED;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	outline: none;
+}
+
+.accordianTitle {
+	height: 14px;
+	font-size: 12px;
+	font-weight: bold;
+	background-repeat: repeat-x;
+	padding: 3px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	line-height: 14px;
+	background-color: #d7d7d7;
+}
+
+/**
+ * GXT overrides
+ */
+.x-form-item, .x-form-item-label, .x-form-group-label, .x-form-cb-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: black;
+}
+
+.x-panel-header {
+    height: 12px;
+    font-size: 10px;
+}
+
+.x-toolbar {
+    height: 20px;
+}
+
+.x-toolbar .x-btn button {
+    font-size: 10px;
+}
