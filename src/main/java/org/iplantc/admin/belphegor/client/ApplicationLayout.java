@@ -74,7 +74,7 @@ public class ApplicationLayout extends Viewport {
 
         north.add(new HeaderPanel());
 
-        BorderLayoutData data = new BorderLayoutData(LayoutRegion.NORTH, 90);
+        BorderLayoutData data = new BorderLayoutData(LayoutRegion.NORTH, 145);
         data.setCollapsible(false);
         data.setFloatable(false);
         data.setHideCollapseTool(true);
