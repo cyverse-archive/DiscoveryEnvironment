@@ -12,39 +12,52 @@
 		<param-name>org.iplantc.initial-page</param-name>
 		<param-value></param-value>
 	</context-param>
-	<context-param>
-		<!-- max size of the upload request -->
-		<param-name>maxSize</param-name>
-		<param-value>268435456</param-value>
-	</context-param>
-
-	<!-- Filters 
 	<filter>
 		<filter-name>authenticationFilter</filter-name>
 		<filter-class>org.iplantc.de.server.AuthFilter</filter-class>
 	</filter>
-        -->
-
-	<!-- Filter Mapping Definitions
 	<filter-mapping>
 		<filter-name>authenticationFilter</filter-name>
-		<url-pattern>/jsintegrate/sessionmanagement</url-pattern>
+		<url-pattern>/belphegor/sessionmanagement</url-pattern>
 	</filter-mapping>
-         -->
 
-	<!-- Servlets
+
 	<servlet>
-		<servlet-name>toolSubmitServlet</servlet-name>
-		<servlet-class>org.iplantc.js.integrate.server.NewToolRequestServlet</servlet-class>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
 	</servlet>
-         -->
-
-        <!-- Servlet Mapping Examples
+	
+	<servlet>
+		<servlet-name>propertyServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.SessionInitializationServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
+	</servlet>
+	
 	<servlet-mapping>
-		<servlet-name>toolSubmitServlet</servlet-name>
-		<url-pattern>/jsintegrate/new_tool_request</url-pattern>
+		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+		<url-pattern>/belphegor/unsecureddeservice</url-pattern>
 	</servlet-mapping>
-        -->
+	<servlet-mapping>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<url-pattern>/belphegor/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>propertyServlet</servlet-name>
+		<url-pattern>/belphegor/properties</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<url-pattern>/belphegor/sessionmanagement</url-pattern>
+	</servlet-mapping>
 
 	<session-config>
 		<session-timeout>60</session-timeout>
@@ -52,7 +65,7 @@
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
-		<welcome-file>console.html</welcome-file>
+		<welcome-file>belphegor.html</welcome-file>
 	</welcome-file-list>
 
 </web-app>
