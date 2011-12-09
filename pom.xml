@@ -60,7 +60,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
-			<artifactId>ui-applications</artifactId>
+			<artifactId>applications</artifactId>
 			<version>dev-SNAPSHOT</version>
 		</dependency>
 		<!-- Other dependencies -->
