@@ -49,7 +49,7 @@ public class ApplicationLayout extends Viewport {
         });
 
         setLayout(layout);
-        setStyleName("iplantc_background");
+        setStyleName("iplantc_background"); //$NON-NLS-1$
 
         addListeners();
     }
@@ -70,7 +70,7 @@ public class ApplicationLayout extends Viewport {
         north.setHeaderVisible(false);
         north.setBodyBorder(false);
         north.setBorders(false);
-        north.setBodyStyleName("iplantc_portal_component");
+        north.setBodyStyleName("iplantc_portal_component"); //$NON-NLS-1$
 
         north.add(new HeaderPanel());
 
@@ -88,10 +88,10 @@ public class ApplicationLayout extends Viewport {
         HorizontalPanel south = new HorizontalPanel();
 
         Html copyright = new Html(I18N.DISPLAY.projectCopyrightStatement());
-        copyright.setStyleName("copyright");
+        copyright.setStyleName("copyright"); //$NON-NLS-1$
 
         Html nsftext = new Html(I18N.DISPLAY.nsfProjectText());
-        nsftext.setStyleName("nsf_text");
+        nsftext.setStyleName("nsf_text"); //$NON-NLS-1$
 
         south.add(copyright);
         south.add(nsftext);
@@ -157,14 +157,14 @@ public class ApplicationLayout extends Viewport {
 
             add(buildLogoPanel());
             add(buildActionsPanel());
-            setStyleName("iplantc_portal_component");
+            setStyleName("iplantc_portal_component"); //$NON-NLS-1$
         }
 
         private VerticalPanel buildLogoPanel() {
             VerticalPanel panel = new VerticalPanel();
 
             Image logo = new Image(Constants.CLIENT.iplantLogo());
-            logo.addStyleName("iplantc_logo");
+            logo.addStyleName("iplantc_logo"); //$NON-NLS-1$
             logo.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent arg0) {
@@ -178,7 +178,7 @@ public class ApplicationLayout extends Viewport {
 
         private HorizontalPanel buildActionsPanel() {
             HorizontalPanel pnlActions = new HorizontalPanel();
-            pnlActions.setStyleName("iplantc_header_actions");
+            pnlActions.setStyleName("iplantc_header_actions"); //$NON-NLS-1$
             pnlActions.setSpacing(5);
 
             pnlActions.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()));
@@ -220,7 +220,7 @@ public class ApplicationLayout extends Viewport {
 
         private HorizontalPanel buildActionsMenu(String menuHeaderText, final Menu menu) {
             final HorizontalPanel ret = new HorizontalPanel();
-            ret.setStyleName("iplantc_header_menu_panel");
+            ret.setStyleName("iplantc_header_menu_panel"); //$NON-NLS-1$
 
 //            // build menu header text and icon
 //            CustomLabel menuHeader = new CustomLabel(menuHeaderText);
@@ -265,7 +265,7 @@ public class ApplicationLayout extends Viewport {
 
             menu.setSize(110, 90);
             menu.setBorders(true);
-            menu.setStyleName("iplantc_header_menu_body");
+            menu.setStyleName("iplantc_header_menu_body"); //$NON-NLS-1$
 
             return menu;
         }
