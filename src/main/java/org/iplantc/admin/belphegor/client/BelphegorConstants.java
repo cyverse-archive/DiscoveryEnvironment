@@ -11,6 +11,13 @@ public interface BelphegorConstants extends CommonUiConstants {
     String iplantLogo();
 
     /**
+     * The path to the tile image used for extending the heading across the whole browser width.
+     * 
+     * @return a string representation of the path to iPlant logo
+     */
+    String iplantLogoFill();
+
+    /**
      * The location of the login page.
      * 
      * @return the relative path to the login page.
