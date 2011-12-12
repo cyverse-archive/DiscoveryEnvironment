@@ -3,7 +3,7 @@ package org.iplantc.admin.belphegor.client.views.panels;
 import java.util.ArrayList;
 
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.admin.belphegor.client.services.AppAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
@@ -35,8 +35,9 @@ public class CatalogAdminPanel extends ContentPanel {
     public CatalogAdminPanel() {
         setCaption();
         initHandlers();
+        initPanels();
         initLayout();
-        setInitialSize();
+
     }
 
     private void initHandlers() {
@@ -93,43 +94,14 @@ public class CatalogAdminPanel extends ContentPanel {
         compose();
     }
 
-    @Override
-    protected void onResize(int width, int height) {
-        super.onResize(width, height);
-
-        resizeContents(getInnerWidth(), getInnerHeight());
-    }
-
-    @Override
-    protected void onAfterLayout() {
-        super.onAfterLayout();
-
-        resizeContents(getInnerWidth(), getInnerHeight());
-    }
-
-    /**
-     * Resizes this panel's inner tree panel.
-     * 
-     * @param width
-     * @param height
-     */
-    private void resizeContents(int width, int height) {
-        setWidth(width);
-        setHeight(height);
-    }
-
     private void initPanels() {
         catPanel = new CatalogCategoryAdminPanel();
-        // mainPanel = new CatalogMainAdminPanel();
+        mainPanel = new CatalogMainAdminPanel(new AppTemplateAdminServiceFacade());
     }
 
     private void compose() {
         add(catPanel, dataWest);
         add(mainPanel, dataCenter);
-    }
-
-    private void setInitialSize() {
-        setSize(800, 410);
     }
 
     private int getWestWidth() {
@@ -150,7 +122,7 @@ public class CatalogAdminPanel extends ContentPanel {
     }
 
     private void updateAnalysesListing(final AnalysisGroup group) {
-        AppAdminServiceFacade facade = new AppAdminServiceFacade();
+        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
         mask(I18N.DISPLAY.loadingMask());
         facade.getAnalysis(group.getId(), new AsyncCallback<String>() {
             @Override

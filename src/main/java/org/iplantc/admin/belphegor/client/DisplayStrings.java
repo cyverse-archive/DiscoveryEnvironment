@@ -11,4 +11,11 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      */
     String adminApp();
 
+    /**
+     * Localized error message to show when information about the current user couldn't be loaded.
+     * 
+     * @return string representing the text
+     */
+    String cantLoadUserInfo();
+
 }
