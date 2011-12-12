@@ -38,10 +38,19 @@
 	</servlet>
 	
 	<servlet>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.DEServiceDispatcher</servlet-class>
+	</servlet>
+	
+	<servlet>
 		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
 		<servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
 	</servlet>
 	
+	<servlet-mapping>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<url-pattern>/belphegor/deservice</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
 		<url-pattern>/belphegor/unsecureddeservice</url-pattern>
