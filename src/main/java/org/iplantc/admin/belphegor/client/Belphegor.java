@@ -2,14 +2,12 @@ package org.iplantc.admin.belphegor.client;
 
 import java.util.Map;
 
-import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
-import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -35,7 +33,7 @@ public class Belphegor implements EntryPoint {
     }
 
     private void setEntryPointTitle() {
-        Window.setTitle(I18N.DISPLAY.header());
+        // Window.setTitle(I18N.DISPLAY.header());
     }
 
     private void initUserInfo() {
@@ -43,7 +41,7 @@ public class Belphegor implements EntryPoint {
                 new AsyncCallback<Map<String, String>>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);
+                        // ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);
                     }
 
                     @Override
@@ -55,26 +53,26 @@ public class Belphegor implements EntryPoint {
                     }
                 });
     }
-    
-    /** Initializes the Tito configuration properties object.
-    */
-   private void initializeTitoProperties() {
-       PropertyServiceFacade.getInstance().getProperties(new AsyncCallback<Map<String, String>>() {
-           @Override
-           public void onFailure(Throwable caught) {
-               ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);
-           }
 
-           @Override
-           public void onSuccess(Map<String, String> result) {
-//               TitoProperties.getInstance().initialize(result);
-//               setBrowserContextMenuEnabled(TitoProperties.getInstance().isContextClickEnabled());
-               initApp();
-           }
-       });
-   }
-    
-    
+    /**
+     * Initializes the Tito configuration properties object.
+     */
+    private void initializeTitoProperties() {
+        PropertyServiceFacade.getInstance().getProperties(new AsyncCallback<Map<String, String>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                // ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);
+            }
+
+            @Override
+            public void onSuccess(Map<String, String> result) {
+                // TitoProperties.getInstance().initialize(result);
+                // setBrowserContextMenuEnabled(TitoProperties.getInstance().isContextClickEnabled());
+                initApp();
+            }
+        });
+    }
+
     /**
      * Disable the context menu of the browser using native JavaScript.
      * 

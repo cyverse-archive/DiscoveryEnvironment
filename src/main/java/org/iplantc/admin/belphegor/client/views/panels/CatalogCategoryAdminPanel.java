@@ -4,28 +4,8 @@ import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCatego
 
 public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
 
-    @Override
-    public String getCategoryNameWorkspace() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public CatalogCategoryAdminPanel() {
 
-    @Override
-    public String getCategoryNameFav() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getCategoryNameDev() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getBetaCategoryById() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

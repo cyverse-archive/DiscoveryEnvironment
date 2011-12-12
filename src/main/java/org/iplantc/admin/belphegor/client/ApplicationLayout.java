@@ -1,5 +1,6 @@
 package org.iplantc.admin.belphegor.client;
 
+import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 
@@ -56,13 +57,7 @@ public class ApplicationLayout extends Viewport {
 
     private void addListeners() {
         EventBus instance = EventBus.getInstance();
-//        instance.addHandler(NavigateToHomeEvent.TYPE, new NavigateToHomeEventHandler() {
-//            @Override
-//            public void onHome() {
-//                addListOfTools();
-//            }
-//
-//        });
+
     }
 
     private void drawNorth() {
@@ -148,7 +143,13 @@ public class ApplicationLayout extends Viewport {
 
         drawNorth();
         drawSouth();
+        initAdminPanel();
 
+    }
+
+    private void initAdminPanel() {
+        CatalogAdminPanel panel = new CatalogAdminPanel();
+        replaceCenterPanel(panel);
     }
 
     private class HeaderPanel extends HorizontalPanel {
@@ -190,73 +191,17 @@ public class ApplicationLayout extends Viewport {
 
         private Menu buildUserMenu() {
             Menu userMenu = buildMenu();
-
-//            userMenu.add(new CustomHyperlink(I18N.DISPLAY.logout(), new LogoutSelectionListener(), I18N.DISPLAY.logoutToolTipText()));
-
             return userMenu;
         }
 
         private Menu buildHelpMenu() {
             Menu helpMenu = buildMenu();
-
-//            helpMenu.add(new CustomHyperlink(I18N.DISPLAY.documentation(),
-//                    new DocumentationSelectionListener(),""));
-//            helpMenu.add(new CustomHyperlink(I18N.DISPLAY.forums(), new Listener<BaseEvent>() {
-//                @Override
-//                public void handleEvent(BaseEvent be) {
-//                    WindowUtil.open(Constants.CLIENT.forumsUrl());
-//                }
-//            }, ""));
-//
-//            helpMenu.add(new CustomHyperlink(I18N.DISPLAY.contactSupport(), new Listener<BaseEvent>() {
-//                @Override
-//                public void handleEvent(BaseEvent be) {
-//                    WindowUtil.open(Constants.CLIENT.supportUrl());
-//                }
-//            }, ""));
-//            helpMenu.add(new CustomHyperlink(I18N.DISPLAY.about(), new AboutSelectionListener(),""));
-
             return helpMenu;
         }
 
         private HorizontalPanel buildActionsMenu(String menuHeaderText, final Menu menu) {
             final HorizontalPanel ret = new HorizontalPanel();
             ret.setStyleName("iplantc_header_menu_panel"); //$NON-NLS-1$
-
-//            // build menu header text and icon
-//            CustomLabel menuHeader = new CustomLabel(menuHeaderText);
-//            menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
-//                @Override
-//                public void handleEvent(BaseEvent be) {
-//                    showHeaderActionsMenu(ret, menu);
-//                }
-//            });
-//
-//            IconButton icon = new IconButton("iplantc_header_menu_button",
-//                    new SelectionListener<IconButtonEvent>() {
-//                        @Override
-//                        public void componentSelected(IconButtonEvent ce) {
-//                            showHeaderActionsMenu(ret, menu);
-//                        }
-//                    });
-//
-//            ret.add(menuHeader);
-//            ret.add(icon);
-//
-//            // update header style when menu is shown
-//            menu.addListener(Events.Show, new Listener<MenuEvent>() {
-//                @Override
-//                public void handleEvent(MenuEvent be) {
-//                    ret.addStyleName("iplantc_header_menu_selected");
-//                }
-//            });
-//
-//            menu.addListener(Events.Hide, new Listener<MenuEvent>() {
-//                @Override
-//                public void handleEvent(MenuEvent be) {
-//                    ret.removeStyleName("iplantc_header_menu_selected");
-//                }
-//            });
 
             return ret;
         }
