@@ -29,7 +29,9 @@
 }
 
 .iplantc_background {
-	background: url(./images/background.png) repeat-x top center !important;
+    background: #fffffb url('images/iplant-logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .required_marker {
