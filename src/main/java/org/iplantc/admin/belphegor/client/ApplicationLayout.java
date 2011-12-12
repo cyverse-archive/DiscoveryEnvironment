@@ -158,6 +158,7 @@ public class ApplicationLayout extends Viewport {
             add(buildLogoPanel());
             add(buildActionsPanel());
             setStyleName("iplantc_portal_component"); //$NON-NLS-1$
+            setStyleAttribute("background-image", "url('images/headerlogo-fill.png')");
         }
 
         private VerticalPanel buildLogoPanel() {
