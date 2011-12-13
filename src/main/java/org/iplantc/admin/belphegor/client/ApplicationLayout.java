@@ -50,7 +50,7 @@ public class ApplicationLayout extends Viewport {
         });
 
         setLayout(layout);
-        setStyleName("iplantc_background"); //$NON-NLS-1$
+        setStyleName(""); //$NON-NLS-1$
 
         addListeners();
     }
@@ -65,7 +65,6 @@ public class ApplicationLayout extends Viewport {
         north.setHeaderVisible(false);
         north.setBodyBorder(false);
         north.setBorders(false);
-        north.setBodyStyleName("iplantc_portal_component"); //$NON-NLS-1$
 
         north.add(new HeaderPanel());
 
@@ -158,8 +157,7 @@ public class ApplicationLayout extends Viewport {
 
             add(buildLogoPanel());
             add(buildActionsPanel());
-            setStyleName("iplantc_portal_component"); //$NON-NLS-1$
-            setStyleAttribute("background-image", "url('" + Constants.CLIENT.iplantLogoFill() + "')"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            setStyleName("iplantc_header_right"); //$NON-NLS-1$
         }
 
         private VerticalPanel buildLogoPanel() {

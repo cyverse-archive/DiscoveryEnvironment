@@ -14,8 +14,9 @@
     top: 0px !important;
 }
 
-.iplantc_portal_component {
+.iplantc_header_right {
     background-color: transparent;
+    background-image: url('images/headerlogo-fill.png');
 }
 
 .iplantc_header_actions {
@@ -26,12 +27,6 @@
 
 .iplantc_logo {
 	cursor: pointer;
-}
-
-.iplantc_background {
-    background: #fffffb url('images/iplant-logo.png');
-    background-repeat: no-repeat;
-    background-position: center;
 }
 
 .required_marker {
