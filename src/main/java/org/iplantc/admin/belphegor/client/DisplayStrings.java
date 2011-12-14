@@ -2,6 +2,9 @@ package org.iplantc.admin.belphegor.client;
 
 import org.iplantc.core.uicommons.client.CommonUIDisplayStrings;
 
+/**
+ * Internationalized strings for Belphegor
+ */
 public interface DisplayStrings extends CommonUIDisplayStrings {
 
     /**
@@ -18,4 +21,25 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      */
     String cantLoadUserInfo();
 
+    /**
+     * Localized error message to show when an app couldn't be deleted.
+     * 
+     * @return string representing the text
+     */
+    String cantDeleteApp();
+
+    /**
+     * Localized confirmation message to show when a user tries to delete an app.
+     * 
+     * @param appName the name of the app to be deleted
+     * @return string representing the text
+     */
+    String confirmDeleteApp(String appName);
+
+    /**
+     * Localized title for the "confirm app deletion" message box.
+     * 
+     * @return string representing the text
+     */
+    String confirmDeleteAppTitle();
 }
