@@ -5,6 +5,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -18,10 +19,7 @@ import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Image;
 
 /**
  * Defines the overall layout for the root panel of the web application.
@@ -163,15 +161,15 @@ public class ApplicationLayout extends Viewport {
         private VerticalPanel buildLogoPanel() {
             VerticalPanel panel = new VerticalPanel();
 
-            Image logo = new Image(Constants.CLIENT.iplantLogo());
-            logo.addStyleName("iplantc_logo"); //$NON-NLS-1$
-            logo.addClickHandler(new ClickHandler() {
+            panel.addStyleName("iplantc_logo"); //$NON-NLS-1$
+            panel.setSize(900, 143); // set width and height here because setting it in the iplantc_logo
+                                     // css has no effect
+            panel.addListener(Events.OnClick, new Listener<BaseEvent>() {
                 @Override
-                public void onClick(ClickEvent arg0) {
+                public void handleEvent(BaseEvent be) {
                     com.google.gwt.user.client.Window.Location.assign(Constants.CLIENT.iplantHome());
                 }
             });
-            panel.add(logo);
 
             return panel;
         }

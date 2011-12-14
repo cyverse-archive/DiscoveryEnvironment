@@ -15,7 +15,6 @@
 }
 
 .iplantc_header_right {
-    background-color: transparent;
     background-image: url('images/headerlogo-fill.png');
 }
 
@@ -27,6 +26,7 @@
 
 .iplantc_logo {
 	cursor: pointer;
+	background-image: url('images/headerlogo.png');
 }
 
 .required_marker {
