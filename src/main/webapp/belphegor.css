@@ -125,3 +125,13 @@
 .x-toolbar .x-btn button {
     font-size: 10px;
 }
+
+.analysis_name {
+	cursor: pointer;
+	text-decoration: none;
+	color: black;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
