@@ -96,7 +96,7 @@ public class CatalogAdminPanel extends ContentPanel {
 
     private void initPanels() {
         catPanel = new CatalogCategoryAdminPanel();
-        mainPanel = new CatalogMainAdminPanel(new AppTemplateAdminServiceFacade());
+        mainPanel = new CatalogMainAdminPanel();
     }
 
     private void compose() {
