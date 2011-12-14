@@ -18,4 +18,10 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      */
     String cantLoadUserInfo();
 
+    /**
+     * Message provided when a user enters an invalid App Documentation Wiki URL.
+     */
+
+    public String notValidAppWikiUrl();
+
 }
