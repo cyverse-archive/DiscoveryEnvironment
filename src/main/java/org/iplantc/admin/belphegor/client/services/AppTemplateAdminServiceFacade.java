@@ -46,13 +46,18 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * Adds a new Category with the given category name.
      * 
      * @param name
+     * @param destCategoryId
      * @param callback
      */
-    public void addCategory(String name, AsyncCallback<String> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getAddCategoryServiceUrl() + "?" //$NON-NLS-1$
-                + name;
+    public void addCategory(String name, String destCategoryId, AsyncCallback<String> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getAddCategoryServiceUrl();
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        JSONObject body = new JSONObject();
+        body.put("categoryId", new JSONString(destCategoryId)); //$NON-NLS-1$
+        body.put("name", new JSONString(name)); //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                body.toString());
         callService(wrapper, callback);
     }
 
