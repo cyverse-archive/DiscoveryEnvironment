@@ -12,15 +12,12 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.menu.Menu;
-import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.json.client.JSONObject;
@@ -44,7 +41,7 @@ public class CatalogCategoryToolBar extends ToolBar {
      * @param tag a tag for this widget
      */
     public CatalogCategoryToolBar() {
-        add(buildActionsMenuButton());
+        buildActionButtons();
     }
 
     public void setMaskingParent(Component maskingParent) {
@@ -69,40 +66,27 @@ public class CatalogCategoryToolBar extends ToolBar {
     }
 
     /**
-     * Builds a menu button with items for adding, renaming, and deleting categories.
+     * Builds a buttons with items for adding, renaming, and deleting categories.
      * 
-     * @return The navigation panel's toolbar's Actions menu button.
+     * 
      */
-    private Button buildActionsMenuButton() {
-        // build the menu and menu actions
-        Menu actionMenu = new Menu();
+    private void buildActionButtons() {
+        final Button addCategory = buildAddCategoryButton();
+        final Button renameCategory = buildRenameCategoryButton();
+        final Button deleteCategory = buildDeleteCategoryButton();
 
-        final MenuItem addCategory = buildAddCategoryMenuItem();
-        final MenuItem renameCategory = buildRenameCategoryMenuItem();
-        final MenuItem deleteCategory = buildDeleteCategoryMenuItem();
-
-        actionMenu.add(addCategory);
-        actionMenu.add(renameCategory);
-        actionMenu.add(deleteCategory);
-
-        // create the menu button
-        Button ret = new Button(I18N.DISPLAY.moreActions());
-
-        ret.setMenu(actionMenu);
-
-        // Add a selection listener that will disable or enable actions based on the selected category.
-        ret.addSelectionListener(new MoreActionsListener(addCategory, renameCategory, deleteCategory));
-
-        return ret;
+        add(addCategory);
+        add(renameCategory);
+        add(deleteCategory);
     }
 
-    private MenuItem buildDeleteCategoryMenuItem() {
-        MenuItem ret = new MenuItem();
+    private Button buildDeleteCategoryButton() {
+        Button ret = new Button();
         ret.setText(I18N.DISPLAY.delete());
         ret.setIcon(AbstractImagePrototype.create(Resources.ICONS.delete()));
-        ret.addSelectionListener(new SelectionListener<MenuEvent>() {
+        ret.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 final AnalysisGroup selectedCategory = getSelectedCategory();
 
                 if (selectedCategory == null) {
@@ -141,44 +125,21 @@ public class CatalogCategoryToolBar extends ToolBar {
         return ret;
     }
 
-    private MenuItem buildRenameCategoryMenuItem() {
-        MenuItem ret = new MenuItem();
+    private Button buildRenameCategoryButton() {
+        Button ret = new Button();
         ret.setText(I18N.DISPLAY.rename());
-        ret.setIcon(AbstractImagePrototype.create(Resources.ICONS.category_open()));
-        ret.addSelectionListener(new SelectionListener<MenuEvent>() {
+        ret.setIcon(AbstractImagePrototype.create(Resources.ICONS.cat_edit()));
+        ret.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 final AnalysisGroup selectedCategory = getSelectedCategory();
 
                 if (selectedCategory == null) {
                     return;
                 }
 
-                IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 340, new IPlantPromptPanel(
-                        I18N.DISPLAY.rename()) {
-                    @Override
-                    public void handleOkClick() {
-                        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(
-                                maskingParent);
-                        facade.renameCategory(selectedCategory.getId(), field.getValue(),
-                                new AdminServiceCallback() {
-                                    @Override
-                                    protected void onSuccess(JSONObject jsonResult) {
-                                        // TODO parse actual result from service
-                                        selectedCategory.setName(JsonUtil.getString(jsonResult,
-                                                AnalysisGroupTreeModel.NAME));
-
-                                        treePnlCategories.getStore().update(selectedCategory);
-                                    }
-
-                                    @Override
-                                    protected String getErrorMessage() {
-                                        // TODO Auto-generated method stub
-                                        return null;
-                                    }
-                                });
-                    }
-                });
+                IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 340, new RenamePromptPanel(
+                        I18N.DISPLAY.rename(), selectedCategory));
 
                 dlg.show();
             }
@@ -186,13 +147,13 @@ public class CatalogCategoryToolBar extends ToolBar {
         return ret;
     }
 
-    private MenuItem buildAddCategoryMenuItem() {
-        MenuItem ret = new MenuItem();
+    private Button buildAddCategoryButton() {
+        Button ret = new Button();
         ret.setText(I18N.DISPLAY.add());
         ret.setIcon(AbstractImagePrototype.create(Resources.ICONS.category()));
-        ret.addSelectionListener(new SelectionListener<MenuEvent>() {
+        ret.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 final AnalysisGroup selectedCategory = getSelectedCategory();
 
                 if (selectedCategory == null) {
@@ -232,27 +193,35 @@ public class CatalogCategoryToolBar extends ToolBar {
         return ret;
     }
 
-    private final class MoreActionsListener extends SelectionListener<ButtonEvent> {
-        private final MenuItem addCategory;
-        private final MenuItem renameCategory;
-        private final MenuItem deleteCategory;
+    private final class RenamePromptPanel extends IPlantPromptPanel {
+        private final AnalysisGroup selectedCategory;
 
-        private MoreActionsListener(MenuItem addCategory, MenuItem renameCategory,
-                MenuItem deleteCategory) {
-            this.addCategory = addCategory;
-            this.renameCategory = renameCategory;
-            this.deleteCategory = deleteCategory;
+        private RenamePromptPanel(String caption, AnalysisGroup selectedCategory) {
+            super(caption);
+            field.setValue(selectedCategory.getName());
+            this.selectedCategory = selectedCategory;
         }
 
         @Override
-        public void componentSelected(ButtonEvent ce) {
-            // enable all actions if a category is selected
-            boolean actionMenuItemsEnabled = (getSelectedCategory() != null);
+        public void handleOkClick() {
+            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(maskingParent);
+            facade.renameCategory(selectedCategory.getId(), field.getValue(),
+                    new AdminServiceCallback() {
+                        @Override
+                        protected void onSuccess(JSONObject jsonResult) {
+                            // TODO parse actual result from service
+                            selectedCategory.setName(JsonUtil.getString(jsonResult,
+                                    AnalysisGroupTreeModel.NAME));
 
-            addCategory.setEnabled(actionMenuItemsEnabled);
-            renameCategory.setEnabled(actionMenuItemsEnabled);
-            deleteCategory.setEnabled(actionMenuItemsEnabled);
+                            treePnlCategories.getStore().update(selectedCategory);
+                        }
+
+                        @Override
+                        protected String getErrorMessage() {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+                    });
         }
-
     }
 }

@@ -1,15 +1,12 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
-import java.util.List;
-
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.BoundedTextArea;
 import org.iplantc.core.client.widgets.BoundedTextField;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
-import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Scroll;
@@ -22,7 +19,6 @@ import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.DateField;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -35,7 +31,6 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EditAppDetailsPanel extends LayoutContainer {
@@ -49,7 +44,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private TextField<String> emailField;
 
     private TextField<String> appNameField;
-    private DateField publishedDateField;
     private TextArea descField;
 
     private TextField<String> urlField;
@@ -58,8 +52,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private FormPanel form;
     private Analysis analysis;
     private AsyncCallback<String> closeCallback;
-
-    private List<AnalysisGroupTreeModel> selectedItems;
 
     /**
      * Creates a new instance of EditAppDetailsPanel
@@ -85,7 +77,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         };
 
         form.setLayout(new FormLayout(LabelAlign.TOP));
-        form.setSize(595, 440);
+        form.setSize(595, 350);
         form.setHeaderVisible(false);
         form.setBodyBorder(false);
         form.setButtonAlign(HorizontalAlignment.CENTER);
@@ -110,24 +102,24 @@ public class EditAppDetailsPanel extends LayoutContainer {
                 && !analysis.get(Analysis.WIKI_URL).toString().isEmpty()) {
             urlField.setValue(analysis.get(Analysis.WIKI_URL).toString());
         }
-        publishedDateField.setValue(analysis.getIntegrationDate());
+
+        emailField.setValue(analysis.getIntegratorsEmail());
 
     }
 
     private JSONObject toJson() {
-        JSONObject json = new JSONObject();
+        analysis.setName(getNonNullString(appNameField.getValue()));
+        analysis.setIntegratorEmail(getNonNullString(emailField.getValue()));
+        analysis.setIntegratorName(getNonNullString(integratorNameField.getValue()));
+        analysis.setWikiUrl(getNonNullString(urlField.getValue()));
+        analysis.setDescription(getNonNullString(descField.getValue()));
 
-        json.put("analysis_id", getJsonString(analysis.getId())); //$NON-NLS-1$
-        json.put("integrator", getJsonString(integratorNameField.getValue())); //$NON-NLS-1$
-        json.put("email", getJsonString(emailField.getValue())); //$NON-NLS-1$
-        json.put("desc", getJsonString(descField.getValue())); //$NON-NLS-1$
-        json.put("wiki_url", getJsonString(urlField.getValue())); //$NON-NLS-1$
+        return analysis.toJson();
 
-        return json;
     }
 
-    private JSONString getJsonString(String value) {
-        return new JSONString(value == null ? "" : value); //$NON-NLS-1$
+    private String getNonNullString(String value) {
+        return (value == null ? "" : value); //$NON-NLS-1$
     }
 
     private void addFields() {
@@ -135,15 +127,12 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         LayoutContainer top = buildColumnLayoutContainer();
         LayoutContainer left = buildLeftLayoutContainer(buildFormLayout());
-        LayoutContainer right = buildRightLayoutContainer(buildFormLayout());
 
         left.add(appNameField, formData);
-        left.add(publishedDateField, formData);
         left.add(integratorNameField, formData);
         left.add(emailField, formData);
 
         top.add(left, new ColumnData(.5));
-        top.add(right, new ColumnData(.5));
         form.add(top);
 
         form.add(createSpacer());
@@ -168,12 +157,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
         LayoutContainer left2 = new LayoutContainer(left2Layout);
         left2.setStyleAttribute("paddingRight", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
         return left2;
-    }
-
-    private LayoutContainer buildRightLayoutContainer(FormLayout right1Layout) {
-        LayoutContainer right1 = new LayoutContainer(right1Layout);
-        right1.setStyleAttribute("paddingLeft", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
-        return right1;
     }
 
     private FormLayout buildFormLayout() {
@@ -201,22 +184,17 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private void buildFields() {
         appNameField = buildTextField(I18N.DISPLAY.name(), false, null, Analysis.NAME, null, 255);
 
-        publishedDateField = new DateField();
-        publishedDateField.setFieldLabel(buildRequiredFieldLabel(Analysis.INTEGRATION_DATE));
-        publishedDateField.setAllowBlank(false);
-
         integratorNameField = buildTextField(I18N.DISPLAY.integratorName(), false, null,
                 INTEGRATOR_NAME, null, 32);
 
-        emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, getEmail(), EMAIL,
+        emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, null, EMAIL,
                 new BasicEmailValidator(), 256);
 
         descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
-                1024);
+                255);
 
         urlField = buildTextField(null, false, null, WIKI_URL, null, 1024);
 
-        // refPanel = new ReferenceEditorGridPanel(525, 90);
     }
 
     private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,
@@ -306,9 +284,14 @@ public class EditAppDetailsPanel extends LayoutContainer {
         btnSubmit.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-
+                submit();
             }
         });
+    }
+
+    private void submit() {
+        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
+        facade.updateApplication(toJson(), closeCallback);
     }
 
     private void buildCancelButton() {
@@ -323,11 +306,5 @@ public class EditAppDetailsPanel extends LayoutContainer {
                 closeCallback.onFailure(null);
             }
         });
-    }
-
-    private String getEmail() {
-        UserInfo info = UserInfo.getInstance();
-
-        return info.getEmail();
     }
 }

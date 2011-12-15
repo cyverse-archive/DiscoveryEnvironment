@@ -12,4 +12,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("delete.gif")
     ImageResource delete();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("book_edit.png")
+    ImageResource cat_edit();
+
 }

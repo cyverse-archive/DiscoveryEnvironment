@@ -4,6 +4,7 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.images.Resources;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.Hyperlink;
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -24,6 +25,8 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -153,16 +156,42 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
     private class EditCompleteCallback implements AsyncCallback<String> {
 
+        Dialog dialog;
+
+        public EditCompleteCallback(Dialog d) {
+            dialog = d;
+        }
+
         @Override
         public void onFailure(Throwable caught) {
-            // TODO Auto-generated method stub
-
+            dialog.hide();
+            if (caught != null) {
+                ErrorHandler.post(caught);
+            }
         }
 
         @Override
         public void onSuccess(String result) {
-            // TODO Auto-generated method stub
+            dialog.hide();
+            updateApp(result);
+        }
 
+    }
+
+    private void updateApp(String result) {
+        JSONObject obj = JSONParser.parseStrict(result).isObject();
+        if (obj != null) {
+            JSONObject json_app = obj.get("application").isObject();
+            Analysis a = analysisGrid.getStore().findModel(Analysis.ID,
+                    JsonUtil.getString(json_app, Analysis.ID));
+            if (a != null) {
+                a.setName(JsonUtil.getString(json_app, Analysis.NAME));
+                a.setIntegratorEmail(JsonUtil.getString(json_app, Analysis.INTEGRATOR_EMAIL));
+                a.setIntegratorName(JsonUtil.getString(json_app, Analysis.INTEGRATOR_NAME));
+                a.setWikiUrl(JsonUtil.getString(json_app, Analysis.WIKI_URL));
+                a.setDescription(JsonUtil.getString(json_app, Analysis.DESCRIPTION));
+                analysisGrid.getStore().update(a);
+            }
         }
 
     }
@@ -176,12 +205,11 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
         @Override
         public void handleEvent(BaseEvent be) {
-            EditAppDetailsPanel editPanel = new EditAppDetailsPanel(model, new EditCompleteCallback());
             Dialog d = new Dialog();
+            EditAppDetailsPanel editPanel = new EditAppDetailsPanel(model, new EditCompleteCallback(d));
             d.setHeading(model.getName());
-            d.setButtons(Dialog.OKCANCEL);
-            d.setHideOnButtonClick(true);
-            d.setSize(595, 440);
+            d.getButtonBar().removeAll();
+            d.setSize(595, 380);
             d.add(editPanel);
             d.show();
         }
