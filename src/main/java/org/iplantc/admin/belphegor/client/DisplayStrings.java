@@ -27,7 +27,7 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
 
     public String notValidAppWikiUrl();
 
-    /*
+    /**
      * Localized error message to show when an app couldn't be deleted.
      * 
      * @return string representing the text
@@ -49,4 +49,11 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      */
     String confirmDeleteAppTitle();
 
+    /**
+     * Localized confirmation message to show when a user tries to delete a category.
+     * 
+     * @param appName the name of the category to be deleted
+     * @return string representing the text
+     */
+    String confirmDeleteCategory(String name);
 }

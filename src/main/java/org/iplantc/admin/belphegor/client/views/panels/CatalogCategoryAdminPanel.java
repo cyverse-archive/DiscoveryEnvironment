@@ -9,8 +9,14 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
+    private final CatalogCategoryToolBar toolBar;
 
     public CatalogCategoryAdminPanel() {
+        toolBar = new CatalogCategoryToolBar();
+        toolBar.setMaskingParent(this);
+
+        setTopComponent(toolBar);
+
         getData();
     }
 
@@ -33,4 +39,10 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
                 });
     }
 
+    @Override
+    protected void initListeners() {
+        super.initListeners();
+
+        toolBar.setCategoryTreePanel(categoryPanel);
+    }
 }
