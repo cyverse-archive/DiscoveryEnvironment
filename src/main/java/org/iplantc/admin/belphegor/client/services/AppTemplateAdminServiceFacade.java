@@ -2,13 +2,24 @@ package org.iplantc.admin.belphegor.client.services;
 
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
+    private final Component maskingCaller;
+
+    public AppTemplateAdminServiceFacade() {
+        this(null);
+    }
+
+    public AppTemplateAdminServiceFacade(Component maskingCaller) {
+        this.maskingCaller = maskingCaller;
+    }
 
     /**
      * {@inheritDoc}
@@ -17,7 +28,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
     public void getAnalysisCategories(String workspaceId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -28,7 +39,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl() + "?" //$NON-NLS-1$
                 + analysisGroupId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -42,7 +53,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
                 + name;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -61,7 +72,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -80,7 +91,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -94,7 +105,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
                 + "?" + categoryId; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -108,7 +119,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 application.toString());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -127,7 +138,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+        callService(wrapper, callback);
     }
 
     /**
@@ -141,6 +152,24 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
                 + applicationId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        callService(wrapper, callback);
+    }
+
+    /**
+     * Performs the actual service call, masking any calling component.
+     * 
+     * @param callback executed when RPC call completes.
+     * @param wrapper the wrapper used to get to the actual service via the service proxy.
+     */
+    private void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
+        if (callback instanceof AdminServiceCallback) {
+            ((AdminServiceCallback)callback).setMaskedCaller(maskingCaller);
+        }
+
+        if (maskingCaller != null) {
+            maskingCaller.mask(I18N.DISPLAY.loadingMask());
+        }
+
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 }
