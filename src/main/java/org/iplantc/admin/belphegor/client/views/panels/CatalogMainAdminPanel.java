@@ -10,8 +10,10 @@ import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.dnd.GridDragSource;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -27,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -35,7 +38,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * button when nothing selected
  */
 public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
-    private AppTemplateAdminServiceFacade service;
+    private final AppTemplateAdminServiceFacade service;
     private Button deleteButton;
 
     /**
@@ -46,6 +49,8 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     public CatalogMainAdminPanel() {
         service = new AppTemplateAdminServiceFacade();
         initToolBar();
+
+        new CatalogMainAdminPanelDragSource(analysisGrid);
     }
 
     private void initToolBar() {
@@ -215,4 +220,42 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         }
     }
 
+    /**
+     * GridDragSource for re-categorizing Apps.
+     * 
+     * @author psarando
+     * 
+     */
+    private class CatalogMainAdminPanelDragSource extends GridDragSource {
+        public CatalogMainAdminPanelDragSource(Grid<Analysis> grid) {
+            super(grid);
+        }
+
+        @Override
+        public void onDragStart(DNDEvent event) {
+            // Check if a valid row is selected.
+            Element dragStartElement = (Element)event.getDragEvent().getStartElement();
+            Element targetRow = analysisGrid.getView().findRow(dragStartElement).cast();
+            if (targetRow == null) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Set the drag source in the event
+            Analysis source = analysisGrid.getSelectionModel().getSelectedItem();
+
+            if (source != null) {
+                event.setData(source);
+                event.getStatus().update(source.getName());
+            } else {
+                event.setCancelled(true);
+                event.getStatus().setStatus(false);
+            }
+        }
+
+        @Override
+        public void onDragDrop(DNDEvent e) {
+            // do nothing intentionally
+        }
+    }
 }
