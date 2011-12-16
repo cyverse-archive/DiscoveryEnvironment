@@ -36,8 +36,8 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      */
     @Override
     public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl() + "?" //$NON-NLS-1$
-                + analysisGroupId;
+        String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl()
+                + "/" + analysisGroupId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
     }
@@ -92,7 +92,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId)); //$NON-NLS-1$
-        body.put("parent_categoryId", new JSONString(parentCategoryId)); //$NON-NLS-1$
+        body.put("destination_categoryId", new JSONString(parentCategoryId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
@@ -107,7 +107,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      */
     public void deleteCategory(String categoryId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getDeleteCategoryServiceUrl()
-                + "?" + categoryId; //$NON-NLS-1$
+                + "/" + categoryId; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
@@ -138,8 +138,8 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getMoveAppServiceUrl();
 
         JSONObject body = new JSONObject();
-        body.put("app_id", new JSONString(applicationId)); //$NON-NLS-1$
-        body.put("group_id", new JSONString(groupId)); //$NON-NLS-1$
+        body.put("id", new JSONString(applicationId)); //$NON-NLS-1$
+        body.put("categoryId", new JSONString(groupId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
@@ -153,7 +153,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * @param callback
      */
     public void deleteApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getDeleteAppServiceUrl() + "?" //$NON-NLS-1$
+        String address = ToolIntegrationAdminProperties.getInstance().getDeleteAppServiceUrl() + "/" //$NON-NLS-1$
                 + applicationId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
