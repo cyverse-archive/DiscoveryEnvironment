@@ -50,8 +50,8 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private Button btnSubmit;
     private Button btnCancel;
     private FormPanel form;
-    private Analysis analysis;
-    private AsyncCallback<String> closeCallback;
+    private final Analysis analysis;
+    private final AsyncCallback<String> closeCallback;
 
     /**
      * Creates a new instance of EditAppDetailsPanel
@@ -299,12 +299,16 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         btnCancel.setText(I18N.DISPLAY.cancel());
         btnCancel.setId("idBtnCancel"); //$NON-NLS-1$
+    }
 
-        btnCancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                closeCallback.onFailure(null);
-            }
-        });
+    /**
+     * Adds a SelectionListener to the Cancel button (e.g. for hiding parent components).
+     * 
+     * @param listener
+     */
+    public void addCancelButtonSelectionListener(SelectionListener<ButtonEvent> listener) {
+        if (listener != null) {
+            btnCancel.addSelectionListener(listener);
+        }
     }
 }

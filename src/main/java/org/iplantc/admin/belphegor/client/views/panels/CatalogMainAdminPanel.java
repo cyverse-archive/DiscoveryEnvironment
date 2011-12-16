@@ -2,6 +2,7 @@ package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.images.Resources;
+import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
@@ -29,7 +30,6 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -155,13 +155,12 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         @Override
         public Object render(final Analysis model, String property, ColumnData config, int rowIndex,
                 int colIndex, ListStore<Analysis> store, Grid<Analysis> grid) {
-            return NumberFormat.getFormat("0.00").format(model.getFeedback().getAverage_score());
+            return NumberFormat.getFormat("0.00").format(model.getFeedback().getAverage_score()); //$NON-NLS-1$
         }
 
     }
 
-    private class EditCompleteCallback implements AsyncCallback<String> {
-
+    private class EditCompleteCallback extends AdminServiceCallback {
         Dialog dialog;
 
         public EditCompleteCallback(Dialog d) {
@@ -169,37 +168,33 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         }
 
         @Override
-        public void onFailure(Throwable caught) {
+        protected void onSuccess(JSONObject jsonResult) {
             dialog.hide();
-            if (caught != null) {
-                ErrorHandler.post(caught);
-            }
+
+            updateApp(JsonUtil.getObject(jsonResult, "application")); //$NON-NLS-1$
         }
 
         @Override
-        public void onSuccess(String result) {
-            dialog.hide();
-            updateApp(result);
+        protected String getErrorMessage() {
+            // TODO I18N
+            return "Error updating App.";
         }
 
     }
 
-    private void updateApp(String result) {
-        JSONObject obj = JSONParser.parseStrict(result).isObject();
-        if (obj != null) {
-            JSONObject json_app = obj.get("application").isObject();
-            Analysis a = analysisGrid.getStore().findModel(Analysis.ID,
-                    JsonUtil.getString(json_app, Analysis.ID));
-            if (a != null) {
-                a.setName(JsonUtil.getString(json_app, Analysis.NAME));
-                a.setIntegratorEmail(JsonUtil.getString(json_app, Analysis.INTEGRATOR_EMAIL));
-                a.setIntegratorName(JsonUtil.getString(json_app, Analysis.INTEGRATOR_NAME));
-                a.setWikiUrl(JsonUtil.getString(json_app, Analysis.WIKI_URL));
-                a.setDescription(JsonUtil.getString(json_app, Analysis.DESCRIPTION));
-                analysisGrid.getStore().update(a);
-            }
-        }
+    private void updateApp(JSONObject jsonApp) {
+        Analysis app = analysisGrid.getStore().findModel(Analysis.ID,
+                JsonUtil.getString(jsonApp, Analysis.ID));
 
+        if (app != null) {
+            app.setName(JsonUtil.getString(jsonApp, Analysis.NAME));
+            app.setIntegratorEmail(JsonUtil.getString(jsonApp, Analysis.INTEGRATOR_EMAIL));
+            app.setIntegratorName(JsonUtil.getString(jsonApp, Analysis.INTEGRATOR_NAME));
+            app.setWikiUrl(JsonUtil.getString(jsonApp, Analysis.WIKI_URL));
+            app.setDescription(JsonUtil.getString(jsonApp, Analysis.DESCRIPTION));
+
+            analysisGrid.getStore().update(app);
+        }
     }
 
     private final class AppNameClickHandler implements Listener<BaseEvent> {
@@ -211,8 +206,16 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
         @Override
         public void handleEvent(BaseEvent be) {
-            Dialog d = new Dialog();
+            final Dialog d = new Dialog();
+
             EditAppDetailsPanel editPanel = new EditAppDetailsPanel(model, new EditCompleteCallback(d));
+            editPanel.addCancelButtonSelectionListener(new SelectionListener<ButtonEvent>() {
+                @Override
+                public void componentSelected(ButtonEvent ce) {
+                    d.hide();
+                }
+            });
+
             d.setHeading(model.getName());
             d.getButtonBar().removeAll();
             d.setSize(595, 380);
