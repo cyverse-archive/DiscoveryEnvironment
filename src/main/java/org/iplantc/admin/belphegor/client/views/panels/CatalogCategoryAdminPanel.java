@@ -2,6 +2,7 @@ package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
+import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
@@ -16,7 +17,6 @@ import com.extjs.gxt.ui.client.dnd.TreePanelDragSource;
 import com.extjs.gxt.ui.client.dnd.TreePanelDropTarget;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.store.TreeStore;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
 import com.google.gwt.json.client.JSONObject;
@@ -69,9 +69,40 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         toolBar.setCategoryTreePanel(categoryPanel);
     }
 
+    private void moveAnalysisGroupTreeModel(final AnalysisGroupTreeModel source,
+            final AnalysisGroup destination) {
+        String srcId = source.getId();
+        String destId = destination.getId();
+
+        AdminServiceCallback callback = new AdminServiceCallback() {
+            @Override
+            protected void onSuccess(JSONObject jsonResult) {
+                loadCategories();
+            }
+
+            @Override
+            protected String getErrorMessage() {
+                // TODO I18N
+                if (source instanceof Analysis) {
+                    return "Error moving App";
+                }
+
+                return "Error moving Category";
+            }
+        };
+
+        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(this);
+
+        if (source instanceof Analysis) {
+            facade.moveApplication(srcId, destId, callback);
+        } else {
+            facade.moveCategory(srcId, destId, callback);
+        }
+    }
+
     private void initDragAndDrop() {
         CatalogCategoryAdminPanelDropTarget target = new CatalogCategoryAdminPanelDropTarget(
-                categoryPanel, this);
+                categoryPanel);
         target.setAllowDropOnLeaf(true);
         target.setAllowSelfAsSource(true);
         target.setFeedback(Feedback.APPEND);
@@ -79,15 +110,17 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         new CatalogCategoryAdminPanelDragSource(categoryPanel);
     }
 
+    /**
+     * TreePanelDropTarget for drag-n-drop support of moving categories and apps.
+     * 
+     * @author psarando
+     * 
+     */
     private class CatalogCategoryAdminPanelDropTarget extends TreePanelDropTarget {
-        private final Component maskingCaller;
         private ScrollSupport scrollSupport;
 
-        public CatalogCategoryAdminPanelDropTarget(TreePanel<AnalysisGroupTreeModel> tree,
-                Component maskingCaller) {
+        public CatalogCategoryAdminPanelDropTarget(TreePanel<AnalysisGroupTreeModel> tree) {
             super(tree);
-
-            this.maskingCaller = maskingCaller;
         }
 
         @Override
@@ -124,6 +157,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
                 return;
             }
 
+            // Get our destination category.
             @SuppressWarnings("rawtypes")
             TreeNode node = categoryPanel.findNode(event.getTarget());
 
@@ -133,11 +167,19 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
                 return;
             }
 
-            // get our destination category
             AnalysisGroup target = (AnalysisGroup)node.getModel();
 
-            // if the target category is the src category, don't allow a drop there
-            if (target.isLeaf() && target.getCount() > 0) {
+            // Check if the source may be dropped into the target.
+            AnalysisGroupTreeModel source = (AnalysisGroupTreeModel)event.getData();
+
+            if (source instanceof AnalysisGroup) {
+                if (target.isLeaf() && target.getCount() > 0) {
+                    // Don't allow a category drop into a category leaf with apps in it.
+                    event.setCancelled(true);
+                    event.getStatus().setStatus(false);
+                }
+            } else if (!target.isLeaf()) {
+                // Apps can only be dropped into leaf categories.
                 event.setCancelled(true);
                 event.getStatus().setStatus(false);
             }
@@ -147,26 +189,14 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         public void onDragDrop(DNDEvent event) {
             @SuppressWarnings("rawtypes")
             TreeNode node = categoryPanel.findNode(event.getTarget());
-            final AnalysisGroup category = (AnalysisGroup)event.getData();
+            final AnalysisGroupTreeModel source = (AnalysisGroupTreeModel)event.getData();
 
-            if (node != null && category != null) {
+            if (node != null && source != null) {
                 // get our destination category
                 final AnalysisGroup target = (AnalysisGroup)node.getModel();
 
                 // call service to move category
-                AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(maskingCaller);
-                facade.moveCategory(category.getId(), target.getId(), new AdminServiceCallback() {
-                    @Override
-                    protected void onSuccess(JSONObject jsonResult) {
-                        loadCategories();
-                    }
-
-                    @Override
-                    protected String getErrorMessage() {
-                        // TODO Auto-generated method stub
-                        return "Error moving category";
-                    }
-                });
+                moveAnalysisGroupTreeModel(source, target);
             }
         }
 
@@ -181,6 +211,12 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         }
     }
 
+    /**
+     * TreePanelDragSource for moving categories.
+     * 
+     * @author psarando
+     * 
+     */
     private class CatalogCategoryAdminPanelDragSource extends TreePanelDragSource {
         public CatalogCategoryAdminPanelDragSource(TreePanel<AnalysisGroupTreeModel> tree) {
             super(tree);
@@ -189,6 +225,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         @SuppressWarnings("rawtypes")
         @Override
         public void onDragStart(DNDEvent event) {
+            // Check if a valid tree node was selected.
             Element dragStartElement = (Element)event.getDragEvent().getStartElement();
 
             TreeNode node = tree.findNode(dragStartElement);
@@ -202,11 +239,12 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
                 return;
             }
 
-            AnalysisGroup category = (AnalysisGroup)categoryPanel.getSelectionModel().getSelectedItem();
+            // Set the drag source in the event
+            AnalysisGroup source = (AnalysisGroup)categoryPanel.getSelectionModel().getSelectedItem();
 
-            if (category != null) {
-                event.setData(category);
-                event.getStatus().update(category.getDisplayName());
+            if (source != null) {
+                event.setData(source);
+                event.getStatus().update(source.getDisplayName());
             } else {
                 event.setCancelled(true);
                 event.getStatus().setStatus(false);
