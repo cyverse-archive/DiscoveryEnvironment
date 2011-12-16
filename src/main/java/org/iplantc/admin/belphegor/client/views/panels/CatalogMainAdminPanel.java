@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -149,7 +150,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         @Override
         public Object render(final Analysis model, String property, ColumnData config, int rowIndex,
                 int colIndex, ListStore<Analysis> store, Grid<Analysis> grid) {
-            return model.getFeedback().getAverage_score();
+            return NumberFormat.getFormat("0.00").format(model.getFeedback().getAverage_score());
         }
 
     }
