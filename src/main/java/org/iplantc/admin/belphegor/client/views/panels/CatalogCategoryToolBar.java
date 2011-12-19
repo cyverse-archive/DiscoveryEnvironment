@@ -93,6 +93,8 @@ public class CatalogCategoryToolBar extends ToolBar {
                     return;
                 }
 
+                final String name = selectedCategory.getName();
+
                 Listener<MessageBoxEvent> callback = new Listener<MessageBoxEvent>() {
                     @Override
                     public void handleEvent(MessageBoxEvent ce) {
@@ -109,16 +111,16 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                                 @Override
                                 protected String getErrorMessage() {
-                                    // TODO Auto-generated method stub
-                                    return null;
+                                    // TODO I18N
+                                    return "Error deleting category " + name;
                                 }
                             });
                         }
                     }
                 };
 
-                MessageBox.confirm(I18N.DISPLAY.warning(),
-                        I18N.DISPLAY.confirmDeleteCategory(selectedCategory.getName()), callback);
+                MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteCategory(name),
+                        callback);
             }
         });
 
@@ -164,23 +166,23 @@ public class CatalogCategoryToolBar extends ToolBar {
                         I18N.DISPLAY.add()) {
                     @Override
                     public void handleOkClick() {
-                        // TODO Auto-generated method stub
+                        final String name = field.getValue();
+
                         AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(
                                 maskingParent);
-                        facade.addCategory(field.getValue(), selectedCategory.getId(),
-                                new AdminServiceCallback() {
-                                    @Override
-                                    protected void onSuccess(JSONObject jsonResult) {
-                                        // TODO Auto-generated method stub
+                        facade.addCategory(name, selectedCategory.getId(), new AdminServiceCallback() {
+                            @Override
+                            protected void onSuccess(JSONObject jsonResult) {
+                                // TODO Auto-generated method stub
 
-                                    }
+                            }
 
-                                    @Override
-                                    protected String getErrorMessage() {
-                                        // TODO Auto-generated method stub
-                                        return null;
-                                    }
-                                });
+                            @Override
+                            protected String getErrorMessage() {
+                                // TODO I18N
+                                return "Could not add category " + name;
+                            }
+                        });
 
                     }
                 });
@@ -198,6 +200,7 @@ public class CatalogCategoryToolBar extends ToolBar {
 
         private RenamePromptPanel(String caption, AnalysisGroup selectedCategory) {
             super(caption);
+
             field.setValue(selectedCategory.getName());
             this.selectedCategory = selectedCategory;
         }
@@ -209,7 +212,6 @@ public class CatalogCategoryToolBar extends ToolBar {
                     new AdminServiceCallback() {
                         @Override
                         protected void onSuccess(JSONObject jsonResult) {
-                            // TODO parse actual result from service
                             selectedCategory.setName(JsonUtil.getString(jsonResult,
                                     AnalysisGroupTreeModel.NAME));
 
@@ -218,8 +220,8 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                         @Override
                         protected String getErrorMessage() {
-                            // TODO Auto-generated method stub
-                            return null;
+                            // TODO I18N
+                            return "Could not rename category " + selectedCategory.getName();
                         }
                     });
         }

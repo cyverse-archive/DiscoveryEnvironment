@@ -8,7 +8,6 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.dnd.GridDragSource;
@@ -31,7 +30,6 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -82,6 +80,8 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     }
 
     private void deleteSelectedApp() {
+        final Analysis app = getSelectedApp();
+
         Listener<MessageBoxEvent> callback = new Listener<MessageBoxEvent>() {
             @Override
             public void handleEvent(MessageBoxEvent ce) {
@@ -89,27 +89,26 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
                 // did the user click yes?
                 if (btn.getItemId().equals(Dialog.YES)) {
-                    confirmDeleteSelectedApp();
+                    confirmDeleteSelectedApp(app);
                 }
             }
         };
 
-        String appName = getSelectedApp().getName();
-        MessageBox.confirm(I18N.DISPLAY.confirmDeleteAppTitle(), I18N.DISPLAY.confirmDeleteApp(appName),
-                callback);
+        MessageBox.confirm(I18N.DISPLAY.confirmDeleteAppTitle(),
+                I18N.DISPLAY.confirmDeleteApp(app.getName()), callback);
     }
 
-    private void confirmDeleteSelectedApp() {
-        String appId = getSelectedApp().getId();
-        service.deleteApplication(appId, new AsyncCallback<String>() {
-
+    private void confirmDeleteSelectedApp(final Analysis app) {
+        service.deleteApplication(app.getId(), new AdminServiceCallback() {
             @Override
-            public void onSuccess(String result) {
+            protected void onSuccess(JSONObject jsonResult) {
+                analysisGrid.getStore().remove(app);
             }
 
             @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.DISPLAY.cantDeleteApp(), caught);
+            protected String getErrorMessage() {
+                // TODO Move to error strings.
+                return I18N.DISPLAY.cantDeleteApp();
             }
         });
     }
