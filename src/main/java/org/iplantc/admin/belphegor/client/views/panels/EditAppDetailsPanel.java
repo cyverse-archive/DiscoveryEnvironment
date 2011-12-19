@@ -260,7 +260,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
                 // least one character under the validAppWikiUrlPath.
                 if (!value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
                         + Constants.CLIENT.validAppWikiUrlPath() + ".+")) { //$NON-NLS-1$
-                    return I18N.DISPLAY.notValidAppWikiUrl(); //$NON-NLS-1$
+                    return I18N.DISPLAY.notValidAppWikiUrl();
                 }
 
                 return null;

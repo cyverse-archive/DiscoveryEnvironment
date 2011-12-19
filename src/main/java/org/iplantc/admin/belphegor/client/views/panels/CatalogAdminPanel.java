@@ -51,11 +51,6 @@ public class CatalogAdminPanel extends ContentPanel {
         setHeading(I18N.DISPLAY.adminApp());
     }
 
-    private void initModel() {
-        // TODO Auto-generated method stub
-
-    }
-
     private BorderLayoutData initLayoutRegion(LayoutRegion region, float size, boolean collapsible) {
         BorderLayoutData ret = new BorderLayoutData(region);
 
@@ -74,6 +69,7 @@ public class CatalogAdminPanel extends ContentPanel {
 
         // make sure we re-draw when a panel expands
         layout.addListener(Events.Expand, new Listener<BorderLayoutEvent>() {
+            @Override
             public void handleEvent(BorderLayoutEvent be) {
                 layout();
             }
@@ -129,7 +125,7 @@ public class CatalogAdminPanel extends ContentPanel {
             public void onSuccess(String result) {
                 ArrayList<Analysis> analyses = new ArrayList<Analysis>();
 
-                JSONArray templates = JsonUtil.getArray(JsonUtil.getObject(result), "templates");
+                JSONArray templates = JsonUtil.getArray(JsonUtil.getObject(result), "templates"); //$NON-NLS-1$
                 if (templates != null) {
                     for (int i = 0; i < templates.size(); i++) {
                         Analysis analysis = new Analysis(JsonUtil.getObjectAt(templates, i));

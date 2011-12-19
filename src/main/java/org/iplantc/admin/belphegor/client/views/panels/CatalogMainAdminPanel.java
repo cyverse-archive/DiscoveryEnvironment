@@ -35,8 +35,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * A panel that displays apps in a grid and lets the user delete or modify them. TODO: disable delete
- * button when nothing selected
+ * A panel that displays apps in a grid and lets the user delete or modify them.
  */
 public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     private final AppTemplateAdminServiceFacade service;
