@@ -107,8 +107,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
             @Override
             protected String getErrorMessage() {
-                // TODO Move to error strings.
-                return I18N.DISPLAY.cantDeleteApp();
+                return I18N.ERROR.deleteApplicationError(app.getName());
             }
         });
     }
@@ -174,8 +173,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
         @Override
         protected String getErrorMessage() {
-            // TODO I18N
-            return "Error updating App.";
+            return I18N.ERROR.updateApplicationError();
         }
 
     }

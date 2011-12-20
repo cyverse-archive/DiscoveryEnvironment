@@ -1,5 +1,6 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -50,7 +51,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(caught);
+                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
                     }
                 });
     }
@@ -82,12 +83,11 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
 
             @Override
             protected String getErrorMessage() {
-                // TODO I18N
                 if (source instanceof Analysis) {
-                    return "Error moving App";
+                    return I18N.ERROR.moveApplicationError(source.getName());
                 }
 
-                return "Error moving Category";
+                return I18N.ERROR.moveCategoryError(source.getName());
             }
         };
 

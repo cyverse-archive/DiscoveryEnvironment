@@ -111,8 +111,7 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                                 @Override
                                 protected String getErrorMessage() {
-                                    // TODO I18N
-                                    return "Error deleting category " + name;
+                                    return I18N.ERROR.deleteCategoryError(name);
                                 }
                             });
                         }
@@ -179,8 +178,7 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                             @Override
                             protected String getErrorMessage() {
-                                // TODO I18N
-                                return "Could not add category " + name;
+                                return I18N.ERROR.addCategoryError(name);
                             }
                         });
 
@@ -220,8 +218,7 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                         @Override
                         protected String getErrorMessage() {
-                            // TODO I18N
-                            return "Could not rename category " + selectedCategory.getName();
+                            return I18N.ERROR.renameCategoryError(selectedCategory.getName());
                         }
                     });
         }

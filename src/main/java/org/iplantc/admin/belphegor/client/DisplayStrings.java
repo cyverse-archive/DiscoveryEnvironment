@@ -24,15 +24,7 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
     /**
      * Message provided when a user enters an invalid App Documentation Wiki URL.
      */
-
     public String notValidAppWikiUrl();
-
-    /**
-     * Localized error message to show when an app couldn't be deleted.
-     * 
-     * @return string representing the text
-     */
-    String cantDeleteApp();
 
     /**
      * Localized confirmation message to show when a user tries to delete an app.
