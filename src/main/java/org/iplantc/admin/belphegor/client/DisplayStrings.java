@@ -48,4 +48,11 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return string representing the text
      */
     String confirmDeleteCategory(String name);
+
+    /**
+     * Localized display text for an "Average User Rating" label.
+     * 
+     * @return a string representing the localized text.
+     */
+    String avgUserRating();
 }

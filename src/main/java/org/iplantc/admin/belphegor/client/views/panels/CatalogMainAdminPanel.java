@@ -119,7 +119,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     protected ColumnModel buildColumnModel() {
         ColumnModel model = super.buildColumnModel();
         ColumnConfig cc = model.getColumnById(Analysis.RATING);
-        cc.setHeader("Average User Rating");
+        cc.setHeader(I18N.DISPLAY.avgUserRating());
         cc.setAlignment(HorizontalAlignment.CENTER);
         cc.setRenderer(new VotingCellRenderer());
         model.getColumnById(Analysis.NAME).setRenderer(new AppNameCellRenderer());
