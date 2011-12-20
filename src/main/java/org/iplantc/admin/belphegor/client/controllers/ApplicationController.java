@@ -1,7 +1,6 @@
 package org.iplantc.admin.belphegor.client.controllers;
 
 import org.iplantc.admin.belphegor.client.ApplicationLayout;
-import org.iplantc.core.uicommons.client.events.EventBus;
 
 /**
  * A controller class that initializes the layout and event handlers
@@ -14,7 +13,6 @@ public class ApplicationController {
     private ApplicationLayout layout;
 
     private ApplicationController() {
-        initListeners();
         disableBrowserContextMenu();
     }
 
@@ -24,11 +22,6 @@ public class ApplicationController {
         }
 
         return instance;
-    }
-
-    private void initListeners() {
-        EventBus eventbus = EventBus.getInstance();
-
     }
 
     public void init(ApplicationLayout layout) {

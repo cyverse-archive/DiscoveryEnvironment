@@ -1,7 +1,6 @@
 package org.iplantc.admin.belphegor.client;
 
 import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
-import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
@@ -49,13 +48,6 @@ public class ApplicationLayout extends Viewport {
 
         setLayout(layout);
         setStyleName(""); //$NON-NLS-1$
-
-        addListeners();
-    }
-
-    private void addListeners() {
-        EventBus instance = EventBus.getInstance();
-
     }
 
     private void drawNorth() {
@@ -210,13 +202,6 @@ public class ApplicationLayout extends Viewport {
             menu.setStyleName("iplantc_header_menu_body"); //$NON-NLS-1$
 
             return menu;
-        }
-
-        private void showHeaderActionsMenu(HorizontalPanel anchor, Menu actionsMenu) {
-            // show the menu so that its right edge is aligned with with the anchor's right edge,
-            // and its top is aligned with the anchor's bottom.
-            actionsMenu.showAt(anchor.getAbsoluteLeft() + anchor.getWidth() - 110,
-                    anchor.getAbsoluteTop() + anchor.getHeight());
         }
     }
 }
