@@ -1,12 +1,14 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.images.Resources;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 
@@ -105,8 +107,7 @@ public class CatalogCategoryToolBar extends ToolBar {
                             facade.deleteCategory(selectedCategory.getId(), new AdminServiceCallback() {
                                 @Override
                                 protected void onSuccess(JSONObject jsonResult) {
-                                    // TODO Auto-generated method stub
-
+                                    EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
                                 }
 
                                 @Override

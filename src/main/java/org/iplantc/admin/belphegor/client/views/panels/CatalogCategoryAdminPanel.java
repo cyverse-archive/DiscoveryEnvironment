@@ -1,6 +1,8 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -9,6 +11,7 @@ import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.core.El;
@@ -20,6 +23,7 @@ import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -27,6 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
     private final CatalogCategoryToolBar toolBar;
+    private HandlerRegistration handlerRefresh;
 
     public CatalogCategoryAdminPanel() {
         toolBar = new CatalogCategoryToolBar();
@@ -34,6 +39,11 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
 
         setTopComponent(toolBar);
 
+        loadCategories();
+    }
+
+    private void reloadCategories() {
+        setDefaultCategoryId(categoryPanel.getSelectionModel().getSelectedItem().getId());
         loadCategories();
     }
 
@@ -61,13 +71,25 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         super.seed(models);
 
         initDragAndDrop();
+
+        toolBar.setCategoryTreePanel(categoryPanel);
     }
 
     @Override
     protected void initListeners() {
         super.initListeners();
 
-        toolBar.setCategoryTreePanel(categoryPanel);
+        if (handlerRefresh != null) {
+            handlerRefresh.removeHandler();
+        }
+
+        handlerRefresh = EventBus.getInstance().addHandler(CatalogCategoryRefreshEvent.TYPE,
+                new CatalogCategoryRefreshEventHandler() {
+                    @Override
+                    public void onRefresh(CatalogCategoryRefreshEvent event) {
+                        reloadCategories();
+                    }
+                });
     }
 
     private void moveAnalysisGroupTreeModel(final AnalysisGroupTreeModel source,
@@ -78,7 +100,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
         AdminServiceCallback callback = new AdminServiceCallback() {
             @Override
             protected void onSuccess(JSONObject jsonResult) {
-                loadCategories();
+                reloadCategories();
             }
 
             @Override

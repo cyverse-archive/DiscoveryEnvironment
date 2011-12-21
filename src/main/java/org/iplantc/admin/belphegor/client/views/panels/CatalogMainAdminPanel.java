@@ -1,6 +1,7 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.images.Resources;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
@@ -8,6 +9,7 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
+import org.iplantc.core.uicommons.client.events.EventBus;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.dnd.GridDragSource;
@@ -102,7 +104,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         service.deleteApplication(app.getId(), new AdminServiceCallback() {
             @Override
             protected void onSuccess(JSONObject jsonResult) {
-                analysisGrid.getStore().remove(app);
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
             }
 
             @Override
