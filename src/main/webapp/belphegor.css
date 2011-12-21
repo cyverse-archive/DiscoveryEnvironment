@@ -135,3 +135,11 @@
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
+.x-panel-header {
+    height: 12px;
+    font-size: 10px;
+}
+.x-window-body p,.x-panel-body p {
+    padding: 10px;
+    margin: 0;
+}
