@@ -44,8 +44,15 @@ public class CatalogAdminPanel extends ContentPanel {
         setCaption();
         initHandlers();
         initPanels();
+        initToolBar();
         initLayout();
 
+    }
+
+    private void initToolBar() {
+        ToolBar tb = new ToolBar();
+        tb.add(new Label(I18N.DISPLAY.adminInfo()));
+        setTopComponent(tb);
     }
 
     private void initHandlers() {
