@@ -173,8 +173,11 @@ public class CatalogCategoryToolBar extends ToolBar {
                         facade.addCategory(name, selectedCategory.getId(), new AdminServiceCallback() {
                             @Override
                             protected void onSuccess(JSONObject jsonResult) {
-                                // TODO Auto-generated method stub
+                                // TODO parse actual service results
+                                AnalysisGroup group = new AnalysisGroup(JsonUtil.getObject(jsonResult,
+                                        "category")); //$NON-NLS-1$
 
+                                treePnlCategories.getStore().add(selectedCategory, group, false);
                             }
 
                             @Override
