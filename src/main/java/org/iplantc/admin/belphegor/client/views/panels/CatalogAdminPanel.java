@@ -17,13 +17,21 @@ import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+/**
+ * 
+ * 
+ * @author sriram
+ * 
+ */
 public class CatalogAdminPanel extends ContentPanel {
     private ArrayList<HandlerRegistration> handlers;
     private CatalogCategoryAdminPanel catPanel;

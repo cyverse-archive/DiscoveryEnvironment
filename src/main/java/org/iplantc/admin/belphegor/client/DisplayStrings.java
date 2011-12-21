@@ -55,4 +55,11 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String avgUserRating();
+
+    /**
+     * Info for admin user
+     * 
+     * @return a string representing the localized text.
+     */
+    String adminInfo();
 }
