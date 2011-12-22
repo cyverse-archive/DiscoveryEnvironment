@@ -109,7 +109,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getDeleteCategoryServiceUrl()
                 + "/" + categoryId; //$NON-NLS-1$
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
         callService(wrapper, callback);
     }
 

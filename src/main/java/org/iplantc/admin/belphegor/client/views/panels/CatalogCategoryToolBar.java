@@ -107,6 +107,7 @@ public class CatalogCategoryToolBar extends ToolBar {
                             facade.deleteCategory(selectedCategory.getId(), new AdminServiceCallback() {
                                 @Override
                                 protected void onSuccess(JSONObject jsonResult) {
+                                    // Refresh the catalog, so that the proper category counts display.
                                     EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
                                 }
 
