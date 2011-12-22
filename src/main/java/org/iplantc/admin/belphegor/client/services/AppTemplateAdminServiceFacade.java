@@ -53,10 +53,10 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getAddCategoryServiceUrl();
 
         JSONObject body = new JSONObject();
-        body.put("categoryId", new JSONString(destCategoryId)); //$NON-NLS-1$
+        body.put("parentCategoryId", new JSONString(destCategoryId)); //$NON-NLS-1$
         body.put("name", new JSONString(name)); //$NON-NLS-1$
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address,
                 body.toString());
         callService(wrapper, callback);
     }
