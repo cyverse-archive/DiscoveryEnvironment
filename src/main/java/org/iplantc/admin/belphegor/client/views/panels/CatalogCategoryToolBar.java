@@ -96,6 +96,12 @@ public class CatalogCategoryToolBar extends ToolBar {
                     return;
                 }
 
+                // Check if a new Category can be created in the target Category.
+                if (!selectedCategory.isLeaf() || selectedCategory.getCount() > 0) {
+                    ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
+                    return;
+                }
+
                 final String name = selectedCategory.getName();
 
                 Listener<MessageBoxEvent> callback = new Listener<MessageBoxEvent>() {

@@ -73,4 +73,11 @@ public interface ErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String addCategoryPermissionError();
+
+    /**
+     * Error message displayed when deleting a Category is not permitted.
+     * 
+     * @return localized error string.
+     */
+    String deleteCategoryPermissionError();
 }
