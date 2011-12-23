@@ -8,6 +8,7 @@ import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
@@ -163,6 +164,12 @@ public class CatalogCategoryToolBar extends ToolBar {
                     return;
                 }
 
+                // Check if a new Category can be created in the target Category.
+                if (selectedCategory.isLeaf() && selectedCategory.getCount() > 0) {
+                    ErrorHandler.post(I18N.ERROR.addCategoryPermissionError());
+                    return;
+                }
+
                 IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.add(), 340, new IPlantPromptPanel(
                         I18N.DISPLAY.add()) {
                     @Override
@@ -174,8 +181,8 @@ public class CatalogCategoryToolBar extends ToolBar {
                         facade.addCategory(name, selectedCategory.getId(), new AdminServiceCallback() {
                             @Override
                             protected void onSuccess(JSONObject jsonResult) {
-                                AnalysisGroup group = new AnalysisGroup(JsonUtil.getString(jsonResult,
-                                        "categoryId"), name, "", 0, true); //$NON-NLS-1$ //$NON-NLS-2$
+                                AnalysisGroup group = new AnalysisGroup(JsonUtil.getObject(jsonResult,
+                                        "category")); //$NON-NLS-1$
 
                                 treePnlCategories.getStore().add(selectedCategory, group, false);
                             }
