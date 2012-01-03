@@ -62,4 +62,18 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String adminInfo();
+
+    /**
+     * rename category prompt
+     * 
+     * @return a string representing the localized text.
+     */
+    String renamePrompt();
+
+    /**
+     * add category prompt
+     * 
+     * @return a string representing the localized text.
+     */
+    String addCategoryPrompt();
 }

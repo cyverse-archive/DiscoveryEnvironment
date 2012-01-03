@@ -149,7 +149,7 @@ public class CatalogCategoryToolBar extends ToolBar {
                 }
 
                 IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 340, new RenamePromptPanel(
-                        I18N.DISPLAY.rename(), selectedCategory));
+                        I18N.DISPLAY.renamePrompt(), selectedCategory));
 
                 dlg.show();
             }
@@ -177,7 +177,7 @@ public class CatalogCategoryToolBar extends ToolBar {
                 }
 
                 IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.add(), 340, new IPlantPromptPanel(
-                        I18N.DISPLAY.add()) {
+                        I18N.DISPLAY.addCategoryPrompt()) {
                     @Override
                     public void handleOkClick() {
                         final String name = field.getValue();
