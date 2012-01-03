@@ -1,5 +1,8 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.images.Resources;
@@ -13,6 +16,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -190,6 +194,9 @@ public class CatalogCategoryToolBar extends ToolBar {
                                 AnalysisGroup group = new AnalysisGroup(JsonUtil.getObject(jsonResult,
                                         "category")); //$NON-NLS-1$
 
+                                List<ModelData> temp = new ArrayList<ModelData>();
+                                temp.add(group);
+                                selectedCategory.setChildren(temp);
                                 treePnlCategories.getStore().add(selectedCategory, group, false);
                             }
 
