@@ -278,7 +278,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private void buildSubmitButton() {
         btnSubmit = new Button();
 
-        btnSubmit.setText(I18N.DISPLAY.submit());
+        btnSubmit.setText(I18N.DISPLAY.save());
         btnSubmit.setId("idBtnSubmit"); //$NON-NLS-1$
 
         btnSubmit.addSelectionListener(new SelectionListener<ButtonEvent>() {

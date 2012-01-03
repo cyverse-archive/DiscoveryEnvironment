@@ -79,6 +79,7 @@ public class ApplicationLayout extends Viewport {
 
         south.add(copyright);
         south.add(nsftext);
+        south.setStyleAttribute("background-color", "#FEFDDD");
 
         BorderLayoutData data = new BorderLayoutData(LayoutRegion.SOUTH, 20);
         data.setCollapsible(false);
