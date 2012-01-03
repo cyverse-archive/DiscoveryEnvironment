@@ -156,7 +156,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getDeleteAppServiceUrl() + "/" //$NON-NLS-1$
                 + applicationId;
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
         callService(wrapper, callback);
     }
 
