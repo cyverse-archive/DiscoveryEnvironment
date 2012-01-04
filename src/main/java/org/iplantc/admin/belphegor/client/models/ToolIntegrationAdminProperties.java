@@ -61,9 +61,17 @@ public class ToolIntegrationAdminProperties {
     private static final String SERVICE_URL_APP_DELETE = PROPERTY_NAME_PREFIX + "delete-app"; //$NON-NLS-1$
 
     /**
+     * Properties key of the default Beta Category ID.
+     */
+    private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
+            + "category.defaultBetaAnalysisGroupId";//$NON-NLS-1$
+
+    /**
      * Properties key of the context click enabled option
      */
     private static final String CONTEXT_CLICK_ENABLED = PROPERTY_NAME_PREFIX + "contextMenu.enabled";//$NON-NLS-1$
+
+    private String defaultBetaAnalysisGroupId;
 
     private boolean contextClickEnabled;
 
@@ -89,6 +97,8 @@ public class ToolIntegrationAdminProperties {
                 SERVICE_URL_APP_DELETE)) {
             serviceUrlMap.put(key, properties.get(key));
         }
+
+        defaultBetaAnalysisGroupId = properties.get(CATEGORY_DEFAULT_BETA_GROUP_ID);
 
         try {
             contextClickEnabled = Boolean.parseBoolean(properties.get(CONTEXT_CLICK_ENABLED));
@@ -176,6 +186,15 @@ public class ToolIntegrationAdminProperties {
      */
     public String getDeleteAppServiceUrl() {
         return serviceUrlMap.get(SERVICE_URL_APP_DELETE);
+    }
+
+    /**
+     * Gets the default Beta Category ID.
+     * 
+     * @return the Beta Category ID as a string.
+     */
+    public String getDefaultBetaAnalysisGroupId() {
+        return defaultBetaAnalysisGroupId;
     }
 
     /**
