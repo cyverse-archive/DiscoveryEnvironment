@@ -8,8 +8,8 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * A common callback for disk resource service calls that implements a common onFailure method that will
- * parse JSON error messages from the given Throwable::getMessage method to display to the user.
+ * A common callback for administrative service calls that implements common onSuccess and onFailure
+ * methods, that will unmask a given caller and parse JSON messages from success or error responses.
  * 
  * @author psarando
  * 
@@ -19,6 +19,12 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
 
     protected Component maskedCaller;
 
+    /**
+     * Sets a reference to a caller that is masked during the service call, and should be unmasked after
+     * a response is received.
+     * 
+     * @param maskedCaller
+     */
     public void setMaskedCaller(Component maskedCaller) {
         this.maskedCaller = maskedCaller;
     }
@@ -46,10 +52,9 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
     }
 
     /**
-     * Builds a JSON object used for MessageDispatcher event JSON.
+     * Handles any additional processing of a successful service call.
      * 
      * @param jsonResult The parsed JSON results of the successful service call.
-     * @return JSON object used for MessageDispatcher event JSON.
      */
     protected abstract void onSuccess(final JSONObject jsonResult);
 
@@ -64,21 +69,20 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
     }
 
     /**
-     * Gets a default error message to display to the user on failure, if no error code could be parsed
-     * from the service response.
+     * Gets a default error message to display to the user on failure.
      * 
-     * @return Default error message to display to the user.
+     * @return Error message to display to the user on failure.
      */
     protected abstract String getErrorMessage();
 
     /**
-     * Parses result as a JSON object, checks for a failure status field, then returns the parsed object.
-     * Throws an exception with result as its message if the given string is not a JSON object or if a
-     * status failure field was parsed from the object.
+     * Parses result as a JSON object, checks for a success field, then returns the parsed object. Throws
+     * an exception with result as its message if the given string is not a JSON object or if a false
+     * success value was parsed from the object.
      * 
      * @param result The JSON object string.
      * @return The parsed JSON object.
-     * @throws Throwable if result is not a JSON object or if a failure status is parsed from result.
+     * @throws Throwable if result is not a JSON object or a false success value is parsed from result.
      */
     protected JSONObject getJsonResponse(String result) throws Throwable {
 
