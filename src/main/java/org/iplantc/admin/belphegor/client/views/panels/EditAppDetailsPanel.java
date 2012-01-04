@@ -139,8 +139,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         form.add(descField, formData);
 
-        form.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.wikiUrlLabel(Constants.CLIENT
-                .publishDocumentationUrl()) + ":"))); //$NON-NLS-1$
+        form.add(new Label(I18N.DISPLAY.wikiUrlLabel(Constants.CLIENT.publishDocumentationUrl()) + ":")); //$NON-NLS-1$
         form.add(buildUrlField(), formData);
     }
 
@@ -192,9 +191,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
                 255);
-
-        urlField = buildTextField(null, false, null, WIKI_URL, null, 1024);
-
     }
 
     private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,
@@ -205,7 +201,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         field.setId(ID + name);
         field.setFieldLabel(allowBlank ? label : buildRequiredFieldLabel(label));
         field.setAllowBlank(allowBlank);
-        field.setValidateOnBlur(true);
+        field.setAutoValidate(true);
         field.setStyleAttribute("padding-bottom", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (defaultVal != null) {
@@ -243,17 +239,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private VerticalPanel buildUrlField() {
-        urlField = new BoundedTextField<String>();
-
-        urlField.setMaxLength(1024);
-        urlField.setName(WIKI_URL);
-        urlField.setId(ID + WIKI_URL);
-        urlField.setAllowBlank(false);
-        urlField.setAutoValidate(true);
-        urlField.setWidth(520);
-        urlField.setEmptyText(Constants.CLIENT.validAppWikiUrlExample());
-
-        urlField.setValidator(new Validator() {
+        urlField = buildTextField(null, true, null, WIKI_URL, new Validator() {
             @Override
             public String validate(Field<?> field, String value) {
                 // make sure the URL protocol is http or https, has a valid iPlant host name, and has at
@@ -265,7 +251,10 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
                 return null;
             }
-        });
+        }, 1024);
+
+        urlField.setWidth(520);
+        urlField.setEmptyText(Constants.CLIENT.validAppWikiUrlExample());
 
         VerticalPanel panel = new VerticalPanel();
         panel.setBorders(true);
