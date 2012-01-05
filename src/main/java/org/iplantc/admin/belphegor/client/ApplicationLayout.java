@@ -1,20 +1,26 @@
 package org.iplantc.admin.belphegor.client;
 
+import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
-import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.client.widgets.Hyperlink;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MenuEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
+import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
@@ -55,7 +61,7 @@ public class ApplicationLayout extends Viewport {
         north.setHeaderVisible(false);
         north.setBodyBorder(false);
         north.setBorders(false);
-
+        north.setBodyStyleName("iplantc-portal-component"); //$NON-NLS-1$
         north.add(new HeaderPanel());
 
         BorderLayoutData data = new BorderLayoutData(LayoutRegion.NORTH, 125);
@@ -148,15 +154,14 @@ public class ApplicationLayout extends Viewport {
 
             add(buildLogoPanel());
             add(buildActionsPanel());
-            setStyleName("iplantc_header_right"); //$NON-NLS-1$
+            setStyleName("iplantc-portal-component");
+            addStyleName("iplantc_header_right");
         }
 
         private VerticalPanel buildLogoPanel() {
             VerticalPanel panel = new VerticalPanel();
-
             panel.addStyleName("iplantc_logo"); //$NON-NLS-1$
-            panel.setSize(900, 143); // set width and height here because setting it in the iplantc_logo
-                                     // css has no effect
+            panel.setSize(500, 143);
             panel.addListener(Events.OnClick, new Listener<BaseEvent>() {
                 @Override
                 public void handleEvent(BaseEvent be) {
@@ -172,14 +177,18 @@ public class ApplicationLayout extends Viewport {
             pnlActions.setStyleName("iplantc_header_actions"); //$NON-NLS-1$
             pnlActions.setSpacing(5);
 
-            pnlActions.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()));
-            pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
+            String user = CASCredentials.getInstance().getFirstName() + " "
+                    + CASCredentials.getInstance().getLastName();
+            pnlActions.add(buildActionsMenu(user, buildUserMenu()));
+            // pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
 
             return pnlActions;
         }
 
         private Menu buildUserMenu() {
             Menu userMenu = buildMenu();
+            userMenu.add(new CustomHyperlink(I18N.DISPLAY.logout(), new LogoutSelectionListener(),
+                    I18N.DISPLAY.logoutToolTipText()));
             return userMenu;
         }
 
@@ -192,6 +201,41 @@ public class ApplicationLayout extends Viewport {
             final HorizontalPanel ret = new HorizontalPanel();
             ret.setStyleName("iplantc_header_menu_panel"); //$NON-NLS-1$
 
+            // build menu header text and icon
+            CustomLabel menuHeader = new CustomLabel(menuHeaderText);
+            menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    showHeaderActionsMenu(ret, menu);
+                }
+            });
+
+            IconButton icon = new IconButton("iplantc_header_menu_button",
+                    new SelectionListener<IconButtonEvent>() {
+                        @Override
+                        public void componentSelected(IconButtonEvent ce) {
+                            showHeaderActionsMenu(ret, menu);
+                        }
+                    });
+
+            ret.add(menuHeader);
+            ret.add(icon);
+
+            // update header style when menu is shown
+            menu.addListener(Events.Show, new Listener<MenuEvent>() {
+                @Override
+                public void handleEvent(MenuEvent be) {
+                    ret.addStyleName("iplantc_header_menu_selected");
+                }
+            });
+
+            menu.addListener(Events.Hide, new Listener<MenuEvent>() {
+                @Override
+                public void handleEvent(MenuEvent be) {
+                    ret.removeStyleName("iplantc_header_menu_selected");
+                }
+            });
+
             return ret;
         }
 
@@ -203,6 +247,105 @@ public class ApplicationLayout extends Viewport {
             menu.setStyleName("iplantc_header_menu_body"); //$NON-NLS-1$
 
             return menu;
+        }
+
+        private void showHeaderActionsMenu(HorizontalPanel anchor, Menu actionsMenu) {
+            // show the menu so that its right edge is aligned with with the anchor's right edge,
+            // and its top is aligned with the anchor's bottom.
+            actionsMenu.showAt(anchor.getAbsoluteLeft() + anchor.getWidth() - 110,
+                    anchor.getAbsoluteTop() + anchor.getHeight());
+        }
+    }
+
+    private class LogoutSelectionListener implements Listener<BaseEvent> {
+        @Override
+        public void handleEvent(BaseEvent be) {
+            com.google.gwt.user.client.Window.Location.assign("http://" //$NON-NLS-1$
+                    + com.google.gwt.user.client.Window.Location.getHost()
+                    + Constants.CLIENT.logoutUrl());
+
+        }
+    }
+
+    /**
+     * A custom label class used in header to act/style like a menus
+     * 
+     * @author sriram
+     * 
+     */
+    private class CustomLabel extends Label {
+
+        public CustomLabel(String text) {
+            super(text);
+
+            sinkBrowserEvents();
+            setStyleName("iplantc_header_menu_label");
+            addListeners();
+        }
+
+        private void sinkBrowserEvents() {
+            sinkEvents(Events.OnClick.getEventCode());
+            sinkEvents(Events.OnMouseOver.getEventCode());
+            sinkEvents(Events.OnMouseOut.getEventCode());
+        }
+
+        private void addListeners() {
+            addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    addStyleName("iplantc_header_menu_label_hover");
+                }
+            });
+
+            addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    removeStyleName("iplantc_header_menu_label_hover");
+                }
+            });
+
+        }
+    }
+
+    /**
+     * A Hyperlink class that can be initialized with a click listener and that adds or removes it's own
+     * style on mouse over or out events.
+     * 
+     * @author psarando
+     * 
+     */
+    private class CustomHyperlink extends Hyperlink {
+
+        public CustomHyperlink(String text, Listener<BaseEvent> clickListener, String toolTipText) {
+            super(text, "iplantc_hyperlink");
+            setToolTipText(toolTipText);
+            initListeners(clickListener);
+        }
+
+        private void setToolTipText(String toolTipText) {
+            if (toolTipText != null && !toolTipText.isEmpty()) {
+                setToolTip(toolTipText);
+            }
+        }
+
+        protected void initListeners(Listener<BaseEvent> clickListener) {
+            if (clickListener != null) {
+                addListener(Events.OnClick, clickListener);
+            }
+
+            addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    addStyleName("iplantc_header_hyperlink_hover");
+                }
+            });
+
+            addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    removeStyleName("iplantc_header_hyperlink_hover");
+                }
+            });
         }
     }
 }

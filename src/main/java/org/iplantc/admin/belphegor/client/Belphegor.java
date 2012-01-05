@@ -3,9 +3,9 @@ package org.iplantc.admin.belphegor.client;
 import java.util.Map;
 
 import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
+import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
@@ -49,9 +49,10 @@ public class Belphegor implements EntryPoint {
 
                     @Override
                     public void onSuccess(Map<String, String> attributes) {
-                        UserInfo userInfo = UserInfo.getInstance();
-                        userInfo.setEmail(attributes.get(UserInfo.ATTR_EMAIL));
-                        userInfo.setUsername(attributes.get(UserInfo.ATTR_UID));
+                        CASCredentials userInfo = CASCredentials.getInstance();
+                        userInfo.setEmail(attributes.get(CASCredentials.ATTR_EMAIL));
+                        userInfo.setFirstName(attributes.get(CASCredentials.ATTR_USERFIRSTNAME));
+                        userInfo.setLastName(attributes.get(CASCredentials.ATTR_USERLASTNAME));
                         initProperties();
                     }
                 });

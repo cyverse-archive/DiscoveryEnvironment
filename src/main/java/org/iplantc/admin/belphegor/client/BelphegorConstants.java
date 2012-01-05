@@ -25,4 +25,16 @@ public interface BelphegorConstants extends CommonUiConstants {
      */
     String publishDocumentationUrl();
 
+    /**
+     * Logout url for the application
+     * 
+     */
+    String logoutUrl();
+
+    /**
+     * 
+     * @return
+     */
+    String iplantLogo();
+
 }
