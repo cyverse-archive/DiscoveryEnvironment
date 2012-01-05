@@ -16,6 +16,6 @@ for (; attributeNames.hasNext();) {
       System.out.println(attributeName + "-->" + attributeValue);
       session.setAttribute(attributeName, attributeValue);
 }
-String redirectURL = "/belphegor.html";
+String redirectURL = request.getContextPath() + "/belphegor.html";
 response.sendRedirect(redirectURL);
 %>

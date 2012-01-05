@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -260,8 +261,8 @@ public class ApplicationLayout extends Viewport {
     private class LogoutSelectionListener implements Listener<BaseEvent> {
         @Override
         public void handleEvent(BaseEvent be) {
-            com.google.gwt.user.client.Window.Location.assign("http://" //$NON-NLS-1$
-                    + com.google.gwt.user.client.Window.Location.getHost()
+            com.google.gwt.user.client.Window.Location.assign(
+                    GWT.getHostPageBaseURL()
                     + Constants.CLIENT.logoutUrl());
 
         }

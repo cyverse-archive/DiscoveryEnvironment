@@ -3,6 +3,8 @@ To logout of all applications, click
 <%
  
 session.invalidate();
-out.print("<a href='https://auth.iplantcollaborative.org/cas/logout?service=http://iplantcollaborative.org'>here</a>");
+String logoutPath = application.getInitParameter("org.iplantc.logout-url");
+String logoutForward = application.getInitParameter("org.iplantc.logout-forward");
+out.print("<a href='" + logoutPath + "?service=" + logoutForward + "'>here</a>");
  
 %>
