@@ -114,6 +114,26 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         });
     }
 
+    @Override
+    protected String buildAppDetailsTemplate() {
+        StringBuilder tmpl = new StringBuilder(super.buildAppDetailsTemplate());
+
+        // Deployed Components
+        tmpl.append("<tpl if=\"suggested_categories\"><p>"); //$NON-NLS-1$
+
+        tmpl.append("<u>"); //$NON-NLS-1$
+        tmpl.append(I18N.DISPLAY.categorySelect());
+        tmpl.append("</u>"); //$NON-NLS-1$
+
+        tmpl.append("<tpl for=\"suggested_categories\">"); //$NON-NLS-1$
+        tmpl.append("<br/>{name}"); //$NON-NLS-1$
+        tmpl.append("</tpl>"); //$NON-NLS-1$
+
+        tmpl.append("</p></tpl>"); //$NON-NLS-1$
+
+        return tmpl.toString();
+    }
+
     /**
      * Overridden to render app names as hyperlinks to edit the app, and display average user rating
      */

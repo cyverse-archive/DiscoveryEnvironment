@@ -92,7 +92,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId)); //$NON-NLS-1$
-        body.put("destination_categoryId", new JSONString(parentCategoryId)); //$NON-NLS-1$
+        body.put("parentCategoryId", new JSONString(parentCategoryId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
