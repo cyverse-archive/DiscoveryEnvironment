@@ -6,9 +6,11 @@
 <%
  
 AttributePrincipal principal = (AttributePrincipal)request.getUserPrincipal();
- 
+
+session.setAttribute("casPrincipal", principal);
+
 Map attributes = principal.getAttributes();
- 
+
 Iterator attributeNames = attributes.keySet().iterator();
 for (; attributeNames.hasNext();) {
 	  String attributeName = (String) attributeNames.next();

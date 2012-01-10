@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
  * A singleton service that provides an asynchronous proxy to data services.
  */
 public class ToolIntegrationAdminServiceFacade implements DEServiceAsync {
-    public static final String DE_SERVICE = "unsecureddeservice"; //$NON-NLS-1$
+    public static final String DE_SERVICE = "casdeservice"; //$NON-NLS-1$
 
     private static ToolIntegrationAdminServiceFacade srvFacade;
     private DEServiceAsync proxy;
