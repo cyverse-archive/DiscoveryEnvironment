@@ -16,6 +16,11 @@ public class ToolIntegrationAdminProperties {
     private static final String PROPERTY_NAME_PREFIX = "org.iplantc.belphegor."; //$NON-NLS-1$
 
     /**
+     * The base URL used to access the services.
+     */
+    private static final String SERVICE_URL_BASE = PROPERTY_NAME_PREFIX + "conrad-base"; //$NON-NLS-1$
+
+    /**
      * The URL used to access the App Groups service.
      */
     private static final String SERVICE_URL_CATEGORY_LIST = PROPERTY_NAME_PREFIX + "get-app-groups"; //$NON-NLS-1$
@@ -91,7 +96,7 @@ public class ToolIntegrationAdminProperties {
     public void initialize(Map<String, String> properties) {
         serviceUrlMap = new FastMap<String>();
 
-        for (String key : Arrays.asList(SERVICE_URL_CATEGORY_ADD, SERVICE_URL_CATEGORY_RENAME,
+        for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD, SERVICE_URL_CATEGORY_RENAME,
                 SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE, SERVICE_URL_CATEGORY_LIST,
                 SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE, SERVICE_URL_APP_MOVE,
                 SERVICE_URL_APP_DELETE)) {
@@ -108,12 +113,22 @@ public class ToolIntegrationAdminProperties {
     }
 
     /**
+     * Obtains the full URL used to access a service.
+     * 
+     * @param serviceName the name of the service.
+     * @return the URL.
+     */
+    private String getServiceUrl(String serviceName) {
+        return serviceUrlMap.get(SERVICE_URL_BASE) + serviceUrlMap.get(serviceName);
+    }
+
+    /**
      * Gets the Add Category service URL.
      * 
      * @return the URL as a string.
      */
     public String getAddCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_ADD);
+        return getServiceUrl(SERVICE_URL_CATEGORY_ADD);
     }
 
     /**
@@ -122,7 +137,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getRenameCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_RENAME);
+        return getServiceUrl(SERVICE_URL_CATEGORY_RENAME);
     }
 
     /**
@@ -131,7 +146,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getMoveCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_MOVE);
+        return getServiceUrl(SERVICE_URL_CATEGORY_MOVE);
     }
 
     /**
@@ -140,7 +155,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getDeleteCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_DELETE);
+        return getServiceUrl(SERVICE_URL_CATEGORY_DELETE);
     }
 
     /**
@@ -149,7 +164,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getCategoryListServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_LIST);
+        return getServiceUrl(SERVICE_URL_CATEGORY_LIST);
     }
 
     /**
@@ -158,7 +173,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getAppsInCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_APPS);
+        return getServiceUrl(SERVICE_URL_CATEGORY_APPS);
     }
 
     /**
@@ -167,7 +182,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getUpdateAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_UPDATE);
+        return getServiceUrl(SERVICE_URL_APP_UPDATE);
     }
 
     /**
@@ -176,7 +191,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getMoveAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_MOVE);
+        return getServiceUrl(SERVICE_URL_APP_MOVE);
     }
 
     /**
@@ -185,7 +200,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getDeleteAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_DELETE);
+        return getServiceUrl(SERVICE_URL_APP_DELETE);
     }
 
     /**
