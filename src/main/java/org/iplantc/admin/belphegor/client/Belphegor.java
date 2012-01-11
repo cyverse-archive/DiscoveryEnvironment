@@ -50,6 +50,7 @@ public class Belphegor implements EntryPoint {
                     @Override
                     public void onSuccess(Map<String, String> attributes) {
                         CASCredentials userInfo = CASCredentials.getInstance();
+                        userInfo.setUsername(attributes.get(CASCredentials.ATTR_USERNAME));
                         userInfo.setEmail(attributes.get(CASCredentials.ATTR_EMAIL));
                         userInfo.setFirstName(attributes.get(CASCredentials.ATTR_USERFIRSTNAME));
                         userInfo.setLastName(attributes.get(CASCredentials.ATTR_USERLASTNAME));

@@ -1,7 +1,10 @@
 package org.iplantc.admin.belphegor.client.models;
 
 public class CASCredentials {
-
+    /**
+     * The attribute for the username.
+     */
+    public static String ATTR_USERNAME = "username";
     /**
      * Defines an attribute for users email
      */
@@ -18,6 +21,7 @@ public class CASCredentials {
 
     private static CASCredentials instance;
 
+    private String username;
     private String email;
     private String firstName;
     private String lastName;
@@ -33,6 +37,24 @@ public class CASCredentials {
             instance = new CASCredentials();
         }
         return instance;
+    }
+
+    /**
+     * Get the username.
+     * 
+     * @return the username.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username.
+     *
+     * @param username the new username.
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**

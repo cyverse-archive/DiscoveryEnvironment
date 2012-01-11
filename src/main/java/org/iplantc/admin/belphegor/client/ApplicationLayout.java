@@ -178,8 +178,7 @@ public class ApplicationLayout extends Viewport {
             pnlActions.setStyleName("iplantc_header_actions"); //$NON-NLS-1$
             pnlActions.setSpacing(5);
 
-            String user = CASCredentials.getInstance().getFirstName() + " "
-                    + CASCredentials.getInstance().getLastName();
+            String user = CASCredentials.getInstance().getUsername();
             pnlActions.add(buildActionsMenu(user, buildUserMenu()));
             // pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
 

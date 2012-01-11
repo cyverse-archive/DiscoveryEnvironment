@@ -8,6 +8,7 @@
 AttributePrincipal principal = (AttributePrincipal)request.getUserPrincipal();
 
 session.setAttribute("casPrincipal", principal);
+session.setAttribute("username", request.getRemoteUser());
 
 Map attributes = principal.getAttributes();
 
