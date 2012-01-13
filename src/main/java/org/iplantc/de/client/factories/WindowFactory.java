@@ -2,11 +2,13 @@ package org.iplantc.de.client.factories;
 
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.models.BasicWindowConfig;
+import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
+import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 import org.iplantc.de.client.views.windows.MyAnalysesWindow;
 import org.iplantc.de.client.views.windows.MyDataWindow;
@@ -47,6 +49,8 @@ public class WindowFactory {
                 ret = new DECatalogWindow(type, (BasicWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
+            } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
+                ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else {
                 ret = new WizardWindow(type);
             }

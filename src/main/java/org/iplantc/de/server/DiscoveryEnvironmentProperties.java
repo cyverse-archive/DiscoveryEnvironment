@@ -22,6 +22,11 @@ public class DiscoveryEnvironmentProperties {
     private static final String DATA_MGMT_PROPERTY_PREFIX = "org.iplantc.services.de-data-mgmt."; //$NON-NLS-1$
 
     /**
+     * Properties key of the base data management URL.
+     */
+    private static final String DATA_MGMT_SERVICE_BASE_URL = DATA_MGMT_PROPERTY_PREFIX + "base"; //$NON-NLS-1$
+
+    /**
      * Properties key of the base URL used to upload user's data files.
      */
     private static final String UPLOAD_SERVICE_URL = DATA_MGMT_PROPERTY_PREFIX + "file-upload"; //$NON-NLS-1$
@@ -44,7 +49,7 @@ public class DiscoveryEnvironmentProperties {
      * The list of required properties.
      */
     private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL, NOTIFICATION_BASE_URL,
-            UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL};
+            DATA_MGMT_SERVICE_BASE_URL, UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL};
 
     /**
      * The properties. Place any default values in the initializer.
@@ -125,6 +130,15 @@ public class DiscoveryEnvironmentProperties {
      */
     public static String getNotificaitonBaseUrl() {
         return properties.getProperty(NOTIFICATION_BASE_URL);
+    }
+
+    /**
+     * Gets the base data management URL.
+     * 
+     * @return the URL as a string.
+     */
+    public static String getDataMgmtServiceBaseUrl() {
+        return properties.getProperty(DATA_MGMT_SERVICE_BASE_URL);
     }
 
     /**

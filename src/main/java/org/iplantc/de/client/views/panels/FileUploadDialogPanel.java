@@ -65,73 +65,60 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         destFolder = hiddenFields.get(HDN_PARENT_ID_KEY);
 
         form = new FormPanel();
-        form.setHeaderVisible(false);
-        form.setAction(servletActionUrl);
-        form.setMethod(Method.POST);
-        form.setEncoding(Encoding.MULTIPART);
+        fupload = new ArrayList<FileUpload>();
 
         fileStatus = buildFileStatus();
 
+        initForm(servletActionUrl);
+
+        VerticalPanel pnlInternalLayout = buildInternalLayout(hiddenFields);
+
         VerticalPanel vpnlWidget = new VerticalPanel();
         vpnlWidget.setSpacing(5);
-
-        VerticalPanel pnlInternalLayout = new VerticalPanel();
-        pnlInternalLayout.setStyleName("iplantc-form-internal-layout-panel"); //$NON-NLS-1$
-
-        // add any key/value pairs provided as hidden field
-        for (String field : hiddenFields.keySet()) {
-            Hidden hdn = new Hidden(field, hiddenFields.get(field));
-            pnlInternalLayout.add(hdn);
-        }
-
-        // then add the visual widgets
-        fupload = new ArrayList<FileUpload>();
-        for (int i = 0; i < MAX_UPLOADS; i++) {
-            FileUpload uploadField = buildFileUpload();
-            fupload.add(uploadField);
-            pnlInternalLayout.add(uploadField);
-        }
-
-        pnlInternalLayout.add(fileStatus);
 
         vpnlWidget.add(new LabelField(I18N.DISPLAY.fileUploadMaxSizeWarning()));
         vpnlWidget.add(pnlInternalLayout);
 
         form.add(vpnlWidget);
 
-        form.addListener(Events.Submit, new Listener<FormEvent>() {
-            @Override
-            public void handleEvent(FormEvent fe) {
-                String response = fe.getResultHtml();
-
-                try {
-                    JSONObject jsonResponse = JsonUtil.getObject(JsonUtil.formatString(response));
-                    JSONArray results = JsonUtil.getArray(jsonResponse, "results"); //$NON-NLS-1$
-                    if (results == null) {
-                        throw new Exception(I18N.ERROR.fileUploadFailed(fupload.get(0).getFilename()));
-                    }
-
-                    for (int i = 0; i < results.size(); i++) {
-                        JSONObject jsonFileUploadStatus = results.get(i).isObject();
-                        if (jsonFileUploadStatus != null) {
-                            hdlrUpload.onCompletion(JsonUtil.getString(jsonFileUploadStatus, "label"), //$NON-NLS-1$
-                                    jsonFileUploadStatus.toString());
-                        }
-                    }
-                } catch (Exception e) {
-                    hdlrUpload.onCompletion(fupload.get(0).getFilename(), response);
-                }
-
-                // we're done, so clear the busy notification
-                fileStatus.clearStatus(""); //$NON-NLS-1$
-            }
-        });
-
-        form.setStyleName("iplantc-form-layout-panel"); //$NON-NLS-1$
-
         pnlLayout = new VerticalPanel();
         pnlLayout.setLayoutData(new FitLayout());
         pnlLayout.add(form);
+    }
+
+    private void initForm(String servletActionUrl) {
+        form.setStyleName("iplantc-form-layout-panel"); //$NON-NLS-1$
+
+        form.setHideLabels(true);
+        form.setHeaderVisible(false);
+
+        form.setAction(servletActionUrl);
+        form.setMethod(Method.POST);
+        form.setEncoding(Encoding.MULTIPART);
+
+        form.addListener(Events.Submit, new SubmitListener());
+    }
+
+    private VerticalPanel buildInternalLayout(FastMap<String> hiddenFields) {
+        VerticalPanel ret = new VerticalPanel();
+        ret.setStyleName("iplantc-form-internal-layout-panel"); //$NON-NLS-1$
+
+        // add any key/value pairs provided as hidden field
+        for (String field : hiddenFields.keySet()) {
+            Hidden hdn = new Hidden(field, hiddenFields.get(field));
+            ret.add(hdn);
+        }
+
+        // then add the visual widgets
+        for (int i = 0; i < MAX_UPLOADS; i++) {
+            FileUpload uploadField = buildFileUpload();
+            fupload.add(uploadField);
+            ret.add(uploadField);
+        }
+
+        ret.add(fileStatus);
+
+        return ret;
     }
 
     private Status buildFileStatus() {
@@ -184,6 +171,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             // check for duplicate files already on the server, excluding any invalid upload fields
             final List<String> destResourceIds = new ArrayList<String>();
             for (FileUpload uploadField : fupload) {
+                // Remove any path from the filename.
                 String filename = uploadField.getFilename().replaceAll(".*[\\\\/]", ""); //$NON-NLS-1$//$NON-NLS-2$
                 boolean validFilename = isValidFilename(filename);
 
@@ -230,7 +218,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private boolean isValidFilename(String filename) {
-        return filename != null && !filename.isEmpty() && !filename.equalsIgnoreCase("null"); //$NON-NLS-1$
+        return filename != null && !filename.trim().isEmpty() && !filename.equalsIgnoreCase("null"); //$NON-NLS-1$
     }
 
     private Button getOkButton() {
@@ -261,5 +249,33 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     public void setButtonBar(ButtonBar buttons) {
         super.setButtonBar(buttons);
         initOkButton();
+    }
+
+    private class SubmitListener implements Listener<FormEvent> {
+        @Override
+        public void handleEvent(FormEvent fe) {
+            String response = fe.getResultHtml();
+
+            try {
+                JSONObject jsonResponse = JsonUtil.getObject(JsonUtil.formatString(response));
+                JSONArray results = JsonUtil.getArray(jsonResponse, "results"); //$NON-NLS-1$
+                if (results == null) {
+                    throw new Exception(I18N.ERROR.fileUploadFailed(fupload.get(0).getFilename()));
+                }
+
+                for (int i = 0; i < results.size(); i++) {
+                    JSONObject jsonFileUploadStatus = JsonUtil.getObjectAt(results, i);
+                    if (jsonFileUploadStatus != null) {
+                        hdlrUpload.onCompletion(JsonUtil.getString(jsonFileUploadStatus, "label"), //$NON-NLS-1$
+                                jsonFileUploadStatus.toString());
+                    }
+                }
+            } catch (Exception e) {
+                hdlrUpload.onCompletion(fupload.get(0).getFilename(), response);
+            }
+
+            // we're done, so clear the busy notification
+            fileStatus.clearStatus(""); //$NON-NLS-1$
+        }
     }
 }

@@ -4,24 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
-import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
-import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.dialogs.URLImportDialog;
+import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
-import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
@@ -50,7 +47,6 @@ public class DataNavToolBar extends ToolBar {
     @SuppressWarnings("unused")
     private final String tag;
     private String parentFolderId;
-    private Dialog dlgUpload;
     private URLImportDialog dlgURLImport;
     private TreePanelSelectionModel<Folder> selectionModel;
     private Component maskingParent;
@@ -128,31 +124,7 @@ public class DataNavToolBar extends ToolBar {
 
     private void promptUpload(Point p) {
         if (canUpload(selectionModel.getSelectedItem())) {
-            String idParentFolder = getCurrentPath();
-            String username = UserInfo.getInstance().getUsername();
-
-            // provide key/value pairs for hidden fields
-            FastMap<String> hiddenFields = new FastMap<String>();
-            hiddenFields.put(FileUploadDialogPanel.HDN_PARENT_ID_KEY, idParentFolder);
-            hiddenFields.put(FileUploadDialogPanel.HDN_USER_ID_KEY, username);
-
-            // define a handler for upload completion
-            UploadCompleteHandler handler = new DefaultUploadCompleteHandler(idParentFolder) {
-                /** {@inheritDoc} */
-                @Override
-                public void onAfterCompletion() {
-                    if (dlgUpload != null) {
-                        dlgUpload.hide();
-                    }
-                }
-            };
-
-            FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields, "servlet.gupld", //$NON-NLS-1$
-                    handler);
-
-            dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 375, pnlUpload);
-            dlgUpload.setPagePosition(getPosition(false));
-            dlgUpload.show();
+            IDropLiteAppletWindow.launchIDropLiteUploadWindow(getCurrentPath(), getCurrentPath());
         }
     }
 

@@ -1018,4 +1018,25 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String dataDragDropStatusText();
+
+    /**
+     * Localized text for java error
+     * 
+     * @return a string representing the localized text.
+     */
+    String javaError();
+
+    /**
+     * Localized text for the Simple Upload Form button launcher.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleUploadForm();
+
+    /**
+     * Localized text for the Simple Download Panel button launcher.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleDownloadForm();
 }

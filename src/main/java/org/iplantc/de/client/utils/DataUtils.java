@@ -20,7 +20,7 @@ public class DataUtils {
                 .delete()), View(I18N.DISPLAY.view()), ViewTree(I18N.DISPLAY.viewTreeViewer()), Download(
                 I18N.DISPLAY.download());
 
-        private String displayText;
+        private final String displayText;
 
         private Action(String displayText) {
             this.displayText = displayText;
@@ -63,7 +63,6 @@ public class DataUtils {
                         ret.add(Action.RenameFile);
                         ret.add(Action.View);
                         ret.add(Action.ViewTree);
-                        ret.add(Action.Download);
                     }
                 } else {
                     if (!hasFolders) {
@@ -71,6 +70,7 @@ public class DataUtils {
                     }
                 }
 
+                ret.add(Action.Download);
                 ret.add(Action.Delete);
             }
         }
