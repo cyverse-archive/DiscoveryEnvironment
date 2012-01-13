@@ -25,7 +25,11 @@ if [[ ! -e $TARGET_PATH ]]; then
     exit 1
 fi
 
-cp $CONFIGULON"/dev/"$DE_ENV"/"$PROP_FILE $TARGET_PATH
+cp $CONFIGULON"/dev/"$DE_ENV"/"$PROP_FILE $TARGET_PATH && \
 cp $CONFIGULON"/dev/"$DE_ENV"/"$SEC_FILE $TARGET_PATH"security.properties"
 
-echo "...bootstrapped!" 
+if [[ $? ]]; then 
+    echo "...bootstrapped! (you are free to go about your local development)" 
+else 
+    echo "ERROR: one or both of the configuration copy operations failed (bummer!)"
+fi
