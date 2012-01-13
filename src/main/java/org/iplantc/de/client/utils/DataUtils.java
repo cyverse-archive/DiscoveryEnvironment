@@ -18,7 +18,7 @@ public class DataUtils {
     public enum Action {
         RenameFolder(I18N.DISPLAY.rename()), RenameFile(I18N.DISPLAY.rename()), Delete(I18N.DISPLAY
                 .delete()), View(I18N.DISPLAY.view()), ViewTree(I18N.DISPLAY.viewTreeViewer()), Download(
-                I18N.DISPLAY.download());
+                I18N.DISPLAY.download()), Metadata(I18N.DISPLAY.metadata());
 
         private final String displayText;
 
@@ -64,6 +64,7 @@ public class DataUtils {
                         ret.add(Action.View);
                         ret.add(Action.ViewTree);
                     }
+                    ret.add(Action.Metadata);
                 } else {
                     if (!hasFolders) {
                         ret.add(Action.View);

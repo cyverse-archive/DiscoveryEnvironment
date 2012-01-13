@@ -1039,4 +1039,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String simpleDownloadForm();
+
+    /**
+     * Localized text for manage data metadata menu item
+     * 
+     * @return a string representing the localized text.
+     */
+    String metadata();
 }
