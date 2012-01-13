@@ -17,8 +17,9 @@ Once Belphegor is deployed into a servlet container and the war is exploded, per
 6. set CAS Authentication Filter param serverName to DNS (In cases where the server is not listed in the DNS then an IP address will work fine along with port number if applicable) of the machine where this application is being deployed
 7. set CAS Validation Filter param casServerUrlPrefix to appropriate CAS server prefix. For example, https://auth.iplantcollaborative.org/cas
 8. set CAS Validation Filter param serverName to DNS (In cases where the server is not listed in the DNS then an IP address will work fine along with port number if applicable) of the machine where this application is being deployed
-9. save web.xml.
-10. cd into <app-name>/WEB-INF/classes  and start editing belphegor.properties
-11. configure Belphegor to talk to appropriate Conrad services
-12. Save belphegor.properties
-13. Bounce the application server.
+9. update the protocol, host, port and context path in the CAS Validation Filter parameter, proxyCallbackUrl.  It is not necessary (and not recommended) to change the remainder of the path (/proxy-receptinator).  If you do change this portion of the path then it is also necessary to change the configuration parameter, proxyReceptorUrl.
+10. save web.xml.
+11. cd into <app-name>/WEB-INF/classes  and start editing belphegor.properties
+12. configure Belphegor to talk to appropriate Conrad services
+13. Save belphegor.properties
+14. Bounce the application server.
