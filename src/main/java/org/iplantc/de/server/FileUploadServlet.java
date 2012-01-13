@@ -14,6 +14,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
@@ -27,6 +28,7 @@ import org.iplantc.de.shared.services.MultiPartServiceWrapper;
  * @author sriram
  * 
  */
+@SuppressWarnings("nls")
 public class FileUploadServlet extends UploadAction {
     private static final long serialVersionUID = 1L;
 
@@ -49,9 +51,9 @@ public class FileUploadServlet extends UploadAction {
         String json = null;
         String idFolder = null;
         String user = null;
-        String type = "AUTO"; //$NON-NLS-1$
+        String type = "AUTO";
 
-        LOG.debug("Upload Action started."); //$NON-NLS-1$
+        LOG.debug("Upload Action started.");
 
         List<FileItem> fileItems = new ArrayList<FileItem>();
 
@@ -80,7 +82,7 @@ public class FileUploadServlet extends UploadAction {
         // remove files from session. this avoids duplicate submissions
         removeSessionFileItems(request, false);
 
-        LOG.debug("FileUploadServlet::executeAction - JSON returned: " + json); //$NON-NLS-1$
+        LOG.debug("FileUploadServlet::executeAction - JSON returned: " + json);
         return json;
     }
 
@@ -114,7 +116,7 @@ public class FileUploadServlet extends UploadAction {
                 fileContents = item.getInputStream();
             } catch (IOException e) {
                 LOG.error(
-                        "FileUploadServlet::executeAction - Exception while getting file input stream.", //$NON-NLS-1$
+                        "FileUploadServlet::executeAction - Exception while getting file input stream.",
                         e);
                 e.printStackTrace();
 
@@ -133,11 +135,11 @@ public class FileUploadServlet extends UploadAction {
                 dispatcher.init(getServletConfig());
                 dispatcher.setRequest(request);
                 String repsonse = dispatcher.getServiceData(wrapper);
-                LOG.debug("FileUploadServlet::executeAction - Making service call."); //$NON-NLS-1$
+                LOG.debug("FileUploadServlet::executeAction - Making service call.");
 
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
-                LOG.error("FileUploadServlet::executeAction - unable to upload file", e); //$NON-NLS-1$
+                LOG.error("FileUploadServlet::executeAction - unable to upload file", e);
                 e.printStackTrace();
 
                 // add the error to the results array, in case some files successfully uploaded already.
@@ -185,10 +187,10 @@ public class FileUploadServlet extends UploadAction {
         // build our wrapper
         MultiPartServiceWrapper wrapper = new MultiPartServiceWrapper(MultiPartServiceWrapper.Type.POST,
                 address);
-        wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength)); //$NON-NLS-1$
-        wrapper.addPart(idFolder + "/" + filename, "dest"); //$NON-NLS-1$ //$NON-NLS-2$
-        wrapper.addPart(user, "user"); //$NON-NLS-1$
-        wrapper.addPart(type, "type"); //$NON-NLS-1$
+        wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength));
+        wrapper.addPart(idFolder + "/" + filename, "dest");
+        wrapper.addPart(user, "user");
+        wrapper.addPart(type, "type");
 
         return wrapper;
     }
@@ -212,13 +214,11 @@ public class FileUploadServlet extends UploadAction {
             }
         }
 
-        return validFileItems && user != null && !user.isEmpty() && idFolder != null
-                && !idFolder.isEmpty();
+        return validFileItems && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(idFolder);
     }
 
     private boolean validFileInfo(FileItem item) {
-        return item != null && item.getName() != null && !item.getName().isEmpty()
-                && item.getContentType() != null && !item.getContentType().isEmpty()
-                && item.getSize() > 0;
+        return item != null && !StringUtils.isEmpty(item.getName())
+                && !StringUtils.isEmpty(item.getContentType()) && item.getSize() > 0;
     }
 }
