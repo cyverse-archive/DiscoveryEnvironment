@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+	<context-param>
+		<param-name>appPropertyFile</param-name>
+		<param-value>discoveryenvironment.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.iplantc.initial-page</param-name>
+		<param-value>#workspace</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.iplantc.properties</param-name>
+		<param-value>/discoveryenvironment.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mule.core.enabled</param-name>
+		<param-value>/WEB-INF/mule-config.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mule.rest.enabled</param-name>
+		<param-value>/WEB-INF/rest-mule.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>mule.irods.enabled</param-name>
+		<param-value>/WEB-INF/irods-mule.xml</param-value>
+	</context-param>
+	<context-param>
+		<!-- max size of the upload request -->
+		<param-name>maxSize</param-name>
+		<param-value>2040109465</param-value>
+	</context-param>
+	<!-- Filters -->
+	<filter>
+		<filter-name>Authentication Filter</filter-name>
+		<filter-class>org.iplantc.de.server.AuthFilter</filter-class>
+	</filter>
+	<!-- Filter Mapping Definitions -->
+	<filter-mapping>
+		<filter-name>Authentication Filter</filter-name>
+		<url-pattern>/discoveryenvironment/deservice</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Authentication Filter</filter-name>
+		<url-pattern>*.gdwnld</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>Authentication Filter</filter-name>
+		<url-pattern>/discoveryenvironment/data-api-service</url-pattern>
+	</filter-mapping>
+	<!-- Listeners -->
+	<listener>
+		<listener-class>org.iplantc.muletoolkit.config.builders.ConditionalMuleXmlBuilderContextListener</listener-class>
+	</listener>
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.SessionInitializationServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.DEServiceDispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.FileDownloadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>propertyServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>jUnitHostImpl</servlet-name>
+		<servlet-class>com.google.gwt.junit.server.JUnitHostImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>dispatchServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.DispatchServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>dataApiServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.DataApiServiceDispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>aboutAppServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
+	</servlet>
+
+	<!-- Servlet Mapping Definitions -->
+	<servlet-mapping>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jUnitHostImpl</servlet-name>
+		<url-pattern>/discoveryenvironment/junithost</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>fileUploadServlet</servlet-name>
+		<url-pattern>*.gupld</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>*.gdwnld</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<url-pattern>/discoveryenvironment/deservice</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+		<url-pattern>/discoveryenvironment/unsecureddeservice</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>propertyServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/properties</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/sessionmanagement</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>dispatchServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/dispatch</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>dataApiServiceDispatcher</servlet-name>
+		<url-pattern>/discoveryenvironment/data-api-service</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>aboutAppServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/about</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Discoveryenvironment.html</welcome-file>
+	</welcome-file-list>
+</web-app>

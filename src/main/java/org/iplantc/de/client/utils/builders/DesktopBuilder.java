@@ -1,0 +1,49 @@
+package org.iplantc.de.client.utils.builders;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.iplantc.de.client.models.ShortcutDesc;
+
+/**
+ * Abstract class for managing desktop shortcuts.
+ * 
+ * @author amuir
+ * 
+ */
+public abstract class DesktopBuilder {
+    private List<ShortcutDesc> shortcuts = new ArrayList<ShortcutDesc>();
+
+    /**
+     * Default constructor.
+     */
+    public DesktopBuilder() {
+        buildShortcuts();
+    }
+
+    /**
+     * Creates desktop shortcut widgets.
+     */
+    protected abstract void buildShortcuts();
+
+    /**
+     * Helper method to add a new shortcut.
+     * 
+     * @param id shortcut id.
+     * @param caption shortcut caption.
+     * @param action action to be fired on shortcut click.
+     * @param tag associated tag.
+     */
+    protected void addShortcut(String id, String caption, String action, String tag) {
+        shortcuts.add(new ShortcutDesc(id, caption, action, tag));
+    }
+
+    /**
+     * Retrieves all added shortcuts.
+     * 
+     * @return all shortcuts.
+     */
+    public List<ShortcutDesc> getShortcuts() {
+        return shortcuts;
+    }
+}

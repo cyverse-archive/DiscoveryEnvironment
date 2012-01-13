@@ -1,0 +1,604 @@
+/** Add css rules here for your application. */
+.copyright {
+    font-size: 10px;
+    padding-left: 10px;
+}
+
+.nsf-text {
+    font-size: 10px;
+    position: absolute;
+    right: 10px;
+}
+
+.iplantc-portal-component {
+    background-color: transparent;
+}
+
+.iplantc-header-actions {
+    position: fixed;
+    top: 15px;
+    right: 40px;
+}
+
+.iplantc-logo {
+	cursor: pointer;
+}
+
+.iplantc-about-pad-text {
+	font-size: 12px;
+	padding: 5px 2px 5px 2px;
+}
+
+div.iplantc-about-pad-text p {
+	padding: 0px;
+	margin: 0px;
+}
+
+.iplantc-select-trait-grid .x-grid3-cell-inner {
+	cursor: pointer;
+}
+
+.iplantc-mydata-shortcut {
+	background-image: url(./images/icon_data.png);
+}
+
+.iplantc-myanalysis-shortcut {
+	background-image: url(./images/icon_analyses.png);
+}
+
+.iplantc-catalog-shortcut {
+	background-image: url(./images/icon_apps.png);
+}
+
+.iplantc-background {
+	background: url(./images/background.png) repeat-x top center !important;
+}
+
+.iplantc-centerlogo {
+	background-image: url('images/iplant_logo.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: transparent;
+}
+
+.iplantc-blue {
+    color: #0098AA;
+}
+
+.iplantc-blue-highlight {
+    color: #AADDCC;
+}
+
+.iplantc-green {
+    color: #446600;
+}
+
+.iplantc-green-highlight {
+    color: #77AA22;
+}
+
+.iplantc-orange {
+    color: #DB6619;
+}
+
+.iplantc-tan {
+    color: #C4BD8F;
+}
+
+/**
+ * GXT overrides
+ */
+html,body {
+	font-size: 12px;
+	font-family: Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+		Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+		Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+	overflow: hidden;
+	height: 100%;
+}
+
+.x-panel-header {
+    height: 12px;
+    font-size: 10px;
+}
+
+.x-toolbar {
+    height: 20px;
+}
+
+.x-toolbar .x-btn button {
+    font-size: 10px;
+}
+
+#x-desktop {
+	width: 100%;
+	height: 100%;
+	border: 0 none;
+	position: relative;
+	overflow: hidden;
+	zoom: 1;
+}
+
+#ux-taskbar .x-btn {
+	float: left;
+	margin: 1px 0 0 1px;
+	position: relative;
+}
+
+#ux-taskbar button { /* width: 150px;
+	overflow: ellipsis; */
+	text-align: left;
+	color: #ffffff;
+}
+
+#ux-taskbar {
+	background: transparent none;
+	height: 30px;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	z-index: 12001;
+}
+
+.ux-taskbutton-left {
+	width: 4px;
+	height: 28px;
+	background: url( ./images/taskbar/taskbutton.gif ) no-repeat 0 -84px;
+}
+
+.ux-taskbutton-right {
+	width: 4px;
+	height: 28px;
+	background: url( ./images/taskbar/taskbutton.gif ) no-repeat 0 -112px;
+}
+
+.ux-taskbutton-left i,.ux-taskbutton-right i {
+	display: block;
+	width: 4px;
+	overflow: hidden;
+	font-size: 1px;
+	line-height: 1px;
+}
+
+.ux-taskbutton-center {
+	background: url( ./images/taskbar/taskbutton.gif ) repeat-x 0 -140px;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 5px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+#ux-taskbar .x-btn-over .ux-taskbutton-center button {
+    color: #0098AA;
+}
+
+#ux-taskbar .x-btn-click .ux-taskbutton-left {
+    background-image: url( ./images/taskbar/grey/taskbutton.gif );
+    background-position: 0 -252px;
+}
+
+#ux-taskbar .x-btn-click  .ux-taskbutton-right {
+    background-image: url( ./images/taskbar/grey/taskbutton.gif );
+    background-position: 0 -280px;
+}
+
+#ux-taskbar .x-btn-click .ux-taskbutton-center {
+    background-image: url( ./images/taskbar/grey/taskbutton.gif );
+    background-position: 0 -308px;
+}
+
+#ux-taskbar .active-win .ux-taskbutton-left {
+    background: url( ./images/taskbar/grey/taskbutton.gif ) no-repeat 0 0;
+}
+
+#ux-taskbar .active-win  .ux-taskbutton-right {
+	background: url( ./images/taskbar/grey/taskbutton.gif ) no-repeat 0 -28px;
+}
+
+#ux-taskbar .active-win .ux-taskbutton-center {
+	background: url( ./images/taskbar/grey/taskbutton.gif ) repeat-x 0 -56px;
+}
+
+#ux-taskbar .active-win .ux-taskbutton-center button {
+	color: #fff;
+}
+
+#ux-taskbar #ux-taskbuttons-panel button.x-btn-text {
+	padding: 7px 0px 7px 23px !important;
+}
+
+.x-window-body p,.x-panel-body p {
+	padding: 10px;
+	margin: 0;
+}
+
+#ux-taskbuttons-panel {
+	background: #000000
+		url( ./images/taskbar/taskbuttons-panel-bg.jpg ) repeat-x left
+		top;
+	padding-top: 0;
+	position: relative;
+}
+
+.ux-taskbuttons-strip-wrap { /* overflow:hidden;
+	position:relative;
+	width:100%; */
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+	zoom: 1;
+}
+
+ul.ux-taskbuttons-strip {
+	display: block;
+	width: 5000px;
+	zoom: 1;
+}
+
+ul.ux-taskbuttons-strip li {
+	float: left;
+	margin-left: 2px;
+}
+
+ul.ux-taskbuttons-strip li.ux-taskbuttons-edge {
+	float: left;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 none !important;
+	font-size: 1px !important;
+	line-height: 1px !important;
+	overflow: hidden;
+	zoom: 1;
+	background: transparent !important;
+	width: 1px;
+}
+
+.x-clear {
+	clear: both;
+	height: 0;
+	overflow: hidden;
+	line-height: 0;
+	font-size: 0;
+}
+
+/* IE9 fix for window title bars being cut off */
+.windowLayoutTitle {
+	height: 15px !important;
+}
+
+.x-window-header-text {
+	cursor: default;
+}
+
+/** Fix for IE not displaying shadows correctly: don't show them at all */
+.x-ie-shadow {
+	width: 0px !important;
+	height: 0px !important;
+}
+
+.x-resizable-proxy {
+	background: #C7DFFC;
+	opacity: .5;
+	-moz-opacity: .5;
+	filter: alpha(opacity =                 50);
+	border: 1px solid #3b5a82;
+}
+
+/* Desktop Shortcuts */
+#x-shortcuts dt {
+	margin: 15px 0 0 15px;
+	clear: left;
+	width: 101px;
+	font: normal 10px tahoma, arial, verdana, sans-serif;
+	text-align: center;
+	zoom: 1;
+	display: block;
+	float: left;
+}
+
+#x-shortcuts dt a {
+	width: 101px;
+	display: block;
+	color: black;
+	text-decoration: none;
+}
+
+#x-shortcuts dt div {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+#x-shortcuts dt a:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+.accordianTitle {
+    height: 14px;
+    font-size: 12px;
+    background-image: url('./images/bevel_greybar.jpg');
+    background-repeat: repeat-x;
+    padding: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    color: white;
+    line-height: 14px;
+    background-color: #d7d7d7;
+}
+
+.accordianbody {
+	background-color: #EDEDED;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	outline: none;
+}
+
+.windowLayoutTitle {
+    font-size: 12px;
+    background-repeat: repeat;
+    background-image: url('./images/bevel_greybar.jpg');
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    line-height: 14px;
+    height:14px;
+    color: #ffffff;
+    padding: 4px;
+    background-color: #222222;
+}
+
+.x-tool-collapse {
+    background-image: url('./images/accordian/arrow_down_unhover.png');
+    height: 15px;
+    width: 15px;
+    padding-right: 24px;
+}
+
+.x-tool-collapse-hover {
+    background-image: url('./images/accordian/arrow_down_hover.png');
+}
+
+.x-tool-expand {
+    background-image: url('./images/accordian/arrow_left_unhover.png');
+    height: 15px;
+    width: 15px;
+    padding-right: 24px;
+}
+
+.x-tool-expand-hover {
+    background-image: url('./images/accordian/arrow_left_hover.png');
+}
+
+.x-tool-closewindow {
+	background-image: url('./images/button_exit.png');
+    height: 15px;
+    width: 15px;
+	position: relative;
+	top: 2px;
+	padding-right: 3px;
+}
+
+.x-tool-closewindow-hover {
+    background-image: url('./images/button_exit_hover.png');
+}
+
+.x-tool-minimizewindow {
+	background-image: url('./images/button_minimize.png');
+    height: 15px;
+    width: 15px;
+	position: relative;
+	top: 2px;
+	padding-right: 2px;
+}
+
+.x-tool-minimizewindow-hover {
+    background-image: url('./images/button_minimize_hover.png');
+}
+
+.x-tool-maximizewindow {
+	background-image: url('./images/button_maximize.png');
+    height: 15px;
+    width: 15px;
+	position: relative;
+	top: 2px;
+	padding-right: 2px;
+}
+
+.x-tool-maximizewindow-hover {
+    background-image: url('./images/button_maximize_hover.png');
+}
+
+.x-tool-restorewindow {
+	background-image: url('./images/button_restore.png');
+    height: 15px;
+    width: 15px;
+	position: relative;
+	top: 2px;
+	padding-right: 2px;
+}
+
+.x-tool-restorewindow-hover {
+    background-image: url('./images/button_restore_hover.png');
+}
+
+.x-menu {
+	border: none !important;
+	outline: none !important;
+}
+
+.de_hyperlink {
+    cursor: pointer;
+    color: #0098AA;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+a.x-menu-item {
+	color: black !important;
+}
+
+.mydata_name {
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: #black;
+}
+
+.data_details_label {
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.data_details_value {
+	font-size: 11px;
+}
+
+.de_tnrs_hyperlink {
+	cursor: pointer;
+	text-decoration: underline;
+	color: Navy;
+}
+
+.de_notification_hyperlink {
+	cursor: pointer;
+	text-decoration: none;
+	color: #black;
+}
+
+.analysis_name {
+	cursor: pointer;
+	text-decoration: none;
+	color: black;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+img.analysis_remove {
+	padding-right: 10px;
+}
+
+.menu-row-over .x-grid3-row-over {
+	background-image: url(./images/control_arrow_down.png) !important;
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+.required_marker {
+	font-size: 14px;
+	color: #ff4000;
+	top: -5px;
+}
+
+.de_header_menu_panel {
+    padding: 3px;
+}
+
+.de_header_menu_body {
+	background-color: white;
+	outline: none;
+	border-color: #0098AA;
+	border-width: 3px;
+}
+
+.de_header_menu_hyperlink {
+	cursor: pointer;
+	color: #0098AA;
+	text-decoration: none;
+	font-size: 11px;
+}
+
+.de_header_menu_hyperlink_hover {
+	background-color: 	#ededed;
+}
+
+.de_header_menu_button {
+	background-image: url('./gxt/images/default/button/arrow.gif');
+	height: 13px;
+	width: 7px;
+	position: relative;
+	top: 5px;
+	padding-left: 5px;
+}
+
+.de_header_menu_label {
+	color: black;
+	padding-left:3px;
+}
+
+.de_header_menu_label_hover {
+	cursor: pointer;
+}
+
+.de_header_menu_selected {
+	background-color: #fff;
+	border-style: solid;
+    border-color: #0098AA #0098AA white;
+	border-width: 1px 1px 2px;
+	padding: 2px;
+}
+
+.de_notification_indicator {
+    font-size: 11px;
+    padding: 0px 4px;
+    position: relative;
+    top: -5px;
+}
+
+.de_notification_indicator_highlight {
+    background-color: #DB6619;
+    color: white;
+}
+
+.apps_rating_gold_button{
+	background-image: url('./images/star-gold.gif');
+	height: 16px;
+	width: 16px;
+}
+
+.apps_rating_red_button{
+	background-image: url('./images/star-red.gif');
+	height: 16px;
+	width: 16px;
+}
+
+.apps_rating_white_button{
+	background-image: url('./images/star-white.gif');
+	height: 16px;
+	width: 16px;
+}
+
+.apps_rating_unrate_button{
+    background-image: url('./images/delete_rating.png');
+    height: 16px;
+    width: 16px;
+}
+
+.apps_rating_unrate_button_hover{
+    background-image: url('./images/delete_rating_hover.png');
+    height: 16px;
+    width: 16px;
+}
+
+.x-form-textarea {
+	font-family: courier !important;
+}
+
+.x-unselectable-single {
+  user-select: text;
+  -moz-user-select: text;
+  -khtml-user-select: text;
+  -webkit-user-select: text;
+}

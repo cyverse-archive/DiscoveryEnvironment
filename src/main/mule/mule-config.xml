@@ -1,0 +1,1166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesource.org/schema/mule/core/2.2"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring="http://www.springframework.org/schema/beans"
+       xmlns:vm="http://www.mulesource.org/schema/mule/vm/2.2"
+       xmlns:http="http://www.mulesource.org/schema/mule/http/2.2"
+       xmlns:restlet="http://www.mulesource.org/schema/mule/restlet/2.2"
+       xmlns:script="http://www.mulesource.org/schema/mule/scripting/2.2"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mule-ss="http://www.mulesource.org/schema/mule/spring-security/2.2"
+       xmlns:iplant-sec="http://www.mulesource.org/schema/mule/iplantsecurity/2.2"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:api="http://api.iplantcollaborative.org/apidoc"
+       xmlns:tcp="http://www.mulesource.org/schema/mule/tcp/2.2"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.mulesource.org/schema/mule/core/2.2 http://www.mulesource.org/schema/mule/core/2.2/mule.xsd
+       http://www.mulesource.org/schema/mule/vm/2.2 http://www.mulesource.org/schema/mule/vm/2.2/mule-vm.xsd
+       http://www.mulesource.org/schema/mule/http/2.2 http://www.mulesource.org/schema/mule/http/2.2/mule-http.xsd
+       http://www.mulesource.org/schema/mule/restlet/2.2 http://www.mulesource.org/schema/mule/restlet/2.2/mule-restlet.xsd
+       http://www.mulesource.org/schema/mule/scripting/2.2 http://www.mulesource.org/schema/mule/scripting/2.2/mule-scripting.xsd
+       http://www.mulesource.org/schema/mule/spring-security/2.2 http://www.mulesource.org/schema/mule/spring-security/2.2/mule-spring-security.xsd
+       http://www.mulesource.org/schema/mule/iplantsecurity/2.2 META-INF/mule-iplantsecurity.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://api.iplantcollaborative.org/apidoc META-INF/apidoc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.mulesource.org/schema/mule/tcp/2.2 http://www.mulesource.org/schema/mule/tcp/2.2/mule-tcp.xsd">
+
+	<configuration defaultSynchronousEndpoints="true" defaultResponseTimeout="30000"/>
+
+	<context:property-placeholder location="discoveryenvironment.properties,security.properties" />
+
+	<spring:beans xmlns="http://www.springframework.org/schema/beans">
+
+		<bean name="WorkflowElementService" class="org.iplantc.workflow.service.WorkflowElementRetrievalService">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+
+		<bean name="analysisRetriever" class="org.iplantc.workflow.experiment.AnalysisRetriever">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+
+  		<bean name="osmClient" class="org.iplantc.workflow.client.OsmClient">
+  			<property name="baseUrl" value="${org.iplantc.discoveryenvironment.osmBaseUrl}" />
+  			<property name="bucket" value="${org.iplantc.discoveryenvironment.osmBucket}" />
+  			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.osmConnectionTimeout}" />
+  			<property name="encoding" value="${org.iplantc.discoveryenvironment.osmEncoding}" />
+  		</bean>
+
+  		<bean name="zoidbergClient" class="org.iplantc.workflow.client.ZoidbergClient">
+  			<property name="baseUrl" value="${org.iplantc.discoveryenvironment.zoidbergBaseUrl}" />
+  			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.zoidbergConnectionTimeout}" />
+  			<property name="encoding" value="${org.iplantc.discoveryenvironment.zoidbergEncoding}" />
+  		</bean>
+
+        <bean name="analysisEditService" class="org.iplantc.workflow.service.AnalysisEditService">
+            <property name="sessionFactory" ref="sessionFactory" />
+            <property name="zoidbergClient" ref="zoidbergClient" />
+        </bean>
+
+  		<bean name="AnalysisService" class="org.iplantc.workflow.experiment.AnalysisService">
+            <property name="sessionFactory" ref="sessionFactory" />
+			<property name="osmBaseUrl" value="${org.iplantc.discoveryenvironment.osmBaseUrl}" />
+			<property name="osmBucket" value="${org.iplantc.discoveryenvironment.osmBucket}" />
+			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.osmConnectionTimeout}" />
+		</bean>
+
+	    <bean name="urlAssembler" class="org.iplantc.workflow.experiment.IrodsUrlAssembler">
+	    	<property name="user" value="${org.iplantc.discoveryenvironment.irods.user}" />
+	    	<property name="password" value="${org.iplantc.discoveryenvironment.irods.password}" />
+	    	<property name="zone" value="${org.iplantc.discoveryenvironment.irods.zone}" />
+	    	<property name="host" value="${org.iplantc.discoveryenvironment.irods.host}" />
+	    	<property name="port" value="${org.iplantc.discoveryenvironment.irods.port}" />
+	    </bean>
+
+		<bean name="experimentRunner" class="org.iplantc.workflow.experiment.ExperimentRunner" >
+			<property name="sessionFactory" ref="sessionFactory" />
+			<property name="fileInfo" ref="fileInfoService" />
+			<property name="executionUrl" value="${org.iplantc.discoveryenvironment.job_execution}" />
+			<property name="urlAssembler" ref="urlAssembler" />
+  			<property name="osmClient" ref="osmClient" />
+		</bean>
+
+	    <bean name="NotificationAppender" class="org.iplantc.workflow.template.notifications.NotificationAppender">
+	        <property name="sessionFactory" ref="sessionFactory" />
+	    </bean>
+
+        <bean name="userSessionService" class="org.iplantc.de.server.MuleUserSessionService" />
+
+        <bean name="userService" class="org.iplantc.workflow.service.UserService">
+            <property name="sessionFactory" ref="sessionFactory" />
+            <property name="userSessionService" ref="userSessionService" />
+            <property name="rootAnalysisGroup" value="${org.iplantc.discoveryenvironment.workspace.rootAnalysisGroup}" />
+            <property name="defaultAnalysisGroups" value="${org.iplantc.discoveryenvironment.workspace.defaultAnalysisGroups}" />
+        </bean>
+		
+		<bean name="categoryService" class="org.iplantc.workflow.service.CategoryService">
+            <property name="sessionFactory" ref="sessionFactory" />
+        </bean>
+
+		<bean name="permanentFileSaver" class="org.iplantc.files.persistence.IRodsPermanentFileSaver">
+			<property name="downloader" ref="downloadToIrods" />
+			<property name="irodsFileService" ref="irodsFileService" />
+			<property name="irodsFileExtractor" ref="extractIrodsFile" />
+		</bean>
+
+		<bean name="BarcodeFileHandler" class="org.iplantc.files.types.BarcodeFileHandler">
+            <property name="sessionFactory" ref="sessionFactory" />
+			<property name="permanentFileSaver" ref="permanentFileSaver" />
+		</bean>
+		
+		<bean name="templateGroupService" class="org.iplantc.workflow.service.TemplateGroupService">
+            <property name="sessionFactory" ref="sessionFactory" />
+			<property name="zoidbergClient" ref="zoidbergClient" />
+			<property name="userSessionService" ref="userSessionService" />
+		</bean>
+		
+		<bean name="referenceSequenceHandler" class="org.iplantc.files.types.ReferenceSequenceHandler">
+			<property name="referenceGenomeUrlMap" ref="referenceGenomePaths"/>
+		</bean>
+		
+		<bean name="referenceAnnotationHandler" class="org.iplantc.files.types.ReferenceAnnotationHandler">
+			<property name="referenceGenomeUrlMap" ref="referenceGenomePaths"/>
+		</bean>
+		
+		<bean name="referenceGenomeHandler" class="org.iplantc.files.types.ReferenceGenomeHandler">
+			<property name="referenceGenomeUrlMap" ref="referenceGenomePaths"/>
+		</bean>
+		
+		<util:map id="referenceGenomePaths" map-class="java.util.HashMap">
+			<entry>
+				<key>
+					<value>Aquilegia coerulea (columbine) v1.0</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.bca3a7e0cc8164fd5c80eab92eb5ee45}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis lyrata (subsp. lyrata) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.e035aec7bd636f99b65f8dc27fc8f1e1}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis thaliana (Bur-0 thale cress) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.8f0218d46a96dcd809778e7e51598f5b}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis thaliana (C24 thale cress) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.6c3c11b4c1e8cc2ba6ade91f343045cf}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis thaliana (Col-0 thale cress) v10</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.72963ecba088bf84f08b516ea1736786}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis thaliana (Kro-0 thale cress) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.af58b7c72b264c375b8e60148a463c19}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Arabidopsis thaliana (Ler-1 thale cress) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.b339b5822f8ee89b3de1e01aff566878}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Brachypodium distachyon (line Bd21) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.7d9e02980944440dab85398072fe03d9}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Brassica rapa (unknown) v0.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.b1c31c5fb1cb815f907e9021489efb11}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Carica papaya (unknown) v0.5</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.a0342a0c3fec1d1114c3da5791e79159}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Chlamydomonas reinhardtii (strain CC-503 cw92 mt+) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.131f73a05e8a587565bac6581139814a}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Citrus clementina (Clementine mandarin) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.9036379eedf62120b825920212dd7036}</value>
+			</entry>
+			<entry>
+				<key><value>Citrus sinensis (citrus Sweet orange) v1</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.7949ec23d52b49ae69b91b3124cf5049}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Cucumis sativus (cucumber) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.7eb3d87feb9e9a917b1539854a4ecd1b}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Eucalyptus grandis (BRASUZ1) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.6e49d82743b1791c106d42311443cb7e}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Fragaria vesca (woodland strawberry) v1.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.7c121a9b236ef1cf14a6a3bab4fa5ece}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Glycine max (soybean) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.444447aa488389f2a0d7df6ea153a13c}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Malus x (domestica apple) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.50e66d8db0f02f5986de48e93658821c}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Medicago truncatula (unknown) v3.5.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.8b3484e1bfa8d4ba5dc69396bbf7776e}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Mimulus guttatus (unknown) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.e485d3dec080b95b443867fd858444ca}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Musa acuminata (banana) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.517581dd2d46056b8eef2c78168f4016}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Oryza sativa (japonica Rice) v6.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.c7090ba3270399300530d5bf487c1ad9}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Oryza sativa (L. ssp. indica rice) v1.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.2930350a0bea659f45141c260b5eb59c}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Phoenix dactylifera (L. date palm) v3</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.e54eb1a0fd042b7efd0bb680619879be}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Physcomitrella patens (subsp. patens) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.154492bae9a9d53424bd854fd89e339a}</value>
+			</entry>
+			<entry>
+				<key><value>Populus trichocarpa (Poplar cotton wood) v1.1</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.45674a84b761fe4aec87a3d977f4722f}</value>
+			</entry>
+			<entry>
+				<key><value>Populus trichocarpa (Poplar cotton wood) v2</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.150c110acbdf130496298015e4a7cb58}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Prunus persica (peach) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.5907fc91323a74db297569a956ef5e15}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Ricinus communis (castor bean) v2</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.12c1931fad767c35902097a3e90c05bb}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Selaginella moellendorffii (unknown) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.827e132e164116917821e8f51b5ee9a0}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Setaria italica (foxtail millet) v2.1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.aa06144370b0d7c6a35e500e8dd3a605}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Solanum lycopersicum (tomato) v2.40</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.e7365543c3773fe092aaeab4a5f8beab}</value>
+			</entry>
+			<entry>
+				<key><value>Solanum phureja (DM1-3 516R44 Potato type chaucha) v3</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.2b1d950552e3362ac1ed09e4d61ff5ea}</value>
+			</entry>
+			<entry>
+				<key><value>Solanum tuberosum (group Phureja DM1-3 516 R44 potato) v3.219</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.5f8e31661da18d7cc3d3b78dfff6adc1}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Sorghum bicolor (sorghum) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.79605968960d266a676a560882028515}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Eutrema parvulum (Thellungiella parvula) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.66cc2a983f23fb51325f5fe56848b12e}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Theobroma cacao (chocolate) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.eac73790228f513311f5cb8259a2109f}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Vitis vinifera (grape) v2</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.5a857cb2e0f80b151a24114fa3e117eb}</value>
+			</entry>
+			<entry>
+				<key>
+					<value>Volvox carteri (f. nagariensis strain Eve) v1</value>
+				</key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.a26eab6d6e6edc02015dc5675b6c316d}</value>
+			</entry>
+			<entry>
+				<key><value>Zea mays (maize corn) v2</value></key>
+				<value>${org.iplantc.discoveryenvironment.referenceGenomePath.f87f9a79c7e6fa1ab65ee7c3b61c0017}</value>
+			</entry>			
+		</util:map>
+
+		<bean name="fileInfoService" class="org.iplantc.files.service.FileInfoService">
+			<property name="fileTypeHandlerMap">
+				<map>
+					<entry>
+						<key><value>ReferenceGenome</value></key>
+						<ref bean="referenceGenomeHandler" />
+					</entry>
+					<entry>
+						<key><value>ReferenceAnnotation</value></key>
+						<ref bean="referenceAnnotationHandler"/>
+					</entry>
+					<entry>
+						<key><value>ReferenceSequence</value></key>
+						<ref bean="referenceSequenceHandler"/>
+					</entry>
+					<entry>
+						<key><value>BarcodeSelector</value></key>
+						<ref bean="BarcodeFileHandler"/>
+					</entry>
+				</map>
+			</property>
+		</bean>
+
+	    <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="org.postgresql.Driver" />
+			<property name="jdbcUrl" value="jdbc:postgresql://${org.iplantc.discoveryenvironment.database.host}:${org.iplantc.discoveryenvironment.database.port}/${org.iplantc.discoveryenvironment.database.database}" />
+			<property name="user" value="${org.iplantc.discoveryenvironment.database.user}" />
+			<property name="password" value="${org.iplantc.discoveryenvironment.database.password}" />
+		</bean>
+
+		<bean name="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+			<property name="dataSource" ref="dataSource" />
+			<property name="mappingResources">
+				<list>
+					<value>database.hbm.xml</value>
+					<value>template-mapping.hbm.xml</value>
+					<value>notifications.hbm.xml</value>
+					<value>workflow.hbm.xml</value>
+				</list>
+			</property>
+			<property name="packagesToScan">
+				<list>
+					<value>org.iplantc.persistence.dto.step</value>
+					<value>org.iplantc.persistence.dto.transformation</value>
+					<value>org.iplantc.persistence.dto.data</value>
+                    <value>org.iplantc.persistence.dto.workspace</value>
+					<value>org.iplantc.persistence.dto.user</value>
+                    <value>org.iplantc.persistence.dto.components</value>
+                    <value>org.iplantc.persistence.dto.listing</value>
+					<value>org.iplantc.workflow.core</value>
+				</list>
+			</property>
+			<property name="hibernateProperties">
+				<props>
+					<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+					<prop key="hibernate.hbm2ddl.auto">validate</prop>
+					<prop key="hibernate.jdbc.batch_size">50</prop>
+				</props>
+			</property>
+		</bean>
+
+		<bean name="templateFetcher" class="org.iplantc.workflow.HibernateTemplateFetcher">
+			<property name="sessionFactory" ref="sessionFactory" />
+			<property name="refGenomeHandler" ref="referenceGenomeHandler"/>
+		</bean>
+
+		<bean name="workflowImportService" class="org.iplantc.workflow.service.WorkflowImportService">
+            <constructor-arg ref="sessionFactory" />
+            <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
+            <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+		</bean>
+
+        <bean name="analysisCategorizationService" class="org.iplantc.workflow.service.AnalysisCategorizationService">
+            <property name="sessionFactory" ref="sessionFactory" />
+            <property name="devAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
+            <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+        </bean>
+
+        <bean name="pipelineService" class="org.iplantc.workflow.service.PipelineService">
+            <property name="sessionFactory" ref="sessionFactory" />
+        </bean>
+
+        <bean name="analysisListingService" class="org.iplantc.workflow.service.AnalysisListingService">
+            <property name="sessionFactory" ref="sessionFactory" />
+            <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+        </bean>
+
+		<bean name="workflowExportService" class="org.iplantc.workflow.service.WorkflowExportService">
+			<constructor-arg ref="sessionFactory" />
+		</bean>
+
+		<bean name="workflowPreviewService" class="org.iplantc.workflow.service.WorkflowPreviewService">
+			<constructor-arg ref="sessionFactory" />
+			<constructor-arg ref="referenceGenomeHandler" />
+		</bean>
+		
+		<bean name="ratingService" class="org.iplantc.workflow.service.RatingService">
+			<property name="sessionFactory" ref="sessionFactory" />
+			<property name="userSessionService" ref="userSessionService" />
+			<property name="analysisRetriever" ref="analysisRetriever" />
+		</bean>
+
+		<bean name="analysisDeletionService" class="org.iplantc.workflow.service.AnalysisDeletionService">
+			<constructor-arg ref="sessionFactory" />
+		</bean>
+
+		<bean name="cacheServiceCache" class="java.util.HashMap" />
+		
+    	<bean name="setTransientCacheService"
+    		class="org.iplantc.muletoolkit.service.SetTransientCacheService">
+    		<property name="cache" ref="cacheServiceCache" />
+    	</bean>
+    	
+    	<bean name="retrieveTransientCacheService"
+    		class="org.iplantc.muletoolkit.service.RetrieveTransientCacheService">
+    		<property name="cache" ref="cacheServiceCache" />
+    	</bean>
+		
+		<bean name="exportService" class="org.iplantc.workflow.service.ExportService">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+	</spring:beans>
+
+    <custom-transformer name="AddUsernameToJsonPayload" class="org.iplantc.muletoolkit.transformers.AddUsernameToJson">
+        <spring:property name="defaultUsername" value="ipctest" />
+    </custom-transformer>
+	<custom-transformer name="FormatError" class="org.iplantc.muletoolkit.transformers.FormatError" />
+	<custom-transformer name="AbortOnError" class="org.iplantc.muletoolkit.transformers.AbortOnError" />
+	<custom-transformer name="StringToLong" class="org.iplantc.muletoolkit.transformers.StringToLongTransformer" />
+    <custom-transformer name="FormatStringWithSpaces" class="org.iplantc.muletoolkit.transformers.FormatStringWithSpaces" />
+	<byte-array-to-object-transformer name="ByteArrayToString" returnClass="java.lang.String" />
+    <object-to-byte-array-transformer name="ObjectToByteArray" />
+	<custom-transformer name="NotificationTransformer" class="org.iplantc.de.server.NotificationTransformer">
+		<spring:property name="analysisRetriever" ref="analysisRetriever" />
+	</custom-transformer>
+	<custom-transformer name="NoDataNotificationTransformer" class="org.iplantc.de.server.NotificationTransformer">
+		<spring:property name="analysisRetriever" ref="analysisRetriever" />
+	</custom-transformer>
+	<message-properties-transformer name="CopyContentType">
+		<add-message-property key="Content-Type" value="#[header:Content-Type]" />
+	</message-properties-transformer>
+	<message-properties-transformer name="RemoveAuthenticationToken">
+		<delete-message-property key="_iplant_auth"/>
+	</message-properties-transformer>
+
+	<tcp:connector name="tcpConnector">
+		<tcp:eof-protocol payloadOnly="true" />
+	</tcp:connector>
+		
+	<model>
+	    <custom-exception-strategy class="org.iplantc.muletoolkit.SaveFullStackTraceExceptionStrategy" />
+	    
+	    <!-- Old services -->
+        <service name="Bootstrap">
+            <inbound>
+                <vm:inbound-endpoint path="bootstrap" synchronous="true" />
+            </inbound>
+            <component>
+                <no-arguments-entry-point-resolver>
+                    <include-entry-point method="getCurrentUserInfo" />
+                </no-arguments-entry-point-resolver>
+                <spring-object bean="userService" />
+            </component>
+        </service>
+
+        <service name="CreateWorkspace">
+            <inbound>
+                <vm:inbound-endpoint path="createWorkspace" synchronous="true" name="createWorkspace" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="createWorkspace" />
+                </method-entry-point-resolver>
+                <spring-object bean="userService" />
+            </component>
+        </service>
+
+        <service name="GetOrCreateWorkspace">
+            <inbound>
+                <vm:inbound-endpoint path="getOrCreateWorkspace" synchronous="true" name="getOrCreateWorkspace" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getOrCreateWorkspace" />
+                </method-entry-point-resolver>
+                <spring-object bean="userService" />
+            </component>
+        </service>
+
+        <service name="GetOrCreateWorkspaceForUsername">
+            <inbound>
+                <vm:inbound-endpoint path="getOrCreateWorkspaceForUsername" synchronous="true" name="getOrCreateWorkspaceForUsername" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getOrCreateWorkspaceForUsername" />
+                </method-entry-point-resolver>
+                <spring-object bean="userService" />
+            </component>
+        </service>
+
+        <service name="GetCurrentUserDetails">
+            <inbound>
+                <vm:inbound-endpoint path="getCurrentUserDetails" synchronous="true" name="getCurrentUserDetails" />
+            </inbound>
+            <component>
+                <no-arguments-entry-point-resolver>
+                    <include-entry-point method="getCurrentUserDetails" />
+                </no-arguments-entry-point-resolver>
+                <spring-object bean="userService" />
+            </component>
+        </service>
+
+        <!-- Metadata Services -->
+		<service name="AddAnalysisToGroup">
+			<inbound>
+				<vm:inbound-endpoint path="addAnalysisToTemplateGroup" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="addAnalysisToTemplateGroup" />
+				</method-entry-point-resolver>
+				<spring-object bean="templateGroupService" />
+			</component>
+		</service>
+		
+		<service name="MakeAnalysisPublic">
+			<inbound>
+				<vm:inbound-endpoint path="makeAnalysisPublic" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="makeAnalysisPublic" />
+				</method-entry-point-resolver>
+				<spring-object bean="templateGroupService" />
+			</component>
+		</service>
+
+        <service name="GetOnlyAnalysisGroups">
+            <inbound>
+                <vm:inbound-endpoint path="getOnlyAnalysisGroups" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="listAnalysisGroups"/>
+                </method-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
+        <service name="GetAnalysesInGroup">
+            <inbound>
+                <vm:inbound-endpoint path="getAnalysesInGroup" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="listAnalysesInGroup"/>
+                </method-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
+        <service name="GetPublicAnalyses">
+            <inbound>
+                <vm:inbound-endpoint path="getPublicAnalyses" synchronous="true" />
+            </inbound>
+            <component>
+                <no-arguments-entry-point-resolver>
+                    <include-entry-point method="listPublicAnalyses" />
+                </no-arguments-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
+        <service name="Get template with Notifications">
+	        <inbound>
+	            <vm:inbound-endpoint path="fetchTemplateAndNotification" synchronous="true" />
+	            <forwarding-router />
+	        </inbound>
+	        <outbound>
+	            <custom-outbound-router class="org.iplantc.muletoolkit.routing.OrchestrationRouter">
+	                <vm:outbound-endpoint path="fetchTemplate" synchronous="true">
+	                    <property key="args" value="arg0"/>
+	                </vm:outbound-endpoint>
+	                <vm:outbound-endpoint path="appendNotification" synchronous="true">
+	                    <property key="args" value="e0"/>
+	                </vm:outbound-endpoint>
+	            </custom-outbound-router>
+	        </outbound>
+	    </service>
+	    
+	    <service name="Append Notifications to template and return JSON">
+	        <inbound>
+	            <vm:inbound-endpoint path="appendNotification" synchronous="true"  />
+	        </inbound>
+	        <component>
+	            <method-entry-point-resolver>
+	                <include-entry-point method="appendNotificationToTemplate"/>
+	            </method-entry-point-resolver>
+	            <spring-object bean="NotificationAppender" />
+	        </component>
+	    </service>
+
+        <service name="Run Analysis" >
+            <inbound>
+                <vm:inbound-endpoint path="runExperiment" synchronous="true" />
+            </inbound>
+           <component>
+               <method-entry-point-resolver>
+                   <include-entry-point method="runExperiment"/>
+               </method-entry-point-resolver>
+               <spring-object bean="experimentRunner" />
+           </component>
+        </service>
+
+		<service name="Retrieve Workflow Elements">
+			<inbound>
+				<vm:inbound-endpoint path="getWorkflowElements" synchronous="true"/>
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="getElements"/>
+				</method-entry-point-resolver>
+				<spring-object bean="WorkflowElementService" />
+			</component>
+		</service>
+
+	    <service name="Retrieve experiment list">
+	        <inbound>
+	            <vm:inbound-endpoint path="retrieveExperiments" synchronous="true"/>
+	        </inbound>
+	        <component>
+	            <method-entry-point-resolver>
+	                <include-entry-point method="retrieveExperimentsByWorkspaceId"/>
+	            </method-entry-point-resolver>
+	        	<spring-object bean="AnalysisService" />
+	        </component>
+	    </service>
+
+		<service name="Delete Analysis Execution">
+			<inbound>
+				<vm:inbound-endpoint path="deleteExecutions" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="deleteExecutionSet"/>
+				</method-entry-point-resolver>
+				<spring-object bean="AnalysisService" />
+			</component>
+		</service>
+
+	    <service name="fetchTemplate">
+	        <inbound>
+	            <vm:inbound-endpoint path="fetchTemplate" synchronous="true"/>
+	        </inbound>
+	        <component>
+	            <method-entry-point-resolver>
+	                <include-entry-point method="fetchTemplateByName"/>
+	            </method-entry-point-resolver>
+                <spring-object bean="templateFetcher" />
+	        </component> 
+	    </service>
+
+		<service name="ImportWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="importWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="importWorkflow" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowImportService" />
+			</component>
+		</service>
+
+		<service name="ImportTemplate">
+			<inbound>
+				<vm:inbound-endpoint path="importTemplate" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="importTemplate" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowImportService" />
+			</component>
+		</service>
+
+		<service name="UpdateWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="updateWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="updateWorkflow" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowImportService" />
+			</component>
+		</service>
+
+		<service name="ForceUpdateWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="forceUpdateWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="forceUpdateWorkflow" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowImportService" />
+			</component>
+		</service>
+
+		<service name="UpdateTemplate">
+			<inbound>
+				<vm:inbound-endpoint path="updateTemplate" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="updateTemplate" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowImportService" />
+			</component>
+		</service>
+
+		<service name="ExportWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="exportWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="exportAnalysis" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowExportService" />
+			</component>
+		</service>
+
+		<service name="ExportTemplate">
+			<inbound>
+				<vm:inbound-endpoint path="exportTemplate" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="exportTemplate" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowExportService" />
+			</component>
+		</service>
+
+        <service name="GetTemplateFromAnalysis">
+            <inbound>
+                <vm:inbound-endpoint path="getTemplateFromAnalysis" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getTemplateFromAnalysis" />
+                </method-entry-point-resolver>
+                <spring-object bean="workflowExportService" />
+            </component>
+        </service>
+
+        <service name="GetAllAnalysisIds">
+            <inbound>
+                <vm:inbound-endpoint path="getAllAnalysisIds" synchronous="true" />
+            </inbound>
+            <component>
+                <no-arguments-entry-point-resolver>
+                    <include-entry-point method="getAnalysisIds" />
+                </no-arguments-entry-point-resolver>
+                <spring-object bean="workflowExportService" />
+            </component>
+        </service>
+
+        <service name="PreviewWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="previewWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="previewWorkflow" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowPreviewService" />
+			</component>
+		</service>
+
+		<service name="PreviewTemplate">
+			<inbound>
+				<vm:inbound-endpoint path="previewTemplate" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="previewTemplate" />
+				</method-entry-point-resolver>
+				<spring-object bean="workflowPreviewService" />
+			</component>
+		</service>
+
+		<service name="DeleteWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="deleteWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="deleteAnalysis" />
+				</method-entry-point-resolver>
+				<spring-object bean="analysisDeletionService" />
+			</component>
+		</service>
+
+		<service name="PermanentlyDeleteWorkflow">
+			<inbound>
+				<vm:inbound-endpoint path="permanentlyDeleteWorkflow" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="physicallyDeleteAnalysis" />
+				</method-entry-point-resolver>
+				<spring-object bean="analysisDeletionService" />
+			</component>
+		</service>
+
+        <service name="EditTemplate">
+            <inbound>
+                <vm:inbound-endpoint path="editTemplate" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="prepareAnalysisForEditing" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisEditService" />
+            </component>
+        </service>
+
+        <service name="CopyTemplate">
+            <inbound>
+                <vm:inbound-endpoint path="copyTemplate" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="copyAnalysis" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisEditService" />
+            </component>
+        </service>
+		
+		<service name="CanExportAnalysisService">
+            <inbound>
+                <vm:inbound-endpoint path="canExportAnalysis" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="canExportAnalysis" />
+                </method-entry-point-resolver>
+                <spring-object bean="exportService" />
+            </component>
+        </service>
+
+        <!-- Begin Notification Services -->
+		<service name="getNotifications">
+			<inbound>
+				<vm:inbound-endpoint path="getNotifications" synchronous="true" />
+			</inbound>
+			<outbound>
+				<pass-through-router>
+					<http:outbound-endpoint address="${org.iplantc.discoveryenvironment.notificationAgentBaseUrl}/get-messages"
+						synchronous="true" keep-alive="false">
+						<transformers>
+							<transformer ref="AddUsernameToJsonPayload"/>
+							<transformer ref="RemoveAuthenticationToken" />
+						</transformers>
+						<response-transformers>
+							<transformer ref="CopyContentType" />
+							<transformer ref="NoDataNotificationTransformer" />
+						</response-transformers>
+					</http:outbound-endpoint>
+				</pass-through-router>
+			</outbound>
+		</service>
+
+		<service name="getUnseenNotifications">
+			<inbound>
+				<vm:inbound-endpoint path="getUnseenNotifications" synchronous="true" />
+			</inbound>
+			<outbound>
+				<pass-through-router>
+					<http:outbound-endpoint address="${org.iplantc.discoveryenvironment.notificationAgentBaseUrl}/get-unseen-messages"
+						synchronous="true" keep-alive="false">
+						<transformers>
+							<transformer ref="AddUsernameToJsonPayload"/>
+							<transformer ref="RemoveAuthenticationToken" />
+						</transformers>
+						<response-transformers>
+							<transformer ref="CopyContentType" />
+							<transformer ref="NotificationTransformer" />
+						</response-transformers>
+					</http:outbound-endpoint>
+				</pass-through-router>
+			</outbound>
+		</service>
+
+		<service name="deleteNotifications">
+			<inbound>
+				<vm:inbound-endpoint path="deleteNotifications" synchronous="true" />
+			</inbound>
+			<outbound>
+				<pass-through-router>
+					<http:outbound-endpoint address="${org.iplantc.discoveryenvironment.notificationAgentBaseUrl}/delete"
+						synchronous="true" keep-alive="false">
+						<transformers>
+							<transformer ref="AddUsernameToJsonPayload"/>
+							<transformer ref="RemoveAuthenticationToken" />
+						</transformers>
+						<response-transformers>
+							<transformer ref="CopyContentType" />
+						</response-transformers>
+					</http:outbound-endpoint>
+				</pass-through-router>
+			</outbound>
+		</service>
+
+		<service name="SaveToTransientCache">
+			<inbound>
+				<vm:inbound-endpoint path="saveToTransientCache" synchronous="true" />
+			</inbound>
+			<component>
+				<spring-object bean="setTransientCacheService" />			
+			</component>
+		</service>
+
+		<service name="RetrieveFromTransientCache">
+			<inbound>
+				<vm:inbound-endpoint path="retrieveFromTransientCache" synchronous="true"/>
+			</inbound>
+			<component>
+				<spring-object bean="retrieveTransientCacheService" />			
+			</component>
+		</service>
+		
+		<!-- Ratings -->
+		<service name="getAnalysisRating">
+			<inbound>
+				<vm:inbound-endpoint path="getAnalysisRating" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="getAnalysisRating" />
+				</method-entry-point-resolver>
+				<spring-object bean="ratingService" />
+			</component>
+		</service>
+		
+		<service name="getUserAnalysisRating">
+			<inbound>
+				<vm:inbound-endpoint path="getUserAnalysisRating" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="getUserRating" />
+				</method-entry-point-resolver>
+				<spring-object bean="ratingService" />
+			</component>
+		</service>
+		
+		<service name="rateAnalysis">
+			<inbound>
+				<vm:inbound-endpoint path="rateAnalysis" synchronous="true" />
+			</inbound>
+			<component>
+				<method-entry-point-resolver>
+					<include-entry-point method="rateAnalysis" />
+				</method-entry-point-resolver>
+				<spring-object bean="ratingService" />
+			</component>
+		</service>
+
+        <service name="deleteRating">
+            <inbound>
+                <vm:inbound-endpoint path="deleteRating" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="deleteRating" />
+                </method-entry-point-resolver>
+                <spring-object bean="ratingService" />
+            </component>
+        </service>
+
+        <service name="udpateFavorites">
+            <inbound>
+                <vm:inbound-endpoint path="updateFavorites" synchronous="true" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="updateFavorite" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisCategorizationService" />
+            </component>
+        </service>
+
+        <service name="getAnalysisCategories">
+            <inbound>
+                <vm:inbound-endpoint path="getAnalysisCategories" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getAnalysisCategories" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisCategorizationService" />
+            </component>
+        </service>
+
+        <service name="categorizeAnalyses">
+            <inbound>
+                <vm:inbound-endpoint path="categorizeAnalyses" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="categorizeAnalyses" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisCategorizationService" />
+            </component>
+        </service>
+
+        <service name="listAnalysesForPipeline">
+            <inbound>
+                <vm:inbound-endpoint path="listAnalysesForPipeline" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="listAnalysesInGroup" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
+        <service name="listAnalysesInGroup">
+            <inbound>
+                <vm:inbound-endpoint path="listAnalysesInGroup" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="listAnalysesInGroup" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
+        <service name="getDataObjectsForAnalysis">
+            <inbound>
+                <vm:inbound-endpoint path="getDataObjectsForAnalysis" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getDataObjectsForAnalysis" />
+                </method-entry-point-resolver>
+                <spring-object bean="pipelineService" />
+            </component>
+        </service>
+
+        <service name="getDataObjectsForAnalysisInternal">
+            <inbound>
+                <vm:inbound-endpoint path="getDataObjectsForAnalysisInternal" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="getDataObjectsForAnalysisInternal" />
+                </method-entry-point-resolver>
+                <spring-object bean="pipelineService" />
+            </component>
+        </service>
+
+        <service name="validateAnalysisForPipelines">
+            <inbound>
+                <vm:inbound-endpoint path="validateAnalysisForPipelines" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="validateAnalysisForPipelines" />
+                </method-entry-point-resolver>
+                <spring-object bean="pipelineService" />
+            </component>
+        </service>
+
+        <service name="validateAnalysisForPipelinesInternal">
+            <inbound>
+                <vm:inbound-endpoint path="validateAnalysisForPipelinesInternal" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="validateAnalysisForPipelinesInternal" />
+                </method-entry-point-resolver>
+                <spring-object bean="pipelineService" />
+            </component>
+        </service>
+
+		<service name="deleteCategories">
+            <inbound>
+                <vm:inbound-endpoint path="deleteCategories" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="deleteCategories" />
+                </method-entry-point-resolver>
+                <spring-object bean="categoryService" />
+            </component>
+        </service>
+    </model>
+</mule>

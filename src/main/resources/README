@@ -1,0 +1,105 @@
+
+============================
+iPlant Discovery Environment
+============================
+
+Installation for Development Testing
+************************************
+
+If user authentication is not required for testing then it is possible to
+disable all Discovery Environment security features by setting the property,
+org.iplantc.discoveryenvironment.securityEnabled to false.  To do this, place
+the WAR file in the servlet containers web application directory and wait for
+the file to be exploded.  After the file has been exploded, shut down the
+servlet container, cd to $DEPLOYMENT_DIRECTORY/WEB-INF/classes, and edit the
+file, discoveryenvironment.properties.  The line:
+
+org.iplantc.discoveryenvironment.securityEnabled=true
+
+should be modified so that it reads
+
+org.iplantc.discoveryenvironment.securityEnabled=false
+
+Once this modification has been made, restart the servlet container.  No other
+changes need to be made.
+
+
+Live Deployment Installation
+****************************
+
+If user authentication is required then several steps need to be performed to
+secure the discovery environment.  The first step is to secure the primary
+login page, $CONTEXT_PATH/discoveryenvironment/login, using Shibboleth.  Refer
+to the Shibboleth documentation and to the Shibboleth Service Provider Setup
+instructions in the iPlant wiki for more information.
+
+The next step is to generate a keystore that the discovery environment can use
+to sign messages that are being sent to back-end services.  Prior to doing
+this, however, it's advisable to customize the passwords used by both the
+keystore and the encryption keys contained in the keystore.  The contents of
+the keystore are defined by a file called keystoregenerator.properties in
+$DEPLOYMENT_DIRECTORY/WEB-INF/classes.  By default, the file looks like this:
+
+org.iplantc.keystore.path = keystore.jceks
+org.iplantc.keystore.type = JCEKS
+org.iplantc.keystore.password = changeit
+
+org.iplantc.keystore.key.signing.algorithm = RSA
+org.iplantc.keystore.key.signing.keysize = 1024
+org.iplantc.keystore.key.signing.signatureAlgorithm = SHA512WithRSAEncryption
+org.iplantc.keystore.key.signing.distinguishedName = CN=iPlant
+org.iplantc.keystore.key.signing.validity = 3650
+org.iplantc.keystore.key.signing.password = changeit
+
+org.iplantc.keystore.key.signing2.algorithm = RSA
+org.iplantc.keystore.key.signing2.keysize = 1024
+org.iplantc.keystore.key.signing2.signatureAlgorithm = SHA512WithRSAEncryption
+org.iplantc.keystore.key.signing2.distinguishedName = CN=tester
+org.iplantc.keystore.key.signing2.validity = 3650
+org.iplantc.keystore.key.signing2.password = changeit
+
+org.iplantc.keystore.key.encrypting.algorithm = RSA
+org.iplantc.keystore.key.encrypting.keysize = 1024
+org.iplantc.keystore.key.encrypting.signatureAlgorithm = SHA512WithRSAEncryption
+org.iplantc.keystore.key.encrypting.distinguishedName = CN=iPlant
+org.iplantc.keystore.key.encrypting.validity = 3650
+org.iplantc.keystore.key.encrypting.password = changeit
+
+Most of the settings in this file should not change, but it may be desirable
+to change the passwords to something more secure.  If the passwords are
+changed here then they will also have to be changed in two other files.  The
+file, $DEPLOYMENT_DIRECTORY/WEB-INF/classes/discoveryenvironment.properties,
+contains the information that the user interface needs in order to access
+the keystore.  The relevant settings are:
+
+org.iplantc.discoveryenvironment.keystorePath=keystore.jceks
+org.iplantc.discoveryenvironment.keystoreType=JCEKS
+org.iplantc.discoveryenvironment.keystorePassword=changeit
+org.iplantc.discoveryenvironment.signingKeyAlias=signing
+org.iplantc.discoveryenvironment.signingKeyPassword=changeit
+org.iplantc.discoveryenvironment.encryptingKeyAlias=encrypting
+
+The file, $DEPLOYMENT_DIRECTORY/WEB-INF/rest-mule.xml contains the information
+that the RESTful services need to access the keystore.  The relevant settings
+are:
+
+<iplant-sec:decoder>
+  <iplant-sec:key-store-path>keystore.jceks</iplant-sec:key-store-path>
+  <iplant-sec:key-store-password>changeit</iplant-sec:key-store-password>
+  <iplant-sec:key-store-type>JCEKS</iplant-sec:key-store-type>
+  <iplant-sec:key-encrypting-key-pair-alias>encrypting</iplant-sec:key-encrypting-key-pair-alias>
+  <iplant-sec:key-encrypting-key-pair-password>changeit</iplant-sec:key-encrypting-key-pair-password>
+  <iplant-sec:trusted-signing-certificate-aliases>
+    <spring:value>signing</spring:value>
+    <spring:value>signing2</spring:value>
+  </iplant-sec:trusted-signing-certificate-aliases>
+</iplant-sec:decoder>
+
+Once all of the files have been edited, you can run the keystore generation
+script to actually generate the keystore.  To do this, cd to the directory,
+$DEPLOYMENT_DIRECTORY/WEB-INF/classes and execute this command:
+
+perl generate_keystore.pl
+
+After the command has finished, stop and restart the servlet container, and
+the discover environment will be ready for use.

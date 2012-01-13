@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.1//EN" "http://google-web-toolkit.googlecode.com/svn/tags/1.7.1/distro-source/core/src/gwt-module.dtd">
+<module rename-to='discoveryenvironment'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.json.JSON" />
+	<inherits name='com.google.gwt.junit.JUnit'/>
+    <inherits name="com.google.gwt.http.HTTP"/>
+	<!--
+		Load dynamically predefined styles in the library when the application
+		starts
+	-->
+	<stylesheet src="Upload.css" />
+
+	<!-- Inherit the default GWT style sheet.  You can change       -->
+	<!-- the theme of your GWT application by uncommenting          -->
+	<!-- any one of the following lines.                            -->
+	<inherits name='com.google.gwt.user.theme.standard.Standard' />
+
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+	<!-- Other module inherits                                      -->
+	<!-- Include GWTUpload library, used by File Upload Servlet -->
+	<inherits name="gwtupload.GWTUpload" />
+	<inherits name='com.extjs.gxt.ui.GXT'/>
+		
+	<!-- I18N -->
+	<inherits name="com.google.gwt.i18n.I18N"/>
+	<inherits name="com.google.gwt.resources.Resources" />
+        <!-- Common Service Interfaces -->
+	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
+	<inherits name="org.iplantc.core.JsonUtil"/>
+    <inherits name="org.iplantc.core.ui-commons"/>
+	<inherits name="org.iplantc.core.Metadata"/>
+	<inherits name="org.iplantc.core.diskresource"/>
+	<inherits name="org.iplantc.core.applications"/>
+	<inherits name="org.iplantc.core.pipelines"/>
+	<inherits name="org.iplantc.core.Widgets"/>
+	<!-- for server push -->
+	<inherits name="com.google.gwt.rpc.RPC" />
+	
+	<!-- Specify the app entry point class.                         -->
+	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />
+</module>

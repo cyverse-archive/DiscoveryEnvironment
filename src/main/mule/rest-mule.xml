@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesource.org/schema/mule/core/2.2"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring="http://www.springframework.org/schema/beans"
+       xmlns:vm="http://www.mulesource.org/schema/mule/vm/2.2"
+       xmlns:http="http://www.mulesource.org/schema/mule/http/2.2"
+       xmlns:restlet="http://www.mulesource.org/schema/mule/restlet/2.2"
+       xmlns:json="http://www.mulesource.org/schema/mule/json/2.2"
+       xmlns:script="http://www.mulesource.org/schema/mule/scripting/2.2"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mule-ss="http://www.mulesource.org/schema/mule/spring-security/2.2"
+       xmlns:iplant-sec="http://www.mulesource.org/schema/mule/iplantsecurity/2.2"
+       xmlns:api="http://api.iplantcollaborative.org/apidoc"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.mulesource.org/schema/mule/core/2.2 http://www.mulesource.org/schema/mule/core/2.2/mule.xsd
+       http://www.mulesource.org/schema/mule/vm/2.2 http://www.mulesource.org/schema/mule/vm/2.2/mule-vm.xsd
+       http://www.mulesource.org/schema/mule/http/2.2 http://www.mulesource.org/schema/mule/http/2.2/mule-http.xsd
+       http://www.mulesource.org/schema/mule/restlet/2.2 http://www.mulesource.org/schema/mule/restlet/2.2/mule-restlet.xsd
+       http://www.mulesource.org/schema/mule/json/2.2 http://www.mulesource.org/schema/mule/json/2.2/mule-json.xsd
+       http://www.mulesource.org/schema/mule/scripting/2.2 http://www.mulesource.org/schema/mule/scripting/2.2/mule-scripting.xsd
+       http://www.mulesource.org/schema/mule/spring-security/2.2 http://www.mulesource.org/schema/mule/spring-security/2.2/mule-spring-security.xsd
+       http://www.mulesource.org/schema/mule/iplantsecurity/2.2 META-INF/mule-iplantsecurity.xsd
+       http://api.iplantcollaborative.org/apidoc META-INF/apidoc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<configuration defaultSynchronousEndpoints="true" defaultResponseTimeout="30000"/>
+
+	<context:property-placeholder location="discoveryenvironment.properties,security.properties" />
+
+	<spring:beans xmlns="http://www.springframework.org/schema/beans">
+
+		<!-- Provides SAML 2.0 based authentication. -->
+		<bean id="samlProvider" class="org.iplantc.security.Saml2AuthenticationProvider" />
+
+		<!-- Manages all Spring Security Framework authentication providers. -->
+		<bean id="providerManager" class="org.springframework.security.providers.ProviderManager">
+			<property name="providers">
+				<list>
+					<ref local="samlProvider" />
+				</list>
+			</property>
+		</bean>
+
+		<!-- An adapter used to integrate Mule Security with Spring Security -->
+		<bean id="providerAdapter" class="org.mule.module.spring.security.SpringProviderAdapter">
+			<property name="delegate" ref="providerManager" />
+		</bean>
+
+        <bean name="springUserSessionService" class="org.iplantc.authn.service.UserSessionServiceImpl">
+            <property name="securityEnabled" value="${org.iplantc.discoveryenvironment.securityEnabled}" />
+        </bean>
+
+	</spring:beans>
+
+	<!-- Configuration for the Spring Security plugin for Mule. -->
+	<mule-ss:security-manager>
+		<mule-ss:delegate-security-provider name="iPlantSamlSecurityProvider" delegate-ref="providerManager">
+			<mule-ss:security-property name="securityMode" value="MODE_GLOBAL" />
+		</mule-ss:delegate-security-provider>
+	</mule-ss:security-manager>
+
+	<custom-transformer name="StoreSecurityContext" class="org.iplantc.de.server.StoreSecurityContext">
+		<spring:property name="userSessionService" ref="springUserSessionService" />
+		<spring:property name="muleUserSessionService" ref="userSessionService" />
+	</custom-transformer>
+	<custom-transformer name="DiscardPayload" class="org.iplantc.muletoolkit.transformers.DiscardPayload" />
+	<custom-transformer name="AppendWorkspaceId" class="org.iplantc.de.server.AppendWorkspaceIdToPayloadTransformer" />
+	<custom-transformer name="StringToJSON" class="org.iplantc.muletoolkit.transformers.StringToJSON"/>
+
+	<json:object-to-json-transformer name="SpitOutJson" />
+
+	<model>
+		<service name="PrivateRestfulServices">
+			<inbound>
+				<http:inbound-endpoint host="localhost" port="${org.iplantc.discoveryenviornment.unsecureMulePort}" synchronous="true" keep-alive="true">
+					<transformers>
+						<transformer ref="ObjectToByteArray" />
+						<transformer ref="ByteArrayToString" />
+					</transformers>
+				</http:inbound-endpoint>
+			</inbound>
+			<outbound>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Import a Workflow</name>
+						<description>This service will import a workflow into the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="importWorkflow" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/import-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Import a Template</name>
+						<description>This service will import a template into the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="importTemplate" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/import-template" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Update a Workflow</name>
+						<description>This service will either update an existing workflow or import a new workflow.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="updateWorkflow" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/update-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Force the Update of a Workflow</name>
+						<description>This service will either update an existing workflow or import a new workflow.  Vetted workflows may be updated.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="forceUpdateWorkflow" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/force-update-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Update a Template</name>
+						<description>This service will either update an existing template or import a new template.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="updateTemplate" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/update-template" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Export a Workflow</name>
+						<description>This service will export a workflow with the given identifier.</description>
+						<request>No body</request>
+						<response>200: A JSON-formatted response as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="exportWorkflow" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/export-workflow/{set-payload.analysisId}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Export a Template</name>
+						<description>This service will export the template with the given identifier.</description>
+						<request>No body</request>
+						<response>200: A JSON-formatted response as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="exportTemplate" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/export-template/{set-payload.templateId}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Preview a Workflow</name>
+						<description>This service will convert a JSON document in the format consumed by the import service into the format required by the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="previewWorkflow" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/preview-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Preview a Template</name>
+						<description>This service will convert a JSON document in the format consumed by the import service into the format required by the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="previewTemplate" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/preview-template" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Delete a Workflow</name>
+						<description>This service will logically remove a workflow from the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="deleteWorkflow" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/delete-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Permanently Delete a Workflow</name>
+						<description>This service will physically remove a workflow from the DE.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services`</request>
+						<response>200: no body</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="permanentlyDeleteWorkflow" responseTransformer-refs="FormatError AbortOnError DiscardPayload" />
+					<restlet:uri-template-filter pattern="/permanently-delete-workflow" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Get a list of Workflow Elements</name>
+						<description>This service will get a list of workflow elements of a specified type.</description>
+						<request>No body</request>
+						<response>200: A JSON-formatted response containing the element information.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getWorkflowElements" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-workflow-elements/{set-payload.type}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Retrieve the set of template groups associated with a user</name>
+						<description>Retrieves the JSON of the grouping set for a specific user.</description>
+						<request>No body</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getOnlyAnalysisGroups" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-only-analysis-groups/{set-payload.workspaceId}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Retrieve the list of public analyses.</name>
+						<description>Retrieves the list of public analyses.</description>
+						<request>No body</request>
+						<response>200: A JSON-formatted repsonse similar to the output of get-analyses-in-group</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getPublicAnalyses" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-public-analyses" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Retrieve a Template</name>
+						<description>Retrieves the JSON of the template associated with an analysis. The input after /template/ should be the analysis id.</description>
+						<request>No body</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="fetchTemplateAndNotification" transformer-refs="FormatStringWithSpaces" responseTransformer-refs=" FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-analysis/{set-payload.analysisId}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Add Analysis To Group</name>
+						<description>Adds an Analysis to a Template Group.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="addAnalysisToTemplateGroup" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/add-analysis-to-group" verbs="POST" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Can export Analysis</name>
+						<description>Used to determine if an analysis can be exported to Tito or not.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="canExportAnalysis" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/can-export-analysis" verbs="POST" />
+				</filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Get Public Analysis Categories</name>
+						<description>Gets the analysis categories for every public analysis.</description>
+						<request>No body</request>
+						<response>200: {"categories":[{"categories":["category1",...],"analysis":{"id":"analysis-id","name":"analysis-name"},...]}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getAnalysisCategories" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-analysis-categories/{set-payload.analysisSet}" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Categorize Analyses</name>
+						<description>Categorizes a list of analyses.</description>
+						<request>{"categories":[{"categories":["category1",...],"analysis":{"id":"analysis-id","name":"analysis-name"},...]}</request>
+						<response>200: {"success":true}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="categorizeAnalyses" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/categorize-analyses" verbs="POST" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Get Data Obejcts for Analysis</name>
+						<description>Gets all data objects for a list of analyses.</description>
+						<request>No body</request>
+						<response>200: {"id":"analysid-id","name":"analysis-name","inputs":[{...property-details...},...],"outputs":[{...property-details...},...]}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getDataObjectsForAnalysis" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/analysis-data-objects/{set-payload.analysisId}" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Validate Analysis for Pipelines</name>
+						<description>Determines whether or not an analysis can be used in a pipeline.</description>
+						<request>No body</request>
+						<response>200: {"isValid":"flag","reason":"details"}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="validateAnalysisForPipelines" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/validate-analysis-for-pipelines/{set-payload.analysisId}" verbs="GET" />
+                </filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Delete Categories</name>
+						<description>Deletes a list of categories from the DE.</description>
+						<request>{"category_ids":["first_id", "second_id",...]}</request>
+						<response>200: {"failures": ["failed_id_1", "failed_id_2", ...]}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="deleteCategories" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/delete-categories" verbs="POST" />
+                </filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Get Analysis Identifiers</name>
+						<description>Gets the identifiers of all of the analyses in the database.</description>
+						<request>No body</request>
+						<response>200: {"analysis_ids":["analysis_id_1", "analysis_id_2", ...]}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="getAllAnalysisIds" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-all-analysis-ids" verbs="GET" />
+                </filtering-router>
+			</outbound>
+		</service>
+		<service name="RestfulServices">
+			<inbound>
+				<http:inbound-endpoint host="localhost" port="${org.iplantc.discoveryenviornment.secureMulePort}" transformer-refs="ObjectToByteArray ByteArrayToString StoreSecurityContext" synchronous="true" keep-alive="true">
+					<iplant-sec:iplant-security-filter>
+					    <iplant-sec:securityEnabled>${org.iplantc.discoveryenvironment.securityEnabled}</iplant-sec:securityEnabled>
+						<iplant-sec:decoder>
+							<iplant-sec:key-store-path>keystore.jceks</iplant-sec:key-store-path>
+							<iplant-sec:key-store-password>changeit</iplant-sec:key-store-password>
+							<iplant-sec:key-store-type>JCEKS</iplant-sec:key-store-type>
+							<iplant-sec:key-encrypting-key-pair-alias>encrypting</iplant-sec:key-encrypting-key-pair-alias>
+							<iplant-sec:key-encrypting-key-pair-password>changeit</iplant-sec:key-encrypting-key-pair-password>
+							<iplant-sec:trusted-signing-certificate-aliases>
+								<spring:value>signing</spring:value>
+								<spring:value>signing2</spring:value>
+							</iplant-sec:trusted-signing-certificate-aliases>
+						</iplant-sec:decoder>
+					</iplant-sec:iplant-security-filter>
+                </http:inbound-endpoint>
+			</inbound>
+			<outbound>
+                <filtering-router>
+                    <vm:outbound-endpoint path="bootstrap" responseTransformer-refs="FormatError AbortOnError SpitOutJson" />
+                    <restlet:uri-template-filter pattern="/bootstrap" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+                    <vm:outbound-endpoint path="retrieveFromTransientCache" transformer-refs="StringToLong" responseTransformer-refs="FormatError AbortOnError" />
+                    <restlet:uri-template-filter pattern="/cache/{set-payload.cacheId}" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+                	<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+                		<name>Get Notifications</name>
+                		<description>This service retrieves notifications from the notification agent and marks any notifications it sends as seen.</description>
+                		<request>POST - A JSON string in the format: {"user": username, "limit": limit, "seen": flag}.</request>
+                		<response>200: A JSON string in the format: {"messages": [{"type":type, "user": username, message: {...}, payload: {...}},...]}</response>
+                		<response>404: error message.</response>
+						<response>500: error message.</response>
+                	</api:apidoc>
+                	<vm:outbound-endpoint path="getNotifications" />
+                	<restlet:uri-template-filter pattern="/notifications/get-messages" verbs="POST" />
+                </filtering-router>
+                <filtering-router>
+                	<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+                		<name>Get Unseen Notifications</name>
+                		<description>This service retrieves notifications that haven't been seen from the notification agent and marks any notifications it sends as seen.</description>
+                		<request>POST - A JSON string in the format: {"user": username, "limit": limit}.</request>
+                		<response>200: A JSON string in the format: {"messages": [{"type":type, "user": username, message: {...}, payload: {...}},...]}</response>
+                		<response>404: error message.</response>
+						<response>500: error message.</response>
+                	</api:apidoc>
+                	<vm:outbound-endpoint path="getUnseenNotifications" />
+                	<restlet:uri-template-filter pattern="/notifications/get-unseen-messages" verbs="POST" />
+                </filtering-router>
+                <filtering-router>
+                	<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+                		<name>Delete Notifications</name>
+                		<description>This service is used to mark notifications as deleted.</description>
+                		<request>POST - A JSON string in the format: {"uuids": [uuid1, uuid2, ..., uuidn]}.</request>
+                		<response>200: no body</response>
+                		<response>404: error message.</response>
+						<response>500: error message.</response>
+                	</api:apidoc>
+                	<vm:outbound-endpoint path="deleteNotifications" />
+                	<restlet:uri-template-filter pattern="/notifications/{set-property.params}" verbs="POST" />
+                </filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Retrieve a Template</name>
+						<description>Retrieves the JSON of the template associated with an analysis. The input after /template/ should be the analysis id.</description>
+						<request>No body</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+						<vm:outbound-endpoint path="fetchTemplateAndNotification" transformer-refs="FormatStringWithSpaces" responseTransformer-refs=" FormatError AbortOnError" />
+				<restlet:uri-template-filter pattern="/template/{set-payload.analysisId}" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Execute Analysis</name>
+						<description>Saves a user defined analysis execution to the database.</description>
+						<request>A json string containing the possibly updated values by the user in the UI, format: {"name":"", "type":"","analysis_id":"", "config":{ (list of properties along with their value)  } </request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="runExperiment" transformer-refs="AppendWorkspaceId StringToJSON" responseTransformer-refs="DiscardPayload FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/workspaces/{set-property.workspaceId}/newexperiment" verbs="PUT" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Get user executions</name>
+						<description>Retrieves the executions associated with a specific user</description>
+						<request>No body</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="retrieveExperiments" transformer-refs="StringToLong" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/workspaces/{set-payload.workspaceId}/executions/list" verbs="GET" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Delete analysis execution(s)</name>
+						<description>Deletes a set of executions (jobs) entries from the user workspace </description>
+						<request> A JSON formatted request with an array of the executions ids to delete. { "executions":["id1","id2",... ] }</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="deleteExecutions" transformer-refs="AppendWorkspaceId" responseTransformer-refs="DiscardPayload FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/workspaces/{set-property.workspaceId}/executions/delete" verbs="PUT" />
+				</filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Rate Application</name>
+						<description>Rates an application for a User.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="rateAnalysis" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/rate-analysis" verbs="POST" />
+				</filtering-router>
+                <filtering-router>
+                    <api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+                        <name>Rate Application</name>
+                        <description>Deletes a vote made through /rate-analysis.</description>
+                        <request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+                        <response>200: A JSON-formatted response in the format required by the DE.</response>
+                        <response>500: A JSON-formatted response in standard error format</response>
+                    </api:apidoc>
+                    <vm:outbound-endpoint path="deleteRating" responseTransformer-refs="FormatError AbortOnError" />
+                    <restlet:uri-template-filter pattern="/delete-rating" verbs="POST" />
+                </filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Retrieve the set of analyses associated with an analysis group</name>
+						<description>Retrieves the set of analyses in the group with the given identifier.</description>
+						<request>No body</request>
+						<response>200: </response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="listAnalysesInGroup" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/get-analyses-in-group/{set-payload.templateGroupId}" verbs="GET" />
+				</filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>List Analyses for Pipelines</name>
+						<description>Lists analyses and includes information about whether or not each analysis can be used in a pipeline.</description>
+						<request>No body</request>
+						<response>200: A JSON-formatted repsonse similar to the output of get-analyses-in-group</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+ 					<vm:outbound-endpoint path="listAnalysesForPipeline" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/list-analyses-for-pipelines/{set-payload.analysisId}" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Update Favorites</name>
+						<description>Adds an analysis to or removes an analysis from a user's favorites folder.</description>
+						<request>A JSON-formatted request in the format: {"workspace_id":"id","analysis_id":"id","user_favorite":flag}</request>
+						<response>200: {"success":"true"}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="updateFavorites" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/update-favorites" verbs="POST" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Edit Template</name>
+						<description>Prepares a template for editing by the user.</description>
+						<request>No body</request>
+						<response>200: {"analysis_id":"id"}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="editTemplate" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/edit-template/{set-payload.analysisId}" verbs="GET" />
+                </filtering-router>
+                <filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+						<name>Copy Template</name>
+						<description>Creates a copy of the template in the user's TITO workspace for editing.</description>
+						<request>No body</request>
+						<response>200: {"analysis_id":"id"}</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="copyTemplate" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/copy-template/{set-payload.analysisId}" verbs="GET" />
+                </filtering-router>
+				<filtering-router>
+					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc">
+						<name>Make an Analysis Public</name>
+						<description>Adds an Analysis to the Beta group.</description>
+						<request>A JSON-formatted request as described here: https://pods.iplantcollaborative.org/wiki/display/coresw/Tool+Integration+Services</request>
+						<response>200: A JSON-formatted response in the format required by the DE.</response>
+						<response>500: A JSON-formatted response in standard error format</response>
+					</api:apidoc>
+					<vm:outbound-endpoint path="makeAnalysisPublic" responseTransformer-refs="FormatError AbortOnError" />
+					<restlet:uri-template-filter pattern="/make-analysis-public" verbs="POST" />
+				</filtering-router>
+                <custom-catch-all-strategy class="org.iplantc.muletoolkit.routing.NoServiceCatchAllStrategy" />
+			</outbound>
+		</service>
+    </model>
+</mule>
