@@ -36,6 +36,11 @@ public class DiscoveryEnvironmentProperties {
      */
     private static final String DOWNLOAD_SERVICE_URL = DATA_MGMT_PROPERTY_PREFIX + "file-download"; //$NON-NLS-1$
 
+    /**
+     * Properties key of the base URL used to import urls.
+     */
+    private static final String URL_IMPORT_SERVICE_URL = DATA_MGMT_PROPERTY_PREFIX + "file-urlupload"; //$NON-NLS-1$
+
     // The prefix for all of the properties.
     public static final String PREFIX = "org.iplantc.discoveryenvironment"; //$NON-NLS-1$
 
@@ -49,7 +54,7 @@ public class DiscoveryEnvironmentProperties {
      * The list of required properties.
      */
     private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL, NOTIFICATION_BASE_URL,
-            DATA_MGMT_SERVICE_BASE_URL, UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL};
+            DATA_MGMT_SERVICE_BASE_URL, UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL, URL_IMPORT_SERVICE_URL};
 
     /**
      * The properties. Place any default values in the initializer.
@@ -157,5 +162,14 @@ public class DiscoveryEnvironmentProperties {
      */
     public static String getDownloadFileServiceBaseUrl() {
         return properties.getProperty(DOWNLOAD_SERVICE_URL);
+    }
+
+    /**
+     * Gets the base URL used to import urls.
+     * 
+     * @return the URL as a string.
+     */
+    public static String getUrlImportServiceBaseUrl() {
+        return properties.getProperty(URL_IMPORT_SERVICE_URL);
     }
 }

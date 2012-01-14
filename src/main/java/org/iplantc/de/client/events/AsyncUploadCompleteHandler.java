@@ -19,21 +19,15 @@ public class AsyncUploadCompleteHandler extends DefaultUploadCompleteHandler {
     }
 
     /**
-     * {@inheritDoc}
-     * "complete" in this case doesn't mean complete but rather "upload has started".
+     * Notify user that the upload has successfully started.
+     * 
+     * @param sourceUrl
+     * @param response
      */
-    @Override
-    public void onCompletion(String sourceUrl, String response) {
+    public void onImportSuccess(String sourceUrl, String response) {
         try {
             JSONObject payload = buildPayload(sourceUrl, response);
-            // TODO Need to handle asynchronous file upload and only display
-            // file in UI once upload is completed.
-            // String json = EventJSONFactory.build(EventJSONFactory.ActionType.UPLOAD_COMPLETE,
-            // payload.toString());
-            //
-            // MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-            // dispatcher.processMessage(json);
-
+            // TODO Is it possible to only display file in UI once asynchronous upload is complete?
             String filename = JsonUtil.getString(payload, DiskResource.LABEL);
             NotifyInfo.notify(NotificationManager.Category.DATA, I18N.DISPLAY.urlImport(),
                     I18N.DISPLAY.importRequestSubmit(filename), null);

@@ -11,9 +11,8 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
+import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
-import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
@@ -31,7 +30,6 @@ import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
-import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
@@ -178,7 +176,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         hiddenFields.put(FileUploadDialogPanel.HDN_USER_ID_KEY, username);
 
         // define a handler for upload completion
-        UploadCompleteHandler handler = new DefaultUploadCompleteHandler(uploadDestId) {
+        AsyncUploadCompleteHandler handler = new AsyncUploadCompleteHandler(uploadDestId) {
             /**
              * {@inheritDoc}
              */
@@ -193,8 +191,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields,
                 Constants.CLIENT.fileUploadServlet(), handler);
 
-        dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 375, pnlUpload);
-        dlgUpload.setPagePosition(getPosition(false));
+        dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 536, pnlUpload);
         dlgUpload.show();
     }
 
@@ -230,7 +227,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
             final String path = JsonUtil.getRawValueAsString(downloadPaths.get(i));
 
             Hyperlink link = new Hyperlink(DataUtils.parseNameFromPath(path), "de_hyperlink"); //$NON-NLS-1$
-            link.addListener(Events.OnClick, new Listener<ComponentEvent>() {
+            link.addClickListener(new Listener<ComponentEvent>() {
                 @Override
                 public void handleEvent(ComponentEvent be) {
                     WindowUtil.open(URL.encode(address + "&path=" + path), "width=100,height=100"); //$NON-NLS-1$ //$NON-NLS-2$
