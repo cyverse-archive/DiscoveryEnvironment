@@ -7,7 +7,7 @@ if [[ ! -e $CONFIGULON ]]; then
     exit 1
 fi
 
-if [[ ! -d $1 ]]; then
+if [[ ! -n $1 ]]; then
     DE_ENV="de-1"
     echo "...No development environment indicated, using 'de-1'"
 else 
@@ -33,3 +33,4 @@ if [[ $? ]]; then
 else 
     echo "ERROR: one or both of the configuration copy operations failed (bummer!)"
 fi
+
