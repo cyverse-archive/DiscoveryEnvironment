@@ -8,23 +8,18 @@ import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
-import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
-import org.iplantc.de.client.views.dialogs.URLImportDialog;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
-import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.util.Point;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -47,7 +42,6 @@ public class DataNavToolBar extends ToolBar {
     @SuppressWarnings("unused")
     private final String tag;
     private String parentFolderId;
-    private URLImportDialog dlgURLImport;
     private TreePanelSelectionModel<Folder> selectionModel;
     private Component maskingParent;
 
@@ -85,67 +79,23 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private Button buildImportButton() {
-        Button ret = PanelHelper.buildButton("idDataImportBtn", I18N.DISPLAY.importLabel(), null); //$NON-NLS-1$
+        Button ret = PanelHelper.buildButton("idDataImportBtn", I18N.DISPLAY.importLabel(), //$NON-NLS-1$
+                new SelectionListener<ButtonEvent>() {
+                    @Override
+                    public void componentSelected(ButtonEvent ce) {
+                        promptUpload();
+                    }
+                });
+
         // ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
         // .importData()));
-        ret.setArrowAlign(ButtonArrowAlign.RIGHT);
-        ret.setMenu(buildImportMenu());
 
         return ret;
     }
 
-    private Menu buildImportMenu() {
-        Menu menu = new Menu();
-
-        menu.add(buildMenuItem("idDataBrowserUploadMenuItem", I18N.DISPLAY.desktop(), null, //$NON-NLS-1$
-                new SelectionListener<MenuEvent>() {
-                    @Override
-                    public void componentSelected(MenuEvent ce) {
-                        promptUpload(ce.getXY());
-                    }
-                }));
-
-        // import from url menu item
-        menu.add(buildMenuItem("idDataBrowserUrlImportMenuItem", I18N.DISPLAY.urlImport(), null, //$NON-NLS-1$
-                new SelectionListener<MenuEvent>() {
-                    @Override
-                    public void componentSelected(MenuEvent ce) {
-                        promptUrlImport(ce.getXY());
-                    }
-                }));
-
-        // CORE-1974 - Phylota Import is currently broken and is being
-        // pulled from 0.4 M1 until it can be fixed. (alenards)
-        // import menu item
-        // menu.add(buildImportMenuItem());
-
-        return menu;
-    }
-
-    private void promptUpload(Point p) {
+    private void promptUpload() {
         if (canUpload(selectionModel.getSelectedItem())) {
             IDropLiteAppletWindow.launchIDropLiteUploadWindow(getCurrentPath(), getCurrentPath());
-        }
-    }
-
-    private void promptUrlImport(Point p) {
-        String idParentFolder = getCurrentPath();
-
-        if (canUpload(selectionModel.getSelectedItem())) {
-            UploadCompleteHandler handler = new AsyncUploadCompleteHandler(idParentFolder) {
-                /** {@inheritDoc} */
-                @Override
-                public void onAfterCompletion() {
-                    if (dlgURLImport != null) {
-                        dlgURLImport.hide();
-                    }
-                }
-            };
-
-            dlgURLImport = new URLImportDialog(idParentFolder, handler);
-            dlgURLImport.setPagePosition(getPosition(false));
-            dlgURLImport.setWidth(388);
-            dlgURLImport.show();
         }
     }
 
@@ -156,14 +106,6 @@ public class DataNavToolBar extends ToolBar {
             showErrorMsg();
             return false;
         }
-    }
-
-    private MenuItem buildMenuItem(String id, String text, AbstractImagePrototype icon,
-            SelectionListener<MenuEvent> listener) {
-        MenuItem ret = new MenuItem(text, icon, listener);
-        ret.setId(id);
-
-        return ret;
     }
 
     private String getCurrentPath() {

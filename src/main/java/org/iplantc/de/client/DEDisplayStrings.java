@@ -724,8 +724,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
 
     String up();
 
-    String desktop();
-
     String idParentInvalid();
 
     /**
