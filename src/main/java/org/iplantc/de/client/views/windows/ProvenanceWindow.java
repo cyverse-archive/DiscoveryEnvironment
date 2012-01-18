@@ -1,11 +1,8 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
-import org.iplantc.de.client.services.RawDataServices;
-import org.iplantc.de.client.utils.ProvenanceFormatter;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Provides a user interface for provenance widgets.
@@ -54,24 +51,6 @@ public abstract class ProvenanceWindow extends FileWindow {
 
         // add necessary tabs
         constructPanel();
-    }
-
-    /**
-     * Retrieve and update provenance information.
-     */
-    protected void updateProvenance() {
-        // retrieve provenance from the server
-        RawDataServices.getFileProvenance(file.getFileId(), new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                // do nothing if there is no provenance data
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                updateProvenance(ProvenanceFormatter.format(result));
-            }
-        });
     }
 
     /**

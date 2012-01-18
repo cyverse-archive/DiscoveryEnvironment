@@ -351,7 +351,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
         @Override
         public void addTab(String result) {
             // add a raw data tab
-            RawDataPanel panelRaw = new RawDataPanel(file, result, false);
+            RawDataPanel panelRaw = new RawDataPanel(file, result);
             panelRaw.setTabIndex(treeUrlTabIndex == 0 ? 1 : 0);
             panel.addTab(panelRaw, provenance);
         }
