@@ -31,12 +31,14 @@ import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -246,6 +248,18 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
     @Override
     protected void doHide() {
+        MessageBox.confirm(I18N.DISPLAY.idropLiteCloseConfirmTitle(),
+                I18N.DISPLAY.idropLiteCloseConfirmMessage(), new Listener<MessageBoxEvent>() {
+                    @Override
+                    public void handleEvent(MessageBoxEvent be) {
+                        if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                            confirmHide();
+                        }
+                    }
+                });
+    }
+
+    protected void confirmHide() {
         // Ensure the applet is removed from the DOM when this window is closed.
         contents.removeAll();
 
@@ -258,7 +272,6 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     refreshPath);
             EventBus.getInstance().fireEvent(event);
         }
-
     }
 
     @Override

@@ -1037,4 +1037,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String simpleDownloadForm();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt title.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmTitle();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmMessage();
 }
