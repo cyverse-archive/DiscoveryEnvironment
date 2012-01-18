@@ -127,7 +127,7 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptUpload(Point p) {
-        if (canUpload(selectionModel.getSelectedItem())) {
+        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
             String idParentFolder = getCurrentPath();
             String username = UserInfo.getInstance().getUsername();
 
@@ -159,7 +159,7 @@ public class DataNavToolBar extends ToolBar {
     private void promptUrlImport(Point p) {
         String idParentFolder = getCurrentPath();
 
-        if (canUpload(selectionModel.getSelectedItem())) {
+        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
             UploadCompleteHandler handler = new AsyncUploadCompleteHandler(idParentFolder) {
                 /** {@inheritDoc} */
                 @Override
