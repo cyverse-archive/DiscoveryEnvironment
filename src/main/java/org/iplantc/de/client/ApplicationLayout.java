@@ -9,8 +9,6 @@ import org.iplantc.de.client.dispatchers.ActionDispatcher;
 import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
-import org.iplantc.de.client.events.DataPayloadEvent;
-import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
@@ -64,11 +62,9 @@ public class ApplicationLayout extends Viewport {
     private NotificationIndicator lblNotifications;
     private NotificationLabel lblNotificationsAll;
     private NotificationLabel lblNotificationsAnalyses;
-    private NotificationLabel lblNotificationsData;
 
     private int countNotificationsAll = 0;
     private int countNotificationsAnalyses = 0;
-    private int countNotificationsData = 0;
 
     /**
      * Default constructor.
@@ -102,21 +98,6 @@ public class ApplicationLayout extends Viewport {
 
     private void initEventHandlers() {
         EventBus eventbus = EventBus.getInstance();
-
-        // handle data events
-        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
-            @Override
-            public void onFire(DataPayloadEvent event) {
-                if (event.getMessage() != null) {
-                    countNotificationsAll++;
-                    countNotificationsData++;
-
-                    lblNotifications.setCount(countNotificationsAll);
-                    lblNotificationsAll.setCount(countNotificationsAll);
-                    lblNotificationsData.setCount(countNotificationsData);
-                }
-            }
-        });
 
         // handle analysis events
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
@@ -288,29 +269,13 @@ public class ApplicationLayout extends Viewport {
         @Override
         public void handleEvent(BaseEvent be) {
             countNotificationsAll = 0;
-            countNotificationsData = 0;
             countNotificationsAnalyses = 0;
 
             lblNotifications.setCount(countNotificationsAll);
             lblNotificationsAll.setCount(countNotificationsAll);
-            lblNotificationsData.setCount(countNotificationsData);
             lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
 
             NotificationIconBar.showNotificationWindow(Category.ALL);
-        }
-    }
-
-    private class NotificationDataListener implements Listener<BaseEvent> {
-        @Override
-        public void handleEvent(BaseEvent be) {
-            countNotificationsData = 0;
-            countNotificationsAll = countNotificationsAnalyses;
-
-            lblNotifications.setCount(countNotificationsAll);
-            lblNotificationsAll.setCount(countNotificationsAll);
-            lblNotificationsData.setCount(countNotificationsData);
-
-            NotificationIconBar.showNotificationWindow(Category.DATA);
         }
     }
 
@@ -318,7 +283,7 @@ public class ApplicationLayout extends Viewport {
         @Override
         public void handleEvent(BaseEvent be) {
             countNotificationsAnalyses = 0;
-            countNotificationsAll = countNotificationsData;
+            countNotificationsAll = 0;
 
             lblNotifications.setCount(countNotificationsAll);
             lblNotificationsAll.setCount(countNotificationsAll);
@@ -410,14 +375,10 @@ public class ApplicationLayout extends Viewport {
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle,
                 countNotificationsAll,
                 new NotificationAllListener());
-        lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle,
-                countNotificationsData,
-                new NotificationDataListener());
         lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
                 countNotificationsAnalyses, new NotificationAnalysisListener());
 
         notificationMenu.add(lblNotificationsAll);
-        notificationMenu.add(lblNotificationsData);
         notificationMenu.add(lblNotificationsAnalyses);
 
         return notificationMenu;

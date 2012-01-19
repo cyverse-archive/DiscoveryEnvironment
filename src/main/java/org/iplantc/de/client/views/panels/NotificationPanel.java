@@ -14,7 +14,6 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.utils.AnalysisViewContextExecutor;
-import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 
@@ -84,8 +83,6 @@ public class NotificationPanel extends ContentPanel {
     private Menu menuRowWithContext;
     private Menu menuRowNoContext;
 
-    private DataViewContextExecutor dataContextExecutor;
-
     private AnalysisViewContextExecutor analysisContextExecutor;
 
     /**
@@ -103,7 +100,7 @@ public class NotificationPanel extends ContentPanel {
         buildNotificationGrid();
         buildMoreActionsButton();
         compose();
-        dataContextExecutor = new DataViewContextExecutor();
+
         analysisContextExecutor = new AnalysisViewContextExecutor();
 
         setMenu();
@@ -279,8 +276,6 @@ public class NotificationPanel extends ContentPanel {
     private void viewSelected() {
         String contextAnalysis = null;
 
-        List<String> itemsData = new ArrayList<String>();
-
         for (Notification notification : checkBoxModel.getSelectedItems()) {
             NotificationManager.Category category = notification.getCategory();
 
@@ -290,10 +285,7 @@ public class NotificationPanel extends ContentPanel {
 
                 // did we get a context to execute?
                 if (context != null) {
-                    if (category == NotificationManager.Category.DATA) {
-                        // execute data context
-                        itemsData.add(context);
-                    } else if (category == NotificationManager.Category.ANALYSIS) {
+                    if (category == NotificationManager.Category.ANALYSIS) {
                         // we only add the first analysis context
                         if (contextAnalysis == null) {
                             contextAnalysis = context;
@@ -301,11 +293,6 @@ public class NotificationPanel extends ContentPanel {
                     }
                 }
             }
-        }
-
-        // do we have any data items?
-        if (!itemsData.isEmpty()) {
-            dataContextExecutor.execute(itemsData);
         }
 
         // do we have an analysis context?
@@ -325,10 +312,7 @@ public class NotificationPanel extends ContentPanel {
 
                 // did we get a context to execute?
                 if (context != null) {
-                    if (category == NotificationManager.Category.DATA) {
-                        // execute data context
-                        dataContextExecutor.execute(context);
-                    } else if (category == NotificationManager.Category.ANALYSIS) {
+                    if (category == NotificationManager.Category.ANALYSIS) {
                         analysisContextExecutor.execute(context);
                     }
                 }
@@ -398,7 +382,6 @@ public class NotificationPanel extends ContentPanel {
     private SimpleComboBox<Category> buildFilterDropdown() {
         dropdown = new SimpleComboBox<Category>();
         dropdown.add(Category.ALL);
-        dropdown.add(Category.DATA);
         dropdown.add(Category.ANALYSIS);
         dropdown.setValue(dropdown.getStore().getModels().get(0)); // select first item
         dropdown.setTriggerAction(TriggerAction.ALL); // Always show all categories in the

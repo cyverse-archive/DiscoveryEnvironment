@@ -4,9 +4,8 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.NotificationManager;
-import org.iplantc.de.client.utils.NotifyInfo;
 
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.google.gwt.json.client.JSONObject;
 
 public class AsyncUploadCompleteHandler extends DefaultUploadCompleteHandler {
@@ -29,8 +28,7 @@ public class AsyncUploadCompleteHandler extends DefaultUploadCompleteHandler {
             JSONObject payload = buildPayload(sourceUrl, response);
             // TODO Is it possible to only display file in UI once asynchronous upload is complete?
             String filename = JsonUtil.getString(payload, DiskResource.LABEL);
-            NotifyInfo.notify(NotificationManager.Category.DATA, I18N.DISPLAY.urlImport(),
-                    I18N.DISPLAY.importRequestSubmit(filename), null);
+            MessageBox.info(I18N.DISPLAY.urlImport(), I18N.DISPLAY.importRequestSubmit(filename), null);
         } catch (Exception e) {
             ErrorHandler.post(I18N.ERROR.importFailed(sourceUrl), e);
         } finally {
