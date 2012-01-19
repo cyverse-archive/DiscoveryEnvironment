@@ -49,6 +49,7 @@ public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor 
     }
 
     private void buildTextArea() {
+        areaData = buildTextArea(false);
         areaData.setId("idRawDataField"); //$NON-NLS-1$
     }
 
