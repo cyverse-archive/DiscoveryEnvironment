@@ -157,8 +157,17 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     @Override
                     public void componentSelected(ButtonEvent ce) {
                         // hide this applet window then open the simple upload form
-                        doHide();
-                        launchSimpleUploadDialog();
+                        MessageBox.confirm(I18N.DISPLAY.idropLiteCloseConfirmTitle(),
+                                I18N.DISPLAY.idropLiteCloseConfirmMessage(),
+                                new Listener<MessageBoxEvent>() {
+                                    @Override
+                                    public void handleEvent(MessageBoxEvent be) {
+                                        if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                                            confirmHide();
+                                            launchSimpleUploadDialog();
+                                        }
+                                    }
+                                });
                     }
                 });
 
