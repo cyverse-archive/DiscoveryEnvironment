@@ -79,14 +79,14 @@ configuration parameters are stored in ${BELPHEGOR_HOME}/WEB-INF/web.xml
    pattern in the filter mapping for the filter, CAS Authentication Filter,
    must be edited to match the correct context path.  The web.xml template
    that is checked into the SCM repository has this path set to
-   /belphegor/belphegor/*.  If, for example, the context path is /belphegor-fu
-   then this path should be set to /belphegor-fu/belphegor/*.
+   /belphegor/belphegor/\*.  If, for example, the context path is /belphegor-fu
+   then this path should be set to /belphegor-fu/belphegor/\*.
 10. If the context path is anything other than /belphegor, then the fourth URL
     pattern in the filter mapping for the filter, roleFilter, will have to be
     edited to match the correct context path.  The web.xml template that is
     checked into the SCM repository has this path set to
-    /belphegor/belphegor/*.  If, for example, the context path is
-    /belphegor-fu then this path should be set to /belphegor-fu/belphegor/*.
+    /belphegor/belphegor/\*.  If, for example, the context path is
+    /belphegor-fu then this path should be set to /belphegor-fu/belphegor/\*.
 
 ### ${BELPHEGOR_HOME}/WEB-INF/classes/belphegor.properties
 
@@ -108,4 +108,4 @@ take effect.  If the Belphegor web application fails to start, it's helpful
 to review the configuration files that have been modified and to examine the
 servlet container's log files.  For example, Apache Tomcat, will log
 deployment errors in ${TOMCAT_HOME}/logs/catalina.out and
-${TOMCAT_HOME}/logs/localhost*.log.
+${TOMCAT_HOME}/logs/localhost\*.log.
