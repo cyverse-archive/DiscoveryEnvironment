@@ -163,7 +163,7 @@
         <servlet-name>sessionInitializationServlet</servlet-name>
         <url-pattern>/belphegor/login</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>4
+    <servlet-mapping>
         <servlet-name>propertyServlet</servlet-name>
         <url-pattern>/belphegor/properties</url-pattern>
     </servlet-mapping>
