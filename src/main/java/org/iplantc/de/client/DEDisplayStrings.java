@@ -201,20 +201,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String taxonId();
 
     /**
-     * Localized text for display as a message indicating a file was successfully saved.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileSave();
-
-    /**
-     * Localized text for display as message indicate file presistence is in progress.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileSaveProgress();
-
-    /**
      * Localized text for display as the title of the web application.
      * 
      * In a raw HTML perspective, this text is displayed inside the HTML title element in the head of the

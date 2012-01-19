@@ -9,7 +9,6 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.DataMonitor;
 
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.json.client.JSONObject;
@@ -24,8 +23,6 @@ import com.google.gwt.user.client.Element;
 public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor {
     private final String data;
     private TextArea areaData;
-    private String textOrig = new String();
-    private final MessageBox wait;
     private int tabIndex;
 
     /**
@@ -38,10 +35,6 @@ public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor 
     public RawDataPanel(FileIdentifier fileIdentifier, String data) {
         super(fileIdentifier);
         this.data = data;
-        
-        wait = MessageBox.wait(I18N.DISPLAY.progress(), I18N.DISPLAY.fileSaveProgress(),
-                I18N.DISPLAY.saving() + "..."); //$NON-NLS-1$
-        wait.close();
 
         buildTextArea();
 
@@ -61,7 +54,6 @@ public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor 
         super.onRender(parent, index);
 
         if (data != null) {
-            textOrig = data;
             areaData.setValue(data);
             areaData.setWidth(getWidth());
 
@@ -123,7 +115,7 @@ public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor 
      */
     @Override
     public void fileSavedAs(String idOrig, String idParent, File info) {
-        wait.close();
+        // intentionally do nothing
     }
 
     /**
