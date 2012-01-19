@@ -73,7 +73,7 @@ public class NotificationManager {
 
     private static NotificationManager instance = null;
 
-    private ListStore<Notification> storeAll;
+    private final ListStore<Notification> storeAll;
 
     private AnalysisContextBuilder analysisContextBuilder;
     private final MessageServiceFacade facadeMessageService;

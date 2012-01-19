@@ -153,8 +153,9 @@ public class NotificationPanel extends ContentPanel {
     private ToolBar buildButtonBar() {
         ToolBar ret = new ToolBar();
 
-        ret.add(new Label(I18N.CONSTANT.filterBy()));
-        ret.add(buildFilterDropdown());
+        // TODO temporarily disable filtering until more categories are added.
+        // ret.add(new Label(I18N.CONSTANT.filterBy()));
+        // ret.add(buildFilterDropdown());
         ret.add(new FillToolItem());
         ret.add(moreActionsButton);
 
@@ -177,7 +178,7 @@ public class NotificationPanel extends ContentPanel {
             protected void handleMouseClick(GridEvent<Notification> event) {
                 super.handleMouseClick(event);
 
-                Grid<Notification> grid = (Grid<Notification>)event.getGrid();
+                Grid<Notification> grid = event.getGrid();
                 // Show the actions menu if the menu grid column was clicked.
                 String colId = grid.getColumnModel().getColumnId(event.getColIndex());
                 if (colId != null && colId.equals("menu")) { //$NON-NLS-1$
@@ -426,7 +427,8 @@ public class NotificationPanel extends ContentPanel {
      * @param category
      */
     public void filterBy(Category category) {
-        dropdown.setValue(dropdown.findModel(category));
+        // TODO temporarily disable filtering until more categories are added.
+        // dropdown.setValue(dropdown.findModel(category));
     }
 
     private void addGridEventListeners() {
