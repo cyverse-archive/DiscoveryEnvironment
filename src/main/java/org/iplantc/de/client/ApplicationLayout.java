@@ -354,11 +354,11 @@ public class ApplicationLayout extends Viewport {
         userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(),
                 "de_header_menu_hyperlink_hover", "de_header_menu_hyperlink", //$NON-NLS-1$ //$NON-NLS-2$
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                doLogout();
-            }
-        }, I18N.DISPLAY.logoutToolTipText()));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        doLogout();
+                    }
+                }, I18N.DISPLAY.logoutToolTipText()));
 
         return userMenu;
     }
@@ -370,35 +370,35 @@ public class ApplicationLayout extends Viewport {
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.documentation(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.deHelpFile());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.deHelpFile());
+                    }
+                }));
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.forums(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.forumsUrl());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.forumsUrl());
+                    }
+                }));
 
-        helpMenu.add(new MenuHyperlink(I18N.DISPLAY.contactSupport(), hoverStyle, linkStyle,
+        helpMenu.add(new MenuHyperlink(I18N.DISPLAY.contactSupport(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.supportUrl());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.supportUrl());
+                    }
+                }));
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.about(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                displayAboutDe();
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        displayAboutDe();
+                    }
+                }));
 
         return helpMenu;
     }
@@ -408,11 +408,9 @@ public class ApplicationLayout extends Viewport {
         String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
 
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle,
-                countNotificationsAll,
-                new NotificationAllListener());
+                countNotificationsAll, new NotificationAllListener());
         lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle,
-                countNotificationsData,
-                new NotificationDataListener());
+                countNotificationsData, new NotificationDataListener());
         lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
                 countNotificationsAnalyses, new NotificationAnalysisListener());
 
@@ -508,7 +506,7 @@ public class ApplicationLayout extends Viewport {
             }
         }
     }
-    
+
     private class NotificationLabel extends MenuHyperlink {
         private String text;
 
