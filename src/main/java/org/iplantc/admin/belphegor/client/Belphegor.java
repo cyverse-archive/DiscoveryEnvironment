@@ -33,6 +33,8 @@ public class Belphegor implements EntryPoint {
         controller.init(layoutApplication);
 
         RootPanel.get().add(layoutApplication);
+        setBrowserContextMenuEnabled(ToolIntegrationAdminProperties.getInstance()
+                .isContextClickEnabled());
     }
 
     private void setEntryPointTitle() {
@@ -72,8 +74,6 @@ public class Belphegor implements EntryPoint {
             @Override
             public void onSuccess(Map<String, String> result) {
                 ToolIntegrationAdminProperties.getInstance().initialize(result);
-                setBrowserContextMenuEnabled(ToolIntegrationAdminProperties.getInstance()
-                        .isContextClickEnabled());
                 initApp();
             }
         });
