@@ -612,8 +612,11 @@ img.analysis_remove {
     float: left;
 }
 
-.tag img {
+.tag-remove {
     cursor: pointer;
     vertical-align: text-top;
     margin: 5px 3px 3px 3px;
+    background: url('./images/x.png') top no-repeat;
+    position: relative;
+    top: 2px;
 }
