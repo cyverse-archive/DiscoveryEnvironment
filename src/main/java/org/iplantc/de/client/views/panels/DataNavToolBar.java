@@ -94,7 +94,7 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptUpload() {
-        if (canUpload(selectionModel.getSelectedItem())) {
+        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
             IDropLiteAppletWindow.launchIDropLiteUploadWindow(getCurrentPath(), getCurrentPath());
         }
     }

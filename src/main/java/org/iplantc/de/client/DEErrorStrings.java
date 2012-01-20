@@ -59,13 +59,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String retrieveFolderInfoFailed();
 
     /**
-     * Error message displayed when the application fails to save raw data.
-     * 
-     * @return localized error string.
-     */
-    String rawDataSaveFailed();
-
-    /**
      * Error message displayed when a file fails to upload.
      * 
      * @return localized error string.

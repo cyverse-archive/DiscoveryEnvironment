@@ -30,6 +30,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
@@ -186,7 +187,18 @@ public class ApplicationLayout extends Viewport {
 
         MenuLabel menuHeader = new MenuLabel(I18N.DISPLAY.notifications(),
                 "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
-        menuHeader.addListener(Events.OnClick, new NotificationAllListener());
+
+        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                countNotificationsAll = 0;
+                countNotificationsAnalyses = 0;
+
+                lblNotifications.setCount(countNotificationsAll);
+
+                NotificationIconBar.showNotificationWindow(Category.ALL);
+            }
+        });
 
         ret.add(menuHeader);
 
@@ -289,23 +301,40 @@ public class ApplicationLayout extends Viewport {
     }
 
     private class NotificationAllListener implements Listener<BaseEvent> {
+        Component source;
+
+        NotificationAllListener(Menu m) {
+            super();
+            source = m;
+        }
+
         @Override
         public void handleEvent(BaseEvent be) {
+            source.hide();
+
             countNotificationsAll = 0;
             countNotificationsAnalyses = 0;
 
             lblNotifications.setCount(countNotificationsAll);
-            // TODO temporarily disable notification labels until more categories are added.
-            // lblNotificationsAll.setCount(countNotificationsAll);
-            // lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
+            lblNotificationsAll.setCount(countNotificationsAll);
+            lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
 
             NotificationIconBar.showNotificationWindow(Category.ALL);
         }
     }
 
     private class NotificationAnalysisListener implements Listener<BaseEvent> {
+        Component source;
+
+        NotificationAnalysisListener(Menu m) {
+            super();
+            source = m;
+        }
+
         @Override
         public void handleEvent(BaseEvent be) {
+            source.hide();
+
             countNotificationsAnalyses = 0;
             countNotificationsAll = 0;
 
@@ -338,56 +367,61 @@ public class ApplicationLayout extends Viewport {
     }
 
     private Menu buildUserMenu() {
-        Menu userMenu = buildMenu();
+        final Menu userMenu = buildMenu();
 
         userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(),
                 "de_header_menu_hyperlink_hover", "de_header_menu_hyperlink", //$NON-NLS-1$ //$NON-NLS-2$
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                doLogout();
-            }
-        }, I18N.DISPLAY.logoutToolTipText()));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        doLogout();
+                        userMenu.hide();
+                    }
+                }, I18N.DISPLAY.logoutToolTipText()));
 
         return userMenu;
     }
 
     private Menu buildHelpMenu() {
-        Menu helpMenu = buildMenu();
+        final Menu helpMenu = buildMenu();
         String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
         String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.documentation(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.deHelpFile());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.deHelpFile());
+                        helpMenu.hide();
+                    }
+                }));
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.forums(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.forumsUrl());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.forumsUrl());
+                        helpMenu.hide();
+                    }
+                }));
 
-        helpMenu.add(new MenuHyperlink(I18N.DISPLAY.contactSupport(), hoverStyle, linkStyle,
+        helpMenu.add(new MenuHyperlink(I18N.DISPLAY.contactSupport(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                WindowUtil.open(Constants.CLIENT.supportUrl());
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        WindowUtil.open(Constants.CLIENT.supportUrl());
+                        helpMenu.hide();
+                    }
+                }));
 
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.about(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                displayAboutDe();
-            }
-        }));
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        displayAboutDe();
+                        helpMenu.hide();
+                    }
+                }));
 
         return helpMenu;
     }
@@ -397,10 +431,9 @@ public class ApplicationLayout extends Viewport {
         String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
 
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle,
-                countNotificationsAll,
-                new NotificationAllListener());
+                countNotificationsAll, new NotificationAllListener(notificationMenu));
         lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
-                countNotificationsAnalyses, new NotificationAnalysisListener());
+                countNotificationsAnalyses, new NotificationAnalysisListener(notificationMenu));
 
         notificationMenu.add(lblNotificationsAll);
         notificationMenu.add(lblNotificationsAnalyses);
@@ -493,7 +526,7 @@ public class ApplicationLayout extends Viewport {
             }
         }
     }
-    
+
     private class NotificationLabel extends MenuHyperlink {
         private final String text;
 

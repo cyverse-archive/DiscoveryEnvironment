@@ -214,13 +214,6 @@ public interface DEDisplayStaticText extends Constants {
     String actions();
 
     /**
-     * Display text provenance display panel.
-     * 
-     * @return a String representing the text.
-     */
-    String provenance();
-
-    /**
      * Display text for trees tab caption in file viewer.
      * 
      * @return a String representing the text.
