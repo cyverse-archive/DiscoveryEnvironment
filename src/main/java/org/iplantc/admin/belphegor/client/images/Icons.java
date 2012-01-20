@@ -20,4 +20,11 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("book_edit.png")
     ImageResource cat_edit();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("tick.png")
+    ImageResource restore();
 }

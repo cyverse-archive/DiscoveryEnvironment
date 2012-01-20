@@ -19,6 +19,8 @@ import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.CheckBoxGroup;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -45,6 +47,8 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
     private TextField<String> appNameField;
     private TextArea descField;
+    private CheckBox isDisabledField;
+    private CheckBoxGroup chkGroup;
 
     private TextField<String> urlField;
     private Button btnSubmit;
@@ -77,7 +81,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         };
 
         form.setLayout(new FormLayout(LabelAlign.TOP));
-        form.setSize(595, 350);
+        form.setSize(595, 400);
         form.setHeaderVisible(false);
         form.setBodyBorder(false);
         form.setButtonAlign(HorizontalAlignment.CENTER);
@@ -104,6 +108,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         }
 
         emailField.setValue(analysis.getIntegratorsEmail());
+        isDisabledField.setValue(analysis.isDisabled());
 
     }
 
@@ -113,7 +118,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         analysis.setIntegratorName(getNonNullString(integratorNameField.getValue()));
         analysis.setWikiUrl(getNonNullString(urlField.getValue()));
         analysis.setDescription(getNonNullString(descField.getValue()));
-
+        analysis.setDisabled(isDisabledField.getValue());
         return analysis.toJson();
 
     }
@@ -131,6 +136,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         left.add(appNameField, formData);
         left.add(integratorNameField, formData);
         left.add(emailField, formData);
+        left.add(chkGroup, formData);
 
         top.add(left, new ColumnData(.5));
         form.add(top);
@@ -191,6 +197,11 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
                 255);
+        isDisabledField = new CheckBox();
+        isDisabledField.setBoxLabel(I18N.DISPLAY.appDisabled());
+        chkGroup = new CheckBoxGroup();
+        chkGroup.setFieldLabel(I18N.DISPLAY.tempDisable());
+        chkGroup.add(isDisabledField);
     }
 
     private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,

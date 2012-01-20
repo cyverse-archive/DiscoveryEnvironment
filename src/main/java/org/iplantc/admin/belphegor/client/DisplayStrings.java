@@ -76,4 +76,53 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String addCategoryPrompt();
+
+    /**
+     * Disable app prompt
+     * 
+     * @return
+     */
+    String appDisabled();
+
+    /**
+     * Disable app text
+     * 
+     * @return
+     */
+    String tempDisable();
+
+    /**
+     * Restore app button text
+     * 
+     * @return
+     */
+    String restoreApp();
+
+    /**
+     * Restore App Msg title
+     * 
+     * @return
+     */
+    String restoreAppSucessMsgTitle();
+
+    /**
+     * Restore App msg
+     * 
+     * @return
+     */
+    String restoreAppSucessMsg(String appName, String restore_categories);
+
+    /**
+     * Restore App failure msg title
+     * 
+     * @return
+     */
+    String restoreAppFailureMsgTitle();
+
+    /**
+     * Restore App failure msg
+     * 
+     * @return
+     */
+    String restoreAppFailureMsg(String appName);
 }

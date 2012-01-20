@@ -3,12 +3,14 @@ package org.iplantc.admin.belphegor.client.views.panels;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.images.Resources;
+import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -30,8 +32,11 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -40,6 +45,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     private final AppTemplateAdminServiceFacade service;
     private Button deleteButton;
+    private Button restoreButton;
 
     /**
      * Creates a new CatalogMainAdminPanel.
@@ -54,11 +60,13 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     }
 
     private void initToolBar() {
-        deleteButton = buildDeleteButton();
+        buildDeleteButton();
+        buildRestoreButton();
         addToToolBar(deleteButton);
+        addToToolBar(restoreButton);
     }
 
-    private Button buildDeleteButton() {
+    private void buildDeleteButton() {
         deleteButton = new Button(I18N.DISPLAY.delete());
 
         deleteButton.disable();
@@ -74,11 +82,36 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         addGridSelectionChangeListener(new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                deleteButton.setEnabled(getSelectedApp() != null);
+                deleteButton.setEnabled(getSelectedApp() != null
+                        && !(current_category.getId().equals(ToolIntegrationAdminProperties
+                                .getInstance().getDefaultTrashAnalysisGroupId())));
             }
         });
 
-        return deleteButton;
+    }
+
+    private void buildRestoreButton() {
+        restoreButton = new Button(I18N.DISPLAY.restoreApp());
+
+        restoreButton.disable();
+        restoreButton.setId("idRestore"); //$NON-NLS-1$
+        restoreButton.setIcon(AbstractImagePrototype.create(Resources.ICONS.restore()));
+        restoreButton.addSelectionListener(new SelectionListener<ButtonEvent>() {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
+                restoreSelectedApp();
+            }
+        });
+
+        addGridSelectionChangeListener(new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                restoreButton.setEnabled(getSelectedApp() != null
+                        && current_category.getId().equals(
+                                ToolIntegrationAdminProperties.getInstance()
+                                        .getDefaultTrashAnalysisGroupId()));
+            }
+        });
     }
 
     private void deleteSelectedApp() {
@@ -98,6 +131,44 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
         MessageBox.confirm(I18N.DISPLAY.confirmDeleteAppTitle(),
                 I18N.DISPLAY.confirmDeleteApp(app.getName()), callback);
+    }
+
+    private void restoreSelectedApp() {
+        final Analysis app = getSelectedApp();
+        service.restoreApplication(app.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONArray arr = obj.get("categories").isArray();
+                if (arr != null && arr.size() > 0) {
+                    StringBuilder names_display = new StringBuilder("");
+                    for (int i = 0; i < arr.size(); i++) {
+                        names_display.append(JsonUtil.trim(arr.get(0).isObject().get("name").toString()));
+                        if (i != arr.size() - 1) {
+                            names_display.append(",");
+                        }
+                    }
+
+                    MessageBox.info(I18N.DISPLAY.restoreAppSucessMsgTitle(),
+                            I18N.DISPLAY.restoreAppSucessMsg(app.getName(), names_display.toString()),
+                            null);
+                }
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
+                String reason = JsonUtil.trim(obj.get("reason").toString());
+                if (reason.contains("orphaned")) {
+                    MessageBox.alert(I18N.DISPLAY.restoreAppFailureMsgTitle(),
+                            I18N.DISPLAY.restoreAppFailureMsg(app.getName()), null);
+                } else {
+                    ErrorHandler.post(reason);
+                }
+            }
+        });
     }
 
     private void confirmDeleteSelectedApp(final Analysis app) {
@@ -236,7 +307,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
             d.setHeading(model.getName());
             d.getButtonBar().removeAll();
-            d.setSize(595, 380);
+            d.setSize(595, 435);
             d.add(editPanel);
             d.show();
         }

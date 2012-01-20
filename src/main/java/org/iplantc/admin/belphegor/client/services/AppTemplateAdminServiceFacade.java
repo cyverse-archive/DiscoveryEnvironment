@@ -161,6 +161,20 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
     }
 
     /**
+     * Deletes an App with the given applicationId.
+     * 
+     * @param applicationId
+     * @param callback
+     */
+    public void restoreApplication(String applicationId, AsyncCallback<String> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getRestoreAppServiceUrl() + "/" //$NON-NLS-1$
+                + applicationId;
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        callService(wrapper, callback);
+    }
+
+    /**
      * Performs the actual service call, masking any calling component.
      * 
      * @param callback executed when RPC call completes.
