@@ -305,7 +305,21 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
     }
 
     public void renameFolder(final String pathOrig, final String path) {
-        if (model.isCurrentPage(DataUtils.parseParent(path))) {
+        if (model == null) {
+            return;
+        }
+
+        if (model.isCurrentPage(pathOrig)) {
+            // The currently viewed folder was renamed.
+            model.getPage().setPath(path);
+
+            // Update the IDs of all disk resources loaded in the grid's store.
+            ListStore<DiskResource> store = grid.getStore();
+            for (DiskResource resource : store.getModels()) {
+                resource.setId(path + "/" + DataUtils.parseNameFromPath(resource.getId())); //$NON-NLS-1$
+            }
+        } else if (model.isCurrentPage(DataUtils.parseParent(path))) {
+            // A folder inside the currently viewed folder was renamed.
             DiskResource resource = findDiskResource(pathOrig);
 
             if (resource != null) {

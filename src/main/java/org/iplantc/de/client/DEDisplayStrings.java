@@ -17,13 +17,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadSuccess(String filename);
 
     /**
-     * Caption to file upload status messages.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileUpload();
-
-    /**
      * File upload maximum size message.
      * 
      * @return a string representing the localized text.
@@ -199,20 +192,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String taxonId();
-
-    /**
-     * Localized text for display as a message indicating a file was successfully saved.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileSave();
-
-    /**
-     * Localized text for display as message indicate file presistence is in progress.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileSaveProgress();
 
     /**
      * Localized text for display as the title of the web application.
@@ -1044,4 +1023,26 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String metadata();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt title.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmTitle();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmMessage();
+
+    /**
+     * Localized text for app unavailable
+     * 
+     * @return @return a string representing the localized text.
+     */
+    String appUnavailable();
+
 }

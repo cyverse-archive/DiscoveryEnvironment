@@ -392,7 +392,6 @@
 			<property name="dataSource" ref="dataSource" />
 			<property name="mappingResources">
 				<list>
-					<value>database.hbm.xml</value>
 					<value>template-mapping.hbm.xml</value>
 					<value>notifications.hbm.xml</value>
 					<value>workflow.hbm.xml</value>

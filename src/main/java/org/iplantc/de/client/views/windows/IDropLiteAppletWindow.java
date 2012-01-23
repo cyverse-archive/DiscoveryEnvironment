@@ -31,12 +31,14 @@ import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -47,6 +49,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -62,6 +65,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private LayoutContainer contents;
     private Html htmlApplet;
     private Dialog dlgUpload;
+    private boolean promptHide = true;
 
     /**
      * Opens an IDropLiteAppletWindow in Upload Mode for the given uploadDest, via the Window Manager.
@@ -151,11 +155,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
     private ToolBar buildSimpleUploadToolbar() {
         Button btnSimpleUpload = new Button(I18N.DISPLAY.simpleUploadForm(),
-                new SelectionListener<ButtonEvent>() {
+                new SimpleFormSelectionListener() {
                     @Override
-                    public void componentSelected(ButtonEvent ce) {
-                        // hide this applet window then open the simple upload form
-                        doHide();
+                    public void removeAppletConfirmed() {
+                        confirmHide();
                         launchSimpleUploadDialog();
                     }
                 });
@@ -197,10 +200,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
     private Component buildSimpleDownloadToolbar() {
         Button btnSimpleDownload = new Button(I18N.DISPLAY.simpleDownloadForm(),
-                new SelectionListener<ButtonEvent>() {
+                new SimpleFormSelectionListener() {
                     @Override
-                    public void componentSelected(ButtonEvent ce) {
-                        // Replace applet tag with simple download links.
+                    public void removeAppletConfirmed() {
+                        promptHide = false;
                         showSimpleDownloadPanel();
                     }
                 });
@@ -246,6 +249,32 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
     @Override
     protected void doHide() {
+        if (promptHide) {
+            promptRemoveApplet(new Command() {
+                @Override
+                public void execute() {
+                    confirmHide();
+                }
+            });
+        } else {
+            confirmHide();
+        }
+    }
+
+    private void promptRemoveApplet(final Command cmdRemoveAppletConfirmed) {
+        MessageBox.confirm(I18N.DISPLAY.idropLiteCloseConfirmTitle(),
+                I18N.DISPLAY.idropLiteCloseConfirmMessage(), new Listener<MessageBoxEvent>() {
+                    @Override
+                    public void handleEvent(MessageBoxEvent be) {
+                        if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                            // The user confirmed closing the applet.
+                            cmdRemoveAppletConfirmed.execute();
+                        }
+                    }
+                });
+    }
+
+    protected void confirmHide() {
         // Ensure the applet is removed from the DOM when this window is closed.
         contents.removeAll();
 
@@ -258,7 +287,6 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     refreshPath);
             EventBus.getInstance().fireEvent(event);
         }
-
     }
 
     @Override
@@ -339,6 +367,29 @@ public class IDropLiteAppletWindow extends IPlantWindow {
             contents.unmask();
 
             ErrorHandler.post(caught);
+        }
+    }
+
+    /**
+     * A SelectionListener for the Simple Upload and Download buttons, that will implement their own
+     * removeAppletConfirmed actions, called in the common componentSelected method that will prompt the
+     * user before closing the iDrop Lite applet.
+     * 
+     * @author psarando
+     * 
+     */
+    private abstract class SimpleFormSelectionListener extends SelectionListener<ButtonEvent> {
+        protected abstract void removeAppletConfirmed();
+
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            // Selecting this listener's button will remove the Applet, so confirm this action first.
+            promptRemoveApplet(new Command() {
+                @Override
+                public void execute() {
+                    removeAppletConfirmed();
+                }
+            });
         }
     }
 }

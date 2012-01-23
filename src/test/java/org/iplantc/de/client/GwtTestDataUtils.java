@@ -178,21 +178,25 @@ public class GwtTestDataUtils extends GWTTestCase {
 
         actions = DataUtils.getSupportedActions(buildSingleFolderList());
         assertTrue(actions.contains(Action.Delete));
+        assertTrue(actions.contains(Action.Download));
         assertTrue(actions.contains(Action.RenameFolder));
-        assertEquals(2, actions.size());
+        assertEquals(3, actions.size());
 
         actions = DataUtils.getSupportedActions(buildFileFolderList());
         assertTrue(actions.contains(Action.Delete));
-        assertEquals(1, actions.size());
+        assertTrue(actions.contains(Action.Download));
+        assertEquals(2, actions.size());
 
         actions = DataUtils.getSupportedActions(buildMixedPermissionsFilesList());
         assertTrue(actions.contains(Action.Delete));
+        assertTrue(actions.contains(Action.Download));
         assertTrue(actions.contains(Action.View));
-        assertEquals(2, actions.size());
+        assertEquals(3, actions.size());
 
         actions = DataUtils.getSupportedActions(buildReadOnlyFolderList());
         assertTrue(actions.contains(Action.Delete));
-        assertEquals(1, actions.size());
+        assertTrue(actions.contains(Action.Download));
+        assertEquals(2, actions.size());
     }
 
     public void testParseParentEmpty() {

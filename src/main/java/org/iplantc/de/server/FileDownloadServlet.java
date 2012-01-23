@@ -126,8 +126,7 @@ public class FileDownloadServlet extends HttpServlet {
         if (downloadUrl == null) {
             downloadUrl = DiscoveryEnvironmentProperties.getDownloadFileServiceBaseUrl();
         } else {
-            downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + "/" //$NON-NLS-1$
-                    + downloadUrl;
+            downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + downloadUrl;
         }
 
         String address = String.format("%s?user=%s&path=%s&attachment=%s", downloadUrl, user, path, //$NON-NLS-1$
