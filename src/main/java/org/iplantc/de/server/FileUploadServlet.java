@@ -128,6 +128,7 @@ public class FileUploadServlet extends UploadAction {
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
                 jsonResults.put("results", jsonResultsArray);
+
                 throw new UploadActionException(jsonResults.toString());
             }
 
@@ -137,10 +138,12 @@ public class FileUploadServlet extends UploadAction {
             // call the RESTful service and get the results.
             try {
                 DEServiceDispatcher dispatcher = new DEServiceDispatcher();
+
                 dispatcher.init(getServletConfig());
                 dispatcher.setRequest(request);
+
+                LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcher.getServiceData(wrapper);
-                LOG.debug("FileUploadServlet::executeAction - Making service call.");
 
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
@@ -150,6 +153,7 @@ public class FileUploadServlet extends UploadAction {
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
                 jsonResults.put("results", jsonResultsArray);
+
                 throw new UploadActionException(jsonResults.toString());
             }
         }
@@ -159,11 +163,14 @@ public class FileUploadServlet extends UploadAction {
 
             // call the RESTful service and get the results.
             try {
-                DEServiceDispatcher dispatcher = new DEServiceDispatcher();
+                DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher();
+
                 dispatcher.init(getServletConfig());
                 dispatcher.setRequest(request);
+                dispatcher.setForceJsonContentType(true);
+
+                LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcher.getServiceData(wrapper);
-                LOG.debug("FileUploadServlet::invokeService - Making service call.");
 
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
@@ -173,11 +180,13 @@ public class FileUploadServlet extends UploadAction {
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, url, e));
                 jsonResults.put("results", jsonResultsArray);
+
                 throw new UploadActionException(jsonResults.toString());
             }
         }
 
         jsonResults.put("results", jsonResultsArray);
+
         return jsonResults.toString();
     }
 
@@ -216,7 +225,7 @@ public class FileUploadServlet extends UploadAction {
         MultiPartServiceWrapper wrapper = new MultiPartServiceWrapper(MultiPartServiceWrapper.Type.POST,
                 address);
         wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength));
-        wrapper.addPart(idFolder + "/" + filename, "dest");
+        wrapper.addPart(idFolder, "dest");
         wrapper.addPart(user, "user");
         wrapper.addPart(type, "type");
 

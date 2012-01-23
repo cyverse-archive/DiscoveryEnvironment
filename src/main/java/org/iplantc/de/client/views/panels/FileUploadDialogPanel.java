@@ -6,6 +6,7 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
+import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.utils.DataUtils;
@@ -32,6 +33,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HTML;
@@ -340,12 +342,18 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                     if (jsonFileUploadStatus != null) {
                         String action = JsonUtil.getString(jsonFileUploadStatus, "action"); //$NON-NLS-1$
 
-                        if (action.equals("file-upload")) { //$NON-NLS-1$
-                            hdlrUpload.onCompletion(JsonUtil.getString(jsonFileUploadStatus, "label"), //$NON-NLS-1$
-                                    jsonFileUploadStatus.toString());
+                        if (action.equals("upload")) { //$NON-NLS-1$
+                            String path = JsonUtil.getString(jsonFileUploadStatus, File.PATH);
+                            String label = DataUtils.parseNameFromPath(path);
+
+                            jsonFileUploadStatus.put(File.ID, new JSONString(path));
+                            jsonFileUploadStatus.put(File.LABEL, new JSONString(label));
+
+                            hdlrUpload.onCompletion(label, jsonFileUploadStatus.toString());
                         } else if (action.equals("url-upload")) { //$NON-NLS-1$
-                            hdlrUpload.onImportSuccess(JsonUtil.getString(jsonFileUploadStatus, "url"), //$NON-NLS-1$
-                                    jsonFileUploadStatus.toString());
+                            String sourceUrl = JsonUtil.getString(jsonFileUploadStatus, "url"); //$NON-NLS-1$
+
+                            hdlrUpload.onImportSuccess(sourceUrl, jsonFileUploadStatus.toString());
                         }
                     }
                 }
