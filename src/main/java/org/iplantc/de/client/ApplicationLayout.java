@@ -32,6 +32,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
@@ -285,8 +286,17 @@ public class ApplicationLayout extends Viewport {
     }
 
     private class NotificationAllListener implements Listener<BaseEvent> {
+        Component source;
+
+        NotificationAllListener(Menu m) {
+            super();
+            source = m;
+        }
+
         @Override
         public void handleEvent(BaseEvent be) {
+            source.hide();
+
             countNotificationsAll = 0;
             countNotificationsData = 0;
             countNotificationsAnalyses = 0;
@@ -301,8 +311,17 @@ public class ApplicationLayout extends Viewport {
     }
 
     private class NotificationDataListener implements Listener<BaseEvent> {
+        Component source;
+
+        NotificationDataListener(Menu m) {
+            super();
+            source = m;
+        }
+
         @Override
         public void handleEvent(BaseEvent be) {
+            source.hide();
+
             countNotificationsData = 0;
             countNotificationsAll = countNotificationsAnalyses;
 
@@ -315,8 +334,17 @@ public class ApplicationLayout extends Viewport {
     }
 
     private class NotificationAnalysisListener implements Listener<BaseEvent> {
+        Component source;
+
+        NotificationAnalysisListener(Menu m) {
+            super();
+            source = m;
+        }
+
         @Override
         public void handleEvent(BaseEvent be) {
+            source.hide();
+
             countNotificationsAnalyses = 0;
             countNotificationsAll = countNotificationsData;
 
@@ -349,7 +377,7 @@ public class ApplicationLayout extends Viewport {
     }
 
     private Menu buildUserMenu() {
-        Menu userMenu = buildMenu();
+        final Menu userMenu = buildMenu();
 
         userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(),
                 "de_header_menu_hyperlink_hover", "de_header_menu_hyperlink", //$NON-NLS-1$ //$NON-NLS-2$
@@ -357,6 +385,7 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         doLogout();
+                        userMenu.hide();
                     }
                 }, I18N.DISPLAY.logoutToolTipText()));
 
@@ -364,7 +393,7 @@ public class ApplicationLayout extends Viewport {
     }
 
     private Menu buildHelpMenu() {
-        Menu helpMenu = buildMenu();
+        final Menu helpMenu = buildMenu();
         String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
         String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
 
@@ -373,6 +402,7 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         WindowUtil.open(Constants.CLIENT.deHelpFile());
+                        helpMenu.hide();
                     }
                 }));
 
@@ -381,6 +411,7 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         WindowUtil.open(Constants.CLIENT.forumsUrl());
+                        helpMenu.hide();
                     }
                 }));
 
@@ -389,6 +420,7 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         WindowUtil.open(Constants.CLIENT.supportUrl());
+                        helpMenu.hide();
                     }
                 }));
 
@@ -397,6 +429,7 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         displayAboutDe();
+                        helpMenu.hide();
                     }
                 }));
 
@@ -408,11 +441,11 @@ public class ApplicationLayout extends Viewport {
         String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
 
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle,
-                countNotificationsAll, new NotificationAllListener());
+                countNotificationsAll, new NotificationAllListener(notificationMenu));
         lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle,
-                countNotificationsData, new NotificationDataListener());
+                countNotificationsData, new NotificationDataListener(notificationMenu));
         lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
-                countNotificationsAnalyses, new NotificationAnalysisListener());
+                countNotificationsAnalyses, new NotificationAnalysisListener(notificationMenu));
 
         notificationMenu.add(lblNotificationsAll);
         notificationMenu.add(lblNotificationsData);

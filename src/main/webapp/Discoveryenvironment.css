@@ -606,3 +606,21 @@ img.analysis_remove {
 .disabled_app_background {
     background-color: #DCDCDC !important;
   }
+
+.tag {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin: 3px;
+    float: left;
+}
+
+.tag-remove {
+    cursor: pointer;
+    vertical-align: text-top;
+    margin: 5px 3px 3px 3px;
+    background: url('./images/x.png') top no-repeat;
+    position: relative;
+    top: 2px;
+}
