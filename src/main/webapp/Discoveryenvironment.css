@@ -602,3 +602,7 @@ img.analysis_remove {
   -khtml-user-select: text;
   -webkit-user-select: text;
 }
+
+.disabled_app_background {
+    background-color: #DCDCDC !important;
+  }

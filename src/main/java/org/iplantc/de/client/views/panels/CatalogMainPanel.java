@@ -25,6 +25,7 @@ import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -45,6 +46,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.extjs.gxt.ui.client.widget.grid.GridViewConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
@@ -89,6 +91,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         templateService = new TemplateServiceFacade();
 
         initGridListeners();
+        initGridViewConfig();
         initToolBar();
     }
 
@@ -98,6 +101,10 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                     new GridSelectionChangeListener());
         }
 
+    }
+
+    private void initGridViewConfig() {
+        analysisGrid.getView().setViewConfig(new AppGridViewConfig());
     }
 
     /**
@@ -485,12 +492,26 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             bus.fireEvent(e);
         }
     }
+
     private class DeleteMenuItemSelectionListener extends SelectionListener<MenuEvent> {
         @Override
         public void componentSelected(MenuEvent ce) {
             MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.appDeleteWarning(),
                     new DeleteMessageBoxListener());
 
+        }
+    }
+
+    private class AppGridViewConfig extends GridViewConfig {
+        public String getRowStyle(ModelData md, int rowIndex, @SuppressWarnings("rawtypes") ListStore ds) {
+            if (md != null) {
+                Analysis a = (Analysis)md;
+                if (a.isDisabled()) {
+                    return "disabled_app_background";
+                }
+            }
+
+            return "";
         }
     }
 
@@ -533,6 +554,10 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                     b.enable();
                 }
 
+                if (selectedItem.isDisabled()) {
+                    buttons.get(ACTION_ID_RUN).disable();
+                }
+
                 if (!current_category.isPublic()) {
                     for (MenuItem mi : mItems) {
                         mi.enable();
@@ -570,18 +595,24 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 name = model.getName();
             }
 
-            Hyperlink link = new Hyperlink(name, "analysis_name"); //$NON-NLS-1$
-            link.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            if (!model.isDisabled()) {
+                Hyperlink link = new Hyperlink(name, "analysis_name"); //$NON-NLS-1$
+                link.addListener(Events.OnClick, new Listener<BaseEvent>() {
 
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    EventBus bus = EventBus.getInstance();
-                    UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), model.getId());
-                    bus.fireEvent(e);
-                }
-            });
-            link.setWidth(model.getName().length());
-            return link;
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        EventBus bus = EventBus.getInstance();
+                        UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), model.getId());
+                        bus.fireEvent(e);
+                    }
+                });
+                link.setWidth(model.getName().length());
+                return link;
+            } else {
+                name = "&nbsp; <img title ='" + I18N.DISPLAY.appUnavailable()
+                        + "' src='./images/exclamation.png'/>" + name;
+                return name;
+            }
         }
     }
 

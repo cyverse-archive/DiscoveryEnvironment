@@ -1004,4 +1004,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String dataDragDropStatusText();
+
+    /**
+     * Localized text for app unavailable
+     * 
+     * @return @return a string representing the localized text.
+     */
+    String appUnavailable();
 }
