@@ -33,7 +33,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HTML;
@@ -343,13 +342,12 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                         String action = JsonUtil.getString(jsonFileUploadStatus, "action"); //$NON-NLS-1$
 
                         if (action.equals("upload")) { //$NON-NLS-1$
-                            String path = JsonUtil.getString(jsonFileUploadStatus, File.PATH);
-                            String label = DataUtils.parseNameFromPath(path);
+                            JSONObject file = JsonUtil.getObject(jsonFileUploadStatus, "file"); //$NON-NLS-1$
 
-                            jsonFileUploadStatus.put(File.ID, new JSONString(path));
-                            jsonFileUploadStatus.put(File.LABEL, new JSONString(label));
-
-                            hdlrUpload.onCompletion(label, jsonFileUploadStatus.toString());
+                            if (file != null) {
+                                hdlrUpload.onCompletion(JsonUtil.getString(file, File.LABEL),
+                                        file.toString());
+                            }
                         } else if (action.equals("url-upload")) { //$NON-NLS-1$
                             String sourceUrl = JsonUtil.getString(jsonFileUploadStatus, "url"); //$NON-NLS-1$
 

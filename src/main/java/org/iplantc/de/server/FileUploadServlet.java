@@ -158,7 +158,16 @@ public class FileUploadServlet extends UploadAction {
                 LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcher.getServiceData(wrapper);
 
-                jsonResultsArray.add(JSONObject.fromObject(repsonse));
+                // FIXME Don't modify the response once the service is updated to include this info
+                JSONObject jsonResponse = JSONObject.fromObject(repsonse);
+
+                JSONObject file = new JSONObject();
+                file.put("id", jsonResponse.getString("path"));
+                file.put("label", filename);
+
+                jsonResponse.put("file", file);
+
+                jsonResultsArray.add(jsonResponse);
             } catch (Exception e) {
                 LOG.error("invokeService - unable to upload file", e);
                 e.printStackTrace();
@@ -190,14 +199,21 @@ public class FileUploadServlet extends UploadAction {
         dispatcherDataApi.setForceJsonContentType(true);
 
         for (String url : urlItems) {
-            ServiceCallWrapper wrapper = createUrlServiceWrapper(idFolder, user, type, url);
+            filename = url.replaceAll(".*/", "");
+
+            ServiceCallWrapper wrapper = createUrlServiceWrapper(idFolder, user, type, filename, url);
 
             // call the RESTful service and get the results.
             try {
                 LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcherDataApi.getServiceData(wrapper);
 
-                jsonResultsArray.add(JSONObject.fromObject(repsonse));
+                // FIXME Don't modify the response once the service is updated to include this info
+                JSONObject jsonResponse = JSONObject.fromObject(repsonse);
+                jsonResponse.put("label", filename);
+                jsonResponse.put("url", url);
+
+                jsonResultsArray.add(jsonResponse);
             } catch (Exception e) {
                 LOG.error("invokeService - unable to import URL", e);
                 e.printStackTrace();
@@ -258,11 +274,11 @@ public class FileUploadServlet extends UploadAction {
     }
 
     private ServiceCallWrapper createUrlServiceWrapper(String idFolder, String user, String type,
-            String url) {
+            String filename, String url) {
         String address = DiscoveryEnvironmentProperties.getUrlImportServiceBaseUrl();
 
         JSONObject body = new JSONObject();
-        body.put("dest", idFolder + "/" + url.replaceAll(".*/", ""));
+        body.put("dest", idFolder + "/" + filename);
         body.put("address", url);
 
         return new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body.toString());
