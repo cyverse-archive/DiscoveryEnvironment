@@ -609,7 +609,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 link.setWidth(model.getName().length());
                 return link;
             } else {
-                name = "&nbsp; <img title ='" + I18N.DISPLAY.appUnavailable()
+                name = "<img title ='"
+                        + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
                         + "' src='./images/exclamation.png'/>" + name;
                 return name;
             }
