@@ -611,7 +611,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             } else {
                 name = "<img title ='"
                         + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
-                        + "' src='./images/exclamation.png'/>" + name;
+                        + "' src='./images/exclamation.png'/>&nbsp;" + name;
                 return name;
             }
         }
