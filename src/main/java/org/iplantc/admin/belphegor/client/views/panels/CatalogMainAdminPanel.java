@@ -231,7 +231,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
             if (model.isDisabled()) {
                 name = "<img title ='"
                         + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
-                        + "' src='./images/exclamation.png'/>" + name;
+                        + "' src='./images/exclamation.png'/>&nbsp;" + name;
             }
             Hyperlink link = new Hyperlink(name, "analysis_name"); //$NON-NLS-1$
             link.addListener(Events.OnClick, new AppNameClickHandler(model));
