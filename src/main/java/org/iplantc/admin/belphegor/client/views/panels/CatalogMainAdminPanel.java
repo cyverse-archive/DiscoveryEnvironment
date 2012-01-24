@@ -227,7 +227,13 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
         @Override
         public Object render(final Analysis model, String property, ColumnData config, int rowIndex,
                 int colIndex, ListStore<Analysis> store, Grid<Analysis> grid) {
-            Hyperlink link = new Hyperlink(model.getName(), "analysis_name"); //$NON-NLS-1$
+            String name = model.getName();
+            if (model.isDisabled()) {
+                name = "<img title ='"
+                        + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
+                        + "' src='./images/exclamation.png'/>" + name;
+            }
+            Hyperlink link = new Hyperlink(name, "analysis_name"); //$NON-NLS-1$
             link.addListener(Events.OnClick, new AppNameClickHandler(model));
             link.setWidth(model.getName().length());
             return link;
