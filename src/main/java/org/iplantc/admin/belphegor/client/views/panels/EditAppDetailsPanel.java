@@ -145,7 +145,8 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         form.add(descField, formData);
 
-        form.add(new Label(I18N.DISPLAY.wikiUrlLabel(Constants.CLIENT.publishDocumentationUrl()) + ":")); //$NON-NLS-1$
+        form.add(new Label(
+                "<span class='required_marker'>*</span> " + I18N.DISPLAY.wikiUrlLabel(Constants.CLIENT.publishDocumentationUrl()) + ":")); //$NON-NLS-1$
         form.add(buildUrlField(), formData);
     }
 
@@ -250,7 +251,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private VerticalPanel buildUrlField() {
-        urlField = buildTextField(null, true, null, WIKI_URL, new Validator() {
+        urlField = buildTextField(null, false, null, WIKI_URL, new Validator() {
             @Override
             public String validate(Field<?> field, String value) {
                 // make sure the URL protocol is http or https, has a valid iPlant host name, and has at
