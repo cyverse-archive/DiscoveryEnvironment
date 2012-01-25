@@ -119,7 +119,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         grid.addPlugin(sm);
         grid.getSelectionModel().addSelectionChangedListener(new MetadataSelectionChangeListener());
         grid.addListener(Events.BeforeEdit, new GridBeforeEditListener());
-        grid.addListener(Events.AfterEdit, new GridAfterEditListener());
+        // grid.addListener(Events.AfterEdit, new GridAfterEditListener());
         add(grid);
         layout();
     }
