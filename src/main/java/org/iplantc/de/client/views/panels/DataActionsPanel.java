@@ -5,10 +5,8 @@ import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
-import org.iplantc.core.uidiskresource.client.models.DiskResourceMetadata;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
@@ -19,20 +17,19 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.views.dialogs.DiskResourceMetadataEditorDialogOkBtnListener;
+import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DataActionsPanel extends ContentPanel {
     private List<DiskResource> resources;
@@ -165,25 +162,15 @@ public class DataActionsPanel extends ContentPanel {
 
         @Override
         public void handleEvent(ComponentEvent be) {
-            Dialog d = new Dialog();
-            d.setButtons(Dialog.OKCANCEL);
-            d.setHideOnButtonClick(true);
-            d.setHeading("Metadata");
-            final MetadataEditorPanel mep = new MetadataEditorPanel(resources.get(0));
-            d.add(mep);
-            Button ok_btn = (Button)d.getButtonBar().getItemByItemId(Dialog.OK);
-            ok_btn.addSelectionListener(new SelectionListener<ButtonEvent>() {
+            DiskResource dr = resources.get(0);
+            final DiskresourceMetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
+            DiskResourceMetadataEditorDialogOkBtnListener listener = new DiskResourceMetadataEditorDialogOkBtnListener(
+                    resources);
+            MetadataEditorDialog d = new MetadataEditorDialog(
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep, listener);
 
-                @Override
-                public void componentSelected(ButtonEvent ce) {
-                    for (DiskResourceMetadata r : mep.getModifiedRecords()) {
-                        FolderServiceFacade facade = new FolderServiceFacade();
-                        facade.setMetaData(resources.get(0), r.toJson(), new UpdateMetadatCallback());
-                    }
-
-                }
-            });
             d.setSize(500, 300);
+            d.setResizable(false);
             d.show();
         }
     }
@@ -191,22 +178,6 @@ public class DataActionsPanel extends ContentPanel {
     private void showErrorMsg() {
         MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(), I18N.DISPLAY.permissionErrorMessage(),
                 null);
-    }
-
-    private class UpdateMetadatCallback implements AsyncCallback<String> {
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught);
-
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            // TODO Auto-generated method stub
-
-        }
-
     }
 
     private class DeleteListenerImpl implements Listener<ComponentEvent> {

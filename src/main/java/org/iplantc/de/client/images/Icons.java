@@ -1,6 +1,5 @@
 package org.iplantc.de.client.images;
 
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -254,5 +253,13 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
      */
     @Source("fav_remove.png")
     ImageResource removeFav();
+
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("comments.png")
+    ImageResource metadata();
 
 }

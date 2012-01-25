@@ -5,7 +5,10 @@ package org.iplantc.de.client.views.panels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -17,6 +20,9 @@ import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderServiceFacade;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.GridEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -44,7 +50,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  *         A panel to display and edit DiskResource Metadata
  * 
  */
-public class MetadataEditorPanel extends ContentPanel {
+public class DiskresourceMetadataEditorPanel extends ContentPanel {
 
     private static final String ID_DELETE = "idDelete";
     private static final String ID_ADD = "idAdd";
@@ -52,9 +58,11 @@ public class MetadataEditorPanel extends ContentPanel {
     private EditorGrid<DiskResourceMetadata> grid;
     private ToolBar toolbar;
     private CheckBoxSelectionModel<DiskResourceMetadata> sm;
+    private Set<String> toDelete;
 
-    public MetadataEditorPanel(DiskResource resource) {
+    public DiskresourceMetadataEditorPanel(DiskResource resource) {
         this.resource = resource;
+        toDelete = new HashSet<String>();
         setSize(500, 300);
         setHeaderVisible(false);
         setLayout(new FitLayout());
@@ -62,8 +70,11 @@ public class MetadataEditorPanel extends ContentPanel {
         retrieveMetaData();
     }
 
-    public List<DiskResourceMetadata> getModifiedRecords() {
-        return grid.getStore().getModels();
+    public HashMap<String, Object> getRecordsToUpdate() {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("add", grid.getStore().getModels());
+        map.put("delete", toDelete);
+        return map;
     }
 
     private void retrieveMetaData() {
@@ -79,11 +90,13 @@ public class MetadataEditorPanel extends ContentPanel {
                 new SelectionListener<ButtonEvent>() {
                     @Override
                     public void componentSelected(ButtonEvent ce) {
-                        DiskResourceMetadata metadata = new DiskResourceMetadata("attr", "value", "unit");
+                        // to distinguish new rows, id is set to null
+                        DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value",
+                                "unit");
                         if (grid != null) {
                             grid.stopEditing();
                             grid.getStore().insert(metadata, 0);
-                            grid.startEditing(grid.getStore().indexOf(metadata), 0);
+                            grid.startEditing(grid.getStore().indexOf(metadata), 1);
                         }
                     }
                 });
@@ -122,19 +135,8 @@ public class MetadataEditorPanel extends ContentPanel {
         grid.setAutoExpandColumn(DiskResourceMetadata.ATTRIBUTE);
         grid.setSelectionModel(sm);
         grid.addPlugin(sm);
-        grid.getSelectionModel().addSelectionChangedListener(
-                new SelectionChangedListener<DiskResourceMetadata>() {
-
-                    @Override
-                    public void selectionChanged(SelectionChangedEvent<DiskResourceMetadata> se) {
-                        if (se.getSelection().size() > 0) {
-                            toolbar.getItemByItemId(ID_DELETE).enable();
-                        } else {
-                            toolbar.getItemByItemId(ID_DELETE).disable();
-                        }
-
-                    }
-                });
+        grid.getSelectionModel().addSelectionChangedListener(new MetadataSelectionChangeListener());
+        grid.addListener(Events.BeforeEdit, new GridBeforeEditListener());
         add(grid);
         layout();
     }
@@ -161,6 +163,32 @@ public class MetadataEditorPanel extends ContentPanel {
         return new CellEditor(text);
     }
 
+    @SuppressWarnings("rawtypes")
+    private class GridBeforeEditListener implements Listener<GridEvent> {
+        @Override
+        public void handleEvent(GridEvent be) {
+            if (be.getProperty().equals(DiskResourceMetadata.ATTRIBUTE)) {
+                // cache attributes that are going to be edited
+                Object o = be.getModel().get(DiskResourceMetadata.ID);
+                if (o != null && !o.toString().isEmpty()) {
+                    toDelete.add(o.toString());
+                }
+            }
+        }
+    }
+
+    private class MetadataSelectionChangeListener extends SelectionChangedListener<DiskResourceMetadata> {
+        @Override
+        public void selectionChanged(SelectionChangedEvent<DiskResourceMetadata> se) {
+            if (se.getSelection().size() > 0) {
+                toolbar.getItemByItemId(ID_DELETE).enable();
+            } else {
+                toolbar.getItemByItemId(ID_DELETE).disable();
+            }
+
+        }
+    }
+
     private class RetrieveMetadataCallback implements AsyncCallback<String> {
 
         @Override
@@ -177,8 +205,8 @@ public class MetadataEditorPanel extends ContentPanel {
                 JsArray<JsDiskResourceMetaData> jsmetadata = JsonUtil.asArrayOf(arr.toString());
                 for (int i = 0; i < jsmetadata.length(); i++) {
                     DiskResourceMetadata metadata = new DiskResourceMetadata(
-                            jsmetadata.get(i).getAttr(), jsmetadata.get(i).getVal(), jsmetadata.get(i)
-                                    .getUnit());
+                            jsmetadata.get(i).getAttr(), jsmetadata.get(i).getAttr(), jsmetadata.get(i)
+                                    .getVal(), jsmetadata.get(i).getUnit());
                     metadata_list.add(metadata);
                 }
             }

@@ -335,7 +335,7 @@ public class FolderServiceFacade {
      * @param body metadata in json format
      * @param callback execute when RPC call complete
      */
-    public void setMetaData(DiskResource dr, JSONObject body, AsyncCallback<String> callback) {
+    public void setMetaData(DiskResource dr, String body, AsyncCallback<String> callback) {
         if (dr instanceof Folder) {
             setFolderMetaData(dr.getId(), body, callback);
         } else {
@@ -376,11 +376,11 @@ public class FolderServiceFacade {
      * @param body metadata in json format
      * @param callback execute when RPC call complete
      */
-    private void setFileMetaData(String path, JSONObject body, AsyncCallback<String> callback) {
+    private void setFileMetaData(String path, String body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
-                + ".file-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+                + ".file-metadata-batch" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-                body.toString());
+                body);
         callService(callback, wrapper);
     }
 
@@ -391,11 +391,11 @@ public class FolderServiceFacade {
      * @param body metadata in json format
      * @param callback execute when RPC call complete
      */
-    private void setFolderMetaData(String path, JSONObject body, AsyncCallback<String> callback) {
+    private void setFolderMetaData(String path, String body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
-                + ".folder-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+                + ".folder-metadata-batch" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-                body.toString());
+                body);
         callService(callback, wrapper);
     }
 

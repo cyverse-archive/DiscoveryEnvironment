@@ -28,7 +28,10 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.views.dialogs.DiskResourceMetadataEditorDialogOkBtnListener;
+import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
+import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
@@ -90,6 +93,7 @@ public class MyDataGrid extends Grid<DiskResource> {
     private MenuItem itemViewTree;
     private MenuItem itemDownloadResource;
     private MenuItem itemDeleteResource;
+    private MenuItem itemMetaData;
 
     private final DataViewContextExecutor executor;
     private final Component maskingParent;
@@ -178,13 +182,18 @@ public class MyDataGrid extends Grid<DiskResource> {
         itemDeleteResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
         itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
 
+        itemMetaData = new MenuItem();
+        itemMetaData.setText(I18N.DISPLAY.metadata());
+        itemMetaData.setIcon(AbstractImagePrototype.create(Resources.ICONS.metadata()));
+        itemMetaData.addSelectionListener(new MetadataListenerImpl());
+
         actionMenu.add(itemAddFolder);
         actionMenu.add(itemRenameResource);
         actionMenu.add(itemViewResource);
         actionMenu.add(itemViewTree);
         actionMenu.add(itemDownloadResource);
         actionMenu.add(itemDeleteResource);
-
+        actionMenu.add(itemMetaData);
         return actionMenu;
     }
 
@@ -253,6 +262,10 @@ public class MyDataGrid extends Grid<DiskResource> {
                         itemDeleteResource.setIcon(AbstractImagePrototype.create(delIcon));
                         itemDeleteResource.enable();
                         itemDeleteResource.show();
+                        break;
+                    case Metadata:
+                        itemMetaData.enable();
+                        itemMetaData.show();
                         break;
                 }
             }
@@ -398,8 +411,6 @@ public class MyDataGrid extends Grid<DiskResource> {
         return createInstanceImpl(currentFolderId, tag, controller, maskingParent);
     }
 
-
-
     /**
      * get root folder id
      * 
@@ -536,6 +547,22 @@ public class MyDataGrid extends Grid<DiskResource> {
             } else {
                 showErrorMsg();
             }
+        }
+    }
+
+    private class MetadataListenerImpl extends SelectionListener<MenuEvent> {
+        @Override
+        public void componentSelected(MenuEvent ce) {
+            DiskResource dr = getSelectionModel().getSelectedItems().get(0);
+            final DiskresourceMetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
+            DiskResourceMetadataEditorDialogOkBtnListener listener = new DiskResourceMetadataEditorDialogOkBtnListener(
+                    getSelectionModel().getSelectedItems());
+            MetadataEditorDialog d = new MetadataEditorDialog(
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep, listener);
+
+            d.setSize(500, 300);
+            d.setResizable(false);
+            d.show();
         }
     }
 
