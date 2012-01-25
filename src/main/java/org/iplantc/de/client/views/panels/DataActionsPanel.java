@@ -17,7 +17,6 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
-import org.iplantc.de.client.views.dialogs.DiskResourceMetadataEditorDialogOkBtnListener;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
@@ -163,11 +162,10 @@ public class DataActionsPanel extends ContentPanel {
         @Override
         public void handleEvent(ComponentEvent be) {
             DiskResource dr = resources.get(0);
-            final DiskresourceMetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
-            DiskResourceMetadataEditorDialogOkBtnListener listener = new DiskResourceMetadataEditorDialogOkBtnListener(
-                    resources);
+            final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
+
             MetadataEditorDialog d = new MetadataEditorDialog(
-                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep, listener);
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep);
 
             d.setSize(500, 300);
             d.setResizable(false);

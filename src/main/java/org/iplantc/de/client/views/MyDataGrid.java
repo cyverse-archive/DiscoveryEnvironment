@@ -28,10 +28,10 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
-import org.iplantc.de.client.views.dialogs.DiskResourceMetadataEditorDialogOkBtnListener;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
 import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
+import org.iplantc.de.client.views.panels.MetadataEditorPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
@@ -554,11 +554,10 @@ public class MyDataGrid extends Grid<DiskResource> {
         @Override
         public void componentSelected(MenuEvent ce) {
             DiskResource dr = getSelectionModel().getSelectedItems().get(0);
-            final DiskresourceMetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
-            DiskResourceMetadataEditorDialogOkBtnListener listener = new DiskResourceMetadataEditorDialogOkBtnListener(
-                    getSelectionModel().getSelectedItems());
+            final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
+
             MetadataEditorDialog d = new MetadataEditorDialog(
-                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep, listener);
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep);
 
             d.setSize(500, 300);
             d.setResizable(false);

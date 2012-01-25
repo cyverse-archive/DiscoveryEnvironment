@@ -17,7 +17,9 @@ import org.iplantc.core.uidiskresource.client.models.DiskResourceMetadata;
 import org.iplantc.core.uidiskresource.client.models.JsDiskResourceMetaData;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.services.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -27,15 +29,16 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.form.Validator;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
-import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
@@ -50,7 +53,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  *         A panel to display and edit DiskResource Metadata
  * 
  */
-public class DiskresourceMetadataEditorPanel extends ContentPanel {
+public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     private static final String ID_DELETE = "idDelete";
     private static final String ID_ADD = "idAdd";
@@ -59,25 +62,24 @@ public class DiskresourceMetadataEditorPanel extends ContentPanel {
     private ToolBar toolbar;
     private CheckBoxSelectionModel<DiskResourceMetadata> sm;
     private Set<String> toDelete;
+    private int initial_count;
 
     public DiskresourceMetadataEditorPanel(DiskResource resource) {
         this.resource = resource;
         toDelete = new HashSet<String>();
-        setSize(500, 300);
-        setHeaderVisible(false);
-        setLayout(new FitLayout());
-        initToolbar();
         retrieveMetaData();
+        initToolbar();
     }
 
-    public HashMap<String, Object> getRecordsToUpdate() {
+    private HashMap<String, Object> getRecordsToUpdate() {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("add", grid.getStore().getModels());
         map.put("delete", toDelete);
         return map;
     }
 
-    private void retrieveMetaData() {
+    @Override
+    protected void retrieveMetaData() {
         FolderServiceFacade facade = new FolderServiceFacade();
         facade.getMetaData(resource, new RetrieveMetadataCallback());
     }
@@ -86,32 +88,12 @@ public class DiskresourceMetadataEditorPanel extends ContentPanel {
         toolbar = new ToolBar();
         setTopComponent(toolbar);
         Button add = buildButton(ID_ADD, I18N.DISPLAY.add(),
-                AbstractImagePrototype.create(Resources.ICONS.add()),
-                new SelectionListener<ButtonEvent>() {
-                    @Override
-                    public void componentSelected(ButtonEvent ce) {
-                        // to distinguish new rows, id is set to null
-                        DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value",
-                                "unit");
-                        if (grid != null) {
-                            grid.stopEditing();
-                            grid.getStore().insert(metadata, 0);
-                            grid.startEditing(grid.getStore().indexOf(metadata), 1);
-                        }
-                    }
-                });
+                AbstractImagePrototype.create(Resources.ICONS.add()), new AddButtonSelectionListener());
         toolbar.add(add);
 
         Button delete = buildButton(ID_DELETE, I18N.DISPLAY.delete(),
                 AbstractImagePrototype.create(Resources.ICONS.cancel()),
-                new SelectionListener<ButtonEvent>() {
-                    @Override
-                    public void componentSelected(ButtonEvent ce) {
-                        for (DiskResourceMetadata md : sm.getSelectedItems()) {
-                            grid.getStore().remove(md);
-                        }
-                    }
-                });
+                new DeleteButtonSelectionListener());
         delete.setEnabled(false);
         toolbar.add(delete);
     }
@@ -137,6 +119,7 @@ public class DiskresourceMetadataEditorPanel extends ContentPanel {
         grid.addPlugin(sm);
         grid.getSelectionModel().addSelectionChangedListener(new MetadataSelectionChangeListener());
         grid.addListener(Events.BeforeEdit, new GridBeforeEditListener());
+        grid.addListener(Events.AfterEdit, new GridAfterEditListener());
         add(grid);
         layout();
     }
@@ -163,19 +146,90 @@ public class DiskresourceMetadataEditorPanel extends ContentPanel {
         return new CellEditor(text);
     }
 
+    private CellEditor buildAttributeCellEditor(boolean allowBlank) {
+        TextField<String> text = new TextField<String>();
+        text.setAllowBlank(allowBlank);
+        text.setValidator(new Validator() {
+
+            @Override
+            public String validate(Field<?> field, String value) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        });
+
+        return new CellEditor(text);
+    }
+
+    private final class DeleteButtonSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            if (DataUtils.isMetadtaUpdatable(resource)) {
+                for (DiskResourceMetadata md : sm.getSelectedItems()) {
+                    toDelete.add(md.getId());
+                    grid.getStore().remove(md);
+                }
+            } else {
+                MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
+                        I18N.DISPLAY.permissionErrorMessage(), null);
+            }
+        }
+    }
+
+    private class AddButtonSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            // to distinguish new rows, id is set to null
+            if (DataUtils.isMetadtaUpdatable(resource)) {
+                DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value", "unit");
+                if (grid != null) {
+                    grid.stopEditing();
+                    grid.getStore().insert(metadata, 0);
+                    grid.startEditing(grid.getStore().indexOf(metadata), 1);
+                }
+            } else {
+                MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
+                        I18N.DISPLAY.permissionErrorMessage(), null);
+            }
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     private class GridBeforeEditListener implements Listener<GridEvent> {
         @Override
         public void handleEvent(GridEvent be) {
             if (be.getProperty().equals(DiskResourceMetadata.ATTRIBUTE)) {
                 // cache attributes that are going to be edited
-                Object o = be.getModel().get(DiskResourceMetadata.ID);
+                Object o = be.getModel();
                 if (o != null && !o.toString().isEmpty()) {
                     toDelete.add(o.toString());
                 }
             }
         }
     }
+
+    // @SuppressWarnings("rawtypes")
+    // private class GridAfterEditListener implements Listener<GridEvent> {
+    // @Override
+    // public void handleEvent(GridEvent be) {
+    // if (be.getProperty().equals(DiskResourceMetadata.ATTRIBUTE)) {
+    // // cache attributes that are going to be edited
+    // DiskResourceMetadata o = (DiskResourceMetadata)be.getModel();
+    // for (DiskResourceMetadata drmd : grid.getStore().getModels()) {
+    // if (drmd.equals(o)) {
+    // continue;
+    // } else {
+    // if (drmd.getAttribute().equals(o.getAttribute())) {
+    // grid.stopEditing();
+    // ColumnConfig c = grid.getColumnModel().getColumn(be.getColIndex());
+    //
+    //
+    // }
+    // }
+    // }
+    // }
+    // }
+    // }
 
     private class MetadataSelectionChangeListener extends SelectionChangedListener<DiskResourceMetadata> {
         @Override
@@ -212,8 +266,32 @@ public class DiskresourceMetadataEditorPanel extends ContentPanel {
             }
 
             initGrid(metadata_list);
+            initial_count = metadata_list.size();
 
         }
+    }
+
+    @Override
+    public void UpdateMetadata() {
+        JSONArray arr = new JSONArray();
+        FolderServiceFacade facade = new FolderServiceFacade();
+        int i = 0;
+        @SuppressWarnings("unchecked")
+        List<DiskResourceMetadata> metadatas = (List<DiskResourceMetadata>)getRecordsToUpdate().get(
+                "add");
+        for (DiskResourceMetadata r : metadatas) {
+            arr.set(i++, r.toJson());
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("avus", arr);
+        facade.setMetaData(resource, obj.toString(), new DiskResourceMetadataUpdateCallback());
+
+    }
+
+    @Override
+    public boolean isDirty() {
+        return initial_count != grid.getStore().getCount() || !toDelete.isEmpty()
+                || grid.getStore().getModifiedRecords().size() > 0;
     }
 
 }

@@ -409,4 +409,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String fileReadable(String nameList);
+
+    /**
+     * Error message displayed when metadata update service call fails
+     * 
+     * @return localized error string.
+     */
+    String metadataUpdateFailed();
 }

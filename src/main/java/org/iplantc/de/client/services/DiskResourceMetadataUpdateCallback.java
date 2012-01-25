@@ -1,35 +1,68 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONObject;
 
+/**
+ * 
+ * 
+ * @author sriram
+ * 
+ */
 public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallback {
+
+    public static enum TYPE {
+        FILE, FOLDER
+    };
+
+    private TYPE type;
 
     public DiskResourceMetadataUpdateCallback() {
     }
 
     @Override
     protected ActionType getActionType() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     protected JSONObject buildPayload(JSONObject jsonResult) {
-        // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onSuccess(String result) {
+        // do nothing intentionally
     }
 
     @Override
     protected String getErrorMessageDefault() {
-        // TODO Auto-generated method stub
-        return null;
+        return I18N.ERROR.metadataUpdateFailed();
     }
 
     @Override
     protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
-        // TODO Auto-generated method stub
-        return null;
+        if (type.equals(TYPE.FILE)) {
+            return getErrorMessageForFiles(code,
+                    DataUtils.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
+        } else {
+            return getErrorMessageForFolders(code,
+                    DataUtils.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
+        }
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
+    }
+
+    public TYPE getType() {
+        return type;
     }
 }

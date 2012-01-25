@@ -335,10 +335,12 @@ public class FolderServiceFacade {
      * @param body metadata in json format
      * @param callback execute when RPC call complete
      */
-    public void setMetaData(DiskResource dr, String body, AsyncCallback<String> callback) {
+    public void setMetaData(DiskResource dr, String body, DiskResourceMetadataUpdateCallback callback) {
         if (dr instanceof Folder) {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FOLDER);
             setFolderMetaData(dr.getId(), body, callback);
         } else {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FILE);
             setFileMetaData(dr.getId(), body, callback);
         }
     }
