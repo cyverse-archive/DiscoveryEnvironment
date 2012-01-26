@@ -11,6 +11,7 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
+import org.iplantc.core.uicommons.client.util.DateParser;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
@@ -104,17 +105,19 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
             switch (enumStatus) {
                 case COMPLETED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
-                            JsonUtil.getString(payload, "resultfolderid"), payload.get("enddate")); //$NON-NLS-1$
+                            JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "enddate"))); //$NON-NLS-1$
                     break;
 
                 case FAILED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
-                            JsonUtil.getString(payload, "resultfolderid"), payload.get("enddate")); //$NON-NLS-1$
+                            JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "enddate"))); //$NON-NLS-1$
                     break;
 
                 case RUNNING:
-                    updateRunExecStatus(
-                            JsonUtil.getString(payload, "id"), enumStatus.toString(), payload.get("startdate")); //$NON-NLS-1$
+                    updateRunExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
                     break;
 
                 default:
@@ -131,7 +134,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     }
 
     private void sort() {
-        getStore().sort("startdate", SortDir.DESC);
+        getStore().sort("startdate", SortDir.DESC); //$NON-NLS-1$
     }
 
     private void updateExecStatus(String id, String status) {
@@ -150,26 +153,26 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         return XTemplate.create(tmpl);
     }
 
-    private void updateEndExecStatus(String id, String status, String resultfolderid, JSONValue enddate) {
+    private void updateEndExecStatus(String id, String status, String resultfolderid, Date enddate) {
         AnalysisExecution ae = getStore().findModel("id", id); //$NON-NLS-1$
 
         if (ae != null) {
             ae.setStatus(status);
             if (enddate != null) {
-                ae.setEndDate(enddate.toString());
+                ae.setEndDate(enddate);
             }
             ae.setResultFolderId(resultfolderid);
             getStore().update(ae);
         }
     }
 
-    private void updateRunExecStatus(String id, String status, JSONValue startdate) {
+    private void updateRunExecStatus(String id, String status, Date startdate) {
         AnalysisExecution ae = getStore().findModel("id", id); //$NON-NLS-1$
 
         if (ae != null) {
             ae.setStatus(status);
             if (startdate != null) {
-                ae.setStartDate(startdate.toString());
+                ae.setStartDate(startdate);
             }
             getStore().update(ae);
         }
@@ -213,13 +216,15 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         expander.setMenuDisabled(true);
 
         ColumnConfig name = new ColumnConfig("name", I18N.DISPLAY.name(), 175); //$NON-NLS-1$
-        ColumnConfig analysisname = new ColumnConfig("analysis_name", I18N.DISPLAY.appName(), 250); //$NON-NLS-1$ //$NON-NLS-2$
+        ColumnConfig analysisname = new ColumnConfig("analysis_name", I18N.DISPLAY.appName(), 250); //$NON-NLS-1$
         ColumnConfig start = new ColumnConfig("startdate", I18N.DISPLAY.startDate(), 150); //$NON-NLS-1$
         ColumnConfig end = new ColumnConfig("enddate", I18N.DISPLAY.endDate(), 150); //$NON-NLS-1$
         ColumnConfig status = new ColumnConfig("status", I18N.DISPLAY.status(), 100); //$NON-NLS-1$
 
-        start.setRenderer(new StartDateCellRenderer());
-        end.setRenderer(new EndDateCellRenderer());
+        DateTimeFormat format = DateTimeFormat
+                .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
+        start.setDateTimeFormat(format);
+        end.setDateTimeFormat(format);
         analysisname.setRenderer(new AppNameCellRenderer());
 
         List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
@@ -304,46 +309,13 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
             }
         }
     }
-
-    public static String formatTime(String timeStamp) {
-        if (timeStamp != null && !timeStamp.isEmpty()) {
-            DateTimeFormat formatter = DateTimeFormat
-                    .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
-            return formatter.format(new Date(Long.parseLong(timeStamp)));
-        } else {
-            return "";
-        }
-
-    }
-}
-
-class StartDateCellRenderer implements GridCellRenderer<AnalysisExecution> {
-
-    @Override
-    public Object render(AnalysisExecution model, String property, ColumnData config, int rowIndex,
-            int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-
-        String timeStamp = model.getStartDate();
-        return MyAnalysesGrid.formatTime(timeStamp);
-    }
-}
-
-class EndDateCellRenderer implements GridCellRenderer<AnalysisExecution> {
-
-    @Override
-    public Object render(AnalysisExecution model, String property, ColumnData config, int rowIndex,
-            int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-        String timeStamp = model.getEndData();
-        return MyAnalysesGrid.formatTime(timeStamp);
-    }
-
 }
 
 class AppNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
     @Override
     public Object render(final AnalysisExecution model, String property, ColumnData config,
             int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-        Hyperlink link = new Hyperlink(model.getAnalysisName(), "analysis_name");
+        Hyperlink link = new Hyperlink(model.getAnalysisName(), "analysis_name"); //$NON-NLS-1$
         link.addListener(Events.OnClick, new Listener<BaseEvent>() {
 
             @Override
