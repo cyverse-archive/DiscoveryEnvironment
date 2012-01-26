@@ -6,6 +6,7 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
+import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.utils.DataUtils;
@@ -340,12 +341,17 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                     if (jsonFileUploadStatus != null) {
                         String action = JsonUtil.getString(jsonFileUploadStatus, "action"); //$NON-NLS-1$
 
-                        if (action.equals("file-upload")) { //$NON-NLS-1$
-                            hdlrUpload.onCompletion(JsonUtil.getString(jsonFileUploadStatus, "label"), //$NON-NLS-1$
-                                    jsonFileUploadStatus.toString());
+                        if (action.equals("upload")) { //$NON-NLS-1$
+                            JSONObject file = JsonUtil.getObject(jsonFileUploadStatus, "file"); //$NON-NLS-1$
+
+                            if (file != null) {
+                                hdlrUpload.onCompletion(JsonUtil.getString(file, File.LABEL),
+                                        file.toString());
+                            }
                         } else if (action.equals("url-upload")) { //$NON-NLS-1$
-                            hdlrUpload.onImportSuccess(JsonUtil.getString(jsonFileUploadStatus, "url"), //$NON-NLS-1$
-                                    jsonFileUploadStatus.toString());
+                            String sourceUrl = JsonUtil.getString(jsonFileUploadStatus, "url"); //$NON-NLS-1$
+
+                            hdlrUpload.onImportSuccess(sourceUrl, jsonFileUploadStatus.toString());
                         }
                     }
                 }

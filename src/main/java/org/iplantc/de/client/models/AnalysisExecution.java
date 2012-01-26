@@ -1,6 +1,9 @@
 package org.iplantc.de.client.models;
 
+import java.util.Date;
+
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.util.DateParser;
 
 import com.google.gwt.json.client.JSONObject;
 
@@ -22,15 +25,16 @@ public class AnalysisExecution extends DEBaseModelData {
      */
     public AnalysisExecution(JsAnalysisExecution exec) {
         super(exec.getId(), exec.getName());
-        set("startdate", exec.getStartDate()); //$NON-NLS-1$
-        set("enddate", exec.getEndDate()); //$NON-NLS-1$
-        set("analysis_id", exec.getAnalysisId()); //$NON-NLS-1$
-        set("analysis_name", exec.getAnalysisName()); //$NON-NLS-1$
-        set("analysis_details", exec.getAnalysisDetails()); //$NON-NLS-1$
-        set("status", exec.getStatus()); //$NON-NLS-1$
-        set("description", JsonUtil.formatString(exec.getDescription())); //$NON-NLS-1$
-        set("resultfolderid", exec.getResultFolderId()); //$NON-NLS-1$
-        set("wiki_url", exec.getWikiUrl());//$NON-NLS-1$
+
+        setStartDate(DateParser.parseDate(exec.getStartDate()));
+        setEndDate(DateParser.parseDate(exec.getEndDate()));
+        setAnalysisId(exec.getAnalysisId());
+        setAnalysisName(exec.getAnalysisName());
+        setAnalysisDetails(exec.getAnalysisDetails());
+        setStatus(exec.getStatus());
+        setDescription(JsonUtil.formatString(exec.getDescription()));
+        setResultFolderId(exec.getResultFolderId());
+        setWikiUrl(exec.getWikiUrl());
     }
 
     /**
@@ -41,17 +45,16 @@ public class AnalysisExecution extends DEBaseModelData {
     }
 
     public AnalysisExecution(JSONObject payload) {
-        setStartDate(JsonUtil.trim(payload.get("startdate").toString())); //$NON-NLS-1$
-        setEndDate(JsonUtil.trim(payload.get("enddate").toString())); //$NON-NLS-1$
         setId(JsonUtil.getString(payload, "id")); //$NON-NLS-1$
         setName(JsonUtil.getString(payload, "name")); //$NON-NLS-1$
         setAnalysisId(JsonUtil.getString(payload, "analysis_id")); //$NON-NLS-1$
         setAnalysisName(JsonUtil.getString(payload, "analysis_name")); //$NON-NLS-1$
         setAnalysisDetails(JsonUtil.getString(payload, "analysis_details")); //$NON-NLS-1$
-        setEndDate(JsonUtil.getString(payload, "enddate")); //$NON-NLS-1$
+        setStartDate(DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
+        setEndDate(DateParser.parseDate(JsonUtil.getString(payload, "enddate"))); //$NON-NLS-1$
         setStatus(JsonUtil.getString(payload, "status")); //$NON-NLS-1$
         setResultFolderId(JsonUtil.getString(payload, "resultfolderid")); //$NON-NLS-1$
-        setWikiUrl(JsonUtil.getString(payload, "wiki_url"));
+        setWikiUrl(JsonUtil.getString(payload, "wiki_url")); //$NON-NLS-1$
     }
 
     public void setWikiUrl(String url) {
@@ -62,12 +65,12 @@ public class AnalysisExecution extends DEBaseModelData {
         return get("resultfolderid").toString(); //$NON-NLS-1$
     }
 
-    public String getStartDate() {
-        return get("startdate").toString(); //$NON-NLS-1$
+    public Date getStartDate() {
+        return get("startdate"); //$NON-NLS-1$
     }
 
-    public String getEndData() {
-        return get("enddate").toString(); //$NON-NLS-1$
+    public Date getEndDate() {
+        return get("enddate"); //$NON-NLS-1$
     }
 
     public String getAnalysisId() {
@@ -90,11 +93,11 @@ public class AnalysisExecution extends DEBaseModelData {
         return get("description").toString(); //$NON-NLS-1$
     }
 
-    public void setStartDate(String startdata) {
-        set("startdate", startdata); //$NON-NLS-1$
+    public void setStartDate(Date startdate) {
+        set("startdate", startdate); //$NON-NLS-1$
     }
 
-    public void setEndDate(String enddate) {
+    public void setEndDate(Date enddate) {
         set("enddate", enddate); //$NON-NLS-1$
     }
 
@@ -131,7 +134,7 @@ public class AnalysisExecution extends DEBaseModelData {
     }
 
     public String getWikiUrl() {
-        return get("wiki_url");
+        return get("wiki_url"); //$NON-NLS-1$
     }
 
 }
