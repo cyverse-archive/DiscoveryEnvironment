@@ -1030,12 +1030,5 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String idropLiteCloseConfirmMessage();
-
-    /**
-     * Localized text for app unavailable
-     * 
-     * @return @return a string representing the localized text.
-     */
-    String appUnavailable();
-
 }
+
