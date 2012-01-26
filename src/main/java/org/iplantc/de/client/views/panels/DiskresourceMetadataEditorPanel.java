@@ -31,14 +31,16 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.form.Validator;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
+import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
@@ -63,6 +65,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
     private CheckBoxSelectionModel<DiskResourceMetadata> sm;
     private Set<String> toDelete;
     private int initial_count;
+    private boolean isError;
 
     public DiskresourceMetadataEditorPanel(DiskResource resource) {
         this.resource = resource;
@@ -119,8 +122,8 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         grid.addPlugin(sm);
         grid.getSelectionModel().addSelectionChangedListener(new MetadataSelectionChangeListener());
         grid.addListener(Events.BeforeEdit, new GridBeforeEditListener());
-        // grid.addListener(Events.AfterEdit, new GridAfterEditListener());
         add(grid);
+        new QuickTip(grid);
         layout();
     }
 
@@ -132,6 +135,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
         ColumnConfig attr = new ColumnConfig(DiskResourceMetadata.ATTRIBUTE, "Attribute", 150);
         attr.setEditor(buildCellEditor(false));
+        attr.setRenderer(new AttributeCellRenderer());
         ColumnConfig val = new ColumnConfig(DiskResourceMetadata.VALUE, "Value", 150);
         val.setEditor(buildCellEditor(false));
         ColumnConfig unit = new ColumnConfig(DiskResourceMetadata.UNIT, "Unit", 75);
@@ -146,21 +150,6 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         return new CellEditor(text);
     }
 
-    private CellEditor buildAttributeCellEditor(boolean allowBlank) {
-        TextField<String> text = new TextField<String>();
-        text.setAllowBlank(allowBlank);
-        text.setValidator(new Validator() {
-
-            @Override
-            public String validate(Field<?> field, String value) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-        });
-
-        return new CellEditor(text);
-    }
-
     private final class DeleteButtonSelectionListener extends SelectionListener<ButtonEvent> {
         @Override
         public void componentSelected(ButtonEvent ce) {
@@ -168,6 +157,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
                 for (DiskResourceMetadata md : sm.getSelectedItems()) {
                     toDelete.add(md.getId());
                     grid.getStore().remove(md);
+                    grid.getView().refresh(false);
                 }
             } else {
                 MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
@@ -181,7 +171,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         public void componentSelected(ButtonEvent ce) {
             // to distinguish new rows, id is set to null
             if (DataUtils.isMetadtaUpdatable(resource)) {
-                DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value", "unit");
+                DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value", "tester");
                 if (grid != null) {
                     grid.stopEditing();
                     grid.getStore().insert(metadata, 0);
@@ -207,29 +197,6 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
             }
         }
     }
-
-    // @SuppressWarnings("rawtypes")
-    // private class GridAfterEditListener implements Listener<GridEvent> {
-    // @Override
-    // public void handleEvent(GridEvent be) {
-    // if (be.getProperty().equals(DiskResourceMetadata.ATTRIBUTE)) {
-    // // cache attributes that are going to be edited
-    // DiskResourceMetadata o = (DiskResourceMetadata)be.getModel();
-    // for (DiskResourceMetadata drmd : grid.getStore().getModels()) {
-    // if (drmd.equals(o)) {
-    // continue;
-    // } else {
-    // if (drmd.getAttribute().equals(o.getAttribute())) {
-    // grid.stopEditing();
-    // ColumnConfig c = grid.getColumnModel().getColumn(be.getColIndex());
-    //
-    //
-    // }
-    // }
-    // }
-    // }
-    // }
-    // }
 
     private class MetadataSelectionChangeListener extends SelectionChangedListener<DiskResourceMetadata> {
         @Override
@@ -294,4 +261,47 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
                 || grid.getStore().getModifiedRecords().size() > 0;
     }
 
+    /**
+     * 
+     * A class that renders attributes. If the attribute is duplicate, then the color of the attributes
+     * is changed to red and error flag is set. Calls EditComplteCallback.execute().
+     * 
+     * @author sriram
+     * 
+     */
+    class AttributeCellRenderer implements GridCellRenderer<DiskResourceMetadata> {
+
+        @Override
+        public Object render(DiskResourceMetadata model, String property, ColumnData config,
+                int rowIndex, int colIndex, ListStore<DiskResourceMetadata> store,
+                Grid<DiskResourceMetadata> grid) {
+
+            String ret = null;
+
+            for (DiskResourceMetadata drmd : grid.getStore().getModels()) {
+                if (drmd.equals(model)) {
+                    continue;
+                } else {
+                    if (drmd.getAttribute().equals(model.getAttribute())) {
+                        isError = true;
+                        ret = "<span qtip='duplicate attribute' style='color:red;'>"
+                                + model.getAttribute() + "</span>";
+                        break;
+                    }
+                    ret = model.getAttribute();
+                    isError = false;
+                }
+            }
+
+            if (cmd != null) {
+                cmd.execute();
+            }
+            return ret;
+        }
+    }
+
+    @Override
+    public boolean isError() {
+        return isError;
+    }
 }
