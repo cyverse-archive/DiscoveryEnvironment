@@ -1040,6 +1040,18 @@
             </component>
         </service>
 
+        <service name="searchAnalyses">
+            <inbound>
+                <vm:inbound-endpoint path="searchAnalyses" />
+            </inbound>
+            <component>
+                <method-entry-point-resolver>
+                    <include-entry-point method="searchAnalyses" />
+                </method-entry-point-resolver>
+                <spring-object bean="analysisListingService" />
+            </component>
+        </service>
+
         <service name="getDataObjectsForAnalysis">
             <inbound>
                 <vm:inbound-endpoint path="getDataObjectsForAnalysis" />
