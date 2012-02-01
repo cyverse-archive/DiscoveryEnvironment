@@ -265,11 +265,6 @@ ul.ux-taskbuttons-strip li.ux-taskbuttons-edge {
 	font-size: 0;
 }
 
-/* IE9 fix for window title bars being cut off */
-.windowLayoutTitle {
-	height: 15px !important;
-}
-
 .x-window-header-text {
 	cursor: default;
 }
@@ -349,7 +344,7 @@ ul.ux-taskbuttons-strip li.ux-taskbuttons-edge {
     border-width: 1px;
     border-color: black;
     line-height: 14px;
-    height:14px;
+    height:14px !important;
     color: #ffffff;
     padding: 4px;
     background-color: #222222;
