@@ -158,16 +158,7 @@ public class FileUploadServlet extends UploadAction {
                 LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcher.getServiceData(wrapper);
 
-                // FIXME Don't modify the response once the service is updated to include this info
-                JSONObject jsonResponse = JSONObject.fromObject(repsonse);
-
-                JSONObject file = new JSONObject();
-                file.put("id", jsonResponse.getString("path"));
-                file.put("label", filename);
-
-                jsonResponse.put("file", file);
-
-                jsonResultsArray.add(jsonResponse);
+                jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
                 LOG.error("invokeService - unable to upload file", e);
                 e.printStackTrace();
@@ -208,12 +199,7 @@ public class FileUploadServlet extends UploadAction {
                 LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcherDataApi.getServiceData(wrapper);
 
-                // FIXME Don't modify the response once the service is updated to include this info
-                JSONObject jsonResponse = JSONObject.fromObject(repsonse);
-                jsonResponse.put("label", filename);
-                jsonResponse.put("url", url);
-
-                jsonResultsArray.add(jsonResponse);
+                jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
                 LOG.error("invokeService - unable to import URL", e);
                 e.printStackTrace();
