@@ -341,7 +341,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                     if (jsonFileUploadStatus != null) {
                         String action = JsonUtil.getString(jsonFileUploadStatus, "action"); //$NON-NLS-1$
 
-                        if (action.equals("upload")) { //$NON-NLS-1$
+                        if (action.equals("file-upload")) { //$NON-NLS-1$
                             JSONObject file = JsonUtil.getObject(jsonFileUploadStatus, "file"); //$NON-NLS-1$
 
                             if (file != null) {
