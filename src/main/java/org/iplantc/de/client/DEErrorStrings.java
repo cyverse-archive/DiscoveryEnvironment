@@ -409,4 +409,12 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String fileReadable(String nameList);
+
+    /**
+     * Error message displayed when a wiki page for a tool cannot be created.
+     * 
+     * @param toolName name of the tool to make a page for
+     * @return localized error string.
+     */
+    String cantCreateConfluencePage(String toolName);
 }

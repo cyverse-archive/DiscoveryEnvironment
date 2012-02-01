@@ -227,20 +227,24 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         return submit;
     }
 
-    private void showPublishToWorldDialog(Analysis analysis) {
+    private void showPublishToWorldDialog(final Analysis analysis) {
         final Window makePublicWin = new Window();
         makePublicWin.setModal(true);
 
         PublishToWorldPanel requestForm = new PublishToWorldPanel(analysis, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(String url) {
                 makePublicWin.hide();
+
+                MessageBox.info(I18N.DISPLAY.success(), I18N.DISPLAY.makePublicSucess(url), null);
+
                 fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 makePublicWin.hide();
+                ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
             }
         });
 
