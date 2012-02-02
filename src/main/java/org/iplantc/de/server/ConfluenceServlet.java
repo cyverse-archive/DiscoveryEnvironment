@@ -20,9 +20,6 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
      */
     @Override
     public String addPage(String toolName, String description) {
-        // TODO delete me
-        toolName = "test-hariolf-" + System.currentTimeMillis();
-
         String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
         String parent = DiscoveryEnvironmentProperties.getConfluenceParentPage();
         String user = DiscoveryEnvironmentProperties.getConfluenceUser();
