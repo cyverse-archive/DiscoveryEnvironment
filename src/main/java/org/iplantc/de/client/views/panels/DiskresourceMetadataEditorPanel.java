@@ -5,7 +5,6 @@ package org.iplantc.de.client.views.panels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +45,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -72,13 +72,6 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         toDelete = new HashSet<String>();
         retrieveMetaData();
         initToolbar();
-    }
-
-    private HashMap<String, Object> getRecordsToUpdate() {
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("add", grid.getStore().getModels());
-        map.put("delete", toDelete);
-        return map;
     }
 
     @Override
@@ -171,7 +164,8 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         public void componentSelected(ButtonEvent ce) {
             // to distinguish new rows, id is set to null
             if (DataUtils.isMetadtaUpdatable(resource)) {
-                DiskResourceMetadata metadata = new DiskResourceMetadata(null, "attr", "value", "tester");
+                DiskResourceMetadata metadata = new DiskResourceMetadata(null, "New Attribute",
+                        "New Value", "New Unit");
                 if (grid != null) {
                     grid.stopEditing();
                     grid.getStore().insert(metadata, 0);
@@ -240,19 +234,31 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     public void UpdateMetadata() {
-        JSONArray arr = new JSONArray();
         FolderServiceFacade facade = new FolderServiceFacade();
+        JSONObject obj = new JSONObject();
+        obj.put("add", buildToAddArray());
+        obj.put("delete", buildToDeleteArray());
+        facade.setMetaData(resource, obj.toString(), new DiskResourceMetadataUpdateCallback());
+
+    }
+
+    private JSONArray buildToAddArray() {
+        JSONArray arr = new JSONArray();
         int i = 0;
-        @SuppressWarnings("unchecked")
-        List<DiskResourceMetadata> metadatas = (List<DiskResourceMetadata>)getRecordsToUpdate().get(
-                "add");
+        List<DiskResourceMetadata> metadatas = grid.getStore().getModels();
         for (DiskResourceMetadata r : metadatas) {
             arr.set(i++, r.toJson());
         }
-        JSONObject obj = new JSONObject();
-        obj.put("avus", arr);
-        facade.setMetaData(resource, obj.toString(), new DiskResourceMetadataUpdateCallback());
+        return arr;
+    }
 
+    private JSONArray buildToDeleteArray() {
+        JSONArray del_arr = new JSONArray();
+        int i = 0;
+        for (String id : toDelete) {
+            del_arr.set(i++, new JSONString(id));
+        }
+        return del_arr;
     }
 
     @Override
