@@ -434,6 +434,7 @@
             <constructor-arg ref="sessionFactory" />
             <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
             <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <constructor-arg ref="workspaceInitializer" />
 		</bean>
 
         <bean name="analysisCategorizationService" class="org.iplantc.workflow.service.AnalysisCategorizationService">
@@ -527,42 +528,6 @@
                 <no-arguments-entry-point-resolver>
                     <include-entry-point method="getCurrentUserInfo" />
                 </no-arguments-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="CreateWorkspace">
-            <inbound>
-                <vm:inbound-endpoint path="createWorkspace" synchronous="true" name="createWorkspace" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="createWorkspace" />
-                </method-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="GetOrCreateWorkspace">
-            <inbound>
-                <vm:inbound-endpoint path="getOrCreateWorkspace" synchronous="true" name="getOrCreateWorkspace" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getOrCreateWorkspace" />
-                </method-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="GetOrCreateWorkspaceForUsername">
-            <inbound>
-                <vm:inbound-endpoint path="getOrCreateWorkspaceForUsername" synchronous="true" name="getOrCreateWorkspaceForUsername" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getOrCreateWorkspaceForUsername" />
-                </method-entry-point-resolver>
                 <spring-object bean="userService" />
             </component>
         </service>
