@@ -56,6 +56,7 @@
         <bean name="analysisEditService" class="org.iplantc.workflow.service.AnalysisEditService">
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="zoidbergClient" ref="zoidbergClient" />
+            <property name="workflowExportService" ref="workflowExportService" />
         </bean>
 
   		<bean name="AnalysisService" class="org.iplantc.workflow.experiment.AnalysisService">
