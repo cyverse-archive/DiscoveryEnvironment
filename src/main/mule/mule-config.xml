@@ -569,19 +569,7 @@
             </component>
         </service>
 
-        <service name="GetAnalysesInGroup">
-            <inbound>
-                <vm:inbound-endpoint path="getAnalysesInGroup" synchronous="true" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="listAnalysesInGroup"/>
-                </method-entry-point-resolver>
-                <spring-object bean="analysisListingService" />
-            </component>
-        </service>
-
-        <service name="GetPublicAnalyses">
+       <service name="GetPublicAnalyses">
             <inbound>
                 <vm:inbound-endpoint path="getPublicAnalyses" synchronous="true" />
             </inbound>
