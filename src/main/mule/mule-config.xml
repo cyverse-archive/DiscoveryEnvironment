@@ -805,18 +805,6 @@
 			</component>
 		</service>
 
-        <service name="GetTemplateFromAnalysis">
-            <inbound>
-                <vm:inbound-endpoint path="getTemplateFromAnalysis" synchronous="true" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getTemplateFromAnalysis" />
-                </method-entry-point-resolver>
-                <spring-object bean="workflowExportService" />
-            </component>
-        </service>
-
         <service name="GetAllAnalysisIds">
             <inbound>
                 <vm:inbound-endpoint path="getAllAnalysisIds" synchronous="true" />
