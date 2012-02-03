@@ -450,6 +450,7 @@
         <bean name="analysisListingService" class="org.iplantc.workflow.service.AnalysisListingService">
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <property name="workspaceInitializer" ref="workspaceInitializer" />
         </bean>
 
 		<bean name="workflowExportService" class="org.iplantc.workflow.service.WorkflowExportService">
