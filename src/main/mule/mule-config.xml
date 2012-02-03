@@ -40,7 +40,11 @@
 			<property name="sessionFactory" ref="sessionFactory" />
 		</bean>
 
-  		<bean name="osmClient" class="org.iplantc.workflow.client.OsmClient">
+        <bean name="workspaceInitializer" class="org.iplantc.workflow.service.InjectableWorkspaceInitializer">
+            <property name="userService" ref="userService" />
+        </bean>
+
+        <bean name="osmClient" class="org.iplantc.workflow.client.OsmClient">
   			<property name="baseUrl" value="${org.iplantc.discoveryenvironment.osmBaseUrl}" />
   			<property name="bucket" value="${org.iplantc.discoveryenvironment.osmBucket}" />
   			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.osmConnectionTimeout}" />
@@ -436,6 +440,7 @@
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="devAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
             <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <property name="workspaceInitializer" ref="workspaceInitializer" />
         </bean>
 
         <bean name="pipelineService" class="org.iplantc.workflow.service.PipelineService">
