@@ -7,10 +7,15 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.FolderCreateCallback;
+import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.WizardExportHelper;
+import org.iplantc.de.client.views.FolderSelector;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -34,6 +39,9 @@ import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -51,6 +59,8 @@ public class JobLaunchDialog extends Dialog {
     private CheckBox chkDebug;
     private CheckBox chkNotify;
     private final String COLON = ":"; //$NON-NLS-1$
+    private FolderSelector folderSelector;
+    private static UserInfo uinfo = UserInfo.getInstance();
 
     /**
      * Constructs an instance of the job launch dialog.
@@ -61,7 +71,6 @@ public class JobLaunchDialog extends Dialog {
     public JobLaunchDialog(String tagCaller, final ComponentValueTable tblComponentVals) {
         this.tagCaller = tagCaller;
         this.tblComponentVals = tblComponentVals;
-
         init();
         compose();
     }
@@ -80,6 +89,7 @@ public class JobLaunchDialog extends Dialog {
             }
         };
         fieldName.setMaxLength(75);
+        fieldName.setWidth(320);
         fieldName.setId("idJobName"); //$NON-NLS-1$
         fieldName.setValue(I18N.DISPLAY.defaultJobName());
         fieldName.setSelectOnFocus(true);
@@ -121,26 +131,33 @@ public class JobLaunchDialog extends Dialog {
         chkNotify.setValue(true);
     }
 
-    private HorizontalPanel buildNameEntry() {
-        HorizontalPanel ret = new HorizontalPanel();
+    private VerticalPanel buildNameEntry() {
+        VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
 
-        TableData td = new TableData();
-        td.setHorizontalAlign(HorizontalAlignment.RIGHT);
-
-        ret.add(new LabelField(I18N.DISPLAY.jobname() + COLON), td);
+        ret.add(new LabelField(I18N.DISPLAY.jobname() + COLON));
 
         initNameField();
 
-        ret.add(fieldName, td);
+        ret.add(fieldName);
 
+        return ret;
+    }
+
+    private VerticalPanel buildDestinationFolderEntry() {
+        setDefaultOutputFolder();
+        VerticalPanel ret = new VerticalPanel();
+        ret.setSpacing(5);
+        folderSelector = new FolderSelector();
+        ret.add(new Label(I18N.DISPLAY.selectJobOutputDir() + COLON));
+        ret.add(folderSelector.getWidget());
         return ret;
     }
 
     private void initDescriptionArea() {
         areaDescription = new JobDescriptionTextArea();
         areaDescription.setId("idJobDescription"); //$NON-NLS-1$
-        areaDescription.setSize(250, 140);
+        areaDescription.setSize(320, 140);
         areaDescription.setSelectOnFocus(true);
         areaDescription.setMaxLength(255);
     }
@@ -188,7 +205,7 @@ public class JobLaunchDialog extends Dialog {
 
         setResizable(false);
         setModal(true);
-        setWidth(285);
+        setWidth(400);
         setButtons(Dialog.OKCANCEL);
 
         initButtons();
@@ -242,14 +259,11 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private void exportLaunch(String type, String json) {
-        UserInfo uinfo = UserInfo.getInstance();
         String idWorkspace = uinfo.getWorkspaceId();
-
         mask(I18N.DISPLAY.launchingJob());
 
         // create our callback - this is the same regardless of the job type
         AsyncCallback<String> callback = buildJobLaunchCallback();
-        System.out.println(json);
         launchJob(idWorkspace, json, callback);
 
     }
@@ -259,6 +273,9 @@ public class JobLaunchDialog extends Dialog {
         tblComponentVals.setDescription(JsonUtil.escapeNewLine(areaDescription.getValue()));
         tblComponentVals.setDebugEnabled(chkDebug.getValue());
         tblComponentVals.setNotifyEnabled(chkNotify.getValue());
+        tblComponentVals.setOutputFolderId(folderSelector.getSelectedFolderId());
+        tblComponentVals.setCreateSubFolder(folderSelector.getSelectedFolderId() == folderSelector
+                .getDefaultFolderId());
 
         String type = tblComponentVals.getType();
         String json = WizardExportHelper.buildJSON(tblComponentVals, false);
@@ -272,6 +289,7 @@ public class JobLaunchDialog extends Dialog {
         panelOuter.setSpacing(5);
         panelOuter.add(buildNameEntry());
         panelOuter.add(buildDescriptionEntry());
+        panelOuter.add(buildDestinationFolderEntry());
         panelOuter.add(buildNotifyEntry());
         panelOuter.add(buildDebugEntry());
 
@@ -328,6 +346,79 @@ public class JobLaunchDialog extends Dialog {
         protected void afterRender() {
             super.afterRender();
             areaDescription.el().setElementAttribute("spellcheck", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+
+    private void setDefaultOutputFolder() {
+        FolderServiceFacade facade = new FolderServiceFacade();
+        facade.getHomeFolder(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject root = null;
+                Folder home = null;
+                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONArray items = JsonUtil.getArray(obj, "roots");
+                if (items != null) {
+                    for (int i = 0; i < items.size(); i++) {
+                        root = JsonUtil.getObject(items.get(i).toString());
+                        if (root != null) {
+                            home = new Folder(root);
+                            createOutputFolderByDefault(home.getId(), DEProperties.getInstance()
+                                    .getDefaulyOutputFolderName());
+                            break;
+
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    protected void createOutputFolderByDefault(String idParentFolder, String name) {
+        FolderServiceFacade facade = new FolderServiceFacade();
+        facade.createFolder(idParentFolder + "/" + name, new OutputFolderCreateCallback(idParentFolder,
+                name));
+    }
+
+    private class OutputFolderCreateCallback extends FolderCreateCallback {
+
+        private String idParentFolder;
+        private String name;
+
+        public OutputFolderCreateCallback(String idParentFolder, String name) {
+            super(idParentFolder, name);
+            this.idParentFolder = idParentFolder;
+            this.name = name;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            super.onSuccess(result);
+            folderSelector.displayFolderName(idParentFolder + "/" + name);
+            folderSelector.setSelectedFolderById(idParentFolder + "/" + name);
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            JSONObject jsonError = parseJsonError(caught);
+            if (jsonError != null) {
+                String errCode = JsonUtil.getString(jsonError, ERROR_CODE);
+
+                ErrorCode code = ErrorCode.valueOf(errCode);
+                if (!code.equals(ErrorCode.ERR_EXISTS)) {
+                    super.onFailure(caught);
+                } else {
+                    folderSelector.displayFolderName(idParentFolder + "/" + name);
+                    folderSelector.setSelectedFolderById(idParentFolder + "/" + name);
+                }
+            }
         }
     }
 }

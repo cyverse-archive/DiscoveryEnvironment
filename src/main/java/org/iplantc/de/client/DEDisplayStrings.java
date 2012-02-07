@@ -1004,4 +1004,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String dataDragDropStatusText();
+
+    /**
+     * Localized text for job output destination folder selection
+     * 
+     * @return a string representing the localized text.
+     */
+    String selectJobOutputDir();
 }

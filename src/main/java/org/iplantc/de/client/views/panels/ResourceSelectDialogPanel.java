@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
+import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -29,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ResourceSelectDialogPanel extends IPlantDialogPanel {
     private Button btnParentOk;
-    private LayoutContainer container;
+    protected LayoutContainer container;
     protected DataNavigationPanel pnlNavigation;
     protected DataMainPanel pnlMain;
     protected final TextField<String> txtResourceName;
@@ -87,12 +88,14 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
     public void seed(final String username, final String json, final Component maskingParent,
             boolean refresh, String folderId) {
         model.seed(json);
-        if (!refresh) {
+        if (!refresh && pnlNavigation != null) {
             pnlNavigation.seed(username, model, navigationSelectionChangeListener);
         }
-        pnlMain.seed(model, tag, mainSelectionChangeListener);
-        pnlMain.setSelectionMode(SelectionMode.SINGLE);
-        pnlMain.setMaskingParent(maskingParent);
+        if (pnlMain != null) {
+            pnlMain.seed(model, tag, mainSelectionChangeListener);
+            pnlMain.setSelectionMode(SelectionMode.SINGLE);
+            pnlMain.setMaskingParent(maskingParent);
+        }
 
         if (selectedResource != null) {
             txtResourceName.setValue(selectedResource.getName());
@@ -126,11 +129,11 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
      */
     protected void initComponents(String lblStringSelectedResource) {
         // initialize the navigation panel
-        pnlNavigation = new DataNavigationPanel(tag,DataNavigationPanel.Mode.VIEW);
+        pnlNavigation = new DataNavigationPanel(tag, DataNavigationPanel.Mode.VIEW);
         pnlNavigation.disableDragAndDrop();
 
         // initialize the main view panel
-        pnlMain = new DataMainPanel(tag, model,selectedResource);
+        pnlMain = new DataMainPanel(tag, model, selectedResource);
         pnlMain.disableDragAndDrop();
 
         // initialize the selected file field
@@ -142,6 +145,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
 
         HorizontalPanel pnlSelectedInfo = new HorizontalPanel();
         pnlSelectedInfo.setSpacing(2);
+        pnlSelectedInfo.add(new Html("<br/>"));
         pnlSelectedInfo.add(lblSelectedFile);
         pnlSelectedInfo.add(txtResourceName);
 
@@ -171,8 +175,12 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
      * @param resource the DiskResource in the data browser grid to select
      */
     public void select(DiskResource resource) {
-        pnlNavigation.selectFolder(DataUtils.parseParent(resource.getId()));
-        pnlMain.select(resource);
+        if (pnlNavigation != null) {
+            pnlNavigation.selectFolder(DataUtils.parseParent(resource.getId()));
+        }
+        if (pnlMain != null) {
+            pnlMain.select(resource);
+        }
     }
 
     /**
@@ -188,7 +196,11 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
      */
     @Override
     public Widget getFocusWidget() {
-        return pnlMain;
+        if (pnlMain != null) {
+            return pnlMain;
+        } else {
+            return pnlNavigation;
+        }
     }
 
     /**
@@ -212,8 +224,12 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
      * Release unneeded resources.
      */
     public void cleanup() {
-        pnlNavigation.cleanup();
-        pnlMain.cleanup();
+        if (pnlNavigation != null) {
+            pnlNavigation.cleanup();
+        }
+        if (pnlMain != null) {
+            pnlMain.cleanup();
+        }
     }
 
     /**

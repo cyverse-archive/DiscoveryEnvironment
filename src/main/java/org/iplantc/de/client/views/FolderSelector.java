@@ -17,12 +17,20 @@ import com.google.gwt.user.client.Command;
 public class FolderSelector extends DiskResourceSelector implements IFolderSelector {
 
     private FolderSelectDialog dlgFolderSelect;
+    private String defaultFolderId;
+
+    /**
+     * @return the defaultFolderId
+     */
+    public String getDefaultFolderId() {
+        return defaultFolderId;
+    }
 
     /**
      * Default constructor.
      */
     public FolderSelector() {
-        super(null);
+        this(null);
     }
 
     /**
@@ -34,21 +42,19 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
         super(cmdChange);
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     protected void launchBrowseDialog(String tag) {
         dlgFolderSelect = new FolderSelectDialog(I18N.CONSTANT.selectAFolder(),
-                I18N.CONSTANT.selectAFolder(),
-                getSelectedFolder(), getCurrentFolderId());
+                I18N.CONSTANT.selectAFolder(), getSelectedFolder(), getCurrentFolderId());
         dlgFolderSelect.addOkClickHandler(new DialogOkClickHandler() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 setSelectedFolder(dlgFolderSelect.getSelectedFolder());
                 setCurrentFolderId(dlgFolderSelect.getCurrentFolder());
-                txtResourceName.setValue(getSelectedResourceName());
+                txtResourceName.setValue(dlgFolderSelect.getSelectedFolder().getId());
 
                 if (cmdChange != null) {
                     cmdChange.execute();
@@ -56,6 +62,12 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
             }
         });
 
+        // init for default case
+        if (dlgFolderSelect.getCurrentFolder() == null) {
+            dlgFolderSelect.setDefaultFolderId(defaultFolderId);
+            dlgFolderSelect.setCurrentFolder(defaultFolderId);
+            setCurrentFolderId(defaultFolderId);
+        }
         dlgFolderSelect.show();
     }
 
@@ -99,6 +111,10 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
     @Override
     public void displayFolderName(String name) {
         super.displayResourceName(name);
+    }
+
+    public void setSelectedFolderById(String folderId) {
+        defaultFolderId = folderId;
     }
 
 }
