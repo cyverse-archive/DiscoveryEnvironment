@@ -5,21 +5,30 @@ import java.util.ArrayList;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.AnalysisSelectEvent;
+import org.iplantc.core.uiapplications.client.events.AnalysisSelectEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.factories.EventJSONFactory;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
+import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -39,6 +48,42 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String FAVORITES;
     public static String APPLICATIONS_UNDER_DEVLOPMENT;
     public static String BETA_GROUP_ID;
+
+    /**
+     * Dispatches a DISPLAY_WINDOW event with the given App and Category ID in a DECatalogWindow config,
+     * so that the Window Manager will open the DECatalogWindow with that Category and App selected.
+     * 
+     * @param selectedCategoryId
+     * @param selectedAppId
+     */
+    public static void launchDECatalogWindow(String selectedCategoryId, String selectedAppId) {
+        // Build window config data
+        JSONObject windowConfigData = new JSONObject();
+
+        if (selectedCategoryId != null) {
+            windowConfigData.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(selectedCategoryId));
+        }
+        if (selectedAppId != null) {
+            windowConfigData.put(CatalogWindowConfig.APP_ID, new JSONString(selectedAppId));
+        }
+
+        // Build window config
+        JSONObject windowConfig = new JSONObject();
+
+        windowConfig.put("data", windowConfigData); //$NON-NLS-1$
+        windowConfig.put("type", new JSONString(Constants.CLIENT.deCatalog())); //$NON-NLS-1$
+
+        // Build window payload
+        JSONObject windowPayload = new JSONObject();
+        windowPayload.put("tag", new JSONString(Constants.CLIENT.deCatalog())); //$NON-NLS-1$
+        windowPayload.put("config", windowConfig); //$NON-NLS-1$
+
+        // Launch display window event with this payload
+        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
+
+        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
+        dispatcher.processMessage(json);
+    }
 
     /**
      * 
@@ -68,8 +113,32 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     private void initHandlers() {
         EventBus eventbus = EventBus.getInstance();
         handlers = new ArrayList<HandlerRegistration>();
+
         handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
+
+        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE, new AnalysisSelectEventHandler() {
+            @Override
+            public void onSelection(AnalysisSelectEvent event) {
+                DECatalogWindow.launchDECatalogWindow(event.getCategoryId(), event.getAppId());
+            }
+        }));
+    }
+
+    @Override
+    public void cleanup() {
+        for (HandlerRegistration hanlder : handlers) {
+            hanlder.removeHandler();
+        }
+
+        super.cleanup();
+    }
+
+    @Override
+    public void configure(WindowConfig config) {
+        if (config instanceof CatalogWindowConfig) {
+            selectConfigData((CatalogWindowConfig)config);
+        }
     }
 
     @Override
@@ -89,13 +158,18 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         mainPanel = new CatalogMainPanel();
 
         if (config instanceof CatalogWindowConfig) {
-            String appID = ((CatalogWindowConfig)config).getAppID();
-
-            // The category panel will select the first root node by default, which is the workspace, if
-            // this category ID is null.
-            catPanel.selectCategory(null);
-            mainPanel.selectTool(appID);
+            selectConfigData((CatalogWindowConfig)config);
         }
+    }
+
+    protected void selectConfigData(CatalogWindowConfig catalogConfig) {
+        String appID = catalogConfig.getAppId();
+        String categoryID = catalogConfig.getCategoryId();
+
+        // The category panel will select the first root node by default, which is the workspace, if
+        // this category ID is null.
+        catPanel.selectCategory(categoryID);
+        mainPanel.selectTool(appID);
     }
 
     @Override
