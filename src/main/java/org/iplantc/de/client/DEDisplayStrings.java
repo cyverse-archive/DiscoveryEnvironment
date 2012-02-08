@@ -1004,4 +1004,19 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String dataDragDropStatusText();
+
+    /**
+     * Localized text for the App Comment dialog title
+     * 
+     * @return a string representing the localized text.
+     */
+    String appCommentDialogTitle();
+
+    /**
+     * Localized text for the text appearing the App Comment dialog before the text area.
+     * 
+     * @param appName name of the app
+     * @return a string representing the localized text.
+     */
+    String appCommentExplanation(String appName);
 }
