@@ -19,6 +19,7 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.dialogs.URLImportDialog;
+import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 
 import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -60,9 +61,11 @@ public class DataNavToolBar extends ToolBar {
      * 
      * @param tag a tag for this widget
      */
-    public DataNavToolBar(final String tag) {
+    public DataNavToolBar(final String tag, Mode mode) {
         this.tag = tag;
-        add(buildImportButton());
+        if (mode.equals(Mode.EDIT)) {
+            add(buildImportButton());
+        }
         add(buildActionsMenuButton());
     }
 
@@ -267,7 +270,7 @@ public class DataNavToolBar extends ToolBar {
                         }
                     }
                 };
-                
+
                 if (!DataUtils.isDeletable(resources)) {
                     showErrorMsg();
                 } else {

@@ -13,6 +13,7 @@ import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.views.panels.FolderSelectDialogPanel;
+import org.iplantc.de.client.views.panels.ResourceSelectDialogPanel;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -211,6 +212,9 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
     }
 
     private void cleanup() {
+
+        ((ResourceSelectDialogPanel)getUnderlyingPanel()).cleanup();
+
         EventBus eventbus = EventBus.getInstance();
 
         // unregister

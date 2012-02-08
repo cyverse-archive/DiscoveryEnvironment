@@ -1008,7 +1008,9 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     /**
      * Localized text for job output destination folder selection
      * 
+     * @param - defaultPath default output folder for analyses
+     * 
      * @return a string representing the localized text.
      */
-    String selectJobOutputDir();
+    String selectJobOutputDir(String defaultPath);
 }

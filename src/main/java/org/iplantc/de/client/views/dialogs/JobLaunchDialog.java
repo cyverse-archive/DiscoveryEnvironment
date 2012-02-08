@@ -149,7 +149,9 @@ public class JobLaunchDialog extends Dialog {
         VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
         folderSelector = new FolderSelector();
-        ret.add(new Label(I18N.DISPLAY.selectJobOutputDir() + COLON));
+        ret.add(new Label(I18N.DISPLAY.selectJobOutputDir("/"
+                + DEProperties.getInstance().getDefaulyOutputFolderName())
+                + COLON));
         ret.add(folderSelector.getWidget());
         return ret;
     }
@@ -157,7 +159,7 @@ public class JobLaunchDialog extends Dialog {
     private void initDescriptionArea() {
         areaDescription = new JobDescriptionTextArea();
         areaDescription.setId("idJobDescription"); //$NON-NLS-1$
-        areaDescription.setSize(320, 140);
+        areaDescription.setSize(320, 100);
         areaDescription.setSelectOnFocus(true);
         areaDescription.setMaxLength(255);
     }
@@ -273,9 +275,14 @@ public class JobLaunchDialog extends Dialog {
         tblComponentVals.setDescription(JsonUtil.escapeNewLine(areaDescription.getValue()));
         tblComponentVals.setDebugEnabled(chkDebug.getValue());
         tblComponentVals.setNotifyEnabled(chkNotify.getValue());
-        tblComponentVals.setOutputFolderId(folderSelector.getSelectedFolderId());
-        tblComponentVals.setCreateSubFolder(folderSelector.getSelectedFolderId() == folderSelector
-                .getDefaultFolderId());
+
+        String selectedFolderId = (folderSelector.getSelectedFolderId() != null && !folderSelector
+                .getSelectedFolderId().isEmpty()) ? folderSelector.getSelectedFolderId()
+                : folderSelector.getDefaultFolderId();
+
+        tblComponentVals.setOutputFolderId(selectedFolderId);
+        tblComponentVals
+                .setCreateSubFolder(selectedFolderId.equals(folderSelector.getDefaultFolderId()));
 
         String type = tblComponentVals.getType();
         String json = WizardExportHelper.buildJSON(tblComponentVals, false);
@@ -402,7 +409,7 @@ public class JobLaunchDialog extends Dialog {
         public void onSuccess(String result) {
             super.onSuccess(result);
             folderSelector.displayFolderName(idParentFolder + "/" + name);
-            folderSelector.setSelectedFolderById(idParentFolder + "/" + name);
+            folderSelector.setDefaultFolderId(idParentFolder + "/" + name);
         }
 
         @Override
@@ -416,7 +423,7 @@ public class JobLaunchDialog extends Dialog {
                     super.onFailure(caught);
                 } else {
                     folderSelector.displayFolderName(idParentFolder + "/" + name);
-                    folderSelector.setSelectedFolderById(idParentFolder + "/" + name);
+                    folderSelector.setDefaultFolderId(idParentFolder + "/" + name);
                 }
             }
         }

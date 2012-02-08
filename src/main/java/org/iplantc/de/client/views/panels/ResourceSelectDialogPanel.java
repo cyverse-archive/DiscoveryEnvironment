@@ -1,8 +1,20 @@
 package org.iplantc.de.client.views.panels;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.controllers.DataController;
+import org.iplantc.de.client.controllers.DataMonitor;
+import org.iplantc.de.client.events.DataPayloadEvent;
+import org.iplantc.de.client.events.DataPayloadEventHandler;
+import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.utils.DataUtils;
 
@@ -20,6 +32,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -28,7 +42,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author lenards
  * 
  */
-public class ResourceSelectDialogPanel extends IPlantDialogPanel {
+public class ResourceSelectDialogPanel extends IPlantDialogPanel implements DataMonitor {
     private Button btnParentOk;
     protected LayoutContainer container;
     protected DataNavigationPanel pnlNavigation;
@@ -40,6 +54,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
     protected String tag;
     protected Listener<BaseEvent> navigationSelectionChangeListener = null;
     protected Listener<BaseEvent> mainSelectionChangeListener = null;
+    private ArrayList<HandlerRegistration> handlers;
 
     /**
      * Construct an instance a file selection panel.
@@ -54,6 +69,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
         model = new ClientDataModel();
         this.tag = tag;
         initComponents();
+        initHandlers();
     }
 
     /**
@@ -104,6 +120,24 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
             selectFolder(folderId);
         }
 
+    }
+
+    private void initHandlers() {
+        EventBus eventbus = EventBus.getInstance();
+        handlers = new ArrayList<HandlerRegistration>();
+        handlers.add(eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandlerImpl()));
+    }
+
+    public void removeEventHandlers() {
+        EventBus eventbus = EventBus.getInstance();
+
+        // unregister
+        for (HandlerRegistration reg : handlers) {
+            eventbus.removeHandler(reg);
+        }
+
+        // clear our list
+        handlers.clear();
     }
 
     private void selectFolder(String folderId) {
@@ -244,6 +278,97 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel {
      */
     public String getCurrentFolderId() {
         return currentFolderId;
+    }
+
+    @Override
+    public void folderCreated(String idParentFolder, JSONObject jsonFolder) {
+        Folder folder = model.createFolder(idParentFolder, jsonFolder);
+        if (pnlMain != null) {
+            pnlMain.addDiskResource(idParentFolder, folder);
+        }
+
+    }
+
+    @Override
+    public void addFile(String path, File info) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void fileSavedAs(String idOrig, String idParentFolder, File info) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void fileRename(String id, String name) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void folderRename(String id, String name) {
+        Folder folder = model.renameFolder(id, name);
+
+        if (folder != null && pnlMain != null) {
+            pnlMain.renameFolder(id, name);
+        }
+
+    }
+
+    @Override
+    public void deleteResources(List<String> folders, List<String> files) {
+        deleteFolders(folders);
+        deleteFiles(files);
+
+    }
+
+    private void deleteFolders(final List<String> folders) {
+        if (folders != null) {
+            if (pnlMain != null) {
+                pnlMain.deleteDiskResources(folders);
+            }
+
+            for (String path : folders) {
+                model.deleteDiskResource(path);
+
+                if (model.isCurrentPage(path)) {
+                    Folder folder = model.getFolder(DataUtils.parseParent(path));
+
+                    if (folder != null) {
+                        EventBus.getInstance().fireEvent(new DiskResourceSelectedEvent(folder, tag));
+                    }
+                }
+            }
+        }
+    }
+
+    private void deleteFiles(final List<String> files) {
+        model.deleteDiskResources(files);
+        if (pnlMain != null) {
+            pnlMain.deleteDiskResources(files);
+        }
+    }
+
+    @Override
+    public void folderMove(Map<String, String> folders) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void fileMove(Map<String, String> files) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private class DataPayloadEventHandlerImpl implements DataPayloadEventHandler {
+        @Override
+        public void onFire(DataPayloadEvent event) {
+            DataController controller = DataController.getInstance();
+            controller.handleEvent(ResourceSelectDialogPanel.this, event.getPayload());
+        }
     }
 
 }

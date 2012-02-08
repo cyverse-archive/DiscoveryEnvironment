@@ -113,7 +113,7 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
         super.displayResourceName(name);
     }
 
-    public void setSelectedFolderById(String folderId) {
+    public void setDefaultFolderId(String folderId) {
         defaultFolderId = folderId;
     }
 
