@@ -120,7 +120,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE, new AnalysisSelectEventHandler() {
             @Override
             public void onSelection(AnalysisSelectEvent event) {
-                DECatalogWindow.launchDECatalogWindow(event.getCategoryId(), event.getAppId());
+                if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())) {
+                    DECatalogWindow.launchDECatalogWindow(event.getCategoryId(), event.getAppId());
+                }
             }
         }));
     }
@@ -155,7 +157,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     protected void initPanels() {
         catPanel = new CatalogCategoryPanel();
-        mainPanel = new CatalogMainPanel();
+        mainPanel = new CatalogMainPanel(Constants.CLIENT.deCatalog());
 
         if (config instanceof CatalogWindowConfig) {
             selectConfigData((CatalogWindowConfig)config);

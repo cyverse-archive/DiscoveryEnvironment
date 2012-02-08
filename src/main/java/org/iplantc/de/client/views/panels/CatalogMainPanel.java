@@ -83,8 +83,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     /**
      * Creates a new CatalogMainPanel.
      */
-    public CatalogMainPanel() {
-        super(new TemplateServiceFacade());
+    public CatalogMainPanel(String tag) {
+        super(tag, new TemplateServiceFacade());
 
         buttons = new FastMap<Button>();
         menuItems = new FastMap<MenuItem>();
