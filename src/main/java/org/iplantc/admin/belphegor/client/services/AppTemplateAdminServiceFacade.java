@@ -43,6 +43,20 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+        // FIXME integrate with a Conrad service
+        callback.onFailure(new Exception("Remote Search not implemented yet."));
+        // String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl() + "/" //$NON-NLS-1$
+        // + URL.encode(search);
+        //
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        // callService(wrapper, callback);
+    }
+
+    /**
      * Adds a new Category with the given category name.
      * 
      * @param name

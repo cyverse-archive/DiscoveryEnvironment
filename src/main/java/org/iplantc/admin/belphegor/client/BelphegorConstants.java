@@ -37,4 +37,8 @@ public interface BelphegorConstants extends CommonUiConstants {
      */
     String iplantLogo();
 
+    /**
+     * @return
+     */
+    String tagBelphegorCatalog();
 }

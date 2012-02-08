@@ -43,7 +43,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * A panel that displays apps in a grid and lets the user delete or modify them.
  */
 public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
-    private final AppTemplateAdminServiceFacade service;
     private Button deleteButton;
     private Button restoreButton;
 
@@ -52,11 +51,16 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
      * 
      * @param templateService
      */
-    public CatalogMainAdminPanel() {
-        service = new AppTemplateAdminServiceFacade();
+    public CatalogMainAdminPanel(String tag) {
+        super(tag, new AppTemplateAdminServiceFacade());
+
         initToolBar();
 
         new CatalogMainAdminPanelDragSource(analysisGrid);
+    }
+
+    private AppTemplateAdminServiceFacade getTemplateService() {
+        return (AppTemplateAdminServiceFacade)templateService;
     }
 
     private void initToolBar() {
@@ -135,7 +139,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
     private void restoreSelectedApp() {
         final Analysis app = getSelectedApp();
-        service.restoreApplication(app.getId(), new AsyncCallback<String>() {
+        getTemplateService().restoreApplication(app.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -172,7 +176,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     }
 
     private void confirmDeleteSelectedApp(final Analysis app) {
-        service.deleteApplication(app.getId(), new AdminServiceCallback() {
+        getTemplateService().deleteApplication(app.getId(), new AdminServiceCallback() {
             @Override
             protected void onSuccess(JSONObject jsonResult) {
                 EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());

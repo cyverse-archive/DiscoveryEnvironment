@@ -71,6 +71,11 @@ public class ToolIntegrationAdminProperties {
     private static final String SERVICE_URL_APP_DELETE = PROPERTY_NAME_PREFIX + "delete-app"; //$NON-NLS-1$
 
     /**
+     * The URL used to access the App Search service.
+     */
+    private static final String SERVICE_URL_APP_SEARCH = PROPERTY_NAME_PREFIX + "search-apps"; //$NON-NLS-1$
+
+    /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
@@ -112,7 +117,8 @@ public class ToolIntegrationAdminProperties {
         for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD,
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
                 SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE,
-                SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE, SERVICE_URL_APP_RESTORE)) {
+                SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE, SERVICE_URL_APP_RESTORE,
+                SERVICE_URL_APP_SEARCH)) {
             serviceUrlMap.put(key, properties.get(key));
         }
 
@@ -224,6 +230,15 @@ public class ToolIntegrationAdminProperties {
      */
     public String getRestoreAppServiceUrl() {
         return getServiceUrl(SERVICE_URL_APP_RESTORE);
+    }
+
+    /**
+     * Gets the Search App service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getSearchAppServiceUrl() {
+        return getServiceUrl(SERVICE_URL_APP_SEARCH);
     }
 
     /**
