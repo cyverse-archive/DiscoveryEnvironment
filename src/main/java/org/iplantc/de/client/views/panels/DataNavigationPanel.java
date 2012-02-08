@@ -64,13 +64,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
     public DataNavigationPanel(final String tag, Mode mode) {
         super(tag);
         this.mode = mode;
-        if (mode.equals(Mode.EDIT)) {
-            toolBar = new DataNavToolBar(tag);
-            setTopComponent(toolBar);
-        } else {
-            setHeaderVisible(true);
-            setHeading(I18N.DISPLAY.navigation());
-        }
+        toolBar = new DataNavToolBar(tag, mode);
+        setTopComponent(toolBar);
     }
 
     /**
@@ -177,10 +172,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
     }
 
     private void setModePrefernces() {
-        if (mode.equals(Mode.EDIT)) {
-            toolBar.setSelectionModel(pnlTree.getSelectionModel());
-            toolBar.setParentFolderId(getRootFolderId());
-        }
+        toolBar.setSelectionModel(pnlTree.getSelectionModel());
+        toolBar.setParentFolderId(getRootFolderId());
     }
 
     @Override
@@ -438,9 +431,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
                 return;
             }
 
-
-            List items = pnlTree.getSelectionModel()
-                    .getSelectedItems();
+            List items = pnlTree.getSelectionModel().getSelectedItems();
 
             if (items != null && items.size() > 0) {
                 e.setData(items);

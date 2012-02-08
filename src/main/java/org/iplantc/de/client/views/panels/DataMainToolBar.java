@@ -16,10 +16,10 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.GridView;
@@ -62,8 +62,6 @@ public class DataMainToolBar extends ToolBar {
         public String getTypeString() {
             return toString().toLowerCase();
         }
-
-
 
         @Override
         public String toString() {
@@ -129,6 +127,7 @@ public class DataMainToolBar extends ToolBar {
         cbxToggleDisplay.select(VIEWS.BASIC_VIEW.index);
         cbxToggleDisplay.setSimpleValue(VIEWS.BASIC_VIEW.toString());
         cbxToggleDisplay.setEditable(false);
+        cbxToggleDisplay.setWidth(100);
     }
 
     // set force fit to true for basic view else force fit to false

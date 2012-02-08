@@ -382,14 +382,15 @@ public class ClientDataModel {
     private void deleteFolderDataResource(String path) {
         DiskResource remove = null;
 
-        for (DiskResource model : page.getResources()) {
-            if (model.getId().equals(path)) {
-                remove = model;
-                break;
+        if (page != null) {
+            for (DiskResource model : page.getResources()) {
+                if (model.getId().equals(path)) {
+                    remove = model;
+                    break;
+                }
             }
+            page.removeDiskResource(remove);
         }
-
-        page.removeDiskResource(remove);
     }
 
     private void updateHasSubFolders(Folder parent) {

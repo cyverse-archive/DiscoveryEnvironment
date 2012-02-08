@@ -12,11 +12,12 @@ public class DEProperties {
      * The base URL used to access the Mule services.
      */
     private static final String MULE_SERVICE_BASE_URL = PROPERTY_NAME_PREFIX + "muleServiceBaseUrl"; //$NON-NLS-1$
-    
+
     /**
      * The base URL used to access the Mule services.
      */
-    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL = PROPERTY_NAME_PREFIX + "unprotectedMuleServiceBaseUrl"; //$NON-NLS-1$
+    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL = PROPERTY_NAME_PREFIX
+            + "unprotectedMuleServiceBaseUrl"; //$NON-NLS-1$
 
     /**
      * Properties key of the base URL used to link to TITo.
@@ -37,7 +38,7 @@ public class DEProperties {
      * Properties key of the notification polling interval
      */
     private static final String NOTIFICATION_POLL_INTERVAL = "org.iplantc.discoveryenvironment.notifications.poll-interval"; //$NON-NLS-1$
-    
+
     /**
      * Properties key of the context click enabled option
      */
@@ -48,12 +49,12 @@ public class DEProperties {
      * The prefix used in each of the private workspace property names.
      */
     private static final String WORKSPACE_PREFIX = "org.iplantc.discoveryenvironment.workspace."; //$NON-NLS-1$
-    
+
     /**
      * Properties key for the private workspace
      */
     private static final String PRIVATE_WORKSPACE = WORKSPACE_PREFIX + "rootAnalysisGroup"; //$NON-NLS-1$
-    
+
     /**
      * Properties key for the private workspace items
      */
@@ -64,7 +65,13 @@ public class DEProperties {
      */
     private static final String DEFAULT_BETA_CATEGORY_ID = WORKSPACE_PREFIX
             + "defaultBetaAnalysisGroupId"; //$NON-NLS-1$
-    
+
+    /**
+     * Properties key for the default output folder name
+     */
+    private static final String DEFAULT_OUTPUT_FOLDER_NAME = WORKSPACE_PREFIX
+            + "defaultOutputFolderName"; //$NON-NLS-1$
+
     /**
      * The single instance of this class.
      */
@@ -79,17 +86,17 @@ public class DEProperties {
      * The polling interval
      */
     private int notificationPollInterval;
-    
+
     /**
      * Context click option
      */
     private boolean contextClickEnabled;
-    
+
     /**
-     *  private workspace name
+     * private workspace name
      */
     private String privateWorkspace;
-    
+
     /**
      * private workspace items
      * 
@@ -100,7 +107,14 @@ public class DEProperties {
      * ID of the default Beta Workspace Category
      */
     private String defaultBetaCategoryId;
-    
+
+    /**
+     * 
+     * Default output folder name
+     * 
+     */
+    private String defaulyOutputFolderName;
+
     /**
      * @return the contextClickEnabled
      */
@@ -112,13 +126,11 @@ public class DEProperties {
      * The base URL used to access the DE Mule services.
      */
     private String muleServiceBaseUrl;
-    
-    
+
     /**
      * The base URL used to access the DE Unprotected Mule services.
      */
     private String unproctedMuleServiceBaseUrl;
-    
 
     /**
      * @return the unproctedMuleServiceBaseUrl
@@ -169,7 +181,8 @@ public class DEProperties {
         privateWorkspace = properties.get(PRIVATE_WORKSPACE);
         privateWorkspaceItems = properties.get(PRIVATE_WORKSPACE_ITEMS);
         defaultBetaCategoryId = properties.get(DEFAULT_BETA_CATEGORY_ID);
-        
+        defaulyOutputFolderName = properties.get(DEFAULT_OUTPUT_FOLDER_NAME);
+
         try {
             contextClickEnabled = Boolean.parseBoolean(properties.get(CONTEXT_CLICK_ENABLED));
         } catch (Exception e) {
@@ -228,8 +241,6 @@ public class DEProperties {
         return serverPushEnabled;
     }
 
-
-
     /**
      * @return the privateWorkspace
      */
@@ -249,5 +260,19 @@ public class DEProperties {
      */
     public String getDefaultBetaCategoryId() {
         return defaultBetaCategoryId;
+    }
+
+    /**
+     * @param defaulyOutputFolderName the defaulyOutputFolderName to set
+     */
+    public void setDefaulyOutputFolderName(String defaulyOutputFolderName) {
+        this.defaulyOutputFolderName = defaulyOutputFolderName;
+    }
+
+    /**
+     * @return the defaulyOutputFolderName
+     */
+    public String getDefaulyOutputFolderName() {
+        return defaulyOutputFolderName;
     }
 }
