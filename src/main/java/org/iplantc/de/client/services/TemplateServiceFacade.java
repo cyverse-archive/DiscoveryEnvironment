@@ -81,7 +81,8 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void rateAnalysis(String analysisId, int rating, AsyncCallback<String> callback) {
+    public void rateAnalysis(String analysisId, int rating, String appName, String comment,
+            AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis";
 
         JSONObject body = new JSONObject();
@@ -90,7 +91,41 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+        addComment(appName, comment, wrapper, callback);
+    }
+
+    private void addComment(String appName, String comment, final ServiceCallWrapper wrapper,
+            final AsyncCallback<String> callback) {
+        ConfluenceServiceFacade.getInstance().addComment(appName, comment, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    @Override
+    public void updateRating(String analysisId, int rating, String appName, String comment,
+            String commentId,
+            AsyncCallback<String> callback) {
+        rateAnalysis(analysisId, rating, appName, comment, callback);
+        // TODO call update-rating
+        // String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "update-rating";
+        //
+        // JSONObject body = new JSONObject();
+        // body.put("analysis_id", new JSONString(analysisId));
+        // body.put("rating", new JSONNumber(rating));
+        // body.put("comment", new JSONString(comment));
+        // body.put("comment_id", new JSONString(commentId));
+        //
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+        // body.toString());
+        // DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     @Override

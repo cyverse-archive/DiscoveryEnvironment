@@ -49,4 +49,15 @@ public class ConfluenceServiceFacade {
             AsyncCallback<String> callback) {
         proxy.addPage(toolName, description, callback);
     }
+
+    /**
+     * Adds a user comment to a tool description page.
+     * 
+     * @param toolName the name of the tool which is also the page title
+     * @param comment a comment
+     * @param callback called after the service call finishes
+     */
+    public void addComment(String toolName, String comment, AsyncCallback<String> callback) {
+        proxy.addComment(toolName, comment, callback);
+    }
 }

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ConfluenceService;
 import org.swift.common.cli.CliClient.ExitCode;
+import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.confluence.cli.ConfluenceClient;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -103,6 +104,21 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
             if (stream != null) {
                 stream.close();
             }
+        }
+    }
+
+    @Override
+    public String addComment(String toolName, String comment) {
+        String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String parent = DiscoveryEnvironmentProperties.getConfluenceParentPage();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+        String space = DiscoveryEnvironmentProperties.getConfluenceSpaceName();
+        try {
+            RemoteComment confluenceComment = new IPlantConfluenceClient(url, user, password).addComment(space, toolName, comment);
+            return String.valueOf(confluenceComment.getId());
+        } catch (Exception e) {
+            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e);
         }
     }
 }
