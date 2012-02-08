@@ -14,6 +14,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.FolderCreateCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.WizardExportHelper;
 import org.iplantc.de.client.views.FolderSelector;
 
@@ -30,6 +31,7 @@ import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonBar;
@@ -42,6 +44,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -61,6 +64,7 @@ public class JobLaunchDialog extends Dialog {
     private final String COLON = ":"; //$NON-NLS-1$
     private FolderSelector folderSelector;
     private static UserInfo uinfo = UserInfo.getInstance();
+    private boolean isValidFolder;
 
     /**
      * Constructs an instance of the job launch dialog.
@@ -77,8 +81,7 @@ public class JobLaunchDialog extends Dialog {
 
     private void updateOkButton() {
         Button btnOk = getButtonById(Dialog.OK);
-
-        btnOk.setEnabled(fieldName.isValid() && (!fieldName.getValue().equals(""))); //$NON-NLS-1$
+        btnOk.setEnabled(fieldsValid() && isValidFolder); //$NON-NLS-1$
     }
 
     private void initNameField() {
@@ -148,7 +151,7 @@ public class JobLaunchDialog extends Dialog {
         setDefaultOutputFolder();
         VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
-        folderSelector = new FolderSelector();
+        folderSelector = new FolderSelector(new checkPermissions());
         ret.add(new Label(I18N.DISPLAY.selectJobOutputDir("/"
                 + DEProperties.getInstance().getDefaulyOutputFolderName())
                 + COLON));
@@ -209,6 +212,9 @@ public class JobLaunchDialog extends Dialog {
         setModal(true);
         setWidth(400);
         setButtons(Dialog.OKCANCEL);
+
+        // we begin with default folder
+        isValidFolder = true;
 
         initButtons();
     }
@@ -288,6 +294,20 @@ public class JobLaunchDialog extends Dialog {
         String json = WizardExportHelper.buildJSON(tblComponentVals, false);
 
         exportLaunch(type, json);
+    }
+
+    private class checkPermissions implements Command {
+        @Override
+        public void execute() {
+            if (!DataUtils.canUploadToThisFolder(folderSelector.getSelectedFolder())) {
+                MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
+                        I18N.DISPLAY.permissionErrorMessage(), null);
+                isValidFolder = false;
+            } else {
+                isValidFolder = true;
+            }
+            updateOkButton();
+        }
     }
 
     private void compose() {
