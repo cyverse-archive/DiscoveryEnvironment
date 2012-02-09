@@ -91,7 +91,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
         initGridListeners();
         initGridViewConfig();
-        initToolBar();
+        addToolBarActions();
     }
 
     private TemplateServiceFacade getTemplateService() {
@@ -123,7 +123,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         return model;
     }
 
-    private void initToolBar() {
+    private void addToolBarActions() {
         addToToolBar(new SeparatorToolItem());
         addToToolBar(buildNewButton());
         addToToolBar(new FillToolItem());
