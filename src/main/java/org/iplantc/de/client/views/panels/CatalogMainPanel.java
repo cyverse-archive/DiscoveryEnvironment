@@ -22,6 +22,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
+import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -54,6 +55,7 @@ import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -227,20 +229,24 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         return submit;
     }
 
-    private void showPublishToWorldDialog(Analysis analysis) {
+    private void showPublishToWorldDialog(final Analysis analysis) {
         final Window makePublicWin = new Window();
         makePublicWin.setModal(true);
 
         PublishToWorldPanel requestForm = new PublishToWorldPanel(analysis, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(String url) {
                 makePublicWin.hide();
+
+                MessageBox.info(I18N.DISPLAY.success(), I18N.DISPLAY.makePublicSucess(url), null);
+
                 fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 makePublicWin.hide();
+                ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
             }
         });
 
@@ -754,19 +760,36 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 return;
             }
 
-            templateService.rateAnalysis(model.getId(), score, new AsyncCallback<String>() {
+            final AppCommentDialog dlg = new AppCommentDialog(model.getName());
+            Command onConfirm = new Command() {
+                @Override
+                public void execute() {
+                    persistRating(model, score, dlg.getComment(), parent);
+                }
+            };
+            dlg.setCommand(onConfirm);
+            dlg.show();
+        }
+
+        private void persistRating(final Analysis model, final int score, String comment,
+                final LayoutContainer parent) {
+
+            AsyncCallback<String> callback = new AsyncCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     AnalysisFeedback userFeedback = model.getFeedback();
                     int userScoreBefore = userFeedback.getUser_score();
 
+                    userFeedback.setComment_id(result);
+
                     userFeedback.setUser_score(score);
 
+                    resetRatingStarColors(userFeedback, parent);
                     if (parent != null) {
                         if (userScoreBefore <= 0) {
                             addUnrateIcon(model, parent);
                         }
-                        parent.layout();
+                        parent.layout(); // so the unrate icon shows
                     }
                 }
 
@@ -774,7 +797,15 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(caught);
                 }
-            });
+            };
+
+            String commentId = model.getFeedback().getComment_id();
+            // if (commentId == null || commentId.isEmpty()) {
+                templateService.rateAnalysis(model.getId(), score, model.getName(), comment, callback);
+            // } else {
+            // templateService.updateRating(model.getId(), score, model.getName(), comment, commentId,
+            // callback);
+            // }
         }
     }
 }

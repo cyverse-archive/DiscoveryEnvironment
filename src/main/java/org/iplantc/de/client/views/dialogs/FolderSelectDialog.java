@@ -13,6 +13,7 @@ import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.views.panels.FolderSelectDialogPanel;
+import org.iplantc.de.client.views.panels.ResourceSelectDialogPanel;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -30,6 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDialog {
     private ArrayList<HandlerRegistration> handlers;
     private final String tag;
+    private String defaultFolderId;
 
     /**
      * Instantiate from a tag and caption.
@@ -66,8 +68,8 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
             }
         });
 
-        setResizable(true);
-        setSize(640, 480);
+        setResizable(false);
+        setSize(480, 400);
     }
 
     /**
@@ -98,6 +100,15 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
      */
     public void select(Folder folder) {
         ((FolderSelectDialogPanel)getUnderlyingPanel()).select(folder);
+    }
+
+    /**
+     * Set the argument folder id to be selected in the dialog.
+     * 
+     * @param id id of the folder to be selected.
+     */
+    public Folder selectById(String folderId) {
+        return ((FolderSelectDialogPanel)getUnderlyingPanel()).selectById(folderId);
     }
 
     /**
@@ -154,7 +165,8 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
         public void onSuccess(String result) {
             FolderSelectDialogPanel panel = (FolderSelectDialogPanel)getUnderlyingPanel();
 
-            panel.seed(UserInfo.getInstance().getUsername(), result, maskingParent, false, null);
+            panel.seed(UserInfo.getInstance().getUsername(), result, maskingParent, false,
+                    defaultFolderId);
 
             unmask();
         }
@@ -200,6 +212,9 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
     }
 
     private void cleanup() {
+
+        ((ResourceSelectDialogPanel)getUnderlyingPanel()).cleanup();
+
         EventBus eventbus = EventBus.getInstance();
 
         // unregister
@@ -209,5 +224,19 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
 
         // clear our list
         handlers.clear();
+    }
+
+    /**
+     * @param defaultFolderId the defaultFolderId to set
+     */
+    public void setDefaultFolderId(String defaultFolderId) {
+        this.defaultFolderId = defaultFolderId;
+    }
+
+    /**
+     * @return the defaultFolderId
+     */
+    public String getDefaultFolderId() {
+        return defaultFolderId;
     }
 }
