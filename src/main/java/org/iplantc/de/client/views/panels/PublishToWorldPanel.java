@@ -11,9 +11,9 @@ import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.dialogs.CategorySelectionDialog;
 
@@ -28,10 +28,8 @@ import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
@@ -59,7 +57,7 @@ public class PublishToWorldPanel extends LayoutContainer {
     private TextArea selectedCategories;
     private TextArea descField;
     private VerticalPanel categoryField;
-    private TextField<String> urlField;
+    private String wikiUrl;
     private Button btnSubmit;
     private Button btnCancel;
     private FormPanel form;
@@ -119,7 +117,7 @@ public class PublishToWorldPanel extends LayoutContainer {
         json.put("email", getJsonString(emailField.getValue())); //$NON-NLS-1$
         json.put("desc", getJsonString(descField.getValue())); //$NON-NLS-1$
         json.put("groups", buildSelectedCategoriesAsJson()); //$NON-NLS-1$
-        json.put("wiki_url", getJsonString(urlField.getValue())); //$NON-NLS-1$
+        json.put("wiki_url", getJsonString(wikiUrl)); //$NON-NLS-1$
         json.put("references", refPanel.toJson()); //$NON-NLS-1$
 
         return json;
@@ -159,10 +157,6 @@ public class PublishToWorldPanel extends LayoutContainer {
         form.add(createSpacer());
 
         form.add(descField, formData);
-
-        form.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.wikiUrlLabel(Constants.CLIENT
-                .publishDocumentationUrl()) + ":"))); //$NON-NLS-1$
-        form.add(buildUrlField(), formData);
 
         form.add(new FormLabel(I18N.DISPLAY.referencesLabel()), formData);
         form.add(refPanel, formData);
@@ -222,8 +216,6 @@ public class PublishToWorldPanel extends LayoutContainer {
                 255);
 
         categoryField = buildCategoryField();
-
-        urlField = buildTextField(null, false, null, WIKI_URL, null, 1024);
 
         refPanel = new ReferenceEditorGridPanel(525, 90);
     }
@@ -350,39 +342,6 @@ public class PublishToWorldPanel extends LayoutContainer {
                 });
     }
 
-    private VerticalPanel buildUrlField() {
-        urlField = new BoundedTextField<String>();
-
-        urlField.setMaxLength(1024);
-        urlField.setName(WIKI_URL);
-        urlField.setId(ID + WIKI_URL);
-        urlField.setAllowBlank(false);
-        urlField.setAutoValidate(true);
-        urlField.setWidth(520);
-        urlField.setEmptyText(Constants.CLIENT.validAppWikiUrlExample());
-
-        urlField.setValidator(new Validator() {
-            @Override
-            public String validate(Field<?> field, String value) {
-                // make sure the URL protocol is http or https, has a valid iPlant host name, and has at
-                // least one character under the validAppWikiUrlPath.
-                if (!value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
-                        + Constants.CLIENT.validAppWikiUrlPath() + ".+")) { //$NON-NLS-1$
-                    return I18N.RULES.notValidAppWikiUrl(""); //$NON-NLS-1$
-                }
-
-                return null;
-            }
-        });
-
-        VerticalPanel panel = new VerticalPanel();
-        panel.setBorders(true);
-        panel.setSpacing(5);
-        panel.add(urlField);
-
-        return panel;
-    }
-
     private void buildSubmitButton() {
         btnSubmit = new Button();
 
@@ -392,22 +351,40 @@ public class PublishToWorldPanel extends LayoutContainer {
         btnSubmit.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-                TemplateServiceFacade service = new TemplateServiceFacade();
-                service.publishToWorld(toJson(), new AsyncCallback<String>() {
+                createDocumentationPage();
+            }
+        });
+    }
+
+    /**
+     * Adds a page to the wiki.
+     */
+    private void createDocumentationPage() {
+        ConfluenceServiceFacade.getInstance().createDocumentationPage(analysis.getName(),
+                analysis.getDescription(), new AsyncCallback<String>() {
                     @Override
-                    public void onSuccess(String result) {
-                        MessageBox.info(I18N.DISPLAY.success(), I18N.DISPLAY.makePublicSucess(), null);
-                        closeCallback.onSuccess(result);
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.cantCreateConfluencePage(analysis.getName()),
+                                caught);
                     }
 
                     @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
-                        closeCallback.onFailure(caught);
+                    public void onSuccess(String url) {
+                        wikiUrl = url;
+                        TemplateServiceFacade service = new TemplateServiceFacade();
+                        service.publishToWorld(toJson(), new AsyncCallback<String>() {
+                            @Override
+                            public void onSuccess(String result) {
+                                closeCallback.onSuccess(wikiUrl);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                closeCallback.onFailure(caught);
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 
     private void buildCancelButton() {

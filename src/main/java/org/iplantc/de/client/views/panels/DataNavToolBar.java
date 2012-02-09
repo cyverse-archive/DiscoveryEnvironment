@@ -13,19 +13,19 @@ import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
+import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.menu.Menu;
-import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanelSelectionModel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -44,16 +44,23 @@ public class DataNavToolBar extends ToolBar {
     private String parentFolderId;
     private TreePanelSelectionModel<Folder> selectionModel;
     private Component maskingParent;
+    private Button addFolder;
+    private Button deleteFolder;
+    private Button renameFolder;
 
     /**
      * create a new instance of this tool bar
      * 
      * @param tag a tag for this widget
      */
-    public DataNavToolBar(final String tag) {
+    public DataNavToolBar(final String tag, Mode mode) {
         this.tag = tag;
-        add(buildImportButton());
-        add(buildActionsMenuButton());
+        if (mode.equals(Mode.EDIT)) {
+            add(buildImportButton());
+        }
+        add(buildAddFolderButton());
+        add(buildDeleteFolderButton());
+        add(buildRenameFolderButton());
     }
 
     /**
@@ -70,8 +77,11 @@ public class DataNavToolBar extends ToolBar {
      * 
      * @param selectionModel
      */
-    public void setSelectionModel(TreePanelSelectionModel<Folder> selectionModel) {
-        this.selectionModel = selectionModel;
+    public void setSelectionModel(TreePanelSelectionModel<Folder> selModel) {
+        this.selectionModel = selModel;
+        if (selectionModel != null) {
+            selectionModel.addSelectionChangedListener(new ActionsSelectionListener());
+        }
     }
 
     public void setMaskingParent(Component maskingParent) {
@@ -116,47 +126,19 @@ public class DataNavToolBar extends ToolBar {
         }
     }
 
-    /**
-     * Builds a menu button with items for adding, renaming, and deleting folders.
-     * 
-     * @return The navigation panel's toolbar's Actions menu button.
-     */
-    private Button buildActionsMenuButton() {
-        // build the menu and menu actions
-        Menu actionMenu = new Menu();
-
-        final MenuItem addFolder = buildAddFolderMenuItem();
-        final MenuItem renameFolder = buildRenameFolder();
-        final MenuItem deleteFolder = buildDeleteFolderMenuItem();
-
-        actionMenu.add(addFolder);
-        actionMenu.add(renameFolder);
-        actionMenu.add(deleteFolder);
-
-        // create the menu button
-        Button ret = new Button(I18N.DISPLAY.moreActions());
-
-        ret.setMenu(actionMenu);
-
-        // Add a selection listener that will disable or enable actions based on the selected folder.
-        ret.addSelectionListener(new MoreActionsListener(addFolder, renameFolder, deleteFolder));
-
-        return ret;
-    }
-
     private void showErrorMsg() {
         MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(), I18N.DISPLAY.permissionErrorMessage(),
                 null);
     }
 
-    private MenuItem buildDeleteFolderMenuItem() {
-        MenuItem deleteFolder = new MenuItem();
-        deleteFolder.setText(I18N.DISPLAY.delete());
+    private Button buildDeleteFolderButton() {
+        deleteFolder = new Button();
+        deleteFolder.setTitle(I18N.DISPLAY.delete());
         deleteFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
-        deleteFolder.addSelectionListener(new SelectionListener<MenuEvent>() {
+        deleteFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 if (selectionModel == null) {
                     return;
                 }
@@ -181,7 +163,7 @@ public class DataNavToolBar extends ToolBar {
                         }
                     }
                 };
-                
+
                 if (!DataUtils.isDeletable(resources)) {
                     showErrorMsg();
                 } else {
@@ -193,13 +175,13 @@ public class DataNavToolBar extends ToolBar {
         return deleteFolder;
     }
 
-    private MenuItem buildRenameFolder() {
-        MenuItem renameFolder = new MenuItem();
-        renameFolder.setText(I18N.DISPLAY.rename());
+    private Button buildRenameFolderButton() {
+        renameFolder = new Button();
+        renameFolder.setTitle(I18N.DISPLAY.rename());
         renameFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
-        renameFolder.addSelectionListener(new SelectionListener<MenuEvent>() {
+        renameFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 if (selectionModel == null) {
                     return;
                 }
@@ -219,13 +201,13 @@ public class DataNavToolBar extends ToolBar {
         return renameFolder;
     }
 
-    private MenuItem buildAddFolderMenuItem() {
-        MenuItem addFolder = new MenuItem();
-        addFolder.setText(I18N.DISPLAY.newFolder());
+    private Button buildAddFolderButton() {
+        addFolder = new Button();
+        addFolder.setTitle(I18N.DISPLAY.newFolder());
         addFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
-        addFolder.addSelectionListener(new SelectionListener<MenuEvent>() {
+        addFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
-            public void componentSelected(MenuEvent ce) {
+            public void componentSelected(ButtonEvent ce) {
                 if (selectionModel == null) {
                     return;
                 }
@@ -247,19 +229,10 @@ public class DataNavToolBar extends ToolBar {
         return addFolder;
     }
 
-    private final class MoreActionsListener extends SelectionListener<ButtonEvent> {
-        private final MenuItem addFolder;
-        private final MenuItem renameFolder;
-        private final MenuItem deleteFolder;
-
-        private MoreActionsListener(MenuItem addFolder, MenuItem renameFolder, MenuItem deleteFolder) {
-            this.addFolder = addFolder;
-            this.renameFolder = renameFolder;
-            this.deleteFolder = deleteFolder;
-        }
+    private final class ActionsSelectionListener extends SelectionChangedListener<Folder> {
 
         @Override
-        public void componentSelected(ButtonEvent ce) {
+        public void selectionChanged(SelectionChangedEvent<Folder> se) {
             // disable all actions by default
             boolean addMenuItemsEnabled = false;
             boolean editMenuItemsEnabled = false;
@@ -283,6 +256,7 @@ public class DataNavToolBar extends ToolBar {
             addFolder.setEnabled(addMenuItemsEnabled);
             renameFolder.setEnabled(editMenuItemsEnabled);
             deleteFolder.setEnabled(editMenuItemsEnabled);
+
         }
 
     }

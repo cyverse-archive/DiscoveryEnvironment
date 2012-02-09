@@ -99,6 +99,10 @@
 		<servlet-name>aboutAppServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
 	</servlet>
+    <servlet>
+        <servlet-name>confluenceServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
+    </servlet>
 
 	<!-- Servlet Mapping Definitions -->
 	<servlet-mapping>
@@ -145,6 +149,10 @@
 		<servlet-name>aboutAppServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/about</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>confluenceServlet</servlet-name>
+        <url-pattern>/discoveryenvironment/confluence</url-pattern>
+    </servlet-mapping>
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>

@@ -36,6 +36,9 @@ public class WizardExportHelper {
             job.put("notify", JSONBoolean.getInstance(sendEmailNotification)); //$NON-NLS-1$
             job.put("debug", JSONBoolean.getInstance(tblComponentVals.isDebugEnabled())); //$NON-NLS-1$
             job.put("notify", JSONBoolean.getInstance(tblComponentVals.isNotifyEnabled())); //$NON-NLS-1$
+            job.put("output_dir", new JSONString(tblComponentVals.getOutputFolderId()));//$NON-NLS-1$
+            job.put("create_output_subdir",
+                    JSONBoolean.getInstance(tblComponentVals.isCreateSubFolder()));//$NON-NLS-1$
             JSONObject config = new JSONObject();
 
             Map<String, ComponentValue> map = tblComponentVals.getValues();

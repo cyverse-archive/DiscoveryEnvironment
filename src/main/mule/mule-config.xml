@@ -40,7 +40,11 @@
 			<property name="sessionFactory" ref="sessionFactory" />
 		</bean>
 
-  		<bean name="osmClient" class="org.iplantc.workflow.client.OsmClient">
+        <bean name="workspaceInitializer" class="org.iplantc.workflow.service.InjectableWorkspaceInitializer">
+            <property name="userService" ref="userService" />
+        </bean>
+
+        <bean name="osmClient" class="org.iplantc.workflow.client.OsmClient">
   			<property name="baseUrl" value="${org.iplantc.discoveryenvironment.osmBaseUrl}" />
   			<property name="bucket" value="${org.iplantc.discoveryenvironment.osmBucket}" />
   			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.osmConnectionTimeout}" />
@@ -56,6 +60,8 @@
         <bean name="analysisEditService" class="org.iplantc.workflow.service.AnalysisEditService">
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="zoidbergClient" ref="zoidbergClient" />
+            <property name="userService" ref="userService" />
+            <property name="workflowExportService" ref="workflowExportService" />
         </bean>
 
   		<bean name="AnalysisService" class="org.iplantc.workflow.experiment.AnalysisService">
@@ -76,6 +82,7 @@
 		<bean name="experimentRunner" class="org.iplantc.workflow.experiment.ExperimentRunner" >
 			<property name="sessionFactory" ref="sessionFactory" />
 			<property name="fileInfo" ref="fileInfoService" />
+            <property name="userService" ref="userService" />
 			<property name="executionUrl" value="${org.iplantc.discoveryenvironment.job_execution}" />
 			<property name="urlAssembler" ref="urlAssembler" />
   			<property name="osmClient" ref="osmClient" />
@@ -427,12 +434,14 @@
             <constructor-arg ref="sessionFactory" />
             <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
             <constructor-arg value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <constructor-arg ref="workspaceInitializer" />
 		</bean>
 
         <bean name="analysisCategorizationService" class="org.iplantc.workflow.service.AnalysisCategorizationService">
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="devAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.devAnalysisGroupIndex}" />
             <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <property name="workspaceInitializer" ref="workspaceInitializer" />
         </bean>
 
         <bean name="pipelineService" class="org.iplantc.workflow.service.PipelineService">
@@ -442,6 +451,7 @@
         <bean name="analysisListingService" class="org.iplantc.workflow.service.AnalysisListingService">
             <property name="sessionFactory" ref="sessionFactory" />
             <property name="favoritesAnalysisGroupIndex" value="${org.iplantc.discoveryenvironment.workspace.favoritesAnalysisGroupIndex}" />
+            <property name="workspaceInitializer" ref="workspaceInitializer" />
         </bean>
 
 		<bean name="workflowExportService" class="org.iplantc.workflow.service.WorkflowExportService">
@@ -522,54 +532,6 @@
             </component>
         </service>
 
-        <service name="CreateWorkspace">
-            <inbound>
-                <vm:inbound-endpoint path="createWorkspace" synchronous="true" name="createWorkspace" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="createWorkspace" />
-                </method-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="GetOrCreateWorkspace">
-            <inbound>
-                <vm:inbound-endpoint path="getOrCreateWorkspace" synchronous="true" name="getOrCreateWorkspace" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getOrCreateWorkspace" />
-                </method-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="GetOrCreateWorkspaceForUsername">
-            <inbound>
-                <vm:inbound-endpoint path="getOrCreateWorkspaceForUsername" synchronous="true" name="getOrCreateWorkspaceForUsername" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getOrCreateWorkspaceForUsername" />
-                </method-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
-        <service name="GetCurrentUserDetails">
-            <inbound>
-                <vm:inbound-endpoint path="getCurrentUserDetails" synchronous="true" name="getCurrentUserDetails" />
-            </inbound>
-            <component>
-                <no-arguments-entry-point-resolver>
-                    <include-entry-point method="getCurrentUserDetails" />
-                </no-arguments-entry-point-resolver>
-                <spring-object bean="userService" />
-            </component>
-        </service>
-
         <!-- Metadata Services -->
 		<service name="AddAnalysisToGroup">
 			<inbound>
@@ -607,19 +569,7 @@
             </component>
         </service>
 
-        <service name="GetAnalysesInGroup">
-            <inbound>
-                <vm:inbound-endpoint path="getAnalysesInGroup" synchronous="true" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="listAnalysesInGroup"/>
-                </method-entry-point-resolver>
-                <spring-object bean="analysisListingService" />
-            </component>
-        </service>
-
-        <service name="GetPublicAnalyses">
+       <service name="GetPublicAnalyses">
             <inbound>
                 <vm:inbound-endpoint path="getPublicAnalyses" synchronous="true" />
             </inbound>
@@ -803,18 +753,6 @@
 				<spring-object bean="workflowExportService" />
 			</component>
 		</service>
-
-        <service name="GetTemplateFromAnalysis">
-            <inbound>
-                <vm:inbound-endpoint path="getTemplateFromAnalysis" synchronous="true" />
-            </inbound>
-            <component>
-                <method-entry-point-resolver>
-                    <include-entry-point method="getTemplateFromAnalysis" />
-                </method-entry-point-resolver>
-                <spring-object bean="workflowExportService" />
-            </component>
-        </service>
 
         <service name="GetAllAnalysisIds">
             <inbound>
