@@ -65,6 +65,11 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     private final List<FileUpload> fupload;
     private final List<TextArea> urls;
     private final String destFolder;
+    private MODE mode;
+
+    public static enum MODE {
+        URL_ONLY, FILE_AND_URL
+    };
 
     /**
      * Instantiate from hidden fields, URL, and handler.
@@ -74,8 +79,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
      * @param handler handler to be executed on upload completion.
      */
     public FileUploadDialogPanel(FastMap<String> hiddenFields, String servletActionUrl,
-            AsyncUploadCompleteHandler handler) {
+            AsyncUploadCompleteHandler handler, MODE mode) {
         hdlrUpload = handler;
+        this.mode = mode;
         destFolder = hiddenFields.get(HDN_PARENT_ID_KEY);
 
         form = new FormPanel();
@@ -91,7 +97,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         VerticalPanel vpnlWidget = new VerticalPanel();
         vpnlWidget.setSpacing(5);
 
-        vpnlWidget.add(new LabelField(I18N.DISPLAY.fileUploadMaxSizeWarning()));
+        if (mode.equals(MODE.FILE_AND_URL)) {
+            vpnlWidget.add(new LabelField(I18N.DISPLAY.fileUploadMaxSizeWarning()));
+        }
         vpnlWidget.add(pnlInternalLayout);
 
         form.add(vpnlWidget);
@@ -126,11 +134,13 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             ret.add(hdn);
         }
 
-        // then add the visual widgets
-        for (int i = 0; i < MAX_UPLOADS; i++) {
-            FileUpload uploadField = buildFileUpload();
-            fupload.add(uploadField);
-            ret.add(uploadField);
+        if (mode.equals(MODE.FILE_AND_URL)) {
+            // then add the visual widgets
+            for (int i = 0; i < MAX_UPLOADS; i++) {
+                FileUpload uploadField = buildFileUpload();
+                fupload.add(uploadField);
+                ret.add(uploadField);
+            }
         }
 
         ret.add(new HTML(I18N.DISPLAY.urlPrompt()));
@@ -226,15 +236,17 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
             // check for duplicate files already on the server, excluding any invalid upload fields
             final List<String> destResourceIds = new ArrayList<String>();
-            for (FileUpload uploadField : fupload) {
-                // Remove any path from the filename.
-                String filename = uploadField.getFilename().replaceAll(".*[\\\\/]", ""); //$NON-NLS-1$//$NON-NLS-2$
-                boolean validFilename = isValidFilename(filename);
+            if (mode.equals(MODE.FILE_AND_URL)) {
+                for (FileUpload uploadField : fupload) {
+                    // Remove any path from the filename.
+                    String filename = uploadField.getFilename().replaceAll(".*[\\\\/]", ""); //$NON-NLS-1$//$NON-NLS-2$
+                    boolean validFilename = isValidFilename(filename);
 
-                uploadField.setEnabled(validFilename);
+                    uploadField.setEnabled(validFilename);
 
-                if (validFilename) {
-                    destResourceIds.add(buildResourceId(filename));
+                    if (validFilename) {
+                        destResourceIds.add(buildResourceId(filename));
+                    }
                 }
             }
 
@@ -274,10 +286,12 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private boolean isValidUploadForm() {
-        for (FileUpload uploadField : fupload) {
-            String filename = uploadField.getFilename();
-            if (isValidFilename(filename)) {
-                return true;
+        if (mode.equals(MODE.FILE_AND_URL)) {
+            for (FileUpload uploadField : fupload) {
+                String filename = uploadField.getFilename();
+                if (isValidFilename(filename)) {
+                    return true;
+                }
             }
         }
 

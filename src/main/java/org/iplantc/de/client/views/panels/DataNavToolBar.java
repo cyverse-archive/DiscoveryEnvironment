@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
+import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
+import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -47,6 +52,7 @@ public class DataNavToolBar extends ToolBar {
     private Button addFolder;
     private Button deleteFolder;
     private Button renameFolder;
+    private IPlantSubmittableDialog dlgUpload;
 
     /**
      * create a new instance of this tool bar
@@ -57,6 +63,7 @@ public class DataNavToolBar extends ToolBar {
         this.tag = tag;
         if (mode.equals(Mode.EDIT)) {
             add(buildImportButton());
+            add(buildUrlImportButton());
         }
         add(buildAddFolderButton());
         add(buildDeleteFolderButton());
@@ -89,7 +96,7 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private Button buildImportButton() {
-        Button ret = PanelHelper.buildButton("idDataImportBtn", I18N.DISPLAY.importLabel(), //$NON-NLS-1$
+        Button ret = PanelHelper.buildButton("idDataImportBtn", null, //$NON-NLS-1$
                 new SelectionListener<ButtonEvent>() {
                     @Override
                     public void componentSelected(ButtonEvent ce) {
@@ -97,10 +104,57 @@ public class DataNavToolBar extends ToolBar {
                     }
                 });
 
-        // ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
-        // .importData()));
+        ret.setToolTip("Upload from desktop");
+        ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
+                .desktopUpload()));
 
         return ret;
+    }
+
+    private Button buildUrlImportButton() {
+        Button ret = PanelHelper.buildButton("idUrlImportBtn", null, //$NON-NLS-1$
+                new SelectionListener<ButtonEvent>() {
+                    @Override
+                    public void componentSelected(ButtonEvent ce) {
+                        promptUrlImport();
+                    }
+                });
+
+        ret.setToolTip("Import from URL");
+        ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
+                .urlImport()));
+
+        return ret;
+
+    }
+
+    private void promptUrlImport() {
+        String uploadDestId = selectionModel.getSelectedItem().getId();
+        String username = UserInfo.getInstance().getUsername();
+
+        // provide key/value pairs for hidden fields
+        FastMap<String> hiddenFields = new FastMap<String>();
+        hiddenFields.put(FileUploadDialogPanel.HDN_PARENT_ID_KEY, uploadDestId);
+        hiddenFields.put(FileUploadDialogPanel.HDN_USER_ID_KEY, username);
+
+        // define a handler for upload completion
+        AsyncUploadCompleteHandler handler = new AsyncUploadCompleteHandler(uploadDestId) {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void onAfterCompletion() {
+                if (dlgUpload != null) {
+                    dlgUpload.hide();
+                }
+            }
+        };
+
+        FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields,
+                Constants.CLIENT.fileUploadServlet(), handler, FileUploadDialogPanel.MODE.URL_ONLY);
+
+        dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 536, pnlUpload);
+        dlgUpload.show();
     }
 
     private void promptUpload() {
@@ -133,7 +187,7 @@ public class DataNavToolBar extends ToolBar {
 
     private Button buildDeleteFolderButton() {
         deleteFolder = new Button();
-        deleteFolder.setTitle(I18N.DISPLAY.delete());
+        deleteFolder.setToolTip(I18N.DISPLAY.delete());
         deleteFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
         deleteFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @SuppressWarnings("unchecked")
@@ -177,7 +231,7 @@ public class DataNavToolBar extends ToolBar {
 
     private Button buildRenameFolderButton() {
         renameFolder = new Button();
-        renameFolder.setTitle(I18N.DISPLAY.rename());
+        renameFolder.setToolTip(I18N.DISPLAY.rename());
         renameFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
         renameFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
@@ -203,7 +257,7 @@ public class DataNavToolBar extends ToolBar {
 
     private Button buildAddFolderButton() {
         addFolder = new Button();
-        addFolder.setTitle(I18N.DISPLAY.newFolder());
+        addFolder.setToolTip(I18N.DISPLAY.newFolder());
         addFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
         addFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
