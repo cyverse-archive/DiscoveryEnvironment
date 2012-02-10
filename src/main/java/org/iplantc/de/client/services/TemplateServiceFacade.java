@@ -92,7 +92,9 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        addComment(appName, comment, wrapper, callback);
+        // FIXME temp. disable adding comments for ratings, until comments can be deleted.
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+        // addComment(appName, comment, wrapper, callback);
     }
 
     private void addComment(String appName, String comment, final ServiceCallWrapper wrapper,
