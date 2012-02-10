@@ -21,7 +21,6 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
-import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -54,7 +53,6 @@ import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -758,15 +756,17 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 return;
             }
 
-            final AppCommentDialog dlg = new AppCommentDialog(model.getName());
-            Command onConfirm = new Command() {
-                @Override
-                public void execute() {
-                    persistRating(model, score, dlg.getComment(), parent);
-                }
-            };
-            dlg.setCommand(onConfirm);
-            dlg.show();
+            // FIXME temp. disable adding comments for ratings, until comments can be deleted.
+            persistRating(model, score, null, parent);
+            // final AppCommentDialog dlg = new AppCommentDialog(model.getName());
+            // Command onConfirm = new Command() {
+            // @Override
+            // public void execute() {
+            // persistRating(model, score, dlg.getComment(), parent);
+            // }
+            // };
+            // dlg.setCommand(onConfirm);
+            // dlg.show();
         }
 
         private void persistRating(final Analysis model, final int score, String comment,
