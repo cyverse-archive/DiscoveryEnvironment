@@ -3,8 +3,6 @@ package org.iplantc.de.client.utils;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 
-import com.google.gwt.user.client.Window;
-
 /**
  * Utilities to facilitate logging out of the discovery environment.
  * 
@@ -17,7 +15,7 @@ public class LogoutUtil {
      * @return the URL as a string.
      */
     public static String buildLogoutUrl() {
-        return "https://" + Window.Location.getHost() + Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
+        Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
     }
 
     /**

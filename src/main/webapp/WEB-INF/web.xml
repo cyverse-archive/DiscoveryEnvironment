@@ -27,6 +27,14 @@
 		<param-name>mule.irods.enabled</param-name>
 		<param-value>/WEB-INF/irods-mule.xml</param-value>
 	</context-param>
+    <context-param>
+        <param-name>org.iplantc.logout-url</param-name>
+        <param-value>https://cas-server.iplantcollaborative.org/cas/logout</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.iplantc.logout-forward</param-name>
+        <param-value>http://iplantcollaborative.org</param-value>
+    </context-param>
 	<context-param>
 		<!-- max size of the upload request -->
 		<param-name>maxSize</param-name>
@@ -34,22 +42,75 @@
 	</context-param>
 	<!-- Filters -->
 	<filter>
-		<filter-name>Authentication Filter</filter-name>
-		<filter-class>org.iplantc.de.server.AuthFilter</filter-class>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://cas-server.iplantcollaborative.org/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://cas-client.iplantcollaborative.org</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://cas-server.iplantcollaborative.org/cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://cas-client.iplantcollaborative.org</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirectAfterValidation</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyReceptorUrl</param-name>
+			<param-value>/proxy-receptinator</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://cas-client.iplantcollaborative.org/belphegor/proxy-receptinator</param-value>
+		</init-param>
+		<init-param>
+			<param-name>acceptAnyProxy</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>proxyGrantingTicketStorageClass</param-name>
+			<param-value>org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>tolerance</param-name>
+			<param-value>5000</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 	</filter>
 	<!-- Filter Mapping Definitions -->
-	<filter-mapping>
-		<filter-name>Authentication Filter</filter-name>
-		<url-pattern>/discoveryenvironment/deservice</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>Authentication Filter</filter-name>
+    <filter-mapping>
+        <filter-name>CAS Authentication Filter</filter-name>
+        <url-pattern>/</url-pattern>
+        <url-pattern>*.jsp</url-pattern>
+        <url-pattern>*.html</url-pattern>
+		<url-pattern>*.gupld</url-pattern>
 		<url-pattern>*.gdwnld</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>Authentication Filter</filter-name>
-		<url-pattern>/discoveryenvironment/data-api-service</url-pattern>
-	</filter-mapping>
+        <url-pattern>/discoveryenvironment/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CAS Validation Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 	<!-- Listeners -->
 	<listener>
 		<listener-class>org.iplantc.muletoolkit.config.builders.ConditionalMuleXmlBuilderContextListener</listener-class>
@@ -99,10 +160,10 @@
 		<servlet-name>aboutAppServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
 	</servlet>
-    <servlet>
-        <servlet-name>confluenceServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
-    </servlet>
+	<servlet>
+		<servlet-name>confluenceServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
+	</servlet>
 
 	<!-- Servlet Mapping Definitions -->
 	<servlet-mapping>
@@ -149,13 +210,18 @@
 		<servlet-name>aboutAppServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/about</url-pattern>
 	</servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>confluenceServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/confluence</url-pattern>
-    </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>confluenceServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/confluence</url-pattern>
+	</servlet-mapping>
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
+
+	<!-- CAS single sign-out listener -->
+    <listener>
+        <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+    </listener>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
