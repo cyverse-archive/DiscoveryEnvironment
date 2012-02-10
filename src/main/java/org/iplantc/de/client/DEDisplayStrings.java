@@ -17,13 +17,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadSuccess(String filename);
 
     /**
-     * Caption to file upload status messages.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileUpload();
-
-    /**
      * File upload maximum size message.
      * 
      * @return a string representing the localized text.
@@ -710,8 +703,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
 
     String up();
 
-    String desktop();
-
     String idParentInvalid();
 
     /**
@@ -1006,6 +997,41 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String dataDragDropStatusText();
 
     /**
+     * Localized text for java error
+     * 
+     * @return a string representing the localized text.
+     */
+    String javaError();
+
+    /**
+     * Localized text for the Simple Upload Form button launcher.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleUploadForm();
+
+    /**
+     * Localized text for the Simple Download Panel button launcher.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleDownloadForm();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt title.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmTitle();
+
+    /**
+     * Localized text for the iDrop Lite Applet window close-confirmation-prompt message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String idropLiteCloseConfirmMessage();
+
+    /**
      * Localized text for the App Comment dialog title
      * 
      * @return a string representing the localized text.
@@ -1028,4 +1054,5 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String selectJobOutputDir(String defaultPath);
+
 }

@@ -8,8 +8,6 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.ApplicationLayout;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.models.BasicWindowConfig;
-import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.utils.NotificationManager;
@@ -19,7 +17,6 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,16 +37,13 @@ public class DefaultWorkspaceView implements View {
     private void doWorkspaceDisplay() {
         DesktopView view = new DesktopView();
 
+        layout.replaceCenterPanel(view);
+
         // show application if an appID is specified in the request string
         String appId = getAppId();
         if (appId != null) {
-            JSONObject json = new JSONObject();
-            json.put("appID", new JSONString(appId)); //$NON-NLS-1$
-            BasicWindowConfig config = new CatalogWindowConfig(json);
-            new DECatalogWindow(Constants.CLIENT.deCatalog(), config).show();
+            DECatalogWindow.launchDECatalogWindow(null, appId);
         }
-
-        layout.replaceCenterPanel(view);
     }
 
     /**

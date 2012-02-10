@@ -58,7 +58,7 @@ public class GwtTestNotification extends GWTTestCase {
 
     public void testInstantiateByFullJsonObject() {
         Date origTimestamp = new Date(1291530527000L);
-        String json = "{\"id\": \"someId\", \"category\": \"data\", \"text\": \"here's a message\"," //$NON-NLS-1$
+        String json = "{\"id\": \"someId\", \"category\": \"analysis\", \"text\": \"here's a message\"," //$NON-NLS-1$
                 + "\"timestamp\": \"" + Notification.TIMESTAMP_FORMAT.format(origTimestamp) //$NON-NLS-1$
                 + " (MST)\"}"; //$NON-NLS-1$
         JSONObject jsonObj = JsonUtil.getObject(json);
@@ -72,7 +72,7 @@ public class GwtTestNotification extends GWTTestCase {
 
         Category cat = notification.getCategory();
         assertNotNull(cat);
-        assertTrue(cat.equals(Category.DATA));
+        assertTrue(cat.equals(Category.ANALYSIS));
 
         test = notification.getMessage();
         assertNotNull(test);

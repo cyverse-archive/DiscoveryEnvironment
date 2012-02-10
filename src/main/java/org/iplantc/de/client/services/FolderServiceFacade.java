@@ -9,11 +9,11 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
-import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -257,21 +257,31 @@ public class FolderServiceFacade {
     }
 
     /**
-     * Call service to upload a file to our server
+     * Call service to retrieve upload configuration values for idrop-lite.
      * 
-     * @param filename name of file to upload.
-     * @param idFolder folder to place file in.
-     * @param body multi-part body
      * @param callback executed when RPC call completes.
      */
-    public void uploadFile(String filename, String idFolder, String body, AsyncCallback<String> callback) {
-        String address = serviceNamePrefix + ".file-upload"; //$NON-NLS-1$
+    public void upload(AsyncCallback<String> callback) {
+        String address = serviceNamePrefix + ".idrop-upload"; //$NON-NLS-1$
 
-        MultiPartServiceWrapper wrapper = new MultiPartServiceWrapper(MultiPartServiceWrapper.Type.POST,
-                address);
-        wrapper.addPart(body, "name=\"file\"; filename=\"" + filename + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-        wrapper.addPart(idFolder + "/" + filename, "name=\"dest\""); //$NON-NLS-1$ //$NON-NLS-2$
-        SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        callService(callback, wrapper);
+    }
+
+    /**
+     * Call service to retrieve upload configuration values for idrop-lite.
+     * 
+     * @param callback executed when RPC call completes.
+     */
+    public void download(JSONArray paths, AsyncCallback<String> callback) {
+        String address = serviceNamePrefix + ".idrop-download"; //$NON-NLS-1$
+
+        JSONObject body = new JSONObject();
+        body.put("paths", paths); //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                body.toString());
+        callService(callback, wrapper);
     }
 
     /**

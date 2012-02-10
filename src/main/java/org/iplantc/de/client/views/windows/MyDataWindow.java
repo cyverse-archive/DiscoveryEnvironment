@@ -179,10 +179,8 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         // and re-shown.
         config = null;
 
-       
-       return pnlNavigation.selectFolder(path);
+        return pnlNavigation.selectFolder(path);
 
-        
     }
 
     private void selectRootNode() {
@@ -358,7 +356,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      */
     @Override
     protected int getEastWidth() {
-        return 200;
+        return 180;
     }
 
     /**

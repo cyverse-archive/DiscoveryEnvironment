@@ -1,11 +1,15 @@
 package org.iplantc.de.client.factories;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.models.BasicWindowConfig;
+import org.iplantc.de.client.models.CatalogWindowConfig;
+import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Factory class for generating window configuration classes.
@@ -40,6 +44,10 @@ public class WindowConfigFactory {
                         ret = new BasicWindowConfig(objData);
                     } else if (type.equals("my_data_window")) { //$NON-NLS-1$
                         ret = new BasicWindowConfig(objData);
+                    } else if (type.equals(Constants.CLIENT.deCatalog())) {
+                        ret = new CatalogWindowConfig(objData);
+                    } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
+                        ret = new IDropLiteWindowConfig(objData);
                     }
                 }
             }
@@ -47,4 +55,28 @@ public class WindowConfigFactory {
 
         return ret;
     }
+
+    /**
+     * Build a JSON message payload window configuration object.
+     * 
+     * @return JSON message payload window config
+     */
+    public JSONObject buildConfigPayload(final String tag, final String configType,
+            final JSONObject windowConfigData) {
+        if (windowConfigData == null) {
+            return null;
+        }
+
+        JSONObject windowConfig = new JSONObject();
+
+        windowConfig.put("data", windowConfigData); //$NON-NLS-1$
+        windowConfig.put("type", new JSONString(configType == null ? "" : configType)); //$NON-NLS-1$ //$NON-NLS-2$
+
+        JSONObject windowPayload = new JSONObject();
+        windowPayload.put("tag", new JSONString(tag == null ? "" : tag)); //$NON-NLS-1$ //$NON-NLS-2$
+        windowPayload.put("config", windowConfig); //$NON-NLS-1$
+
+        return windowPayload;
+    }
 }
+

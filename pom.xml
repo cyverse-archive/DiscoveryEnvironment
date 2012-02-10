@@ -266,6 +266,13 @@
 			<artifactId>groovy-engine.osgi</artifactId>
 			<version>1.1</version>
 		</dependency>
+        <!-- iDrop Lite Applet, provided by iRODS team -->
+        <dependency>
+            <groupId>org.irods.idrop</groupId>
+            <artifactId>idrop-lite</artifactId>
+            <version>1.0.0-beta3-SNAPSHOT</version>
+            <scope>provided</scope> <!-- we don't want the applet in WEB-INF/classes -->
+        </dependency>
 		<dependency>
 			<groupId>org.swift.common</groupId>
 			<artifactId>cli</artifactId>
@@ -482,6 +489,31 @@
 									<filtering>false</filtering>
 								</resource>
 							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+						            <groupId>org.irods.idrop</groupId>
+						            <artifactId>idrop-lite</artifactId>
+						            <version>1.0.0-beta3-SNAPSHOT</version>
+									<outputDirectory>${basedir}/war/applets</outputDirectory>
+									<destFileName>idrop-lite-1.0.0-beta3-SNAPSHOT.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
 						</configuration>
 					</execution>
 				</executions>

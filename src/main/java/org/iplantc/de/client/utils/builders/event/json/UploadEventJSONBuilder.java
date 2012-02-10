@@ -1,6 +1,7 @@
 package org.iplantc.de.client.utils.builders.event.json;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 
 import com.google.gwt.json.client.JSONObject;
@@ -23,10 +24,9 @@ public class UploadEventJSONBuilder extends AbstractEventJSONBuilder {
     }
 
     private String buildMessageText(final JSONObject jsonObj) {
-        String status = JsonUtil.getString(jsonObj, "status"); //$NON-NLS-1$
-        String filename = JsonUtil.getString(jsonObj, "label"); //$NON-NLS-1$
+        String filename = JsonUtil.getString(jsonObj, File.LABEL);
 
-        if (status != null && status.equals("success") && filename != null && !filename.isEmpty()) {
+        if (!filename.isEmpty()) {
             return I18N.DISPLAY.fileUploadSuccess(filename);
         }
 
