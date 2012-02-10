@@ -192,7 +192,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         };
 
         FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields,
-                Constants.CLIENT.fileUploadServlet(), handler);
+                Constants.CLIENT.fileUploadServlet(), handler, FileUploadDialogPanel.MODE.FILE_AND_URL);
 
         dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 536, pnlUpload);
         dlgUpload.show();

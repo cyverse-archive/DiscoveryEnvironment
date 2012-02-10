@@ -262,4 +262,20 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("comments.png")
     ImageResource metadata();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("drive_disk.png")
+    ImageResource desktopUpload();
+
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("drive_web.png")
+    ImageResource urlImport();
+
 }

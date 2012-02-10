@@ -619,3 +619,32 @@ img.analysis_remove {
     position: relative;
     top: 2px;
 }
+
+.app-search-item {
+  border-color: #FFFFFF #FFFFFF #EEEEEE;
+  border-style: solid;
+  border-width: 1px;
+  color: #555555;
+  padding: 3px 10px;
+  white-space: normal;
+}
+
+.app-search-item h3 {
+  color: #222222;
+}
+
+.app-search-item h3 span {
+  float: right;
+  font-size: 10px;
+  font-weight: normal;
+  margin: 0 0 5px 5px;
+}
+
+.app-search-item h4 {
+  font-weight: normal;
+  font-size: 11px;
+}
+
+.app-search-item h4 span {
+  font-style: italic;
+}
