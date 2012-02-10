@@ -15,7 +15,7 @@ public class LogoutUtil {
      * @return the URL as a string.
      */
     public static String buildLogoutUrl() {
-        Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
+        return Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
     }
 
     /**
