@@ -4,6 +4,7 @@ import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFac
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -204,6 +205,18 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "search-analyses/" //$NON-NLS-1$
+                + URL.encode(search);
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 

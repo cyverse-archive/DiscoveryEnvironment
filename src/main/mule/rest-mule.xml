@@ -466,6 +466,17 @@
                     <vm:outbound-endpoint path="deleteRating" responseTransformer-refs="FormatError AbortOnError" />
                     <restlet:uri-template-filter pattern="/delete-rating" verbs="POST" />
                 </filtering-router>
+                <filtering-router>
+                    <api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
+                        <name>Retrieve the set of analyses associated with an analysis group</name>
+                        <description>Retrieves the set of analyses in the group with the given identifier.</description>
+                        <request>No body</request>
+                        <response>200: </response>
+                        <response>500: A JSON-formatted response in standard error format</response>
+                    </api:apidoc>
+                    <vm:outbound-endpoint path="searchAnalyses" transformer-refs="FormatStringWithSpaces" responseTransformer-refs="FormatError AbortOnError" />
+                    <restlet:uri-template-filter pattern="/search-analyses/{set-payload.searchTerm}" verbs="GET" />
+                </filtering-router>
 				<filtering-router>
 					<api:apidoc xmlns="http://api.iplantcollaborative.org/apidoc" >
 						<name>Retrieve the set of analyses associated with an analysis group</name>
