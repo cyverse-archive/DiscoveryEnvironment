@@ -74,10 +74,10 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * 
  */
 public class MyDataGrid extends Grid<DiskResource> {
-    public static final String COLUMN_ID_NAME = "name"; //$NON-NLS-1$
-    public static final String COLUMN_ID_DATE_MODIFIED = "date-modified"; //$NON-NLS-1$
-    public static final String COLUMN_ID_DATE_CREATED = "date-created"; //$NON-NLS-1$
-    public static final String COLUMN_ID_SIZE = "size"; //$NON-NLS-1$
+    public static final String COLUMN_ID_NAME = DiskResource.NAME;
+    public static final String COLUMN_ID_DATE_MODIFIED = DiskResource.DATE_MODIFIED;
+    public static final String COLUMN_ID_DATE_CREATED = DiskResource.DATE_CREATED;
+    public static final String COLUMN_ID_SIZE = File.SIZE;
     public static final String COLUMN_ID_MENU = "menu"; //$NON-NLS-1$
 
     protected ClientDataModel controller;
