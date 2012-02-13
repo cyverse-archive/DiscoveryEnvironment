@@ -15,6 +15,7 @@ import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DEProperties;
@@ -67,16 +68,10 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             windowConfigData.put(CatalogWindowConfig.APP_ID, new JSONString(selectedAppId));
         }
 
-        // Build window config
-        JSONObject windowConfig = new JSONObject();
-
-        windowConfig.put("data", windowConfigData); //$NON-NLS-1$
-        windowConfig.put("type", new JSONString(Constants.CLIENT.deCatalog())); //$NON-NLS-1$
-
-        // Build window payload
-        JSONObject windowPayload = new JSONObject();
-        windowPayload.put("tag", new JSONString(Constants.CLIENT.deCatalog())); //$NON-NLS-1$
-        windowPayload.put("config", windowConfig); //$NON-NLS-1$
+        // Build window payload with config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowPayload = configFactory.buildConfigPayload(Constants.CLIENT.deCatalog(),
+                Constants.CLIENT.deCatalog(), windowConfigData);
 
         // Launch display window event with this payload
         String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());

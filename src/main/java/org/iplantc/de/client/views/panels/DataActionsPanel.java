@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
@@ -14,11 +13,11 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
-import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -29,8 +28,6 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 
 public class DataActionsPanel extends ContentPanel {
     private List<DiskResource> resources;
@@ -272,13 +269,7 @@ public class DataActionsPanel extends ContentPanel {
         public void handleEvent(ComponentEvent be) {
 
             if (DataUtils.isDownloadable(resources)) {
-                // We must proxy the download request through a servlet, since the actual download
-                // service
-                // may be on a port behind a firewall that the servlet can access, but not the client.
-                String address = GWT.getModuleBaseURL() + "servlet.gdwnld" + "?user=" //$NON-NLS-1$ //$NON-NLS-2$
-                        + UserInfo.getInstance().getUsername() + "&path=" + resources.get(0).getId(); //$NON-NLS-1$
-
-                WindowUtil.open(URL.encode(address), "width=100,height=100"); //$NON-NLS-1$
+                IDropLiteAppletWindow.launchIDropLiteDownloadWindow(resources);
             } else {
                 showErrorMsg();
             }

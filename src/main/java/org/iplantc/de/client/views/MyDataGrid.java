@@ -7,7 +7,6 @@ import java.util.List;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
@@ -25,7 +24,6 @@ import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
-import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
@@ -33,6 +31,7 @@ import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
+import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -58,9 +57,7 @@ import com.extjs.gxt.ui.client.widget.grid.filters.GridFilters;
 import com.extjs.gxt.ui.client.widget.grid.filters.StringFilter;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Element;
@@ -549,16 +546,7 @@ public class MyDataGrid extends Grid<DiskResource> {
             List<DiskResource> resources = getSelectionModel().getSelectedItems();
 
             if (DataUtils.isDownloadable(resources)) {
-
-                for (DiskResource resource : resources) {
-                    // We must proxy the download request through a servlet, since the actual download
-                    // service may be on a port behind a firewall that the servlet can access, but not
-                    // the client.
-                    String address = GWT.getModuleBaseURL() + "servlet.gdwnld" + "?user=" //$NON-NLS-1$ //$NON-NLS-2$
-                            + UserInfo.getInstance().getUsername() + "&path=" + resource.getId(); //$NON-NLS-1$
-
-                    WindowUtil.open(URL.encode(address));
-                }
+                IDropLiteAppletWindow.launchIDropLiteDownloadWindow(resources);
             } else {
                 showErrorMsg();
             }

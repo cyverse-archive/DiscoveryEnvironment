@@ -9,6 +9,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.commands.RPCSuccessCommand;
 import org.iplantc.de.client.controllers.DataMonitor;
@@ -167,8 +168,14 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
         // publicly accessible, so pass only the url query to the download servlet URL.
         String[] urlParts = downloadUrl.split("\\?"); //$NON-NLS-1$
 
-        return GWT.getModuleBaseURL()
-                + "servlet.gdwnld?" + (urlParts.length > 1 ? urlParts[1] : urlParts[0]); //$NON-NLS-1$
+        String urlParams;
+        if (urlParts.length > 1) {
+            urlParams = "url=" + urlParts[0] + "&" + urlParts[1]; //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            urlParams = urlParts[0];
+        }
+
+        return GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet() + "?" + urlParams; //$NON-NLS-1$
     }
 
     private void createViews() {

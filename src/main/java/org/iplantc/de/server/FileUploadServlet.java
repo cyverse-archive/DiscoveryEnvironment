@@ -8,15 +8,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
+import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 /**
  * A class to accept files from the client.
@@ -27,6 +30,7 @@ import org.iplantc.de.shared.services.MultiPartServiceWrapper;
  * @author sriram
  * 
  */
+@SuppressWarnings("nls")
 public class FileUploadServlet extends UploadAction {
     private static final long serialVersionUID = 1L;
 
@@ -49,11 +53,12 @@ public class FileUploadServlet extends UploadAction {
         String json = null;
         String idFolder = null;
         String user = null;
-        String type = "AUTO"; //$NON-NLS-1$
+        String type = "AUTO";
 
-        LOG.debug("Upload Action started."); //$NON-NLS-1$
+        LOG.debug("Upload Action started.");
 
         List<FileItem> fileItems = new ArrayList<FileItem>();
+        List<String> urlItems = new ArrayList<String>();
 
         for (FileItem item : sessionFiles) {
             if (item.isFormField()) {
@@ -66,6 +71,8 @@ public class FileUploadServlet extends UploadAction {
                     user = contents;
                 } else if (name.equals(FileUploadDialogPanel.FILE_TYPE)) {
                     type = contents;
+                } else if (name.equals(FileUploadDialogPanel.URL_FIELD)) {
+                    urlItems.add(contents);
                 }
             } else if (validFileInfo(item)) {
                 fileItems.add(item);
@@ -73,14 +80,14 @@ public class FileUploadServlet extends UploadAction {
         }
 
         // do we have enough information to make a service call?
-        if (sufficientData(user, idFolder, fileItems)) {
-            json = invokeService(request, idFolder, user, type, fileItems);
+        if (sufficientData(user, idFolder, fileItems, urlItems)) {
+            json = invokeService(request, idFolder, user, type, fileItems, urlItems);
         }
 
         // remove files from session. this avoids duplicate submissions
         removeSessionFileItems(request, false);
 
-        LOG.debug("FileUploadServlet::executeAction - JSON returned: " + json); //$NON-NLS-1$
+        LOG.debug("executeAction - JSON returned: " + json);
         return json;
     }
 
@@ -92,11 +99,12 @@ public class FileUploadServlet extends UploadAction {
      * @param user the name of the user account that is uploading the file
      * @param type the file type. It can be AUTO or CSVNAMELIST
      * @param fileItems a list of files to be uploaded
+     * @param urlItems a list of urls to import
      * @return a string representing data in JSON format.
      * @throws UploadActionException if there is an issue invoking the dispatch to the servlet
      */
     private String invokeService(HttpServletRequest request, String idFolder, String user, String type,
-            List<FileItem> fileItems) throws UploadActionException {
+            List<FileItem> fileItems, List<String> urlItems) throws UploadActionException {
         String filename;
         long fileLength;
         String mimeType;
@@ -104,6 +112,25 @@ public class FileUploadServlet extends UploadAction {
 
         JSONObject jsonResults = new JSONObject();
         JSONArray jsonResultsArray = new JSONArray();
+
+        ServletConfig servletConfig = getServletConfig();
+
+        // Call the file upload service for each file.
+        DEServiceDispatcher dispatcher = new DEServiceDispatcher();
+
+        try {
+            dispatcher.init(servletConfig);
+        } catch (Exception e) {
+            LOG.error("DEServiceDispatcher::init - unable to init from getServletConfig()", e);
+            e.printStackTrace();
+
+            jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
+            jsonResults.put("results", jsonResultsArray);
+
+            throw new UploadActionException(jsonResults.toString());
+        }
+
+        dispatcher.setRequest(request);
 
         for (FileItem item : fileItems) {
             filename = item.getName();
@@ -113,14 +140,13 @@ public class FileUploadServlet extends UploadAction {
             try {
                 fileContents = item.getInputStream();
             } catch (IOException e) {
-                LOG.error(
-                        "FileUploadServlet::executeAction - Exception while getting file input stream.", //$NON-NLS-1$
-                        e);
+                LOG.error("invokeService - Exception while getting file input stream.", e);
                 e.printStackTrace();
 
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
                 jsonResults.put("results", jsonResultsArray);
+
                 throw new UploadActionException(jsonResults.toString());
             }
 
@@ -129,25 +155,65 @@ public class FileUploadServlet extends UploadAction {
 
             // call the RESTful service and get the results.
             try {
-                DEServiceDispatcher dispatcher = new DEServiceDispatcher();
-                dispatcher.init(getServletConfig());
-                dispatcher.setRequest(request);
+                LOG.debug("invokeService - Making service call.");
                 String repsonse = dispatcher.getServiceData(wrapper);
-                LOG.debug("FileUploadServlet::executeAction - Making service call."); //$NON-NLS-1$
 
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
-                LOG.error("FileUploadServlet::executeAction - unable to upload file", e); //$NON-NLS-1$
+                LOG.error("invokeService - unable to upload file", e);
                 e.printStackTrace();
 
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
                 jsonResults.put("results", jsonResultsArray);
+
+                throw new UploadActionException(jsonResults.toString());
+            }
+        }
+
+        // Call the URL import service for each URL.
+        DataApiServiceDispatcher dispatcherDataApi = new DataApiServiceDispatcher();
+
+        try {
+            dispatcherDataApi.init(servletConfig);
+        } catch (Exception e) {
+            LOG.error("DataApiServiceDispatcher::init - unable to init from getServletConfig()", e);
+            e.printStackTrace();
+
+            jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
+            jsonResults.put("results", jsonResultsArray);
+
+            throw new UploadActionException(jsonResults.toString());
+        }
+
+        dispatcherDataApi.setRequest(request);
+        dispatcherDataApi.setForceJsonContentType(true);
+
+        for (String url : urlItems) {
+            filename = url.replaceAll(".*/", "");
+
+            ServiceCallWrapper wrapper = createUrlServiceWrapper(idFolder, user, type, filename, url);
+
+            // call the RESTful service and get the results.
+            try {
+                LOG.debug("invokeService - Making service call.");
+                String repsonse = dispatcherDataApi.getServiceData(wrapper);
+
+                jsonResultsArray.add(JSONObject.fromObject(repsonse));
+            } catch (Exception e) {
+                LOG.error("invokeService - unable to import URL", e);
+                e.printStackTrace();
+
+                // add the error to the results array, in case some files successfully uploaded already.
+                jsonResultsArray.add(buildJsonError(idFolder, type, url, e));
+                jsonResults.put("results", jsonResultsArray);
+
                 throw new UploadActionException(jsonResults.toString());
             }
         }
 
         jsonResults.put("results", jsonResultsArray);
+
         return jsonResults.toString();
     }
 
@@ -185,12 +251,23 @@ public class FileUploadServlet extends UploadAction {
         // build our wrapper
         MultiPartServiceWrapper wrapper = new MultiPartServiceWrapper(MultiPartServiceWrapper.Type.POST,
                 address);
-        wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength)); //$NON-NLS-1$
-        wrapper.addPart(idFolder + "/" + filename, "dest"); //$NON-NLS-1$ //$NON-NLS-2$
-        wrapper.addPart(user, "user"); //$NON-NLS-1$
-        wrapper.addPart(type, "type"); //$NON-NLS-1$
+        wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength));
+        wrapper.addPart(idFolder, "dest");
+        wrapper.addPart(user, "user");
+        wrapper.addPart(type, "type");
 
         return wrapper;
+    }
+
+    private ServiceCallWrapper createUrlServiceWrapper(String idFolder, String user, String type,
+            String filename, String url) {
+        String address = DiscoveryEnvironmentProperties.getUrlImportServiceBaseUrl();
+
+        JSONObject body = new JSONObject();
+        body.put("dest", idFolder + "/" + filename);
+        body.put("address", url);
+
+        return new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body.toString());
     }
 
     /**
@@ -199,9 +276,11 @@ public class FileUploadServlet extends UploadAction {
      * @param user the name of the user account that is uploading the file
      * @param idFolder the folder identifier for where the file will be related
      * @param fileItems a list of files to be uploaded
+     * @param urlItems a list of urls to import
      * @return true if all argument have valid values; otherwise false
      */
-    private boolean sufficientData(String user, String idFolder, List<FileItem> fileItems) {
+    private boolean sufficientData(String user, String idFolder, List<FileItem> fileItems,
+            List<String> urlItems) {
         boolean validFileItems = false;
         if (fileItems != null) {
             for (FileItem item : fileItems) {
@@ -212,13 +291,20 @@ public class FileUploadServlet extends UploadAction {
             }
         }
 
-        return validFileItems && user != null && !user.isEmpty() && idFolder != null
-                && !idFolder.isEmpty();
+        if (!validFileItems && urlItems != null) {
+            for (String url : urlItems) {
+                if (!StringUtils.isEmpty(url)) {
+                    validFileItems = true;
+                    break;
+                }
+            }
+        }
+
+        return validFileItems && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(idFolder);
     }
 
     private boolean validFileInfo(FileItem item) {
-        return item != null && item.getName() != null && !item.getName().isEmpty()
-                && item.getContentType() != null && !item.getContentType().isEmpty()
-                && item.getSize() > 0;
+        return item != null && !StringUtils.isEmpty(item.getName())
+                && !StringUtils.isEmpty(item.getContentType()) && item.getSize() > 0;
     }
 }

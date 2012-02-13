@@ -21,6 +21,13 @@ public interface DEClientConstants extends CommonUiConstants {
     String fileUploadServlet();
 
     /**
+     * The Servlet path (relative URL) for file downloads.
+     * 
+     * @return the requested URL.
+     */
+    String fileDownloadServlet();
+
+    /**
      * The path to the iPlant logo used in heading of web application.
      * 
      * @return a string representation of the path to iPlant logo
@@ -384,4 +391,25 @@ public interface DEClientConstants extends CommonUiConstants {
      * @return the tag.
      */
     String pipelineEditorTag();
+
+    /**
+     * The unique tag used to identify the iDrop Lite applet window.
+     * 
+     * @return the tag.
+     */
+    String iDropLiteTag();
+
+    /**
+     * Applet Main Class
+     * 
+     * @return Main class name of the iDrop Lite Applet
+     */
+    String iDropLiteMainClass();
+
+    /**
+     * get relative path of Applet jar
+     * 
+     * @return the relative path
+     */
+    String iDropLiteArchivePath();
 }

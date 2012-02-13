@@ -26,6 +26,7 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         DEServiceInputStream fileContents = null;
         try {
@@ -78,7 +79,7 @@ public class FileDownloadServlet extends HttpServlet {
      */
     private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
         String contentType = fileContents.getContentType();
-        response.setContentType(contentType == null ? "" : contentType);
+        response.setContentType(contentType == null ? "" : contentType); //$NON-NLS-1$
 
         for (String fieldName : HEADER_FIELDS_TO_COPY) {
             response.setHeader(fieldName, fileContents.getHeaderField(fieldName));
@@ -121,8 +122,15 @@ public class FileDownloadServlet extends HttpServlet {
         }
         attachment = URLEncoder.encode(attachment, "UTF-8"); //$NON-NLS-1$
 
-        String address = String.format("%s?user=%s&path=%s&attachment=%s", //$NON-NLS-1$
-                DiscoveryEnvironmentProperties.getDownloadFileServiceBaseUrl(), user, path, attachment);
+        String downloadUrl = request.getParameter("url"); //$NON-NLS-1$
+        if (downloadUrl == null) {
+            downloadUrl = DiscoveryEnvironmentProperties.getDownloadFileServiceBaseUrl();
+        } else {
+            downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + downloadUrl;
+        }
+
+        String address = String.format("%s?user=%s&path=%s&attachment=%s", downloadUrl, user, path, //$NON-NLS-1$
+                attachment);
 
         return address;
     }
