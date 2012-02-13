@@ -87,7 +87,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         // add comment to wiki page, then call rating service
         ConfluenceServiceFacade.getInstance().addComment(appName, comment, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String commentId) {
+            public void onSuccess(final String commentId) {
                 JSONObject body = new JSONObject();
                 body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
                 body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
@@ -96,7 +96,18 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
                 String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
                 ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST,
                         address, body.toString());
-                DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+                // wrap the wrapper so it returns the comment id on success
+                DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        callback.onSuccess(commentId);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
             }
 
             @Override
