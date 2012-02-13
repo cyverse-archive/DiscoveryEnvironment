@@ -774,7 +774,10 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             Command onConfirm = new Command() {
                 @Override
                 public void execute() {
-                    persistRating(model, score, dlg.getComment(), parent);
+                    String comment = dlg.getComment();
+                    comment += " " //$NON-NLS-1$
+                            + I18N.DISPLAY.ratingCommentSuffix(UserInfo.getInstance().getUsername());
+                    persistRating(model, score, comment, parent);
                 }
             };
             dlg.setCommand(onConfirm);
