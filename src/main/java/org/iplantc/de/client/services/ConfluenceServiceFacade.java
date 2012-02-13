@@ -60,4 +60,15 @@ public class ConfluenceServiceFacade {
     public void addComment(String toolName, String comment, AsyncCallback<String> callback) {
         proxy.addComment(toolName, comment, callback);
     }
+
+    /**
+     * Removes a user comment from a tool description page.
+     * 
+     * @param toolName the name of the tool which is also the page title
+     * @param commentId the comment ID in Confluence
+     * @param callback called after the service call finishes
+     */
+    void removeComment(String toolName, Long commentId, AsyncCallback<String> callback) {
+        proxy.removeComment(toolName, commentId, callback);
+    }
 }

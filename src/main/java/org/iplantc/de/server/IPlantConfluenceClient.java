@@ -20,6 +20,12 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     private String user;
     private String password;
 
+    public IPlantConfluenceClient() {
+        address = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        password = DiscoveryEnvironmentProperties.getConfluencePassword();
+    }
+
     /**
      * Creates a new IPlantConfluenceClient. Subsequent calls use the provided address/user/password.
      * 
@@ -72,6 +78,22 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         login(address, user, password);
 
         service.editComment(token, newComment);
+    }
+
+    /**
+     * Removes a comment
+     * 
+     * @param commentId the comment's ID in Confluence
+     * @throws AuthenticationFailedException
+     * @throws RemoteException
+     * @throws RemoteException
+     * @throws ClientException
+     */
+    public void removeComment(long commentId) throws AuthenticationFailedException,
+            org.swift.common.soap.confluence.RemoteException, RemoteException, ClientException {
+        login(address, user, password);
+
+        service.removeComment(token, commentId);
     }
 
     /**

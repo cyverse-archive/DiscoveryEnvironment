@@ -82,24 +82,20 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void rateAnalysis(String analysisId, int rating, String appName, String comment,
-            AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis";
-
-        JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId));
-        body.put("rating", new JSONNumber(rating));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-                body.toString());
-        addComment(appName, comment, wrapper, callback);
-    }
-
-    private void addComment(String appName, String comment, final ServiceCallWrapper wrapper,
-            final AsyncCallback<String> callback) {
+    public void rateAnalysis(final String analysisId, final int rating, final String appName,
+            String comment, final AsyncCallback<String> callback) {
+        // add comment to wiki page, then call rating service
         ConfluenceServiceFacade.getInstance().addComment(appName, comment, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(String commentId) {
+                JSONObject body = new JSONObject();
+                body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+                body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
+                body.put("comment_id", new JSONNumber(Long.valueOf(commentId))); //$NON-NLS-1$
+
+                String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
+                ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST,
+                        address, body.toString());
                 DEServiceFacade.getInstance().getServiceData(wrapper, callback);
             }
 
@@ -130,15 +126,39 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void deleteRating(String analysisId, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "delete-rating";
+    public void deleteRating(final String analysisId, final String toolName, final Long commentId,
+            final AsyncCallback<String> callback) {
+        // call rating service, then delete comment from wiki page
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "delete-rating"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId));
+        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+        DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                if (commentId != null) {
+                    try {
+                        removeComment(toolName, commentId, callback);
+                    } catch (Exception e) {
+                        onFailure(e);
+                    }
+                } else {
+                    callback.onSuccess(result);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    private void removeComment(String toolName, long commentId, final AsyncCallback<String> callback) {
+        ConfluenceServiceFacade.getInstance().removeComment(toolName, commentId, callback);
     }
 
     @Override

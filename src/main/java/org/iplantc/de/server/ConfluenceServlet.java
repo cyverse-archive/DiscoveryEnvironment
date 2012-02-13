@@ -110,7 +110,6 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
     @Override
     public String addComment(String toolName, String comment) {
         String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
-        String parent = DiscoveryEnvironmentProperties.getConfluenceParentPage();
         String user = DiscoveryEnvironmentProperties.getConfluenceUser();
         String password = DiscoveryEnvironmentProperties.getConfluencePassword();
         String space = DiscoveryEnvironmentProperties.getConfluenceSpaceName();
@@ -118,7 +117,20 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
             RemoteComment confluenceComment = new IPlantConfluenceClient(url, user, password).addComment(space, toolName, comment);
             return String.valueOf(confluenceComment.getId());
         } catch (Exception e) {
-            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e);
+            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+
+    @Override
+    public void removeComment(String toolName, Long commentId) {
+        String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+        try {
+            new IPlantConfluenceClient(url, user, password).removeComment(commentId);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 }
