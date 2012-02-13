@@ -2,11 +2,14 @@ package org.iplantc.admin.belphegor.client.views.panels;
 
 import java.util.ArrayList;
 
+import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.AnalysisSelectEvent;
+import org.iplantc.core.uiapplications.client.events.AnalysisSelectEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -58,8 +61,19 @@ public class CatalogAdminPanel extends ContentPanel {
     private void initHandlers() {
         EventBus eventbus = EventBus.getInstance();
         handlers = new ArrayList<HandlerRegistration>();
+
         handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
+
+        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE, new AnalysisSelectEventHandler() {
+            @Override
+            public void onSelection(AnalysisSelectEvent event) {
+                if (Constants.CLIENT.tagBelphegorCatalog().equals(event.getSourceTag())) {
+                    catPanel.selectCategory(event.getCategoryId());
+                    mainPanel.selectTool(event.getAppId());
+                }
+            }
+        }));
     }
 
     private void setCaption() {
@@ -107,7 +121,7 @@ public class CatalogAdminPanel extends ContentPanel {
 
     private void initPanels() {
         catPanel = new CatalogCategoryAdminPanel();
-        mainPanel = new CatalogMainAdminPanel();
+        mainPanel = new CatalogMainAdminPanel(Constants.CLIENT.tagBelphegorCatalog());
     }
 
     private void compose() {

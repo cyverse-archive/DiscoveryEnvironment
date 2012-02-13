@@ -10,6 +10,7 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
+import org.iplantc.core.uiapplications.client.views.panels.CatalogMainToolBar;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
@@ -19,13 +20,16 @@ import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -43,7 +47,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * A panel that displays apps in a grid and lets the user delete or modify them.
  */
 public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
-    private final AppTemplateAdminServiceFacade service;
     private Button deleteButton;
     private Button restoreButton;
 
@@ -52,14 +55,47 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
      * 
      * @param templateService
      */
-    public CatalogMainAdminPanel() {
-        service = new AppTemplateAdminServiceFacade();
-        initToolBar();
+    public CatalogMainAdminPanel(String tag) {
+        super(tag, new AppTemplateAdminServiceFacade());
+
+        addToolBarButtons();
 
         new CatalogMainAdminPanelDragSource(analysisGrid);
     }
 
-    private void initToolBar() {
+    private AppTemplateAdminServiceFacade getTemplateService() {
+        return (AppTemplateAdminServiceFacade)templateService;
+    }
+
+    @Override
+    protected void initToolBar() {
+        toolBar = new CatalogMainToolBar(tag, templateService) {
+            @Override
+            protected Component buildSearchField() {
+                TextField<String> filter = new TextField<String>() {
+                    @Override
+                    public void onKeyUp(FieldEvent fe) {
+                        String filter = getValue();
+                        if (filter != null && !filter.isEmpty()) {
+                            analysisGrid.getStore().filter("name", filter); //$NON-NLS-1$
+                        } else {
+                            analysisGrid.getStore().clearFilters();
+                        }
+
+                    }
+                };
+
+                filter.setWidth(300);
+                filter.setEmptyText(I18N.DISPLAY.filterDataList());
+
+                return filter;
+            }
+        };
+
+        setTopComponent(toolBar);
+    }
+
+    private void addToolBarButtons() {
         buildDeleteButton();
         buildRestoreButton();
         addToToolBar(deleteButton);
@@ -135,7 +171,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
 
     private void restoreSelectedApp() {
         final Analysis app = getSelectedApp();
-        service.restoreApplication(app.getId(), new AsyncCallback<String>() {
+        getTemplateService().restoreApplication(app.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -172,7 +208,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
     }
 
     private void confirmDeleteSelectedApp(final Analysis app) {
-        service.deleteApplication(app.getId(), new AdminServiceCallback() {
+        getTemplateService().deleteApplication(app.getId(), new AdminServiceCallback() {
             @Override
             protected void onSuccess(JSONObject jsonResult) {
                 EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
