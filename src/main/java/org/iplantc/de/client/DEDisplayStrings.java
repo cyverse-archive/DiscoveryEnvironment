@@ -1018,6 +1018,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String simpleDownloadForm();
 
     /**
+     * Localized text for manage data metadata menu item
+     * 
+     * @return a string representing the localized text.
+     */
+    String metadata();
+
+    /**
      * Localized text for the iDrop Lite Applet window close-confirmation-prompt title.
      * 
      * @return a string representing the localized text.
