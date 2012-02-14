@@ -691,6 +691,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 private void updateFeedback(Analysis model, String json) {
                     AnalysisFeedback userFeedback = model.getFeedback();
                     userFeedback.setUser_score(0);
+                    userFeedback.setComment_id(null);
 
                     if (json == null || json.isEmpty()) {
                         userFeedback.setAverage_score(0);
