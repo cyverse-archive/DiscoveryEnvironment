@@ -2,9 +2,6 @@ package org.iplantc.de.server;
 
 import java.rmi.RemoteException;
 
-import org.swift.common.soap.confluence.AuthenticationFailedException;
-import org.swift.common.soap.confluence.InvalidSessionException;
-import org.swift.common.soap.confluence.NotPermittedException;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
 import org.swift.confluence.cli.ConfluenceClient;
@@ -20,6 +17,9 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     private String user;
     private String password;
 
+    /**
+     * Creates a new instance and initializes address/user/password from a .properties file.
+     */
     public IPlantConfluenceClient() {
         address = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
         user = DiscoveryEnvironmentProperties.getConfluenceUser();
@@ -66,15 +66,10 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * Changes an existing comment.
      * 
      * @param newComment the new comment; must have the correct ID and service address set
-     * @throws InvalidSessionException
-     * @throws NotPermittedException
-     * @throws org.swift.common.soap.confluence.RemoteException
      * @throws RemoteException
      * @throws ClientException
      */
-    public void editComment(RemoteComment newComment)
-            throws InvalidSessionException, NotPermittedException,
-            org.swift.common.soap.confluence.RemoteException, RemoteException, ClientException {
+    public void editComment(RemoteComment newComment) throws RemoteException, ClientException {
         login(address, user, password);
 
         service.editComment(token, newComment);
@@ -84,13 +79,10 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * Removes a comment
      * 
      * @param commentId the comment's ID in Confluence
-     * @throws AuthenticationFailedException
-     * @throws RemoteException
      * @throws RemoteException
      * @throws ClientException
      */
-    public void removeComment(long commentId) throws AuthenticationFailedException,
-            org.swift.common.soap.confluence.RemoteException, RemoteException, ClientException {
+    public void removeComment(long commentId) throws RemoteException, ClientException {
         login(address, user, password);
 
         service.removeComment(token, commentId);
@@ -102,14 +94,9 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @param address base Confluence URL
      * @param user
      * @param password
-     * @throws AuthenticationFailedException
-     * @throws org.swift.common.soap.confluence.RemoteException
-     * @throws RemoteException
      * @throws ClientException
      */
-    private void login(String address, String user, String password)
-            throws AuthenticationFailedException,
-            org.swift.common.soap.confluence.RemoteException, RemoteException, ClientException {
+    private void login(String address, String user, String password) throws ClientException {
         ExitCode code = doWork(new String[] {"-a", "login", "--server", address, "--user", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "--password", password}); //$NON-NLS-1$
         if (code != ExitCode.SUCCESS)
