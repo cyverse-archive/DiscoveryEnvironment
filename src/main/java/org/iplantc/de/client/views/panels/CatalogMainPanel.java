@@ -775,14 +775,25 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             Command onConfirm = new Command() {
                 @Override
                 public void execute() {
-                    String comment = dlg.getComment();
-                    comment += " " //$NON-NLS-1$
-                            + I18N.DISPLAY.ratingCommentSuffix(UserInfo.getInstance().getUsername());
+                    String comment = generateCommentMarkup(dlg.getComment(), score);
                     persistRating(model, score, comment, parent);
                 }
             };
             dlg.setCommand(onConfirm);
             dlg.show();
+        }
+
+        private String generateCommentMarkup(String comment, int score) {
+            StringBuilder markup = new StringBuilder();
+            // add full stars
+            for (int i = 0; i < score; i++)
+                markup.append("\u2605"); //$NON-NLS-1$
+            // add empty stars so it is 5 stars total
+            for (int i = 0; i < 5 - score; i++)
+                markup.append("\u2606"); //$NON-NLS-1$
+            markup.append(" ").append(comment).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+            markup.append(I18N.DISPLAY.ratingCommentSuffix(UserInfo.getInstance().getUsername()));
+            return markup.toString();
         }
 
         private void persistRating(final Analysis model, final int score, String comment,
