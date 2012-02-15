@@ -118,22 +118,31 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void updateRating(String analysisId, int rating, String appName, String comment,
-            String commentId,
-            AsyncCallback<String> callback) {
-        rateAnalysis(analysisId, rating, appName, comment, callback);
-        // TODO call update-rating
-        // String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "update-rating";
-        //
-        // JSONObject body = new JSONObject();
-        // body.put("analysis_id", new JSONString(analysisId));
-        // body.put("rating", new JSONNumber(rating));
-        // body.put("comment", new JSONString(comment));
-        // body.put("comment_id", new JSONString(commentId));
-        //
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-        // body.toString());
-        // DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    public void updateRating(final String analysisId, final int rating, final String appName,
+            final Long commentId, final String comment, final AsyncCallback<String> callback) {
+        // update comment on wiki page, then call rating service
+        ConfluenceServiceFacade.getInstance().editComment(appName, commentId, comment,
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
+                                + "rate-analysis"; //$NON-NLS-1$
+
+                        JSONObject body = new JSONObject();
+                        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+                        body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
+                        body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
+
+                        ServiceCallWrapper wrapper = new ServiceCallWrapper(
+                                ServiceCallWrapper.Type.POST, address, body.toString());
+                        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
     }
 
     @Override

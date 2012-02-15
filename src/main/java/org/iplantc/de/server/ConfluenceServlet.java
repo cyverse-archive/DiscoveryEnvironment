@@ -133,4 +133,17 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
                     "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
+
+    @Override
+    public void editComment(String toolName, Long commentId, String newComment) {
+        String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+        try {
+            new IPlantConfluenceClient(url, user, password).editComment(commentId, newComment);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+    }
 }

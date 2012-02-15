@@ -65,13 +65,18 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     /**
      * Changes an existing comment.
      * 
-     * @param newComment the new comment; must have the correct ID and service address set
+     * @param commentId the comment's ID in Confluence
+     * @param newText the new comment; must have the correct ID and service address set
      * @throws RemoteException
      * @throws ClientException
      */
-    public void editComment(RemoteComment newComment) throws RemoteException, ClientException {
+    public void editComment(long commentId, String newText) throws RemoteException, ClientException {
         login(address, user, password);
 
+        RemoteComment newComment = new RemoteComment();
+        newComment.setId(commentId);
+        newComment.setUrl(address);
+        newComment.setContent(newText);
         service.editComment(token, newComment);
     }
 

@@ -662,10 +662,10 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                     try {
                         AnalysisFeedback feedback = model.getFeedback();
                         if (feedback != null) {
-                            commentId = Long.valueOf(feedback.getComment_id());
+                            commentId = feedback.getComment_id();
                         }
                     } catch (NumberFormatException e) {
-                        // comment id empty or not a number, leave it null
+                        // comment id empty or not a number, leave it null and proceed
                     }
 
                     getTemplateService().deleteRating(model.getId(), model.getName(), commentId,
@@ -818,12 +818,12 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             };
 
             Long commentId = model.getFeedback().getComment_id();
-            // if (commentId == null || commentId.isEmpty()) {
+            if (commentId == null) {
                 getTemplateService().rateAnalysis(model.getId(), score, model.getName(), comment, callback);
-            // } else {
-            // getTemplateService().updateRating(model.getId(), score, model.getName(), comment, commentId,
-            // callback);
-            // }
+            } else {
+                getTemplateService().updateRating(model.getId(), score, model.getName(), commentId,
+                        comment, callback);
+            }
         }
     }
 }
