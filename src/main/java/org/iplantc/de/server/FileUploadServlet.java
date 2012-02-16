@@ -116,10 +116,10 @@ public class FileUploadServlet extends UploadAction {
         ServletConfig servletConfig = getServletConfig();
 
         // Call the file upload service for each file.
-        DEServiceDispatcher dispatcher = new DEServiceDispatcher();
+        DataApiServiceDispatcher dispatcherDataApi = new DataApiServiceDispatcher();
 
         try {
-            dispatcher.init(servletConfig);
+            dispatcherDataApi.init(servletConfig);
         } catch (Exception e) {
             LOG.error("DEServiceDispatcher::init - unable to init from getServletConfig()", e);
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class FileUploadServlet extends UploadAction {
             throw new UploadActionException(jsonResults.toString());
         }
 
-        dispatcher.setRequest(request);
+        dispatcherDataApi.setRequest(request);
 
         for (FileItem item : fileItems) {
             filename = item.getName();
@@ -156,8 +156,9 @@ public class FileUploadServlet extends UploadAction {
             // call the RESTful service and get the results.
             try {
                 LOG.debug("invokeService - Making service call.");
-                String repsonse = dispatcher.getServiceData(wrapper);
+                String repsonse = dispatcherDataApi.getServiceData(wrapper);
 
+                LOG.debug(repsonse);
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
                 LOG.error("invokeService - unable to upload file", e);
@@ -172,8 +173,6 @@ public class FileUploadServlet extends UploadAction {
         }
 
         // Call the URL import service for each URL.
-        DataApiServiceDispatcher dispatcherDataApi = new DataApiServiceDispatcher();
-
         try {
             dispatcherDataApi.init(servletConfig);
         } catch (Exception e) {
@@ -253,7 +252,6 @@ public class FileUploadServlet extends UploadAction {
                 address);
         wrapper.addPart(new FileHTTPPart(fileContents, "file", filename, mimeType, fileLength));
         wrapper.addPart(idFolder, "dest");
-        wrapper.addPart(user, "user");
         wrapper.addPart(type, "type");
 
         return wrapper;
