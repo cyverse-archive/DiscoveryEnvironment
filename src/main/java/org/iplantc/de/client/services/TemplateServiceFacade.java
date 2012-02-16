@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -8,6 +9,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -84,20 +86,12 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     @Override
     public void rateAnalysis(final String analysisId, final int rating, final String appName,
             String comment, final AsyncCallback<String> callback) {
-        // add comment to wiki page, then call rating service
-        ConfluenceServiceFacade.getInstance().addComment(appName, comment, new AsyncCallback<String>() {
+        // add comment to wiki page, then call rating service, then update avg on wiki page
+        final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
+        confluenceService.addComment(appName, comment, new AsyncCallback<String>() {
             @Override
             public void onSuccess(final String commentId) {
-                JSONObject body = new JSONObject();
-                body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
-                body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
-                body.put("comment_id", new JSONNumber(Long.valueOf(commentId))); //$NON-NLS-1$
-
-                String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
-                ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST,
-                        address, body.toString());
-                // wrap the wrapper so it returns the comment id on success
-                DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+                rateAnalysis(appName, analysisId, rating, commentId, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         callback.onSuccess(commentId);
@@ -117,6 +111,39 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
+    private void rateAnalysis(final String appName, String analysisId, int rating,
+            final String commentId, final AsyncCallback<String> callback) {
+        JSONObject body = new JSONObject();
+        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+        body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
+        body.put("comment_id", new JSONNumber(Long.valueOf(commentId))); //$NON-NLS-1$
+
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                body.toString());
+        // wrap the wrapper so it returns the comment id on success
+        DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                JSONObject json = JSONParser.parseStrict(result).isObject();
+                if (json != null) {
+                    Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
+                    updateDocumentationPage(appName, avg, callback);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    private void updateDocumentationPage(String appName, Number avgRating, AsyncCallback<String> callback) {
+        int avgRounded = (int)Math.round(avgRating.doubleValue());
+        ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
+    }
+    
     @Override
     public void updateRating(final String analysisId, final int rating, final String appName,
             final Long commentId, final String comment, final AsyncCallback<String> callback) {

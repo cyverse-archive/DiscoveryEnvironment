@@ -51,6 +51,17 @@ public class ConfluenceServiceFacade {
     }
 
     /**
+     * Updates a documentation page with an average app rating.
+     * 
+     * @param toolName the name of the tool which is used as the page title
+     * @param avgRating the new average rating score
+     * @param callback called after the service call finishes
+     */
+    public void updateDocumentationPage(String toolName, int avgRating, AsyncCallback<String> callback) {
+        proxy.updatePage(toolName, avgRating, callback);
+    }
+
+    /**
      * Adds a user comment to a tool description page.
      * 
      * @param toolName the name of the tool which is also the page title

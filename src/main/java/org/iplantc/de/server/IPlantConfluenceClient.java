@@ -52,7 +52,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      */
     public RemoteComment addComment(String space, String pageTitle, String text)
             throws RemoteException, ClientException {
-        login(address, user, password);
+        iplantLogin();
 
         RemotePage page = getPage(pageTitle, space);
         RemoteComment comment = new RemoteComment();
@@ -71,7 +71,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws ClientException
      */
     public void editComment(long commentId, String newText) throws RemoteException, ClientException {
-        login(address, user, password);
+        iplantLogin();
 
         RemoteComment newComment = new RemoteComment();
         newComment.setId(commentId);
@@ -88,9 +88,13 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws ClientException
      */
     public void removeComment(long commentId) throws RemoteException, ClientException {
-        login(address, user, password);
+        iplantLogin();
 
         service.removeComment(token, commentId);
+    }
+
+    public void iplantLogin() throws ClientException {
+        login(address, user, password);
     }
 
     /**
