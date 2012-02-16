@@ -1070,4 +1070,20 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String ratingCommentSuffix(String user);
+
+    /**
+     * Localized text for analysis submit confirmation dialog
+     * 
+     * @return a string representing the localized text.
+     */
+    String analysisSubmitted();
+
+    /**
+     * Localized text for analysis submitted message
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String analysisSubmittedMsg();
+
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.irodsfile.util.LargeIOUtils;
 
@@ -21,7 +22,7 @@ import org.iplantc.irodsfile.util.LargeIOUtils;
 public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"}; //$NON-NLS-1$
 
-    // private static final Logger logger = Logger.getLogger(FileDownloadServlet.class);
+    private static final Logger LOG = Logger.getLogger(FileDownloadServlet.class);
 
     /**
      * {@inheritDoc}
@@ -32,7 +33,9 @@ public class FileDownloadServlet extends HttpServlet {
         try {
             String address = buildRequestAddress(request);
             ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-            DEServiceDispatcher dispatcher = createServiceDispatcher(request);
+            DataApiServiceDispatcher dispatcher = createServiceDispatcher(request);
+
+            LOG.debug("doGet - Making service call.");
             fileContents = dispatcher.getServiceStream(wrapper);
             copyHeaderFields(response, fileContents);
             copyFileContents(response, fileContents);
@@ -92,8 +95,8 @@ public class FileDownloadServlet extends HttpServlet {
      * @param request our HTTP servlet request.
      * @return the service dispatcher.
      */
-    private DEServiceDispatcher createServiceDispatcher(HttpServletRequest request) {
-        DEServiceDispatcher dispatcher = new DEServiceDispatcher();
+    private DataApiServiceDispatcher createServiceDispatcher(HttpServletRequest request) {
+        DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher();
         try {
             dispatcher.init(getServletConfig());
         } catch (ServletException e) {
@@ -113,7 +116,6 @@ public class FileDownloadServlet extends HttpServlet {
      * @throws UnsupportedEncodingException
      */
     private String buildRequestAddress(HttpServletRequest request) throws UnsupportedEncodingException {
-        String user = URLEncoder.encode(request.getParameter("user"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
         String path = URLEncoder.encode(request.getParameter("path"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
 
         String attachment = request.getParameter("attachment"); //$NON-NLS-1$
@@ -129,8 +131,8 @@ public class FileDownloadServlet extends HttpServlet {
             downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + downloadUrl;
         }
 
-        String address = String.format("%s?user=%s&path=%s&attachment=%s", downloadUrl, user, path, //$NON-NLS-1$
-                attachment);
+        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment); //$NON-NLS-1$
+        LOG.debug(address);
 
         return address;
     }
