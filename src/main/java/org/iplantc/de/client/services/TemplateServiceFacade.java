@@ -125,11 +125,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                JSONObject json = JSONParser.parseStrict(result).isObject();
-                if (json != null) {
-                    Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
-                    updateDocumentationPage(appName, avg, callback);
-                }
+                updateDocumentationPage(appName, result, callback);
             }
 
             @Override
@@ -139,30 +135,24 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
-    private void updateDocumentationPage(String appName, Number avgRating, AsyncCallback<String> callback) {
-        int avgRounded = (int)Math.round(avgRating.doubleValue());
-        ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
+    private void updateDocumentationPage(String appName, String avgJson, AsyncCallback<String> callback) {
+        JSONObject json = JSONParser.parseStrict(avgJson).isObject();
+        if (json != null) {
+            Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
+            int avgRounded = (int)Math.round(avg.doubleValue());
+            ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
+        }
     }
     
     @Override
     public void updateRating(final String analysisId, final int rating, final String appName,
             final Long commentId, final String comment, final AsyncCallback<String> callback) {
-        // update comment on wiki page, then call rating service
+        // update comment on wiki page, then call rating service, then update avg on wiki page
         ConfluenceServiceFacade.getInstance().editComment(appName, commentId, comment,
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
-                                + "rate-analysis"; //$NON-NLS-1$
-
-                        JSONObject body = new JSONObject();
-                        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
-                        body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
-                        body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
-
-                        ServiceCallWrapper wrapper = new ServiceCallWrapper(
-                                ServiceCallWrapper.Type.POST, address, body.toString());
-                        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+                        rateAnalysis(appName, analysisId, rating, String.valueOf(commentId), callback);
                     }
 
                     @Override
@@ -186,6 +176,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                updateDocumentationPage(toolName, result, callback);
                 if (commentId != null) {
                     try {
                         removeComment(toolName, commentId, callback);
