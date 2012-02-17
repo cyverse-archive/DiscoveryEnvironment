@@ -1,6 +1,5 @@
 package org.iplantc.de.client.views.panels;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
@@ -17,8 +16,7 @@ import com.google.gwt.user.client.Element;
  * @author amuir
  * 
  */
-public abstract class ProvenanceContentPanel extends ContentPanel {
-    protected TextArea areaProvenance;
+public abstract class ViewerContentPanel extends ContentPanel {
     protected BorderLayoutData centerData;
     protected BorderLayoutData southData;
     protected FileIdentifier fileIdentifier;
@@ -29,13 +27,11 @@ public abstract class ProvenanceContentPanel extends ContentPanel {
      * 
      * @param fileIdentifier identifier of file containing provenance information.
      */
-    protected ProvenanceContentPanel(FileIdentifier fileIdentifier) {
+    protected ViewerContentPanel(FileIdentifier fileIdentifier) {
         this.fileIdentifier = fileIdentifier;
         setHeight(380);
         setHeaderVisible(false);
 
-        areaProvenance = buildTextArea(false);
-        areaProvenance.setId("idProvenanceField"); //$NON-NLS-1$
         centerData = buildCenterData();
     }
 
@@ -87,24 +83,6 @@ public abstract class ProvenanceContentPanel extends ContentPanel {
         }
 
         return ret;
-    }
-
-    /**
-     * Replace our provenance information.
-     * 
-     * @param provenance new provenance information.
-     */
-    public void updateProvenance(String provenance) {
-        if (provenance != null && provenance.length() > 0) {
-            areaProvenance.setValue(JsonUtil.formatString(provenance));
-
-            if (southData == null) {
-                southData = buildSouthData();
-                add(areaProvenance, southData);
-            }
-        } else {
-            areaProvenance.hide();
-        }
     }
 
     /**

@@ -10,6 +10,7 @@ import org.iplantc.de.client.events.FileEditorWindowClosedEvent;
 
 import com.extjs.gxt.ui.client.event.WindowEvent;
 import com.extjs.gxt.ui.client.event.WindowListener;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
@@ -17,7 +18,7 @@ import com.google.gwt.json.client.JSONValue;
 /**
  * Displays the contents of a file.
  */
-public class FileWindow extends IPlantWindow {
+public abstract class FileWindow extends IPlantWindow {
     /**
      * The identifier of the file shown in the window.
      */
@@ -43,7 +44,6 @@ public class FileWindow extends IPlantWindow {
      */
     public FileWindow(String tag, FileIdentifier file, String manifest, boolean isMaximizable) {
         super(tag, true, true, isMaximizable, true);
-
         this.file = file;
 
         if (manifest != null) {
@@ -72,6 +72,10 @@ public class FileWindow extends IPlantWindow {
      */
     protected void init() {
         setHeading(file.getFilename());
+        clearPanel();
+        constructPanel();
+        setSize(640, 438);
+        setLayout(new FitLayout());
     }
 
     /**
@@ -151,4 +155,8 @@ public class FileWindow extends IPlantWindow {
     protected void registerEventHandlers() {
         // by default, no event handlers are registered
     }
+
+    protected abstract void clearPanel();
+
+    protected abstract void constructPanel();
 }

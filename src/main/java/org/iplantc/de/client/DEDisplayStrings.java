@@ -1086,4 +1086,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String analysisSubmittedMsg();
 
+    /**
+     * Localized text for view parameters button
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String viewParameters();
+
 }
