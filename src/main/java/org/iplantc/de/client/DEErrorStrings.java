@@ -411,6 +411,13 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String fileReadable(String nameList);
 
     /**
+     * Error message displayed when metadata update service call fails
+     * 
+     * @return localized error string.
+     */
+    String metadataUpdateFailed();
+
+    /**
      * Error message displayed when a wiki page for a tool cannot be created.
      * 
      * @param toolName name of the tool to make a page for

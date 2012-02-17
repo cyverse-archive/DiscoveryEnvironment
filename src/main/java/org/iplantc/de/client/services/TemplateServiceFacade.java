@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -8,6 +9,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -82,27 +84,24 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void rateAnalysis(String analysisId, int rating, String appName, String comment,
-            AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis";
-
-        JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId));
-        body.put("rating", new JSONNumber(rating));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-                body.toString());
-        // FIXME temp. disable adding comments for ratings, until comments can be deleted.
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-        // addComment(appName, comment, wrapper, callback);
-    }
-
-    private void addComment(String appName, String comment, final ServiceCallWrapper wrapper,
-            final AsyncCallback<String> callback) {
-        ConfluenceServiceFacade.getInstance().addComment(appName, comment, new AsyncCallback<String>() {
+    public void rateAnalysis(final String analysisId, final int rating, final String appName,
+            String comment, final AsyncCallback<String> callback) {
+        // add comment to wiki page, then call rating service, then update avg on wiki page
+        final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
+        confluenceService.addComment(appName, comment, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String result) {
-                DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+            public void onSuccess(final String commentId) {
+                rateAnalysis(appName, analysisId, rating, commentId, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        callback.onSuccess(commentId);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
             }
 
             @Override
@@ -112,35 +111,92 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
+    private void rateAnalysis(final String appName, String analysisId, int rating,
+            final String commentId, final AsyncCallback<String> callback) {
+        JSONObject body = new JSONObject();
+        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+        body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
+        body.put("comment_id", new JSONNumber(Long.valueOf(commentId))); //$NON-NLS-1$
+
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                body.toString());
+        // wrap the wrapper so it returns the comment id on success
+        DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                updateDocumentationPage(appName, result, callback);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    private void updateDocumentationPage(String appName, String avgJson, AsyncCallback<String> callback) {
+        JSONObject json = JSONParser.parseStrict(avgJson).isObject();
+        if (json != null) {
+            Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
+            int avgRounded = (int)Math.round(avg.doubleValue());
+            ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
+        }
+    }
+    
     @Override
-    public void updateRating(String analysisId, int rating, String appName, String comment,
-            String commentId,
-            AsyncCallback<String> callback) {
-        rateAnalysis(analysisId, rating, appName, comment, callback);
-        // TODO call update-rating
-        // String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "update-rating";
-        //
-        // JSONObject body = new JSONObject();
-        // body.put("analysis_id", new JSONString(analysisId));
-        // body.put("rating", new JSONNumber(rating));
-        // body.put("comment", new JSONString(comment));
-        // body.put("comment_id", new JSONString(commentId));
-        //
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-        // body.toString());
-        // DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    public void updateRating(final String analysisId, final int rating, final String appName,
+            final Long commentId, final String comment, final AsyncCallback<String> callback) {
+        // update comment on wiki page, then call rating service, then update avg on wiki page
+        ConfluenceServiceFacade.getInstance().editComment(appName, commentId, comment,
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        rateAnalysis(appName, analysisId, rating, String.valueOf(commentId), callback);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+                });
     }
 
     @Override
-    public void deleteRating(String analysisId, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "delete-rating";
+    public void deleteRating(final String analysisId, final String toolName, final Long commentId,
+            final AsyncCallback<String> callback) {
+        // call rating service, then delete comment from wiki page
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "delete-rating"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId));
+        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+        DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                updateDocumentationPage(toolName, result, callback);
+                if (commentId != null) {
+                    try {
+                        removeComment(toolName, commentId, callback);
+                    } catch (Exception e) {
+                        onFailure(e);
+                    }
+                } else {
+                    callback.onSuccess(result);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    private void removeComment(String toolName, long commentId, final AsyncCallback<String> callback) {
+        ConfluenceServiceFacade.getInstance().removeComment(toolName, commentId, callback);
     }
 
     @Override

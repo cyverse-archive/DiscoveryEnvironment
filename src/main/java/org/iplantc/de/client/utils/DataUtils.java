@@ -18,7 +18,7 @@ public class DataUtils {
     public enum Action {
         RenameFolder(I18N.DISPLAY.rename()), RenameFile(I18N.DISPLAY.rename()), Delete(I18N.DISPLAY
                 .delete()), View(I18N.DISPLAY.view()), ViewTree(I18N.DISPLAY.viewTreeViewer()), Download(
-                I18N.DISPLAY.download());
+                I18N.DISPLAY.download()), Metadata(I18N.DISPLAY.metadata());
 
         private final String displayText;
 
@@ -64,6 +64,7 @@ public class DataUtils {
                         ret.add(Action.View);
                         ret.add(Action.ViewTree);
                     }
+                    ret.add(Action.Metadata);
                 } else {
                     if (!hasFolders) {
                         ret.add(Action.View);
@@ -168,9 +169,10 @@ public class DataUtils {
     public static boolean isRenamable(DiskResource resource) {
         if (resource != null) {
             return resource.getPermissions().isWritable();
-        } else {
-            return false;
         }
+
+        return false;
+
     }
 
     public static boolean isDeletable(List<DiskResource> resources) {
@@ -195,9 +197,10 @@ public class DataUtils {
     public static boolean canUploadToThisFolder(Folder destination) {
         if (destination != null) {
             return destination.getPermissions().isWritable();
-        } else {
-            return false;
         }
+
+        return false;
+
     }
 
     public static boolean canCreateFolderInThisFolder(Folder destination) {
@@ -208,6 +211,15 @@ public class DataUtils {
     public static void checkForDuplicateFilename(final String diskResourceId,
             final AsyncCallback<String> callback) {
         checkListForDuplicateFilenames(Arrays.asList(diskResourceId), callback);
+
+    }
+
+    public static boolean isMetadtaUpdatable(DiskResource resource) {
+        if (resource != null) {
+            return resource.getPermissions().isWritable();
+        }
+
+        return false;
 
     }
 

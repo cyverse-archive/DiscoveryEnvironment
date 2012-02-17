@@ -1018,6 +1018,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String simpleDownloadForm();
 
     /**
+     * Localized text for manage data metadata menu item
+     * 
+     * @return a string representing the localized text.
+     */
+    String metadata();
+
+    /**
      * Localized text for the iDrop Lite Applet window close-confirmation-prompt title.
      * 
      * @return a string representing the localized text.
@@ -1054,5 +1061,29 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String selectJobOutputDir(String defaultPath);
+
+    /**
+     * Localized text that is added to rating comments for the wiki; may contain wiki markup
+     * 
+     * @param user the name of the current DE user
+     * 
+     * @return a string representing the localized text.
+     */
+    String ratingCommentSuffix(String user);
+
+    /**
+     * Localized text for analysis submit confirmation dialog
+     * 
+     * @return a string representing the localized text.
+     */
+    String analysisSubmitted();
+
+    /**
+     * Localized text for analysis submitted message
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String analysisSubmittedMsg();
 
 }

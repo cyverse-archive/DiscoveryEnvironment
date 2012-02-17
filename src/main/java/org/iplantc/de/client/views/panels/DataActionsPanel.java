@@ -17,6 +17,7 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.event.ComponentEvent;
@@ -102,6 +103,10 @@ public class DataActionsPanel extends ContentPanel {
                 ret = new DownloadListenerImpl();
                 break;
 
+            case Metadata:
+                ret = new MetadataListenerImpl();
+                break;
+
             default:
                 break;
         }
@@ -129,7 +134,7 @@ public class DataActionsPanel extends ContentPanel {
                 IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 340,
                         new RenameFolderDialogPanel(resource.getId(), resource.getName(), maskingParent));
 
-            dlg.show();
+                dlg.show();
             } else {
                 showErrorMsg();
             }
@@ -143,12 +148,28 @@ public class DataActionsPanel extends ContentPanel {
             if (DataUtils.isRenamable(resource)) {
                 IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 320,
                         new RenameFileDialogPanel(resource.getId(), resource.getName(), maskingParent));
-    
+
                 dlg.show();
-            } else  {
+            } else {
                 showErrorMsg();
             }
-            
+
+        }
+    }
+
+    private class MetadataListenerImpl implements Listener<ComponentEvent> {
+
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            DiskResource dr = resources.get(0);
+            final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
+
+            MetadataEditorDialog d = new MetadataEditorDialog(
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep);
+
+            d.setSize(500, 300);
+            d.setResizable(false);
+            d.show();
         }
     }
 

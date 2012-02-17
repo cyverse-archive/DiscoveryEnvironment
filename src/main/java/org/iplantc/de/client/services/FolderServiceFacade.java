@@ -315,6 +315,93 @@ public class FolderServiceFacade {
     }
 
     /**
+     * call service to get file / folder metadata
+     * 
+     * @param path path of resource
+     * @param callback execute when RPC call complete
+     */
+    public void getMetaData(DiskResource dr, AsyncCallback<String> callback) {
+        if (dr instanceof Folder) {
+            getFolderMetaData(dr.getId(), callback);
+        } else {
+            getFileMetaData(dr.getId(), callback);
+        }
+    }
+
+    /**
+     * call service to set file / folder metadata
+     * 
+     * @param path path of resource
+     * @param body metadata in json format
+     * @param callback execute when RPC call complete
+     */
+    public void setMetaData(DiskResource dr, String body, DiskResourceMetadataUpdateCallback callback) {
+        if (dr instanceof Folder) {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FOLDER);
+            setFolderMetaData(dr.getId(), body, callback);
+        } else {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FILE);
+            setFileMetaData(dr.getId(), body, callback);
+        }
+    }
+
+    /**
+     * call service to get file metadata
+     * 
+     * @param path path of resource
+     * @param callback execute when RPC call complete
+     */
+    private void getFileMetaData(String path, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix
+                + ".file-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        callService(callback, wrapper);
+    }
+
+    /**
+     * call service to get folder metadata
+     * 
+     * @param path path of resource
+     * @param callback execute when RPC call complete
+     */
+    private void getFolderMetaData(String path, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix
+                + ".folder-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        callService(callback, wrapper);
+    }
+
+    /**
+     * call service to set file metadata
+     * 
+     * @param path path of resource
+     * @param body metadata in json format
+     * @param callback execute when RPC call complete
+     */
+    private void setFileMetaData(String path, String body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix
+                + ".file-metadata-batch" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body);
+        callService(callback, wrapper);
+    }
+
+    /**
+     * call service to set folder metadata
+     * 
+     * @param path path of resource
+     * @param body metadata in json format
+     * @param callback execute when RPC call complete
+     */
+    private void setFolderMetaData(String path, String body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix
+                + ".folder-metadata-batch" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body);
+        callService(callback, wrapper);
+    }
+
+    /**
      * Performs the actual service call.
      * 
      * @param callback executed when RPC call completes.

@@ -8,6 +8,7 @@ import java.util.List;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisExecution;
@@ -51,8 +52,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public class MyAnalysesPanel extends ContentPanel {
 
-    private final String DELETE_ITEM_ID = "idDeleteBtn";
-    private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn";
+    private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
+    private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn"; //$NON-NLS-1$
 
     private MyAnalysesGrid analysisGrid;
 
@@ -346,9 +347,13 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private void retrieveOutputFolder(String id) {
         AnalysisExecution ae = analysisGrid.getStore().findModel("id", id); //$NON-NLS-1$
+
         if (ae != null && ae.getResultFolderId() != null && !ae.getResultFolderId().isEmpty()) {
+            JSONObject context = new JSONObject();
+            context.put(Folder.ID, new JSONString(ae.getResultFolderId()));
+
             MyDataViewContextExecutor contextExec = new MyDataViewContextExecutor();
-            contextExec.execute("{\"id\":\"" + ae.getResultFolderId() + "\"}"); //$NON-NLS-1$ //$NON-NLS-2$
+            contextExec.execute(context.toString());
         }
     }
 
@@ -413,7 +418,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private final class DeleteMessageBoxListener implements Listener<MessageBoxEvent> {
         private final List<AnalysisExecution> execs;
-        private List<AnalysisExecution> items_to_delete;
+        private final List<AnalysisExecution> items_to_delete;
 
         private DeleteMessageBoxListener(List<AnalysisExecution> execs) {
             this.execs = execs;
@@ -426,7 +431,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
             // did the user click yes?
             if (btn.getItemId().equals(Dialog.YES)) {
-                String body = buildDeleteRequestBody(execs); //$NON-NLS-1$
+                String body = buildDeleteRequestBody(execs);
                 facadeAnalysisService.deleteJob(idWorkspace, body, new DeleteSeviceCallback(
                         items_to_delete, execs));
             }
@@ -444,7 +449,7 @@ public class MyAnalysesPanel extends ContentPanel {
                 }
 
             }
-            obj.put("executions", items);
+            obj.put("executions", items); //$NON-NLS-1$
             return obj.toString();
         }
     }

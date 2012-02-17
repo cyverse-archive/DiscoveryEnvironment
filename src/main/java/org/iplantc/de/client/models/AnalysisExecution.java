@@ -130,6 +130,11 @@ public class AnalysisExecution extends DEBaseModelData {
     }
 
     public void setResultFolderId(String resultfolderid) {
+        if (resultfolderid != null) {
+            // Trim the path and remove any trailing slashes
+            resultfolderid = resultfolderid.trim().replaceAll("/+$", ""); //$NON-NLS-1$//$NON-NLS-2$
+        }
+
         set("resultfolderid", resultfolderid); //$NON-NLS-1$
     }
 

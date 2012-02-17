@@ -21,6 +21,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
+import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -53,6 +54,7 @@ import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -655,17 +657,29 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 public void componentSelected(IconButtonEvent ce) {
                     removeUnrateIcon(hp);
                     hp.layout();
-                    getTemplateService().deleteRating(model.getId(), new AsyncCallback<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            updateFeedback(model, result);
-                        }
 
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            ErrorHandler.post(caught);
+                    Long commentId = null;
+                    try {
+                        AnalysisFeedback feedback = model.getFeedback();
+                        if (feedback != null) {
+                            commentId = feedback.getComment_id();
                         }
-                    });
+                    } catch (NumberFormatException e) {
+                        // comment id empty or not a number, leave it null and proceed
+                    }
+
+                    getTemplateService().deleteRating(model.getId(), model.getName(), commentId,
+                            new AsyncCallback<String>() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    updateFeedback(model, result);
+                                }
+
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    ErrorHandler.post(caught);
+                                }
+                            });
                 }
 
                 /**
@@ -677,6 +691,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 private void updateFeedback(Analysis model, String json) {
                     AnalysisFeedback userFeedback = model.getFeedback();
                     userFeedback.setUser_score(0);
+                    userFeedback.setComment_id(null);
 
                     if (json == null || json.isEmpty()) {
                         userFeedback.setAverage_score(0);
@@ -756,17 +771,29 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 return;
             }
 
-            // FIXME temp. disable adding comments for ratings, until comments can be deleted.
-            persistRating(model, score, null, parent);
-            // final AppCommentDialog dlg = new AppCommentDialog(model.getName());
-            // Command onConfirm = new Command() {
-            // @Override
-            // public void execute() {
-            // persistRating(model, score, dlg.getComment(), parent);
-            // }
-            // };
-            // dlg.setCommand(onConfirm);
-            // dlg.show();
+            final AppCommentDialog dlg = new AppCommentDialog(model.getName());
+            Command onConfirm = new Command() {
+                @Override
+                public void execute() {
+                    String comment = generateCommentMarkup(dlg.getComment(), score);
+                    persistRating(model, score, comment, parent);
+                }
+            };
+            dlg.setCommand(onConfirm);
+            dlg.show();
+        }
+
+        private String generateCommentMarkup(String comment, int score) {
+            StringBuilder markup = new StringBuilder();
+            // add full stars
+            for (int i = 0; i < score; i++)
+                markup.append("\u2605"); //$NON-NLS-1$
+            // add empty stars so it is 5 stars total
+            for (int i = 0; i < 5 - score; i++)
+                markup.append("\u2606"); //$NON-NLS-1$
+            markup.append(" ").append(comment).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+            markup.append(I18N.DISPLAY.ratingCommentSuffix(UserInfo.getInstance().getUsername()));
+            return markup.toString();
         }
 
         private void persistRating(final Analysis model, final int score, String comment,
@@ -778,7 +805,11 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                     AnalysisFeedback userFeedback = model.getFeedback();
                     int userScoreBefore = userFeedback.getUser_score();
 
-                    userFeedback.setComment_id(result);
+                    try {
+                        userFeedback.setComment_id(Long.valueOf(result));
+                    } catch (NumberFormatException e) {
+                        // no comment id, do nothing
+                    }
 
                     userFeedback.setUser_score(score);
 
@@ -797,13 +828,13 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 }
             };
 
-            String commentId = model.getFeedback().getComment_id();
-            // if (commentId == null || commentId.isEmpty()) {
+            Long commentId = model.getFeedback().getComment_id();
+            if (commentId == null) {
                 getTemplateService().rateAnalysis(model.getId(), score, model.getName(), comment, callback);
-            // } else {
-            // getTemplateService().updateRating(model.getId(), score, model.getName(), comment, commentId,
-            // callback);
-            // }
+            } else {
+                getTemplateService().updateRating(model.getId(), score, model.getName(), commentId,
+                        comment, callback);
+            }
         }
     }
 }

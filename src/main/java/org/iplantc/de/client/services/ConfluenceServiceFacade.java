@@ -51,6 +51,17 @@ public class ConfluenceServiceFacade {
     }
 
     /**
+     * Updates a documentation page with an average app rating.
+     * 
+     * @param toolName the name of the tool which is used as the page title
+     * @param avgRating the new average rating score
+     * @param callback called after the service call finishes
+     */
+    public void updateDocumentationPage(String toolName, int avgRating, AsyncCallback<String> callback) {
+        proxy.updatePage(toolName, avgRating, callback);
+    }
+
+    /**
      * Adds a user comment to a tool description page.
      * 
      * @param toolName the name of the tool which is also the page title
@@ -59,5 +70,28 @@ public class ConfluenceServiceFacade {
      */
     public void addComment(String toolName, String comment, AsyncCallback<String> callback) {
         proxy.addComment(toolName, comment, callback);
+    }
+
+    /**
+     * Removes a user comment from a tool description page.
+     * 
+     * @param toolName the name of the tool which is also the page title
+     * @param commentId the comment ID in Confluence
+     * @param callback called after the service call finishes
+     */
+    void removeComment(String toolName, Long commentId, AsyncCallback<String> callback) {
+        proxy.removeComment(toolName, commentId, callback);
+    }
+
+    /**
+     * Changes an existing user comment on a tool description page.
+     * 
+     * @param toolName the name of the tool which is also the page title
+     * @param commentId the comment ID in Confluence
+     * @param newComment the new comment text
+     * @param callback called after the service call finishes
+     */
+    void editComment(String toolName, long commentId, String newComment, AsyncCallback<String> callback) {
+        proxy.editComment(toolName, commentId, newComment, callback);
     }
 }

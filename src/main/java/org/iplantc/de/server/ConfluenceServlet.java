@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ConfluenceService;
 import org.swift.common.cli.CliClient.ExitCode;
 import org.swift.common.soap.confluence.RemoteComment;
+import org.swift.common.soap.confluence.RemotePage;
 import org.swift.confluence.cli.ConfluenceClient;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -23,6 +24,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class ConfluenceServlet extends RemoteServiceServlet implements ConfluenceService {
     private static final long serialVersionUID = -7866351808664668611L;
     private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
+    private static final String BLACK_STAR = "\u2605"; //$NON-NLS-1$
+    private static final String WHITE_STAR = "\u2606"; //$NON-NLS-1$
 
     /** a wiki template file containing Confluence markup */
     private static final String TEMPLATE_FILE = "wiki_template"; //$NON-NLS-1$
@@ -63,6 +66,46 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
             throw new RuntimeException("Can't create Confluence page! Error code = " + code); //$NON-NLS-1$
         }
         return DiscoveryEnvironmentProperties.getConfluenceSpaceUrl() + toolName;
+    }
+
+    @Override
+    public void updatePage(String toolName, int avgRating) {
+        String space = DiscoveryEnvironmentProperties.getConfluenceSpaceName();
+        // String content = client.getPageContent(toolName, space);
+        IPlantConfluenceClient client = new IPlantConfluenceClient();
+        try {
+            client.iplantLogin();
+            long pageId = client.getContentId(toolName, space);
+            RemotePage page = client.getPage(pageId);
+            String content = page.getContent();
+
+            int start = content.indexOf(BLACK_STAR);
+            if (start < 0) {
+                start = content.indexOf(WHITE_STAR);
+            }
+            if (start < 0) {
+                return;
+            }
+
+            // remove all stars
+            content = content.replaceAll(BLACK_STAR, ""); //$NON-NLS-1$
+            content = content.replaceAll(WHITE_STAR, ""); //$NON-NLS-1$
+
+            // add the new stars
+            StringBuilder stars = new StringBuilder();
+            for (int i = 0; i < avgRating; i++) {
+                stars.append(BLACK_STAR);
+            }
+            for (int i = 0; i < 5 - avgRating; i++) {
+                stars.append(WHITE_STAR);
+            }
+            content = content.substring(0, start) + stars + content.substring(start);
+
+            // update page
+            client.storePage(page, toolName, space, null, content, true, false);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't update Confluence page! Error code = ", e); //$NON-NLS-1$
+        }
     }
 
     /**
@@ -110,15 +153,42 @@ public class ConfluenceServlet extends RemoteServiceServlet implements Confluenc
     @Override
     public String addComment(String toolName, String comment) {
         String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
-        String parent = DiscoveryEnvironmentProperties.getConfluenceParentPage();
         String user = DiscoveryEnvironmentProperties.getConfluenceUser();
         String password = DiscoveryEnvironmentProperties.getConfluencePassword();
         String space = DiscoveryEnvironmentProperties.getConfluenceSpaceName();
         try {
-            RemoteComment confluenceComment = new IPlantConfluenceClient(url, user, password).addComment(space, toolName, comment);
+            IPlantConfluenceClient client = new IPlantConfluenceClient(url, user, password);
+
+            RemoteComment confluenceComment = client.addComment(space, toolName, comment);
             return String.valueOf(confluenceComment.getId());
         } catch (Exception e) {
-            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e);
+            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+
+    @Override
+    public void removeComment(String toolName, Long commentId) {
+        String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+        try {
+            new IPlantConfluenceClient(url, user, password).removeComment(commentId);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+    }
+
+    @Override
+    public void editComment(String toolName, Long commentId, String newComment) {
+        String url = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+        try {
+            new IPlantConfluenceClient(url, user, password).editComment(commentId, newComment);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 }

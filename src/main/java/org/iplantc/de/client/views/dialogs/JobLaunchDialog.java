@@ -233,6 +233,9 @@ public class JobLaunchDialog extends Dialog {
 
         // close dialog now that job has launched
         closeDialog();
+
+        MessageBox.info(I18N.DISPLAY.analysisSubmitted(), I18N.DISPLAY.analysisSubmittedMsg(), null);
+
     }
 
     private void handleJobLaunchFailure(Throwable caught) {
