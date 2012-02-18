@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Image;
  * @author amuir
  * 
  */
-public class ImagePanel extends ProvenanceContentPanel {
+public class ImagePanel extends ViewerContentPanel {
     private String urlImage;
     private VerticalPanel panel = new VerticalPanel();
 
@@ -36,19 +36,6 @@ public class ImagePanel extends ProvenanceContentPanel {
     @Override
     public String getTabHeader() {
         return I18N.DISPLAY.image();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateProvenance(String provenance) {
-        super.updateProvenance(provenance);
-
-        int height = (provenance != null && provenance.trim().length() > 0) ? 280 : 360;
-        panel.setHeight(height);
-
-        layout();
     }
 
     /**

@@ -19,7 +19,7 @@ import com.google.gwt.user.client.Element;
  * @author sriram
  * 
  */
-public class FilePreviewPanel extends ProvenanceContentPanel {
+public class FilePreviewPanel extends ViewerContentPanel {
 
     private FileIdentifier file;
     private String data;

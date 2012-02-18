@@ -19,9 +19,9 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.panels.FilePreviewPanel;
 import org.iplantc.de.client.views.panels.ImagePanel;
-import org.iplantc.de.client.views.panels.ProvenanceWindowTabPanel;
 import org.iplantc.de.client.views.panels.RawDataPanel;
 import org.iplantc.de.client.views.panels.TreeHyperlinkGridPanel;
+import org.iplantc.de.client.views.panels.ViewerWindowTabPanel;
 
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -41,9 +41,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author amuir
  * 
  */
-public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
+public class FileEditorWindow extends FileWindow implements DataMonitor {
     private int numLoadingTabs;
-    private ProvenanceWindowTabPanel panel;
+    private ViewerWindowTabPanel panel;
     private int treeUrlTabIndex;
     private boolean isPdfPanel;
     private boolean isDirty;
@@ -99,7 +99,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
         TreeHyperlinkGridPanel pnlTreeUrlTab = new TreeHyperlinkGridPanel(file, urls);
         pnlTreeUrlTab.setTabIndex(treeUrlTabIndex);
 
-        panel.addTab(pnlTreeUrlTab, provenance);
+        // panel.addTab(pnlTreeUrlTab, provenance);
 
         return pnlTreeUrlTab;
     }
@@ -109,7 +109,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
      */
     @Override
     protected void init() {
-        panel = new ProvenanceWindowTabPanel();
+        panel = new ViewerWindowTabPanel();
         isPdfPanel = false;
 
         initCommands();
@@ -131,9 +131,9 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
      */
     @Override
     protected void clearPanel() {
-        if (panel != null) {
-            panel.removeAll();
-        }
+        // if (panel != null) {
+        // panel.removeAll();
+        // }
     }
 
     private void updateStatus(int numTabs) {
@@ -150,7 +150,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
             // we got the url of an image... lets add a tab
             ImagePanel pnlImage = new ImagePanel(file, getServletDownloadUrl(url));
 
-            panel.addTab(pnlImage, provenance);
+            panel.addTab(pnlImage);
         }
     }
 
@@ -276,11 +276,11 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected void updatePanelProvenance(String provenance) {
-        this.provenance = provenance;
-        panel.updateProvenance(provenance);
-    }
+    // @Override
+    // protected void updatePanelProvenance(String provenance) {
+    // this.provenance = provenance;
+    // panel.updateProvenance(provenance);
+    // }
 
     /**
      * {@inheritDoc}
@@ -360,7 +360,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
             // add a raw data tab
             RawDataPanel panelRaw = new RawDataPanel(file, result);
             panelRaw.setTabIndex(treeUrlTabIndex == 0 ? 1 : 0);
-            panel.addTab(panelRaw, provenance);
+            panel.addTab(panelRaw);
         }
     }
 
@@ -386,7 +386,7 @@ public class FileEditorWindow extends ProvenanceWindow implements DataMonitor {
             FilePreviewPanel previewPanel = new FilePreviewPanel(file, JsonUtil.getString(
                     JsonUtil.getObject(result), "preview"), false); //$NON-NLS-1$
 
-            panel.addTab(previewPanel, provenance);
+            panel.addTab(previewPanel);
         }
     }
 

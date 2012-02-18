@@ -20,7 +20,7 @@ import com.google.gwt.user.client.Element;
  * @author amuir
  * 
  */
-public class RawDataPanel extends ProvenanceContentPanel implements DataMonitor {
+public class RawDataPanel extends ViewerContentPanel implements DataMonitor {
     private final String data;
     private TextArea areaData;
     private int tabIndex;

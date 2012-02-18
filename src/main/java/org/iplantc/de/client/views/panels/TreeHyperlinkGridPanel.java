@@ -29,7 +29,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TreeHyperlinkGridPanel extends ProvenanceContentPanel {
+public class TreeHyperlinkGridPanel extends ViewerContentPanel {
     public static final String TREE_URLS = "tree-urls"; //$NON-NLS-1$
 
     private static final String LABEL = "label"; //$NON-NLS-1$

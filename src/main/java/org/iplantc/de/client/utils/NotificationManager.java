@@ -11,9 +11,12 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
+import org.iplantc.de.client.events.DataPayloadEvent;
+import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
+import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.store.ListStore;
@@ -39,6 +42,8 @@ public class NotificationManager {
         ALL(I18N.CONSTANT.notificationCategoryAll()),
         /** System notifications */
         SYSTEM(I18N.CONSTANT.notificationCategorySystem()),
+        /** Data notifications */
+        DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
         ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis());
 
@@ -75,6 +80,7 @@ public class NotificationManager {
 
     private final ListStore<Notification> storeAll;
 
+    private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
     private final MessageServiceFacade facadeMessageService;
 
@@ -94,6 +100,7 @@ public class NotificationManager {
     }
 
     private void initContextBuilders() {
+        dataContextBuilder = new DataContextBuilder();
         analysisContextBuilder = new AnalysisContextBuilder();
     }
 
@@ -120,6 +127,15 @@ public class NotificationManager {
 
     private void registerEventHandlers() {
         EventBus eventbus = EventBus.getInstance();
+
+        // handle data events
+        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
+            @Override
+            public void onFire(DataPayloadEvent event) {
+                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
+                        dataContextBuilder.build(event.getPayload()));
+            }
+        });
 
         // handle analysis events
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
@@ -222,7 +238,9 @@ public class NotificationManager {
             JSONObject objMessage = objItem.get("message").isObject(); //$NON-NLS-1$
             JSONObject objPayload = objItem.get("payload").isObject(); //$NON-NLS-1$
 
-            if (type.equals("analysis")) { //$NON-NLS-1$
+            if (type.equals("data")) { //$NON-NLS-1$
+                addItemToStore(Category.DATA, objMessage, dataContextBuilder.build(objPayload));
+            } else if (type.equals("analysis")) { //$NON-NLS-1$
                 addItemToStore(Category.ANALYSIS, objMessage, analysisContextBuilder.build(objPayload));
             }
         }
