@@ -71,13 +71,7 @@
 			<property name="connectionTimeout" value="${org.iplantc.discoveryenvironment.osmConnectionTimeout}" />
 		</bean>
 
-	    <bean name="urlAssembler" class="org.iplantc.workflow.experiment.IrodsUrlAssembler">
-	    	<property name="user" value="${org.iplantc.discoveryenvironment.irods.user}" />
-	    	<property name="password" value="${org.iplantc.discoveryenvironment.irods.password}" />
-	    	<property name="zone" value="${org.iplantc.discoveryenvironment.irods.zone}" />
-	    	<property name="host" value="${org.iplantc.discoveryenvironment.irods.host}" />
-	    	<property name="port" value="${org.iplantc.discoveryenvironment.irods.port}" />
-	    </bean>
+	    <bean name="urlAssembler" class="org.iplantc.workflow.experiment.IrodsUrlAssembler" />
 
 		<bean name="experimentRunner" class="org.iplantc.workflow.experiment.ExperimentRunner" >
 			<property name="sessionFactory" ref="sessionFactory" />
