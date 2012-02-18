@@ -9,6 +9,8 @@ import org.iplantc.de.client.dispatchers.ActionDispatcher;
 import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
+import org.iplantc.de.client.events.DataPayloadEvent;
+import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
@@ -63,9 +65,11 @@ public class ApplicationLayout extends Viewport {
     private NotificationIndicator lblNotifications;
     private NotificationLabel lblNotificationsAll;
     private NotificationLabel lblNotificationsAnalyses;
+    private NotificationLabel lblNotificationsData;
 
     private int countNotificationsAll = 0;
     private int countNotificationsAnalyses = 0;
+    private int countNotificationsData = 0;
 
     /**
      * Default constructor.
@@ -101,6 +105,21 @@ public class ApplicationLayout extends Viewport {
     private void initEventHandlers() {
         EventBus eventbus = EventBus.getInstance();
 
+        // handle data events
+        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
+            @Override
+            public void onFire(DataPayloadEvent event) {
+                if (event.getMessage() != null) {
+                    countNotificationsAll++;
+                    countNotificationsData++;
+
+                    lblNotifications.setCount(countNotificationsAll);
+                    lblNotificationsAll.setCount(countNotificationsAll);
+                    lblNotificationsData.setCount(countNotificationsData);
+                }
+            }
+        });
+
         // handle analysis events
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
@@ -110,9 +129,8 @@ public class ApplicationLayout extends Viewport {
                     countNotificationsAnalyses++;
 
                     lblNotifications.setCount(countNotificationsAll);
-                    // TODO temporarily disable notification labels until more categories are added.
-                    // lblNotificationsAll.setCount(countNotificationsAll);
-                    // lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
+                    lblNotificationsAll.setCount(countNotificationsAll);
+                    lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
                 }
             }
         });
@@ -162,10 +180,8 @@ public class ApplicationLayout extends Viewport {
         pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
 
         // add notification actions menu
-        // TODO temporarily disable notifications menu until more categories are added.
-        // HorizontalPanel notificationPanel = buildActionsMenu(I18N.DISPLAY.notifications(),
-        // buildNotificationsMenu());
-        HorizontalPanel notificationPanel = buildNotificationsActionPanel();
+        HorizontalPanel notificationPanel = buildActionsMenu(I18N.DISPLAY.notifications(),
+                buildNotificationsMenu());
 
         lblNotifications = new NotificationIndicator(countNotificationsAll);
         notificationPanel.add(lblNotifications);
@@ -173,36 +189,6 @@ public class ApplicationLayout extends Viewport {
         pnlActions.add(notificationPanel);
 
         return pnlActions;
-    }
-
-    /**
-     * XXX A temporary method for building a MenuLabel that simply opens the unfiltered notifications
-     * window, until more notification categories are added.
-     * 
-     * @return HorizontalPanel containing the Notifications Action.
-     */
-    private HorizontalPanel buildNotificationsActionPanel() {
-        final HorizontalPanel ret = new HorizontalPanel();
-        ret.setStyleName("de_header_menu_panel"); //$NON-NLS-1$
-
-        MenuLabel menuHeader = new MenuLabel(I18N.DISPLAY.notifications(),
-                "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
-            @Override
-            public void handleEvent(BaseEvent be) {
-                countNotificationsAll = 0;
-                countNotificationsAnalyses = 0;
-
-                lblNotifications.setCount(countNotificationsAll);
-
-                NotificationIconBar.showNotificationWindow(Category.ALL);
-            }
-        });
-
-        ret.add(menuHeader);
-
-        return ret;
     }
 
     private HorizontalPanel buildFooterPanel() {
@@ -313,13 +299,38 @@ public class ApplicationLayout extends Viewport {
             source.hide();
 
             countNotificationsAll = 0;
+            countNotificationsData = 0;
             countNotificationsAnalyses = 0;
 
             lblNotifications.setCount(countNotificationsAll);
             lblNotificationsAll.setCount(countNotificationsAll);
+            lblNotificationsData.setCount(countNotificationsData);
             lblNotificationsAnalyses.setCount(countNotificationsAnalyses);
 
             NotificationIconBar.showNotificationWindow(Category.ALL);
+        }
+    }
+
+    private class NotificationDataListener implements Listener<BaseEvent> {
+        Component source;
+
+        public NotificationDataListener(Menu m) {
+            super();
+            source = m;
+        }
+
+        @Override
+        public void handleEvent(BaseEvent be) {
+            source.hide();
+
+            countNotificationsData = 0;
+            countNotificationsAll = countNotificationsAnalyses;
+
+            lblNotifications.setCount(countNotificationsAll);
+            lblNotificationsAll.setCount(countNotificationsAll);
+            lblNotificationsData.setCount(countNotificationsData);
+
+            NotificationIconBar.showNotificationWindow(Category.DATA);
         }
     }
 
@@ -336,7 +347,7 @@ public class ApplicationLayout extends Viewport {
             source.hide();
 
             countNotificationsAnalyses = 0;
-            countNotificationsAll = 0;
+            countNotificationsAll = countNotificationsData;
 
             lblNotifications.setCount(countNotificationsAll);
             lblNotificationsAll.setCount(countNotificationsAll);
@@ -432,10 +443,13 @@ public class ApplicationLayout extends Viewport {
 
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle,
                 countNotificationsAll, new NotificationAllListener(notificationMenu));
+        lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle,
+                countNotificationsData, new NotificationDataListener(notificationMenu));
         lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
                 countNotificationsAnalyses, new NotificationAnalysisListener(notificationMenu));
 
         notificationMenu.add(lblNotificationsAll);
+        notificationMenu.add(lblNotificationsData);
         notificationMenu.add(lblNotificationsAnalyses);
 
         return notificationMenu;
