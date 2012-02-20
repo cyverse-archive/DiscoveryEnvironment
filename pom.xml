@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.iplantc.de</groupId>
 	<artifactId>de-web</artifactId>
@@ -27,7 +27,6 @@
 			<artifactId>jug.osgi</artifactId>
 			<version>2.0.0</version>
 		</dependency>
-		<!-- service dependencies -->
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -44,17 +43,17 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>widgets</artifactId>
 			<version>dev-SNAPSHOT</version>
@@ -73,6 +72,11 @@
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>diskresource</artifactId>
 			<version>dev-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>3.1.0.RELEASE</version>
 		</dependency>
 		<!-- GWT deps (from central repo) -->
 		<dependency>
@@ -150,12 +154,12 @@
 			<version>1.4.0</version>
 		</dependency>
         <!-- iDrop Lite Applet, provided by iRODS team -->
-        <dependency>
-            <groupId>org.irods.idrop</groupId>
-            <artifactId>idrop-lite</artifactId>
-            <version>1.0.0-beta3-SNAPSHOT</version>
-            <scope>provided</scope> <!-- we don't want the applet in WEB-INF/classes -->
-        </dependency>
+		<dependency>
+			<groupId>org.irods.idrop</groupId>
+			<artifactId>idrop-lite</artifactId>
+			<version>1.0.0-beta3-SNAPSHOT</version>
+			<scope>provided</scope> <!-- we don't want the applet in WEB-INF/classes -->
+		</dependency>
 		<dependency>
 			<groupId>org.swift.common</groupId>
 			<artifactId>cli</artifactId>
@@ -322,9 +326,9 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-						            <groupId>org.irods.idrop</groupId>
-						            <artifactId>idrop-lite</artifactId>
-						            <version>1.0.0-beta3-SNAPSHOT</version>
+									<groupId>org.irods.idrop</groupId>
+									<artifactId>idrop-lite</artifactId>
+									<version>1.0.0-beta3-SNAPSHOT</version>
 									<outputDirectory>${basedir}/war/applets</outputDirectory>
 									<destFileName>idrop-lite-1.0.0-beta3-SNAPSHOT.jar</destFileName>
 								</artifactItem>

@@ -48,7 +48,6 @@ public class DiscoveryEnvironmentProperties {
     public static final String DE_RELEASE_VERSION = PREFIX + ".about.releaseVersion"; //$NON-NLS-1$
 
     public static final String MULE_SERVICE_BASE_URL = PREFIX + ".muleServiceBaseUrl"; //$NON-NLS-1$
-    public static final String NOTIFICATION_BASE_URL = PREFIX + ".notificationAgentBaseUrl"; //$NON-NLS-1$
 
     public static final String CONFLUENCE_BASE_URL = PREFIX + ".confluence.baseUrl"; //$NON-NLS-1$
     public static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".confluence.parentPageName"; //$NON-NLS-1$
@@ -60,8 +59,8 @@ public class DiscoveryEnvironmentProperties {
     /**
      * The list of required properties.
      */
-    private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL, NOTIFICATION_BASE_URL,
-            DATA_MGMT_SERVICE_BASE_URL, UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL, URL_IMPORT_SERVICE_URL};
+    private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL, DATA_MGMT_SERVICE_BASE_URL,
+        UPLOAD_SERVICE_URL, DOWNLOAD_SERVICE_URL, URL_IMPORT_SERVICE_URL};
 
     /**
      * The properties. Place any default values in the initializer.
@@ -133,15 +132,6 @@ public class DiscoveryEnvironmentProperties {
      */
     public static String getMuleServiceBaseUrl() {
         return properties.getProperty(MULE_SERVICE_BASE_URL);
-    }
-
-    /**
-     * Gets the base URL to use to access the notification agent.
-     * 
-     * @return the base URL.
-     */
-    public static String getNotificaitonBaseUrl() {
-        return properties.getProperty(NOTIFICATION_BASE_URL);
     }
 
     /**
