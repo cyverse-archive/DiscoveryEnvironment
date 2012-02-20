@@ -1094,4 +1094,27 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String viewParameters();
 
+    /**
+     * Localized text for param name
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String paramName();
+
+    /**
+     * Localized text for param type
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String paramType();
+
+    /**
+     * Localized text for param value
+     * 
+     * @return a string representing the localized text.
+     */
+    String paramValue();
+
 }

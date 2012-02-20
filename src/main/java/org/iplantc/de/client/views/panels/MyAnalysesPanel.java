@@ -166,6 +166,7 @@ public class MyAnalysesPanel extends ContentPanel {
     private void buildTopComponent() {
         topComponentMenu = new ToolBar();
         topComponentMenu.add(buildViewOpButton());
+        topComponentMenu.add(buildViewParamsButton());
         topComponentMenu.add(buildDeleteButton());
         buildFilterField();
         topComponentMenu.add(filter);
@@ -193,6 +194,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
             default:
                 analyses_buttons.get(DELETE_ITEM_ID).enable();
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).disable();
                 analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
         }
     }
@@ -321,8 +323,10 @@ public class MyAnalysesPanel extends ContentPanel {
             if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.COMPLETED.toString()))
                     || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.FAILED.toString()))) {
                 analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).enable();
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             } else {
                 analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             }
         }
     }
@@ -359,7 +363,13 @@ public class MyAnalysesPanel extends ContentPanel {
     private class ViewParamSelectionListener extends SelectionListener<ButtonEvent> {
         @Override
         public void componentSelected(ButtonEvent ce) {
-
+            Dialog d = new Dialog();
+            d.setHeading(I18N.DISPLAY.viewParameters());
+            d.add(new AnalysisParameterViewerPanel());
+            d.setSize(420, 320);
+            d.setButtons(Dialog.OK);
+            d.setHideOnButtonClick(true);
+            d.show();
         }
     }
 
