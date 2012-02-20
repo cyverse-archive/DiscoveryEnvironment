@@ -15,18 +15,6 @@
 		<param-name>org.iplantc.properties</param-name>
 		<param-value>/discoveryenvironment.properties</param-value>
 	</context-param>
-	<context-param>
-		<param-name>mule.core.enabled</param-name>
-		<param-value>/WEB-INF/mule-config.xml</param-value>
-	</context-param>
-	<context-param>
-		<param-name>mule.rest.enabled</param-name>
-		<param-value>/WEB-INF/rest-mule.xml</param-value>
-	</context-param>
-	<context-param>
-		<param-name>mule.irods.enabled</param-name>
-		<param-value>/WEB-INF/irods-mule.xml</param-value>
-	</context-param>
     <context-param>
         <param-name>org.iplantc.logout-url</param-name>
         <param-value>https://cas-server.iplantcollaborative.org/cas/logout</param-value>
@@ -119,10 +107,6 @@
         <filter-name>CAS Single Sign Out Filter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-	<!-- Listeners -->
-	<listener>
-		<listener-class>org.iplantc.muletoolkit.config.builders.ConditionalMuleXmlBuilderContextListener</listener-class>
-	</listener>
 	<!-- Servlets -->
 	<servlet>
 		<servlet-name>sessionInitializationServlet</servlet-name>

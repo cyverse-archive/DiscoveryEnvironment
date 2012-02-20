@@ -18,10 +18,8 @@
 		<gxt.version>2.2.5</gxt.version>
 		<!-- Define OS/Platform Independent Character Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- Current Mule Version -->
-		<mule.version>2.2.1</mule.version>
 		<netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
-                <hibernate.version>3.6.8.Final</hibernate.version>
+		<hibernate.version>3.6.8.Final</hibernate.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -46,12 +44,17 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.5.6</version>
-		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+        <dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>widgets</artifactId>
 			<version>dev-SNAPSHOT</version>
@@ -67,123 +70,8 @@
 			<version>dev-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-module-spring-config</artifactId>
-			<version>${mule.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-module-builders</artifactId>
-			<version>${mule.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-module-scripting</artifactId>
-			<version>${mule.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.transports</groupId>
-			<artifactId>mule-transport-vm</artifactId>
-			<version>${mule.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.transports</groupId>
-			<artifactId>mule-transport-http</artifactId>
-			<version>${mule.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.transports</groupId>
-			<artifactId>mule-transport-restlet</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>files</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>diskresource</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.modules</groupId>
-			<artifactId>mule-module-json</artifactId>
-			<version>2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule</groupId>
-			<artifactId>mule-core</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>2.5.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>2.5.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>metadactyl</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-        <dependency>
-            <groupId>org.iplantc.core</groupId>
-            <artifactId>iplant-business</artifactId>
-            <version>dev-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.8.0.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>8.4-701.jdbc3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-c3p0</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>jlrproxytoolkit</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>irodsfile</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>muletoolkit</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>hibernatetoolkit</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>saml</artifactId>
-			<version>dev-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>securitymodule</artifactId>
 			<version>dev-SNAPSHOT</version>
 		</dependency>
 		<!-- GWT deps (from central repo) -->
@@ -261,11 +149,6 @@
 			<artifactId>xmlsec.osgi</artifactId>
 			<version>1.4.0</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.script</groupId>
-			<artifactId>groovy-engine.osgi</artifactId>
-			<version>1.1</version>
-		</dependency>
         <!-- iDrop Lite Applet, provided by iRODS team -->
         <dependency>
             <groupId>org.irods.idrop</groupId>
@@ -336,12 +219,6 @@
 						<addDefaultImplementationEntries>true
 						</addDefaultImplementationEntries>
 					</manifest>
-					<webResources>
-						<resource>
-							<directory>${project.build.directory}/generated-webapp
-							</directory>
-						</resource>
-					</webResources>
 					<archive>
 						<manifestEntries>
 							<Build-Version>${BUILD_TAG}</Build-Version>
@@ -405,68 +282,6 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xml-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>mule-config-generation</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>transform</goal>
-						</goals>
-						<configuration>
-							<transformationSets>
-								<transformationSet>
-									<dir>src/main/mule</dir>
-									<includes>
-										<include>mule-config.xml</include>
-										<include>irods-mule.xml</include>
-										<include>rest-mule.xml</include>
-									</includes>
-									<outputDir>${project.build.directory}/generated-webapp/WEB-INF
-									</outputDir>
-									<stylesheet>src/main/xslt/removeapidoc.xsl</stylesheet>
-								</transformationSet>
-							</transformationSets>
-						</configuration>
-					</execution>
-					<execution>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>transform</goal>
-						</goals>
-						<configuration>
-							<transformationSets>
-								<transformationSet>
-									<dir>src/main/mule</dir>
-									<includes>
-										<include>rest-mule.xml</include>
-									</includes>
-									<outputDir>${project.build.directory}/generated-site/apt
-									</outputDir>
-									<stylesheet>src/main/xslt/apidoc.xsl</stylesheet>
-									<fileMappers>
-										<fileMapper
-											implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-											<pattern>rest-mule.xml</pattern>
-											<replacement>apidoc.apt</replacement>
-										</fileMapper>
-									</fileMappers>
-								</transformationSet>
-							</transformationSets>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.saxon</groupId>
-						<artifactId>saxon</artifactId>
-						<version>8.7</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -570,17 +385,8 @@
 	</reporting>
 	<repositories>
 		<repository>
-			<id>mule-deps</id>
-			<name>Mule Dependencies</name>
-			<url>http://dist.codehaus.org/mule/dependencies/maven2</url>
-		</repository>
-		<repository>
 			<id>gwt-maven</id>
 			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
-		</repository>
-		<repository>
-			<id>muleforge</id>
-			<url>http://repository.muleforge.org</url>
 		</repository>
 		<repository>
 			<id>jboss-public-repository</id>

@@ -10,10 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
-import org.iplantc.irodsfile.util.LargeIOUtils;
 
 /**
  * A servlet for downloading a file.
@@ -64,7 +64,7 @@ public class FileDownloadServlet extends HttpServlet {
         OutputStream out = null;
         try {
             out = response.getOutputStream();
-            LargeIOUtils.copy(fileContents, out);
+            IOUtils.copyLarge(fileContents, out);
         } finally {
             fileContents.close();
             if (out != null) {

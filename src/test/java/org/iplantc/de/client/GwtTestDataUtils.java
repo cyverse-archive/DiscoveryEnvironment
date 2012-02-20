@@ -174,13 +174,15 @@ public class GwtTestDataUtils extends GWTTestCase {
         assertTrue(actions.contains(Action.RenameFile));
         assertTrue(actions.contains(Action.View));
         assertTrue(actions.contains(Action.ViewTree));
-        assertEquals(5, actions.size());
+        assertTrue(actions.contains(Action.Metadata));
+        assertEquals(6, actions.size());
 
         actions = DataUtils.getSupportedActions(buildSingleFolderList());
         assertTrue(actions.contains(Action.Delete));
         assertTrue(actions.contains(Action.Download));
         assertTrue(actions.contains(Action.RenameFolder));
-        assertEquals(3, actions.size());
+        assertTrue(actions.contains(Action.Metadata));
+        assertEquals(4, actions.size());
 
         actions = DataUtils.getSupportedActions(buildFileFolderList());
         assertTrue(actions.contains(Action.Delete));
