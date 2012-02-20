@@ -1,31 +1,29 @@
 package org.iplantc.de.client.views.tabs;
 
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
-import org.iplantc.de.client.views.panels.ProvenanceContentPanel;
+import org.iplantc.de.client.views.panels.ViewerContentPanel;
 
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.user.client.Element;
 
 /**
- * Provides a user interface definition for presenting provenanace.
+ * Provides a user interface definition for presenting viewing file.
  */
-public class ProvenanceTab extends TabItem {
-    private ProvenanceContentPanel panel;
+public class ViewTab extends TabItem {
+    private ViewerContentPanel panel;
 
     /**
-     * Constructs an instance of the tab given a panel and provenance description.
+     * Constructs an instance of the tab given a panel
      * 
      * @param panel a panel to display in the body of the tab.
-     * @param provenance a provenance text related to the data in the panel.
      */
-    public ProvenanceTab(ProvenanceContentPanel panel, String provenance) {
+    public ViewTab(ViewerContentPanel panel) {
         this.panel = panel;
 
         setHeight(410);
 
         setHeader();
-        updateProvenance(provenance);
         setLayout(new FitLayout());
     }
 
@@ -50,17 +48,6 @@ public class ProvenanceTab extends TabItem {
 
         if (panel != null) {
             add(panel);
-        }
-    }
-
-    /**
-     * Perform an "update" operation on the provenance text.
-     * 
-     * @param provenance a string containing provenance text.
-     */
-    public void updateProvenance(String provenance) {
-        if (panel != null) {
-            panel.updateProvenance(provenance);
         }
     }
 

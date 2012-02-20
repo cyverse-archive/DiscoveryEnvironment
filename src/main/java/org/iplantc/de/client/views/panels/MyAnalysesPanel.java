@@ -54,6 +54,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
     private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn"; //$NON-NLS-1$
+    private static final String VIEW_PARAMETER_ITEM_ID = "idViewParameter";
 
     private MyAnalysesGrid analysisGrid;
 
@@ -216,6 +217,16 @@ public class MyAnalysesPanel extends ContentPanel {
         return b;
     }
 
+    private Button buildViewParamsButton() {
+        Button b = new Button(I18N.DISPLAY.viewParameters());
+        b.setId(VIEW_PARAMETER_ITEM_ID);
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
+        b.setEnabled(false);
+        b.addSelectionListener(new ViewParamSelectionListener());
+        analyses_buttons.put(VIEW_PARAMETER_ITEM_ID, b);
+        return b;
+    }
+
     /**
      * Builds a text field for filtering items displayed in the data container.
      */
@@ -342,6 +353,13 @@ public class MyAnalysesPanel extends ContentPanel {
         @Override
         public void componentSelected(ButtonEvent ce) {
             retrieveOutputFolder(analysisGrid.getSelectionModel().getSelectedItem().getId());
+        }
+    }
+
+    private class ViewParamSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+
         }
     }
 

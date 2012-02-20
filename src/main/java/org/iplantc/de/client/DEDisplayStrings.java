@@ -17,6 +17,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadSuccess(String filename);
 
     /**
+     * Caption to file upload status messages.
+     * 
+     * @return a string representing the localized text.
+     */
+    String fileUpload();
+
+    /**
      * File upload maximum size message.
      * 
      * @return a string representing the localized text.
@@ -1085,5 +1092,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String analysisSubmittedMsg();
+
+    /**
+     * Localized text for view parameters button
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String viewParameters();
 
 }
