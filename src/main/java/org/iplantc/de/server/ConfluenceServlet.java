@@ -38,6 +38,9 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     /** a string in the template that is replaced with the tool description */
     private static final String DESCRIPTION_PLACEHOLDER = "@DESCRIPTION"; //$NON-NLS-1$
 
+    /** a string in the template that is replaced with rating stars */
+    private static final String AVG_RATING_PLACEHOLDER = "@AVGRATING"; //$NON-NLS-1$
+
     /**
      * {@inheritDoc}
      */
@@ -125,8 +128,10 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * @return a string with the tool name and description filled in
      */
     private String replaceTemplate(String template, String toolName, String description) {
-        return template.replaceAll(TOOL_NAME_PLACEHOLDER, toolName).replaceAll(DESCRIPTION_PLACEHOLDER,
-                description);
+        String defaultStars = WHITE_STAR + WHITE_STAR + WHITE_STAR + WHITE_STAR + WHITE_STAR;
+        return template.replaceAll(TOOL_NAME_PLACEHOLDER, toolName)
+                .replaceAll(DESCRIPTION_PLACEHOLDER, description)
+                .replace(AVG_RATING_PLACEHOLDER, defaultStars);
     }
 
     /**
