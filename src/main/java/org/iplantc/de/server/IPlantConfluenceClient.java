@@ -2,9 +2,12 @@ package org.iplantc.de.server;
 
 import java.rmi.RemoteException;
 
+import org.swift.common.soap.confluence.InvalidSessionException;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
 import org.swift.confluence.cli.ConfluenceClient;
+
+import com.martiansoftware.jsap.JSAP;
 
 /**
  * A subclass of ConfluenceClient that adds methods for adding and updating tool ratings.
@@ -13,30 +16,17 @@ import org.swift.confluence.cli.ConfluenceClient;
  * 
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
-    private String address;
-    private String user;
-    private String password;
 
     /**
      * Creates a new instance and initializes address/user/password from a .properties file.
-     */
-    public IPlantConfluenceClient() {
-        address = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
-        user = DiscoveryEnvironmentProperties.getConfluenceUser();
-        password = DiscoveryEnvironmentProperties.getConfluencePassword();
-    }
-
-    /**
-     * Creates a new IPlantConfluenceClient. Subsequent calls use the provided address/user/password.
      * 
-     * @param address the base Confluence URL
-     * @param user the Confluence user
-     * @param password the Confluence password
+     * @param authToken a token for an active Confluence session, or null if not already logged in
+     * @throws ClientException
      */
-    public IPlantConfluenceClient(String address, String user, String password) {
-        this.address = address;
-        this.user = user;
-        this.password = password;
+    public IPlantConfluenceClient(String authToken) throws ClientException {
+        if (authToken != null) {
+            token = authToken;
+        }
     }
 
     /**
@@ -50,16 +40,24 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws RemoteException
      * @throws ClientException
      */
-    public RemoteComment addComment(String space, String pageTitle, String text)
+    public RemoteComment addComment(final String space, final String pageTitle, String text)
             throws RemoteException, ClientException {
-        iplantLogin();
-
-        RemotePage page = getPage(pageTitle, space);
-        RemoteComment comment = new RemoteComment();
+        RemotePage page = callService(new ServiceCall<RemotePage>() {
+            @Override
+            public RemotePage doit() throws RemoteException, ClientException {
+                return getPage(pageTitle, space);
+            }
+        });
+        final RemoteComment comment = new RemoteComment();
         comment.setPageId(page.getId());
         comment.setContent(text);
-        comment = service.addComment(token, comment);
-        return comment;
+
+        return callService(new ServiceCall<RemoteComment>() {
+            @Override
+            public RemoteComment doit() throws RemoteException {
+                return service.addComment(token, comment);
+            }
+        });
     }
 
     /**
@@ -71,13 +69,18 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws ClientException
      */
     public void editComment(long commentId, String newText) throws RemoteException, ClientException {
-        iplantLogin();
-
-        RemoteComment newComment = new RemoteComment();
+        final RemoteComment newComment = new RemoteComment();
         newComment.setId(commentId);
         newComment.setUrl(address);
         newComment.setContent(newText);
-        service.editComment(token, newComment);
+
+        callService(new ServiceCall<Void>() {
+            @Override
+            public Void doit() throws RemoteException {
+                service.editComment(token, newComment);
+                return null;
+            }
+        });
     }
 
     /**
@@ -87,28 +90,80 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws RemoteException
      * @throws ClientException
      */
-    public void removeComment(long commentId) throws RemoteException, ClientException {
-        iplantLogin();
-
-        service.removeComment(token, commentId);
-    }
-
-    public void iplantLogin() throws ClientException {
-        login(address, user, password);
+    public void removeComment(final long commentId) throws RemoteException, ClientException {
+        callService(new ServiceCall<Void>() {
+            @Override
+            public Void doit() throws RemoteException {
+                service.removeComment(token, commentId);
+                return null;
+            }
+        });
     }
 
     /**
      * Logs a user into Confluence and sets the authentication token.
      * 
-     * @param address base Confluence URL
-     * @param user
-     * @param password
      * @throws ClientException
      */
-    private void login(String address, String user, String password) throws ClientException {
+    private void iplantLogin() throws ClientException {
+        String address = DiscoveryEnvironmentProperties.getConfluenceBaseUrl();
+        String user = DiscoveryEnvironmentProperties.getConfluenceUser();
+        String password = DiscoveryEnvironmentProperties.getConfluencePassword();
+
         ExitCode code = doWork(new String[] {"-a", "login", "--server", address, "--user", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "--password", password}); //$NON-NLS-1$
         if (code != ExitCode.SUCCESS)
             throw new ClientException("doWork() returned exit code " + code); //$NON-NLS-1$
+    }
+
+    /** like getContentId(String, String, false) but can be used without going through doWork() */
+    public long getContentId(final String title, final String space)
+            throws java.rmi.RemoteException, ClientException {
+        return callService(new ServiceCall<Long>() {
+            @Override
+            public Long doit() throws ClientException, RemoteException {
+                return getContentId(title, space, false);
+            }
+        });
+    }
+
+    /** calls the confluence service and handles authentication */
+    private <T> T callService(ServiceCall<T> call) throws ClientException, RemoteException {
+        // first make sure the service is initialized
+        if (service == null) {
+            iplantLogin();
+        } else {
+            // init some fields that aren't set if the login code in ConfluenceClient isn't called
+            jsap = new JSAP();
+            jsapResult = jsap.parse(new String[] {});
+        }
+
+        T result;
+        try {
+            result = call.doit();
+        } catch (InvalidSessionException e) {
+            // if the session timed out, log in and try again
+            iplantLogin();
+            result = call.doit();
+        }
+        return result;
+    }
+
+    @Override
+    public String getToken() {
+        if (token == null) {
+            try {
+                iplantLogin();
+            } catch (ClientException e) {
+                log.error("Cannot login", e); //$NON-NLS-1$
+                return null;
+            }
+        }
+        return token;
+    }
+
+    private interface ServiceCall<T> {
+        /** performs the service call */
+        T doit() throws ClientException, RemoteException;
     }
 }
