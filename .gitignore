@@ -23,3 +23,4 @@ nb-configuration.xml
 nbactions.xml
 catalog.xml
 src/main/webapp/META-INF/context.xml
+*.json
