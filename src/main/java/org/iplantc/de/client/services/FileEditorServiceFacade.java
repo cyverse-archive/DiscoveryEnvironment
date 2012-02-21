@@ -2,6 +2,7 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
+import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -35,7 +36,7 @@ public class FileEditorServiceFacade {
         String address = DEProperties.getInstance().getDataMgmtBaseUrl() + url;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+        SharedUnsecuredServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     /**
