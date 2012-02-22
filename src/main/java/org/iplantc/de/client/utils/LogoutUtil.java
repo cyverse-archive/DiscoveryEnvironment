@@ -1,5 +1,6 @@
 package org.iplantc.de.client.utils;
 
+import com.google.gwt.user.client.Window;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 
@@ -15,7 +16,7 @@ public class LogoutUtil {
      * @return the URL as a string.
      */
     public static String buildLogoutUrl() {
-        return Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
+        return Window.Location.getPath() + Constants.CLIENT.logoutUrl(); //$NON-NLS-1$
     }
 
     /**

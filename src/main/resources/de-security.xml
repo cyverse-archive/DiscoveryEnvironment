@@ -16,7 +16,11 @@
     </authentication-manager>
 
     <http use-expressions="true" entry-point-ref="casAuthEntryPoint">
+        <intercept-url pattern="/discoveryenvironment/logout" access="permitAll" />
         <intercept-url pattern="/**" access="isAuthenticated()" />
         <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
+        <logout logout-success-url="/discoveryenvironment/logout" />
+        <custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />
+        <custom-filter ref="singleLogoutFilter" before="CAS_FILTER" />
     </http>
 </beans:beans>

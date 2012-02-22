@@ -7,6 +7,10 @@
 		<param-name>appPropertyFile</param-name>
 		<param-value>discoveryenvironment.properties</param-value>
 	</context-param>
+    <context-param>
+        <param-name>appPropertyPrefix</param-name>
+        <param-value>org.iplantc.discoveryenvironment</param-value>
+    </context-param>
 	<context-param>
 		<param-name>org.iplantc.initial-page</param-name>
 		<param-value>#workspace</param-value>
@@ -49,6 +53,10 @@
 	<servlet>
 		<servlet-name>sessionInitializationServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>fileUploadServlet</servlet-name>
@@ -99,6 +107,10 @@
 	<servlet-mapping>
 		<servlet-name>sessionInitializationServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/logout</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>jUnitHostImpl</servlet-name>
