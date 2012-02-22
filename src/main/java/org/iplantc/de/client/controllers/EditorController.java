@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
@@ -17,6 +16,7 @@ import org.iplantc.de.client.events.FileEditorWindowClosedEvent;
 import org.iplantc.de.client.events.FileEditorWindowClosedEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.WindowManager;
 import org.iplantc.de.client.views.windows.FileEditorWindow;
@@ -26,14 +26,13 @@ import org.iplantc.de.client.views.windows.IPlantWindow;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Defines a controller for editor windows.
  */
 public class EditorController implements DataMonitor {
-    private WindowManager mgrWindow;
-    private List<FileWindow> fileWindows = new ArrayList<FileWindow>();
+    private final WindowManager mgrWindow;
+    private final List<FileWindow> fileWindows = new ArrayList<FileWindow>();
 
     /**
      * Instantiate from WindowManager.
@@ -216,7 +215,7 @@ public class EditorController implements DataMonitor {
             final boolean addTreeTab) {
         FileEditorServiceFacade facade = new FileEditorServiceFacade();
 
-        facade.getManifest(file.getFileId(), new AsyncCallback<String>() {
+        facade.getManifest(file.getFileId(), new DiskResourceServiceCallback() {
             @Override
             public void onSuccess(String result) {
                 if (result != null) {
@@ -227,8 +226,13 @@ public class EditorController implements DataMonitor {
             }
 
             @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.unableToRetrieveFileManifest(file.getFilename()), caught);
+            protected String getErrorMessageDefault() {
+                return I18N.ERROR.unableToRetrieveFileManifest(file.getFilename());
+            }
+
+            @Override
+            protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                return getErrorMessageForFiles(code, file.getFilename());
             }
         });
     }

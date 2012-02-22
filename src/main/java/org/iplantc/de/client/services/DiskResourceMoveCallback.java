@@ -4,30 +4,20 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.DataPayloadEvent;
-import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
 /**
- * An AsyncCallback that implements a common onFailure method, called when disk resources are moved.
+ * An AsyncCallback that implements a common onFailure method, called when disk resources are moved. Move
+ * actions do not use the MessageDispatcher and do not have an ActionType.
  * 
  * @author psarando
  * 
  */
 public abstract class DiskResourceMoveCallback extends DiskResourceServiceCallback {
-    /**
-     * Move actions do not use the MessageDispatcher and so do not have an ActionType.
-     * 
-     * @return null
-     */
-    @Override
-    protected ActionType getActionType() {
-        return null;
-    }
 
-    @Override
     protected JSONObject buildPayload(JSONObject response) {
         JSONObject payload = new JSONObject();
 

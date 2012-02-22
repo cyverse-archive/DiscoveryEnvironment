@@ -2,10 +2,10 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DataPreviewPanel extends DataTextAreaPanel {
     public DataPreviewPanel() {
@@ -18,10 +18,12 @@ public class DataPreviewPanel extends DataTextAreaPanel {
     }
 
     @Override
-    protected void updateDisplay(final String idFile) {
-        FileEditorServiceFacade facade = new FileEditorServiceFacade();
+    protected void updateDisplay() {
+        final String idFile = file.getId();
+        final String fileName = file.getName();
 
-        facade.getManifest(idFile, new AsyncCallback<String>() {
+        FileEditorServiceFacade facade = new FileEditorServiceFacade();
+        facade.getManifest(idFile, new DiskResourceServiceCallback() {
             @Override
             public void onSuccess(String result) {
                 // Check the current File ID against the requested ID for this response.
@@ -43,9 +45,9 @@ public class DataPreviewPanel extends DataTextAreaPanel {
                 String urlDownload = JsonUtil.getString(jsonResult, "rawcontents"); //$NON-NLS-1$
 
                 if (!urlPreview.isEmpty()) {
-                    displayPreviewData(urlPreview, new GetPreviewDataCallback(idFile));
+                    displayPreviewData(urlPreview, new GetPreviewDataCallback(idFile, fileName));
                 } else if (!urlDownload.isEmpty()) {
-                    displayPreviewData(urlDownload, new GetRawDataCallback(idFile));
+                    displayPreviewData(urlDownload, new GetRawDataCallback(idFile, fileName));
                 } else {
                     hide();
                 }
@@ -54,6 +56,17 @@ public class DataPreviewPanel extends DataTextAreaPanel {
             @Override
             public void onFailure(Throwable caught) {
                 hide();
+                super.onFailure(caught);
+            }
+
+            @Override
+            protected String getErrorMessageDefault() {
+                return I18N.ERROR.unableToRetrieveFileManifest(fileName);
+            }
+
+            @Override
+            protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                return getErrorMessageForFiles(code, fileName);
             }
         });
     }
@@ -65,7 +78,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
      * @param url
      * @param callback
      */
-    private void displayPreviewData(final String url, AsyncCallback<String> callback) {
+    private void displayPreviewData(final String url, DiskResourceServiceCallback callback) {
         FileEditorServiceFacade facade = new FileEditorServiceFacade();
         facade.getData(url, callback);
     }
@@ -99,12 +112,14 @@ public class DataPreviewPanel extends DataTextAreaPanel {
      * @author psarando
      * 
      */
-    private abstract class PreviewManifestCallback implements AsyncCallback<String> {
+    private abstract class PreviewManifestCallback extends DiskResourceServiceCallback {
 
-        private String idFile;
+        private final String idFile;
+        private final String fileName;
 
-        public PreviewManifestCallback(String idFile) {
+        public PreviewManifestCallback(String idFile, String fileName) {
             this.idFile = idFile;
+            this.fileName = fileName;
         }
 
         @Override
@@ -123,6 +138,17 @@ public class DataPreviewPanel extends DataTextAreaPanel {
         @Override
         public void onFailure(Throwable caught) {
             hide();
+            super.onFailure(caught);
+        }
+
+        @Override
+        protected String getErrorMessageDefault() {
+            return I18N.ERROR.unableToRetrieveFileData(fileName);
+        }
+
+        @Override
+        protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+            return getErrorMessageForFiles(code, fileName);
         }
     }
 
@@ -134,8 +160,8 @@ public class DataPreviewPanel extends DataTextAreaPanel {
      */
     private class GetPreviewDataCallback extends PreviewManifestCallback {
 
-        public GetPreviewDataCallback(String idFile) {
-            super(idFile);
+        public GetPreviewDataCallback(String idFile, String fileName) {
+            super(idFile, fileName);
         }
 
         @Override
@@ -152,8 +178,8 @@ public class DataPreviewPanel extends DataTextAreaPanel {
      */
     private class GetRawDataCallback extends PreviewManifestCallback {
 
-        public GetRawDataCallback(String idFile) {
-            super(idFile);
+        public GetRawDataCallback(String idFile, String fileName) {
+            super(idFile, fileName);
         }
     }
 }
