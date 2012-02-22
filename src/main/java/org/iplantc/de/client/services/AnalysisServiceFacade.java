@@ -23,8 +23,6 @@ public class AnalysisServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-
-
     /**
      * Delete an analysis execution
      * 
@@ -40,11 +38,12 @@ public class AnalysisServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
+    public void getAnalysisParams(AsyncCallback<String> callback) {
+        String address = "http://localhost:8888/view-params.json";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
-
-
-
-
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
 
     /**
      * Launch a wizard analysis
@@ -61,6 +60,5 @@ public class AnalysisServiceFacade {
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
-
 
 }

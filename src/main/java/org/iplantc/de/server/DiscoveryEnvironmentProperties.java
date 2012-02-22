@@ -49,13 +49,6 @@ public class DiscoveryEnvironmentProperties {
 
     public static final String MULE_SERVICE_BASE_URL = PREFIX + ".muleServiceBaseUrl"; //$NON-NLS-1$
 
-    public static final String CONFLUENCE_BASE_URL = PREFIX + ".confluence.baseUrl"; //$NON-NLS-1$
-    public static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".confluence.parentPageName"; //$NON-NLS-1$
-    public static final String CONFLUENCE_USER = PREFIX + ".confluence.user"; //$NON-NLS-1$
-    public static final String CONFLUENCE_PASSWORD = PREFIX + ".confluence.password"; //$NON-NLS-1$
-    public static final String CONFLUENCE_SPACE_NAME = PREFIX + ".confluence.spaceName"; //$NON-NLS-1$
-    public static final String CONFLUENCE_SPACE_URL = PREFIX + ".confluence.spaceUrl"; //$NON-NLS-1$
-
     /**
      * The list of required properties.
      */
@@ -168,59 +161,5 @@ public class DiscoveryEnvironmentProperties {
      */
     public static String getUrlImportServiceBaseUrl() {
         return properties.getProperty(URL_IMPORT_SERVICE_URL);
-    }
-
-    /**
-     * Gets the base URL used to access the Confluence wiki.
-     * 
-     * @return the URL as a string.
-     */
-    public static String getConfluenceBaseUrl() {
-        return properties.getProperty(CONFLUENCE_BASE_URL);
-    }
-
-    /**
-     * Gets the name of the 'List of Applications' page.
-     * 
-     * @return the name as a string.
-     */
-    public static String getConfluenceParentPage() {
-        return properties.getProperty(CONFLUENCE_PARENT_PAGE);
-    }
-
-    /**
-     * Gets the Confluence user for adding documentation pages.
-     * 
-     * @return the user name
-     */
-    public static String getConfluenceUser() {
-        return properties.getProperty(CONFLUENCE_USER);
-    }
-
-    /**
-     * Gets the Confluence password for adding documentation pages.
-     * 
-     * @return the password
-     */
-    public static String getConfluencePassword() {
-        return properties.getProperty(CONFLUENCE_PASSWORD);
-    }
-
-    /**
-     * Gets the name of the 'DE Applications' space in Confluence.
-     * 
-     * @return the name as a string.
-     */
-    public static String getConfluenceSpaceName() {
-        return properties.getProperty(CONFLUENCE_SPACE_NAME);
-    }
-
-    /**
-     * Gets the URL of the 'DE Applications' space in Confluence.
-     * 
-     * @return the URL as a string.
-     */
-    public static String getConfluenceSpaceUrl() {
-        return properties.getProperty(CONFLUENCE_SPACE_URL);
     }
 }

@@ -192,6 +192,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         return createInstanceImpl(sm);
     }
 
+    @SuppressWarnings("unchecked")
     private static MyAnalysesGrid createInstanceImpl(CheckBoxSelectionModel<AnalysisExecution> sm) {
         ListStore<AnalysisExecution> gstore = new ListStore<AnalysisExecution>();
         gstore.setStoreSorter(new CommonStoreSorter());

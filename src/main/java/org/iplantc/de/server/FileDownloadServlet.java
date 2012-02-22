@@ -18,7 +18,7 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 /**
  * A servlet for downloading a file.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "nls"})
 public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"}; //$NON-NLS-1$
 

@@ -44,6 +44,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public class DataNavToolBar extends ToolBar {
 
+    private static final String ID_NEW_FOLDER_BTN = "idNewFolderBtn";
+    private static final String ID_RENAME_FOLDER_BTN = "idRenameFolderBtn";
+    private static final String ID_DELETE_FOLDER_BTN = "idDeleteFolderBtn";
     @SuppressWarnings("unused")
     private final String tag;
     private String parentFolderId;
@@ -187,6 +190,7 @@ public class DataNavToolBar extends ToolBar {
 
     private Button buildDeleteFolderButton() {
         deleteFolder = new Button();
+        deleteFolder.setId(ID_DELETE_FOLDER_BTN);
         deleteFolder.setToolTip(I18N.DISPLAY.delete());
         deleteFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
         deleteFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -231,6 +235,7 @@ public class DataNavToolBar extends ToolBar {
 
     private Button buildRenameFolderButton() {
         renameFolder = new Button();
+        renameFolder.setId(ID_RENAME_FOLDER_BTN);
         renameFolder.setToolTip(I18N.DISPLAY.rename());
         renameFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
         renameFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
@@ -258,6 +263,7 @@ public class DataNavToolBar extends ToolBar {
     private Button buildAddFolderButton() {
         addFolder = new Button();
         addFolder.setToolTip(I18N.DISPLAY.newFolder());
+        addFolder.setId(ID_NEW_FOLDER_BTN);
         addFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
         addFolder.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
