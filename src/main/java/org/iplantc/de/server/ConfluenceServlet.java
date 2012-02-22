@@ -213,6 +213,17 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String getComment(long commentId) {
+        try {
+            return getConfluenceClient().getComment(commentId);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't retrieve comment with id " + commentId, e); //$NON-NLS-1$
+        }
+    }
+
     private IPlantConfluenceClient getConfluenceClient() throws SerializationException, ClientException {
         String authToken = getAttribute(AUTH_TOKEN_ATTR);
         return new IPlantConfluenceClient(authToken);

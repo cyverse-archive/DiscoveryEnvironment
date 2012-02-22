@@ -101,6 +101,26 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     }
 
     /**
+     * Retrieves a comment from a Confluence page.
+     * 
+     * @param commentId the comment ID in Confluence
+     * @return the comment text
+     * @throws ClientException
+     * @throws RemoteException
+     */
+    public String getComment(final long commentId) throws RemoteException, ClientException {
+        return callService(new ServiceCall<String>() {
+            @Override
+            public String doit() throws RemoteException {
+                String comment = service.getComment(token, commentId).getContent();
+                comment = comment.substring(6);
+                int idx = comment.lastIndexOf(" _(");
+                return comment.substring(idx, comment.length());
+            }
+        });
+    }
+
+    /**
      * Logs a user into Confluence and sets the authentication token.
      * 
      * @throws ClientException
