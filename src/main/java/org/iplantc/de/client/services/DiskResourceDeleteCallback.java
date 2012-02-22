@@ -13,7 +13,7 @@ import com.google.gwt.json.client.JSONObject;
  * @author amuir
  * 
  */
-public abstract class DiskResourceDeleteCallback extends DiskResourceServiceCallback {
+public abstract class DiskResourceDeleteCallback extends DiskResourceActionCallback {
     protected List<String> listDiskResources;
 
     /**

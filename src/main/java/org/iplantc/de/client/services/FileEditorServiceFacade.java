@@ -18,7 +18,7 @@ public class FileEditorServiceFacade {
      * @param idFile desired manifest's file ID (path).
      * @param callback executes when RPC call is complete.
      */
-    public void getManifest(String idFile, AsyncCallback<String> callback) {
+    public void getManifest(String idFile, DiskResourceServiceCallback callback) {
         String address = "org.iplantc.services.de-data-mgmt.file-manifest?path=" //$NON-NLS-1$
                 + URL.encodeQueryString(idFile);
 
@@ -32,7 +32,7 @@ public class FileEditorServiceFacade {
      * @param idFile file to retrieve raw data from.
      * @param callback executes when RPC call is complete.
      */
-    public void getData(String url, AsyncCallback<String> callback) {
+    public void getData(String url, DiskResourceServiceCallback callback) {
         String address = DEProperties.getInstance().getDataMgmtBaseUrl() + url;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);

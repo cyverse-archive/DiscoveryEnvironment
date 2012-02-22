@@ -110,6 +110,13 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String unableToRetrieveFileManifest(String filename);
 
     /**
+     * Error message displayed when we fail to retrieve file contents.
+     * 
+     * @return localized error string.
+     */
+    String unableToRetrieveFileData(String filename);
+
+    /**
      * Error displayed when a user enters an invalid filename.
      * 
      * @return localized error string.
