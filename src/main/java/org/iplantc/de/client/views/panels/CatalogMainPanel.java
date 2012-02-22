@@ -18,6 +18,7 @@ import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
@@ -766,12 +767,33 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             return icon;
         }
 
+        /** Called when a rating star is clicked. Shows the comment dialog. */
         protected void onRate(final Analysis model, final int score, final LayoutContainer parent) {
             if (model == null) {
                 return;
             }
 
+            // populate dialog via an async call if previous comment ID exists, otherwise show blank dlg
             final AppCommentDialog dlg = new AppCommentDialog(model.getName());
+            Long commentId = model.getFeedback().getComment_id();
+            if (commentId == null) {
+                dlg.unmaskDialog();
+            } else {
+                ConfluenceServiceFacade.getInstance().getComment(commentId,
+                        new AsyncCallback<String>() {
+                            @Override
+                            public void onSuccess(String comment) {
+                                dlg.setText(removeCommentMarkup(comment));
+                                dlg.unmaskDialog();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable e) {
+                                ErrorHandler.post(e);
+                                dlg.unmaskDialog();
+                            }
+                        });
+            }
             Command onConfirm = new Command() {
                 @Override
                 public void execute() {
@@ -783,6 +805,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             dlg.show();
         }
 
+        /** adds rating stars and the DE user name to a user-entered comment */
         private String generateCommentMarkup(String comment, int score) {
             StringBuilder markup = new StringBuilder();
             // add full stars
@@ -796,6 +819,26 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             return markup.toString();
         }
 
+        /** extracts the raw text from a comment by removing stars and the user name */
+        private String removeCommentMarkup(String comment) {
+            // remove prefix
+            comment = comment.substring(6); // #chars added by generateCommentMarkup() at the beginning
+
+            // remove suffix
+            String suffixMarker = I18N.DISPLAY.ratingCommentSuffix(""); //$NON-NLS-1$
+            int markerLen = suffixMarker.indexOf(' ');
+            if (markerLen >= 0) {
+                // marker = beginning of the display string up to the first space char
+                suffixMarker = suffixMarker.substring(0, markerLen);
+                int suffixStart = comment.lastIndexOf(suffixMarker);
+                comment = comment.substring(0, suffixStart);
+                comment = comment.trim();
+            }
+
+            return comment;
+        }
+
+        /** saves a rating to the database and the wiki page */
         private void persistRating(final Analysis model, final int score, String comment,
                 final LayoutContainer parent) {
 

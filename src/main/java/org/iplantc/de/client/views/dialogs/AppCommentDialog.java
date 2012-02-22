@@ -14,7 +14,8 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.user.client.Command;
 
 /**
- * A simple dialog that lets the user enter a comment on an app.
+ * A simple dialog that lets the user enter a comment on an app. The dialog is initially disabled and can
+ * be enabled via unmaskDialog().
  * 
  * @author hariolf
  * 
@@ -27,6 +28,8 @@ public class AppCommentDialog extends Dialog {
      * Creates a new AppCommentDialog with no on-confirm command set.
      * 
      * @param appName name of the app
+     * @param commentId the Confluence ID when an existing comment, or null for a new comment
+     * @param comment the comment pointed to by commentId, or null if no comment exists yet
      */
     public AppCommentDialog(String appName) {
         init(appName);
@@ -43,6 +46,7 @@ public class AppCommentDialog extends Dialog {
         textArea.setSize(385, 164);
         setFocusWidget(textArea);
         compose(appName);
+        maskDialog();
 
         setHideOnButtonClick(true);
 
@@ -55,6 +59,31 @@ public class AppCommentDialog extends Dialog {
         });
 
         setModal(true);
+    }
+
+    /**
+     * Sets the comment text shown in the text area.
+     * 
+     * @param text a comment
+     */
+    public void setText(String text) {
+        textArea.setValue(text);
+    }
+
+    /**
+     * Disables the dialog.
+     */
+    public void maskDialog() {
+        textArea.mask(org.iplantc.core.uiapplications.client.I18N.DISPLAY.loadingMask());
+        getButtonById(Dialog.OK).disable();
+    }
+
+    /**
+     * Enables the dialog.
+     */
+    public void unmaskDialog() {
+        textArea.unmask();
+        getButtonById(Dialog.OK).enable();
     }
 
     private void compose(String appName) {

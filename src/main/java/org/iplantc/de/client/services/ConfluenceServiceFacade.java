@@ -94,4 +94,14 @@ public class ConfluenceServiceFacade {
     void editComment(String toolName, long commentId, String newComment, AsyncCallback<String> callback) {
         proxy.editComment(toolName, commentId, newComment, callback);
     }
+
+    /**
+     * Retrieves a user comment from a tool description page.
+     * 
+     * @param commentId the comment ID in Confluence
+     * @param callback called after the service call finishes
+     */
+    public void getComment(long commentId, AsyncCallback<String> callback) {
+        proxy.getComment(commentId, callback);
+    }
 }
