@@ -15,6 +15,7 @@ import org.iplantc.de.client.commands.RPCSuccessCommand;
 import org.iplantc.de.client.controllers.DataMonitor;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEvent;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEventHandler;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.panels.FilePreviewPanel;
@@ -33,7 +34,6 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Provides a user interface for editing of file data.
@@ -339,16 +339,27 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
         @Override
         public void execute(String url) {
             FileEditorServiceFacade facade = new FileEditorServiceFacade();
-            facade.getData(url, new AsyncCallback<String>() {
+            facade.getData(url, new DiskResourceServiceCallback() {
                 @Override
                 public void onFailure(Throwable caught) {
                     updateStatus(-1);
+                    super.onFailure(caught);
                 }
 
                 @Override
                 public void onSuccess(String result) {
                     updateStatus(-1);
                     addTab(result);
+                }
+
+                @Override
+                protected String getErrorMessageDefault() {
+                    return I18N.ERROR.unableToRetrieveFileData(file.getFilename());
+                }
+
+                @Override
+                protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                    return getErrorMessageForFiles(code, file.getFilename());
                 }
             });
         }

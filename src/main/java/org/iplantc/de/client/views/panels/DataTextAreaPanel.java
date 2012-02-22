@@ -60,7 +60,7 @@ public abstract class DataTextAreaPanel extends ContentPanel {
 
     protected abstract int getInitialHeight();
 
-    protected abstract void updateDisplay(final String idFile);
+    protected abstract void updateDisplay();
 
     private DiskResource getSelectedFile(final List<DiskResource> resources) {
         DiskResource ret = null; // assume failure
@@ -95,7 +95,7 @@ public abstract class DataTextAreaPanel extends ContentPanel {
         } else {
             // getting the manifest sets a chain of rpc calls that will eventually
             // lead to preview data being displayed
-            updateDisplay(file.getId());
+            updateDisplay();
         }
     }
 

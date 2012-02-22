@@ -10,7 +10,7 @@ import com.google.gwt.json.client.JSONString;
 /**
  * Defines an asynchronous callback for folder create events.
  */
-public class FolderCreateCallback extends DiskResourceServiceCallback {
+public class FolderCreateCallback extends DiskResourceActionCallback {
     private final String idParentFolder;
     private final String name;
 

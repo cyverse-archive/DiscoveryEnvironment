@@ -2,7 +2,6 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONObject;
@@ -20,19 +19,6 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
     };
 
     private TYPE type;
-
-    public DiskResourceMetadataUpdateCallback() {
-    }
-
-    @Override
-    protected ActionType getActionType() {
-        return null;
-    }
-
-    @Override
-    protected JSONObject buildPayload(JSONObject jsonResult) {
-        return null;
-    }
 
     /**
      * {@inheritDoc}
