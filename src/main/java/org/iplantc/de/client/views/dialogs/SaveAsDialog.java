@@ -33,6 +33,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SaveAsDialog extends IPlantDialog {
 
     private ArrayList<HandlerRegistration> handlers;
+    @SuppressWarnings("unused")
     private final String tag;
     private String defaultFolderId;
 
@@ -71,7 +72,7 @@ public class SaveAsDialog extends IPlantDialog {
         });
 
         setResizable(false);
-        setSize(480, 450);
+        setSize(480, 425);
     }
 
     /**
@@ -149,7 +150,27 @@ public class SaveAsDialog extends IPlantDialog {
         return ((SaveAsFolderSelectDialogPanel)getUnderlyingPanel()).getCurrentFolderId();
     }
 
+    /**
+     * 
+     * get the new name for the resource
+     * 
+     * @return
+     */
+    public String getNewName() {
+        return ((SaveAsFolderSelectDialogPanel)getUnderlyingPanel()).getNewName();
+    }
+
+    /**
+     * set the new name for the resource
+     * 
+     * @param newName
+     */
+    public void setNewName(String newName) {
+        ((SaveAsFolderSelectDialogPanel)getUnderlyingPanel()).setNewName(newName);
+    }
+
     private void initHandlers() {
+        @SuppressWarnings("unused")
         EventBus eventbus = EventBus.getInstance();
 
         handlers = new ArrayList<HandlerRegistration>();

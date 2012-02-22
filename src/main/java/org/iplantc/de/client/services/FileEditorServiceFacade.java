@@ -6,6 +6,8 @@ import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -51,4 +53,16 @@ public class FileEditorServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
+
+    public void uploadTextAsFile(String destination, String fileContents, AsyncCallback<String> callback) {
+        String fullAddress = "org.iplantc.services.de-data-mgmt.saveas";
+        JSONObject obj = new JSONObject();
+        obj.put("dest", new JSONString(destination)); //$NON-NLS-1$
+        obj.put("content", new JSONString(fileContents));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                obj.toString());
+        SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
+
+    }
+
 }

@@ -431,4 +431,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String cantCreateConfluencePage(String toolName);
+
+    /**
+     * Error message displayed when a call to save parameters as file failed
+     * 
+     * @return localized error string.
+     */
+    String saveParamFailed();
 }

@@ -6,10 +6,16 @@ import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog.DialogOkClickHandler;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
+import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.models.AnalysisParameter;
 import org.iplantc.de.client.models.JsAnalysisParameter;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.SaveAsDialog;
@@ -56,6 +62,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     private void init() {
         setSize(515, 300);
         setLayout(new FitLayout());
+        setHeaderVisible(false);
         retrieveData();
         initToolbar();
         initGrid();
@@ -74,12 +81,67 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
             @Override
             public void componentSelected(ButtonEvent ce) {
-                SaveAsDialog d = new SaveAsDialog("Save", "Save As", null, null);
-                d.show();
+                final SaveAsDialog saveDialog = new SaveAsDialog(I18N.DISPLAY.saveAs(), I18N.DISPLAY
+                        .saveAs(), null, null);
+                saveDialog.addOkClickHandler(new DialogOkClickHandler() {
+                    @Override
+                    public void componentSelected(ButtonEvent ce) {
+                        String fileContents = writeTabFile();
+                        saveFile(saveDialog.getSelectedFolder().getId() + "/" + saveDialog.getNewName(),
+                                fileContents);
+                    }
+                });
+                saveDialog.show();
 
             }
         });
         return b;
+    }
+
+    private void saveFile(final String path, String fileContents) {
+        FileEditorServiceFacade facade = new FileEditorServiceFacade();
+        facade.uploadTextAsFile(path, fileContents, new SaveasServiceCallbackHandler(path));
+    }
+
+    private class SaveasServiceCallbackHandler extends DiskResourceServiceCallback {
+
+        private String parentFolder;
+        private String fileName;
+
+        public SaveasServiceCallbackHandler(String path) {
+            this.fileName = DataUtils.parseNameFromPath(path);
+            this.parentFolder = DataUtils.parseParent(path);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            JSONObject obj = JSONParser.parseStrict(result).isObject();
+            UploadCompleteHandler uch = new DefaultUploadCompleteHandler(parentFolder);
+            uch.onCompletion(fileName, JsonUtil.getObject(obj, "file").toString());
+
+        }
+
+        @Override
+        protected String getErrorMessageDefault() {
+            return I18N.ERROR.saveParamFailed();
+        }
+
+        @Override
+        protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+            return getErrorMessageForFiles(code, fileName);
+        }
+    }
+
+    private String writeTabFile() {
+        StringBuilder sw = new StringBuilder();
+        sw.append(I18N.DISPLAY.paramName() + "\t" + I18N.DISPLAY.paramType() + "\t"
+                + I18N.DISPLAY.paramValue() + "\n");
+        List<AnalysisParameter> params = grid.getStore().getModels();
+        for (AnalysisParameter ap : params) {
+            sw.append(ap.getParamName() + "\t" + ap.getParamType() + "\t" + ap.getParamValue() + "\n");
+        }
+
+        return sw.toString();
     }
 
     private void retrieveData() {

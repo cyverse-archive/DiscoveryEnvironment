@@ -57,8 +57,8 @@ public class SaveAsFolderSelectDialogPanel extends FolderSelectDialogPanel {
 
     private void updateOkButton() {
         DiskResource resource = pnlNavigation.getSelectedItem();
-        if (resource instanceof Folder && resource != null && txtNewName.getValue() != null
-                && !txtNewName.getValue().isEmpty()) {
+        if (resource instanceof Folder && resource != null && getNewName() != null
+                && !getNewName().isEmpty()) {
             enableParentOkButton();
         } else {
             disableParentOkButton();
@@ -86,6 +86,20 @@ public class SaveAsFolderSelectDialogPanel extends FolderSelectDialogPanel {
         container.add(pnlNewName);
 
         pnlNavigation.setMaskingParent(container);
+    }
+
+    /**
+     * @param txtNewName the name to set
+     */
+    public void setNewName(String txtNewName) {
+        this.txtNewName.setValue(txtNewName);
+    }
+
+    /**
+     * @return the txtNewName
+     */
+    public String getNewName() {
+        return txtNewName.getValue();
     }
 
 }
