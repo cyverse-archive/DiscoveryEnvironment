@@ -91,6 +91,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         confluenceService.addComment(appName, comment, new AsyncCallback<String>() {
             @Override
             public void onSuccess(final String commentId) {
+                // wrap the callback so it returns the comment id on success
                 rateAnalysis(appName, analysisId, rating, commentId, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -111,6 +112,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
+    /** calls /rate-analysis and if that is successful, calls updateDocumentationPage() */
     private void rateAnalysis(final String appName, String analysisId, int rating,
             final String commentId, final AsyncCallback<String> callback) {
         JSONObject body = new JSONObject();
@@ -121,7 +123,6 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        // wrap the wrapper so it returns the comment id on success
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
