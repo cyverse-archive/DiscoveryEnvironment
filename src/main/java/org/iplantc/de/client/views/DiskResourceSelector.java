@@ -26,24 +26,26 @@ public abstract class DiskResourceSelector implements IDiskResourceSelector {
     protected TextField<String> txtResourceName;
     protected Command cmdChange;
 
-    private String tag;
+    protected String tag;
     private HorizontalPanel composite = new HorizontalPanel();
     private Button btnLaunch;
 
     /**
      * Default constructor.
      */
-    public DiskResourceSelector() {
-        this(null);
+    public DiskResourceSelector(String tag) {
+        this(null, tag);
     }
 
     /**
      * Instantiate with command for when value changes.
      * 
      * @param cmdChange command to fire.
+     * @param tag to this widget
      */
-    public DiskResourceSelector(Command cmdChange) {
+    public DiskResourceSelector(Command cmdChange, String tag) {
         this.cmdChange = cmdChange;
+        this.tag = tag;
         initWidgets();
     }
 
