@@ -29,8 +29,8 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
     /**
      * Default constructor.
      */
-    public FolderSelector() {
-        this(null);
+    public FolderSelector(String tag) {
+        this(null, tag);
     }
 
     /**
@@ -38,8 +38,8 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
      * 
      * @param cmdChange command to fire.
      */
-    public FolderSelector(Command cmdChange) {
-        super(cmdChange);
+    public FolderSelector(Command cmdChange, String tag) {
+        super(cmdChange, tag);
     }
 
     /**

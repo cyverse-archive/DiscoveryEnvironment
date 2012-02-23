@@ -364,9 +364,10 @@ public class MyAnalysesPanel extends ContentPanel {
         @Override
         public void componentSelected(ButtonEvent ce) {
             Dialog d = new Dialog();
+            d.setResizable(false);
             d.setHeading(I18N.DISPLAY.viewParameters());
             d.add(new AnalysisParameterViewerPanel());
-            d.setSize(420, 320);
+            d.setSize(520, 320);
             d.setButtons(Dialog.OK);
             d.setHideOnButtonClick(true);
             d.show();

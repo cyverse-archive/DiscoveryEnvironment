@@ -110,6 +110,13 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String unableToRetrieveFileManifest(String filename);
 
     /**
+     * Error message displayed when we fail to retrieve file contents.
+     * 
+     * @return localized error string.
+     */
+    String unableToRetrieveFileData(String filename);
+
+    /**
      * Error displayed when a user enters an invalid filename.
      * 
      * @return localized error string.
@@ -424,4 +431,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String cantCreateConfluencePage(String toolName);
+
+    /**
+     * Error message displayed when a call to save parameters as file failed
+     * 
+     * @return localized error string.
+     */
+    String saveParamFailed();
 }

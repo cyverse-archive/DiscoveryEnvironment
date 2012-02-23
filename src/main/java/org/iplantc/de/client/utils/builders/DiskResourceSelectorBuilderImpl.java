@@ -28,7 +28,7 @@ public class DiskResourceSelectorBuilderImpl implements IDiskResourceSelectorBui
      */
     @Override
     public IFileSelector buildFileSelector(Command cmdChange) {
-        return new FileSelector(cmdChange);
+        return new FileSelector(cmdChange, null);
     }
 
     /**
@@ -36,14 +36,14 @@ public class DiskResourceSelectorBuilderImpl implements IDiskResourceSelectorBui
      */
     @Override
     public IFileSelector buildFileSelector(Property property, ComponentValueTable tblComponentVals) {
-        return new WizardFileSelector(property, tblComponentVals);
+        return new WizardFileSelector(property, tblComponentVals, property.getId());
     }
 
     /**
      * {@inheritDoc}
      */
     public IFolderSelector buildFolderSelector(Command cmdChange) {
-        return new FolderSelector(cmdChange);
+        return new FolderSelector(cmdChange, null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class DiskResourceSelectorBuilderImpl implements IDiskResourceSelectorBui
      */
     public IFolderSelector buildFolderSelector(final Property property,
             final ComponentValueTable tblComponentVals) {
-        return new WizardFolderSelector(property, tblComponentVals);
+        return new WizardFolderSelector(property, tblComponentVals, property.getId());
     }
 
     @Override

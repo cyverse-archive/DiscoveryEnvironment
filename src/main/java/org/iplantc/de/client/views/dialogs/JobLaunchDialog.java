@@ -151,7 +151,7 @@ public class JobLaunchDialog extends Dialog {
         setDefaultOutputFolder();
         VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
-        folderSelector = new FolderSelector(new checkPermissions());
+        folderSelector = new FolderSelector(new checkPermissions(), null);
         ret.add(new Label(I18N.DISPLAY.selectJobOutputDir("/"
                 + DEProperties.getInstance().getDefaulyOutputFolderName())
                 + COLON));

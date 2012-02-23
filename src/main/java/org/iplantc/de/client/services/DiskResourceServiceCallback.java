@@ -3,9 +3,7 @@ package org.iplantc.de.client.services;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.utils.DataUtils;
-import org.iplantc.de.client.utils.MessageDispatcher;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONArray;
@@ -20,6 +18,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public abstract class DiskResourceServiceCallback implements AsyncCallback<String> {
+
     public static final String STATUS_FAILURE = "failure"; //$NON-NLS-1$
     public static final String STATUS = "status"; //$NON-NLS-1$
     public static final String REASON = "reason"; //$NON-NLS-1$
@@ -57,38 +56,6 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
     protected void unmaskCaller() {
         if (maskedCaller != null) {
             maskedCaller.unmask();
-        }
-    }
-
-    /**
-     * @return The ActionType for this callback, used to build MessageDispatcher event JSON.
-     */
-    protected abstract EventJSONFactory.ActionType getActionType();
-
-    /**
-     * Builds a JSON object used for MessageDispatcher event JSON.
-     * 
-     * @param jsonResult The parsed JSON results of the successful service call.
-     * @return JSON object used for MessageDispatcher event JSON.
-     */
-    protected abstract JSONObject buildPayload(final JSONObject jsonResult);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onSuccess(String result) {
-        try {
-            JSONObject jsonResult = getJsonResponse(result);
-            JSONObject jsonPayload = buildPayload(jsonResult);
-
-            String json = EventJSONFactory.build(getActionType(), jsonPayload.toString());
-
-            MessageDispatcher.getInstance().processMessage(json);
-
-            unmaskCaller();
-        } catch (Throwable e) {
-            onFailure(e);
         }
     }
 
@@ -306,4 +273,5 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
 
         return ret;
     }
+
 }

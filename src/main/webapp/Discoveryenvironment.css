@@ -648,3 +648,13 @@ img.analysis_remove {
 .app-search-item h4 span {
   font-style: italic;
 }
+
+.analysis-param-value {
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: #0098AA;
+}

@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.event.Listener;
  */
 public class WizardFileSelector extends FileSelector {
     private ComponentValueTable tblComponentVals;
+    private Property property;
 
     /**
      * Instantiate from a property and component value table.
@@ -26,16 +27,18 @@ public class WizardFileSelector extends FileSelector {
      * @param property template for instantiation.
      * @param tblComponentVals table to register with.
      */
-    public WizardFileSelector(final Property property, final ComponentValueTable tblComponentVals) {
+    public WizardFileSelector(final Property property, final ComponentValueTable tblComponentVals,
+            String tag) {
+        super(tag);
         this.tblComponentVals = tblComponentVals;
-
+        this.property = property;
         setId(property.getId());
-        initValidator(property);
+        initValidator();
         tblComponentVals.setFormatter(getId(), new GeneralTextFormatter());
     }
 
-    private void initValidator(final Property property) {
-        IPlantValidator validator = buildValidator(property);
+    private void initValidator() {
+        IPlantValidator validator = buildValidator();
 
         if (validator != null) {
             setValidator(validator);
@@ -44,7 +47,7 @@ public class WizardFileSelector extends FileSelector {
         }
     }
 
-    private IPlantValidator buildValidator(final Property property) {
+    private IPlantValidator buildValidator() {
         IPlantValidator ret = null; // assume failure
         MetaDataValidator validator = property.getValidator();
 

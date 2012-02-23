@@ -9,7 +9,7 @@ import com.google.gwt.json.client.JSONString;
  * @author amuir
  * 
  */
-public abstract class DiskResourceRenameCallback extends DiskResourceServiceCallback {
+public abstract class DiskResourceRenameCallback extends DiskResourceActionCallback {
     protected final String id;
     protected final String name;
 

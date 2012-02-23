@@ -20,9 +20,10 @@ public class WizardFolderSelector extends FolderSelector {
      * @param property template for instantiation.
      * @param tblComponentVals table to register with.
      */
-    public WizardFolderSelector(final Property property, final ComponentValueTable tblComponentVals) {
+    public WizardFolderSelector(final Property property, final ComponentValueTable tblComponentVals,
+            String tag) {
+        super(tag);
         this.tblComponentVals = tblComponentVals;
-
         setId(property.getId());
         initValidator(property);
         tblComponentVals.setFormatter(getId(), new GeneralTextFormatter());

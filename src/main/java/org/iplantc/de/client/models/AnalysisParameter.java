@@ -20,4 +20,20 @@ public class AnalysisParameter extends BaseModelData {
         set(PARAMETER_VALUE, value);
     }
 
+    public String getId() {
+        return get(PARAMETER_ID);
+    }
+
+    public String getParamName() {
+        return get(PARAMETER_NAME);
+    }
+
+    public String getParamType() {
+        return get(PARAMETER_TYPE);
+    }
+
+    public String getParamValue() {
+        return get(PARAMETER_VALUE);
+    }
+
 }

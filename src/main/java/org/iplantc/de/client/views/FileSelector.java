@@ -17,23 +17,23 @@ import com.google.gwt.user.client.Command;
  */
 public class FileSelector extends DiskResourceSelector implements IFileSelector {
 
-
     private FileSelectDialog dlgFileSelect;
 
     /**
      * Default constructor.
      */
-    public FileSelector() {
-        super(null);
+    public FileSelector(String tag) {
+        super(null, tag);
     }
 
     /**
      * Instantiate with command for when value changes.
      * 
      * @param cmdChange command to fire.
+     * @param tag tag to this widget
      */
-    public FileSelector(Command cmdChange) {
-        super(cmdChange);
+    public FileSelector(Command cmdChange, String tag) {
+        super(cmdChange, tag);
     }
 
     /**
@@ -42,8 +42,7 @@ public class FileSelector extends DiskResourceSelector implements IFileSelector 
     @Override
     protected void launchBrowseDialog(String tag) {
         dlgFileSelect = new FileSelectDialog(I18N.CONSTANT.selectAFile(), I18N.CONSTANT.selectAFile(),
-                getSelectedFile(),
-                getCurrentFolderId());
+                getSelectedFile(), getCurrentFolderId());
         dlgFileSelect.addOkClickHandler(new DialogOkClickHandler() {
             @Override
             public void componentSelected(ButtonEvent ce) {
