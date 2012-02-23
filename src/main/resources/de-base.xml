@@ -44,7 +44,7 @@
     <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
         <property name="ticketValidator" ref="casTicketValidator" />
         <property name="serviceProperties" ref="casService" />
-        <property name="key" value="cas" />
+        <property name="key" value="discovery_environment_web_application" />
         <property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" />
     </bean>
 
