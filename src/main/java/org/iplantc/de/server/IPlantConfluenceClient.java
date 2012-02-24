@@ -112,10 +112,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         return callService(new ServiceCall<String>() {
             @Override
             public String doit() throws RemoteException {
-                String comment = service.getComment(token, commentId).getContent();
-                comment = comment.substring(6);
-                int idx = comment.lastIndexOf(" _(");
-                return comment.substring(idx, comment.length());
+                return service.getComment(token, commentId).getContent();
             }
         });
     }
