@@ -1124,4 +1124,20 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String paramValue();
 
+    /**
+     * Localized text for the subject line in rating notifications.
+     * 
+     * @param appName the name of the app
+     * @return a string representing the localized text.
+     */
+    String ratingEmailSubject(String appName);
+
+    /**
+     * Localized text for the email body in rating notifications.
+     * 
+     * @param appName the name of the app
+     * @return a string representing the localized text.
+     */
+    String ratingEmailText(String appName);
+
 }

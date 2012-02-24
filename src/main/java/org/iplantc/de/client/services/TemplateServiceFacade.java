@@ -2,8 +2,13 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
+import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
@@ -126,12 +131,40 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                sendRatingEmail(appName);
                 updateDocumentationPage(appName, result, callback);
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
+            }
+        });
+    }
+
+    private void sendRatingEmail(final String appName) {
+        SessionManagementServiceFacade.getInstance().getAttribute(UserInfo.ATTR_EMAIL, new AsyncCallback<String>() {
+            @Override
+                    public void onSuccess(String userEmail) {
+                        EmailServiceFacade.getInstance().sendEmail(
+                                I18N.DISPLAY.ratingEmailSubject(appName),
+                                I18N.DISPLAY.ratingEmailText(appName),
+                                "noreply@iplantcollaborative.org", "hariolf@iplantcollaborative.org", //$NON-NLS-1$
+                                new AsyncCallback<String>() {
+                                    @Override
+                                    public void onSuccess(String arg0) {
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable arg0) {
+                                        ErrorHandler.post(arg0);
+                                    }
+                                });
+            }
+            
+            @Override
+            public void onFailure(Throwable arg0) {
+                        System.out.print("");
             }
         });
     }

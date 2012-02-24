@@ -821,9 +821,6 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
         /** extracts the raw text from a comment by removing stars and the user name */
         private String removeCommentMarkup(String comment) {
-            // remove prefix
-            comment = comment.substring(6); // #chars added by generateCommentMarkup() at the beginning
-
             // remove suffix
             String suffixMarker = I18N.DISPLAY.ratingCommentSuffix(""); //$NON-NLS-1$
             int markerLen = suffixMarker.indexOf(' ');
@@ -833,6 +830,12 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 int suffixStart = comment.lastIndexOf(suffixMarker);
                 comment = comment.substring(0, suffixStart);
                 comment = comment.trim();
+            }
+
+            // remove prefix
+            if (comment.length() >= 6) {
+                comment = comment.substring(6); // #chars added by generateCommentMarkup() at the
+                                                // beginning
             }
 
             return comment;
