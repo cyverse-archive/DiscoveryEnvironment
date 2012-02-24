@@ -42,7 +42,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
     public void onFailure(Throwable error) {
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
-            if (statusCode == 403 || statusCode == 0) {
+            if (statusCode == 401 || statusCode == 403 || statusCode == 0) {
                 String contextPath = Window.Location.getPath();
                 Window.Location.replace(contextPath + Constants.CLIENT.landingPage());
                 return;

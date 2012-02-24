@@ -53,6 +53,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -269,7 +270,15 @@ public class NotificationPanel extends ContentPanel {
                 .cancel()), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                deleteSelected();
+                mask(I18N.DISPLAY.loadingMask());
+                deleteSelected(new Command() {
+
+                    @Override
+                    public void execute() {
+                        unmask();
+
+                    }
+                });
             }
         });
     }
@@ -340,7 +349,7 @@ public class NotificationPanel extends ContentPanel {
     /**
      * Remove selected notifications.
      */
-    private void deleteSelected() {
+    private void deleteSelected(final Command callback) {
         NotificationManager notiMgr = NotificationManager.getInstance();
         List<Notification> notifications = new ArrayList<Notification>();
 
@@ -348,7 +357,7 @@ public class NotificationPanel extends ContentPanel {
             notifications.add(notification);
         }
 
-        notiMgr.delete(notifications);
+        notiMgr.delete(notifications, callback);
     }
 
     private Component buildStatusPanel() {

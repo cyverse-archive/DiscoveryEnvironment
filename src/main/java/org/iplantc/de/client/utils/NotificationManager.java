@@ -23,6 +23,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -55,8 +56,9 @@ public class NotificationManager {
 
         /**
          * Null-safe and case insensitive variant of valueOf(String)
-         * @param typeString 
-         * @return 
+         * 
+         * @param typeString
+         * @return
          */
         public static Category fromTypeString(String typeString) {
             if (typeString == null || typeString.isEmpty()) {
@@ -96,7 +98,7 @@ public class NotificationManager {
 
         registerEventHandlers();
 
-        getExistingNotifications();
+        getExistingNotifications(null);
     }
 
     private void initContextBuilders() {
@@ -187,7 +189,7 @@ public class NotificationManager {
         }
     }
 
-    private void getExistingNotifications() {
+    private void getExistingNotifications(final Command callback) {
         UserInfo info = UserInfo.getInstance();
 
         facadeMessageService.getNotifications(info.getUsername(), MAX_NOTIFICATIONS,
@@ -198,6 +200,9 @@ public class NotificationManager {
 
                         MessagePoller poller = MessagePoller.getInstance();
                         poller.start();
+                        if (callback != null) {
+                            callback.execute();
+                        }
                     }
 
                     @Override
@@ -206,6 +211,9 @@ public class NotificationManager {
 
                         MessagePoller poller = MessagePoller.getInstance();
                         poller.start();
+                        if (callback != null) {
+                            callback.execute();
+                        }
                     }
                 });
     }
@@ -253,12 +261,16 @@ public class NotificationManager {
         // initialization code goes here.
     }
 
-    private void doDelete(final List<Notification> notifications, final String json) {
+    private void doDelete(final List<Notification> notifications, final String json,
+            final Command callback) {
         if (notifications != null && json != null) {
             facadeMessageService.deleteMessages(json, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.notificationDeletFail(), caught);
+                    if (callback != null) {
+                        callback.execute();
+                    }
                 }
 
                 @Override
@@ -266,6 +278,11 @@ public class NotificationManager {
                     for (Notification notification : notifications) {
                         storeAll.remove(notification);
                     }
+
+                    // load next set
+                    storeAll.removeAll();
+                    getExistingNotifications(callback);
+
                 }
             });
         }
@@ -276,7 +293,7 @@ public class NotificationManager {
      * 
      * @param notifications notifications to be deleted.
      */
-    public void delete(final List<Notification> notifications) {
+    public void delete(final List<Notification> notifications, Command callback) {
         // do we have any notifications to delete?
         if (notifications != null && !notifications.isEmpty()) {
             boolean first = true;
@@ -295,7 +312,7 @@ public class NotificationManager {
 
             buf.append("]"); //$NON-NLS-1$
 
-            doDelete(notifications, buf.toString());
+            doDelete(notifications, buf.toString(), callback);
         }
     }
 
