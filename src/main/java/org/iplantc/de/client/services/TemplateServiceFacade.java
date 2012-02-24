@@ -149,7 +149,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
                         EmailServiceFacade.getInstance().sendEmail(
                                 I18N.DISPLAY.ratingEmailSubject(appName),
                                 I18N.DISPLAY.ratingEmailText(appName),
-                                "noreply@iplantcollaborative.org", "hariolf@iplantcollaborative.org", //$NON-NLS-1$
+                                "noreply@iplantcollaborative.org", userEmail, //$NON-NLS-1$
                                 new AsyncCallback<String>() {
                                     @Override
                                     public void onSuccess(String arg0) {
