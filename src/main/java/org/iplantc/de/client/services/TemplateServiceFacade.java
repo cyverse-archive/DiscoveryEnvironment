@@ -2,7 +2,6 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.EmailServiceFacade;
@@ -151,7 +150,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
                     @Override
                     public void onFailure(Throwable arg0) {
-                        ErrorHandler.post(arg0);
+                        // don't bother the user if email sending fails
                     }
                 });
     }
