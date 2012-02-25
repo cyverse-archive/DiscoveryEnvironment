@@ -876,10 +876,11 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
             Long commentId = model.getFeedback().getComment_id();
             if (commentId == null) {
-                getTemplateService().rateAnalysis(model.getId(), score, model.getName(), comment, callback);
+                getTemplateService().rateAnalysis(model.getId(), score, model.getName(), comment,
+                        model.getIntegratorsEmail(), callback);
             } else {
                 getTemplateService().updateRating(model.getId(), score, model.getName(), commentId,
-                        comment, callback);
+                        comment, model.getIntegratorsEmail(), callback);
             }
         }
     }

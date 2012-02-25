@@ -3,12 +3,10 @@ package org.iplantc.de.client.services;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
-import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
@@ -90,14 +88,15 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
     @Override
     public void rateAnalysis(final String analysisId, final int rating, final String appName,
-            String comment, final AsyncCallback<String> callback) {
+            String comment, final String authorEmail, final AsyncCallback<String> callback) {
         // add comment to wiki page, then call rating service, then update avg on wiki page
         final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
         confluenceService.addComment(appName, comment, new AsyncCallback<String>() {
             @Override
             public void onSuccess(final String commentId) {
                 // wrap the callback so it returns the comment id on success
-                rateAnalysis(appName, analysisId, rating, commentId, new AsyncCallback<String>() {
+                rateAnalysis(appName, analysisId, rating, commentId, authorEmail,
+                        new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         callback.onSuccess(commentId);
@@ -119,7 +118,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
 
     /** calls /rate-analysis and if that is successful, calls updateDocumentationPage() */
     private void rateAnalysis(final String appName, String analysisId, int rating,
-            final String commentId, final AsyncCallback<String> callback) {
+            final String commentId, final String authorEmail, final AsyncCallback<String> callback) {
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
@@ -131,7 +130,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                sendRatingEmail(appName);
+                sendRatingEmail(appName, authorEmail);
                 updateDocumentationPage(appName, result, callback);
             }
 
@@ -142,31 +141,19 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
-    private void sendRatingEmail(final String appName) {
-        SessionManagementServiceFacade.getInstance().getAttribute(UserInfo.ATTR_EMAIL, new AsyncCallback<String>() {
-            @Override
-                    public void onSuccess(String userEmail) {
-                        EmailServiceFacade.getInstance().sendEmail(
-                                I18N.DISPLAY.ratingEmailSubject(appName),
-                                I18N.DISPLAY.ratingEmailText(appName),
-                                "noreply@iplantcollaborative.org", userEmail, //$NON-NLS-1$
-                                new AsyncCallback<String>() {
-                                    @Override
-                                    public void onSuccess(String arg0) {
-                                    }
+    private void sendRatingEmail(final String appName, final String emailAddress) {
+        EmailServiceFacade.getInstance().sendEmail(I18N.DISPLAY.ratingEmailSubject(appName),
+                I18N.DISPLAY.ratingEmailText(appName), "noreply@iplantcollaborative.org", emailAddress, //$NON-NLS-1$
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String arg0) {
+                    }
 
-                                    @Override
-                                    public void onFailure(Throwable arg0) {
-                                        ErrorHandler.post(arg0);
-                                    }
-                                });
-            }
-            
-            @Override
-            public void onFailure(Throwable arg0) {
-                        System.out.print("");
-            }
-        });
+                    @Override
+                    public void onFailure(Throwable arg0) {
+                        ErrorHandler.post(arg0);
+                    }
+                });
     }
 
     private void updateDocumentationPage(String appName, String avgJson, AsyncCallback<String> callback) {
@@ -180,13 +167,15 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     
     @Override
     public void updateRating(final String analysisId, final int rating, final String appName,
-            final Long commentId, final String comment, final AsyncCallback<String> callback) {
+            final Long commentId, final String comment, final String authorEmail,
+            final AsyncCallback<String> callback) {
         // update comment on wiki page, then call rating service, then update avg on wiki page
         ConfluenceServiceFacade.getInstance().editComment(appName, commentId, comment,
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        rateAnalysis(appName, analysisId, rating, String.valueOf(commentId), callback);
+                        rateAnalysis(appName, analysisId, rating, String.valueOf(commentId),
+                                authorEmail, callback);
                     }
 
                     @Override
