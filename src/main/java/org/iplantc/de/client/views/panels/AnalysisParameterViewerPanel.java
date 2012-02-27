@@ -10,6 +10,7 @@ import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog.DialogOkClic
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
+import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisParameter;
 import org.iplantc.de.client.models.JsAnalysisParameter;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
@@ -39,6 +40,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
  * 
@@ -55,15 +57,15 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     private Grid<AnalysisParameter> grid;
     private ToolBar toolbar;
 
-    public AnalysisParameterViewerPanel() {
-        init();
+    public AnalysisParameterViewerPanel(String analysisId) {
+        init(analysisId);
     }
 
-    private void init() {
+    private void init(String analysisId) {
         setSize(515, 300);
         setLayout(new FitLayout());
         setHeaderVisible(false);
-        retrieveData();
+        retrieveData(analysisId);
         initToolbar();
         initGrid();
         add(grid);
@@ -95,6 +97,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
             }
         });
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.save()));
         return b;
     }
 
@@ -144,9 +147,9 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         return sw.toString();
     }
 
-    private void retrieveData() {
+    private void retrieveData(final String analysisId) {
         AnalysisServiceFacade facade = new AnalysisServiceFacade();
-        facade.getAnalysisParams(new AsyncCallback<String>() {
+        facade.getAnalysisParams(analysisId, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -169,7 +172,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             @Override
             public void onFailure(Throwable caught) {
                 System.out.println(caught.getMessage());
-
+                grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
             }
         });
 
