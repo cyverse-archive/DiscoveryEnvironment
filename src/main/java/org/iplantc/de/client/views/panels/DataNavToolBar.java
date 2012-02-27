@@ -132,32 +132,34 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptUrlImport() {
-        String uploadDestId = selectionModel.getSelectedItem().getId();
-        String username = UserInfo.getInstance().getUsername();
+        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
+            String uploadDestId = selectionModel.getSelectedItem().getId();
+            String username = UserInfo.getInstance().getUsername();
 
-        // provide key/value pairs for hidden fields
-        FastMap<String> hiddenFields = new FastMap<String>();
-        hiddenFields.put(FileUploadDialogPanel.HDN_PARENT_ID_KEY, uploadDestId);
-        hiddenFields.put(FileUploadDialogPanel.HDN_USER_ID_KEY, username);
+            // provide key/value pairs for hidden fields
+            FastMap<String> hiddenFields = new FastMap<String>();
+            hiddenFields.put(FileUploadDialogPanel.HDN_PARENT_ID_KEY, uploadDestId);
+            hiddenFields.put(FileUploadDialogPanel.HDN_USER_ID_KEY, username);
 
-        // define a handler for upload completion
-        AsyncUploadCompleteHandler handler = new AsyncUploadCompleteHandler(uploadDestId) {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void onAfterCompletion() {
-                if (dlgUpload != null) {
-                    dlgUpload.hide();
+            // define a handler for upload completion
+            AsyncUploadCompleteHandler handler = new AsyncUploadCompleteHandler(uploadDestId) {
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void onAfterCompletion() {
+                    if (dlgUpload != null) {
+                        dlgUpload.hide();
+                    }
                 }
-            }
-        };
+            };
 
-        FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields,
-                Constants.CLIENT.fileUploadServlet(), handler, FileUploadDialogPanel.MODE.URL_ONLY);
+            FileUploadDialogPanel pnlUpload = new FileUploadDialogPanel(hiddenFields,
+                    Constants.CLIENT.fileUploadServlet(), handler, FileUploadDialogPanel.MODE.URL_ONLY);
 
-        dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 536, pnlUpload);
-        dlgUpload.show();
+            dlgUpload = new IPlantSubmittableDialog(I18N.DISPLAY.upload(), 536, pnlUpload);
+            dlgUpload.show();
+        }
     }
 
     private void promptUpload() {
