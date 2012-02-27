@@ -151,7 +151,7 @@ public interface DEDisplayStaticText extends Constants {
      * 
      * @return a String representing the text.
      */
-    String unknown();
+    String submitted();
 
     /**
      * 
@@ -159,7 +159,7 @@ public interface DEDisplayStaticText extends Constants {
      * 
      * @return a String representing the text.
      */
-    String ready();
+    String unknown();
 
     /**
      * 
@@ -183,7 +183,7 @@ public interface DEDisplayStaticText extends Constants {
      * 
      * @return a String representing the text.
      */
-    String timeout();
+    String removed();
 
     /**
      * 
@@ -199,7 +199,7 @@ public interface DEDisplayStaticText extends Constants {
      * 
      * @return a String representing the text.
      */
-    String stopped();
+    String held();
 
     /**
      * Display text for job execution status
@@ -207,6 +207,13 @@ public interface DEDisplayStaticText extends Constants {
      * @return a String representing the text.
      */
     String idle();
+
+    /**
+     * Display text for job execution status
+     * 
+     * @return a String representing the text.
+     */
+    String subErr();
 
     /**
      * Display text for file selector caption.

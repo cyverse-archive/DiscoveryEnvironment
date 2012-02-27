@@ -25,6 +25,7 @@ import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
+import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.HideMode;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -262,10 +263,22 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void promptRemoveApplet(final Command cmdRemoveAppletConfirmed) {
+        // In Chrome and IE, the applet always stays on top, blocking access to the confirmation dialog,
+        // which is modal and blocks access to everything else.
+        final boolean appletFocusWorkaround = GXT.isChrome || GXT.isIE;
+
+        if (appletFocusWorkaround) {
+            minimize();
+        }
+
         MessageBox.confirm(I18N.DISPLAY.idropLiteCloseConfirmTitle(),
                 I18N.DISPLAY.idropLiteCloseConfirmMessage(), new Listener<MessageBoxEvent>() {
                     @Override
                     public void handleEvent(MessageBoxEvent be) {
+                        if (appletFocusWorkaround) {
+                            show();
+                        }
+
                         if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
                             // The user confirmed closing the applet.
                             cmdRemoveAppletConfirmed.execute();

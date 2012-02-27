@@ -81,19 +81,21 @@ public class MyAnalysesPanel extends ContentPanel {
         /** job status unknown */
         UNKNOWN(I18N.CONSTANT.unknown()),
         /** job is ready */
-        READY(I18N.CONSTANT.ready()),
+        SUBMITTED(I18N.CONSTANT.submitted()),
         /** job is running */
         RUNNING(I18N.CONSTANT.running()),
         /** job is complete */
         COMPLETED(I18N.CONSTANT.completed()),
         /** job timed out */
-        TIMEOUT(I18N.CONSTANT.timeout()),
+        HELD(I18N.CONSTANT.held()),
         /** job failed */
         FAILED(I18N.CONSTANT.failed()),
         /** job was stopped */
-        STOPPED(I18N.CONSTANT.stopped()),
+        SUBMISSION_ERR(I18N.CONSTANT.subErr()),
         /** job is idle */
-        IDLE(I18N.CONSTANT.idle());
+        IDLE(I18N.CONSTANT.idle()),
+        /** job is removed */
+        REMOVED(I18N.CONSTANT.removed());
 
         private String displayText;
 
@@ -220,7 +222,7 @@ public class MyAnalysesPanel extends ContentPanel {
     }
 
     private Button buildViewParamsButton() {
-        Button b = new Button(I18N.DISPLAY.viewParameters());
+        Button b = new Button(I18N.DISPLAY.viewParamLbl());
         b.setId(VIEW_PARAMETER_ITEM_ID);
         b.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
         b.setEnabled(false);
@@ -363,10 +365,11 @@ public class MyAnalysesPanel extends ContentPanel {
     private class ViewParamSelectionListener extends SelectionListener<ButtonEvent> {
         @Override
         public void componentSelected(ButtonEvent ce) {
+            AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
             Dialog d = new Dialog();
             d.setResizable(false);
-            d.setHeading(I18N.DISPLAY.viewParameters());
-            d.add(new AnalysisParameterViewerPanel());
+            d.setHeading(I18N.DISPLAY.viewParameters(ae.getName()));
+            d.add(new AnalysisParameterViewerPanel(ae.getId()));
             d.setSize(520, 320);
             d.setButtons(Dialog.OK);
             d.setHideOnButtonClick(true);

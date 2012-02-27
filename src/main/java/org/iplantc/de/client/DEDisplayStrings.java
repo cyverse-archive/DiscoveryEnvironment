@@ -1094,12 +1094,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String analysisSubmittedMsg();
 
     /**
-     * Localized text for view parameters button
+     * Localized text for view parameters panel
      * 
+     * @param analysisName name of the analysis
      * 
      * @return a string representing the localized text.
      */
-    String viewParameters();
+    String viewParameters(String analysisName);
 
     /**
      * Localized text for param name
@@ -1139,5 +1140,21 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String ratingEmailText(String appName);
+
+    /**
+     * Localized text empty parameter grid
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String noParameters();
+
+    /**
+     * Localized text for view parameters button
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String viewParamLbl();
 
 }

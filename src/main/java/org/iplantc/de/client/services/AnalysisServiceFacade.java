@@ -38,8 +38,9 @@ public class AnalysisServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    public void getAnalysisParams(AsyncCallback<String> callback) {
-        String address = "http://localhost:8888/view-params.json";
+    public void getAnalysisParams(String analysisId, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
+                + "get-property-values/" + analysisId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);

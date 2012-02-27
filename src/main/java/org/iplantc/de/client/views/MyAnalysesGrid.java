@@ -120,6 +120,11 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
                             DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
                     break;
 
+                case SUBMITTED:
+                    updateRunExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
+                    break;
+
                 default:
                     updateExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString()); //$NON-NLS-1$
                     break;
