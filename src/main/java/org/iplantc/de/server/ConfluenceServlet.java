@@ -62,15 +62,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         super.init(config);
         ServletContext context = config.getServletContext();
         String propFilename = context.getInitParameter(PROPERTIES_FILE_KEY);
-        InputStream stream = ConfluenceProperties.class.getResourceAsStream(propFilename);
-        properties = new ConfluenceProperties(stream);
-        try {
-            if (stream != null) {
-                stream.close();
-            }
-        } catch (IOException e) {
-            throw new ServletException(e);
-        }
+        properties = new ConfluenceProperties(propFilename);
     }
 
     /**

@@ -36,11 +36,10 @@ public class ConfluenceProperties {
     /**
      * Creates a new ConfluenceProperties object and loads properties.
      * 
-     * @param propFilePath the name of the properties file
-     * @throws RuntimeException if a required property isn't found in the file
+     * @param propFileName the name of the properties file
      */
-    public ConfluenceProperties(InputStream stream) {
-        loadProperties(stream);
+    public ConfluenceProperties(String propFileName) {
+        loadProperties(propFileName);
         validateProperties(REQUIRED_PROPERTIES);
     }
 
@@ -63,15 +62,25 @@ public class ConfluenceProperties {
      * message, but do not throw an exception; the property validation will catch any required properties
      * that are missing.
      * 
-     * @param stream an input stream from which to read properties
+     * @param propFileName the name of the properties file
      */
-    private void loadProperties(InputStream stream) {
+    private void loadProperties(String propFileName) {
         properties = new Properties();
+        InputStream stream = ConfluenceProperties.class.getResourceAsStream(propFileName);
         try {
             properties.load(stream);
         } catch (IOException e) {
             String msg = "unable to load discovery environment properties"; //$NON-NLS-1$
             LOGGER.error(msg, e);
+        }
+ finally { // FIXME eclipse auto indent fail
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    LOGGER.error("Cannot close input stream for file " + propFileName, e); //$NON-NLS-1$
+        }
+    }
         }
     }
 
