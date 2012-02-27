@@ -20,6 +20,10 @@
 		<param-value>/discoveryenvironment.properties</param-value>
 	</context-param>
     <context-param>
+        <param-name>org.iplantc.properties.confluence</param-name>
+        <param-value>/confluence.properties</param-value>
+    </context-param>
+    <context-param>
         <param-name>org.iplantc.logout-url</param-name>
         <param-value>https://cas-server.iplantcollaborative.org/cas/logout</param-value>
     </context-param>
