@@ -6,6 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ConfluenceService;
 import org.swift.common.cli.CliClient.ClientException;
@@ -48,16 +52,37 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     /** a string in the template that is replaced with rating stars */
     private static final String AVG_RATING_PLACEHOLDER = "@AVGRATING"; //$NON-NLS-1$
 
+    /** name of the init parameter that contains the name of the .properties file */
+    private static final String PROPERTIES_FILE_KEY = "org.iplantc.properties.confluence"; //$NON-NLS-1$
+
+    private ConfluenceProperties properties;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        ServletContext context = config.getServletContext();
+        String propFilename = context.getInitParameter(PROPERTIES_FILE_KEY);
+        InputStream stream = ConfluenceProperties.class.getResourceAsStream(propFilename);
+        properties = new ConfluenceProperties(stream);
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            throw new ServletException(e);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String addPage(String toolName, String description) {
-        String url = ConfluenceProperties.getConfluenceBaseUrl();
-        String parent = ConfluenceProperties.getConfluenceParentPage();
-        String user = ConfluenceProperties.getConfluenceUser();
-        String password = ConfluenceProperties.getConfluencePassword();
-        String space = ConfluenceProperties.getConfluenceSpaceName();
+        String url = properties.getConfluenceBaseUrl();
+        String parent = properties.getConfluenceParentPage();
+        String user = properties.getConfluenceUser();
+        String password = properties.getConfluencePassword();
+        String space = properties.getConfluenceSpaceName();
         String content;
         try {
             content = getTemplate();
@@ -84,7 +109,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         if (code != ExitCode.SUCCESS) {
             throw new RuntimeException("Can't create Confluence page! Error code = " + code); //$NON-NLS-1$
         }
-        return ConfluenceProperties.getConfluenceSpaceUrl() + toolName;
+        return properties.getConfluenceSpaceUrl() + toolName;
     }
 
     /**
@@ -92,7 +117,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      */
     @Override
     public void updatePage(String toolName, int avgRating) {
-        String space = ConfluenceProperties.getConfluenceSpaceName();
+        String space = properties.getConfluenceSpaceName();
         // String content = client.getPageContent(toolName, space);
         try {
             IPlantConfluenceClient client = getConfluenceClient();
@@ -178,7 +203,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      */
     @Override
     public String addComment(String toolName, String comment) {
-        String space = ConfluenceProperties.getConfluenceSpaceName();
+        String space = properties.getConfluenceSpaceName();
         try {
             RemoteComment confluenceComment = getConfluenceClient().addComment(space, toolName, comment);
             return String.valueOf(confluenceComment.getId());
@@ -226,6 +251,6 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
 
     private IPlantConfluenceClient getConfluenceClient() throws SerializationException, ClientException {
         String authToken = getAttribute(AUTH_TOKEN_ATTR);
-        return new IPlantConfluenceClient(authToken);
+        return new IPlantConfluenceClient(properties, authToken);
     }
 }

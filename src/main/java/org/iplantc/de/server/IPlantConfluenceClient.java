@@ -16,14 +16,18 @@ import com.martiansoftware.jsap.JSAP;
  * 
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
+    private ConfluenceProperties properties;
 
     /**
      * Creates a new instance and initializes address/user/password from a .properties file.
      * 
+     * @param properties
      * @param authToken a token for an active Confluence session, or null if not already logged in
      * @throws ClientException
      */
-    public IPlantConfluenceClient(String authToken) throws ClientException {
+    public IPlantConfluenceClient(ConfluenceProperties properties, String authToken)
+            throws ClientException {
+        this.properties = properties;
         if (authToken != null) {
             token = authToken;
         }
@@ -123,9 +127,9 @@ public class IPlantConfluenceClient extends ConfluenceClient {
      * @throws ClientException
      */
     private void iplantLogin() throws ClientException {
-        String address = ConfluenceProperties.getConfluenceBaseUrl();
-        String user = ConfluenceProperties.getConfluenceUser();
-        String password = ConfluenceProperties.getConfluencePassword();
+        String address = properties.getConfluenceBaseUrl();
+        String user = properties.getConfluenceUser();
+        String password = properties.getConfluencePassword();
 
         ExitCode code = doWork(new String[] {"-a", "login", "--server", address, "--user", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "--password", password}); //$NON-NLS-1$
