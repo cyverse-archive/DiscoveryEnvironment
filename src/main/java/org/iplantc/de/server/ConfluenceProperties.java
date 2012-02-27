@@ -1,6 +1,7 @@
 package org.iplantc.de.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -12,14 +13,10 @@ import org.apache.log4j.Logger;
  * 
  */
 public class ConfluenceProperties {
-    private static final Logger LOGGER = Logger.getLogger(ConfluenceProperties.class);
+    private final Logger LOGGER = Logger.getLogger(ConfluenceProperties.class);
 
     // The prefix for all of the properties.
     private static final String PREFIX = "org.iplantc.discoveryenvironment"; //$NON-NLS-1$
-
-    // The name of the properties file.
-    private static final String PROPERTIES_FILE = "/confluence.properties"; //$NON-NLS-1$
-    private static final String MULE_SERVICE_BASE_URL = PREFIX + ".muleServiceBaseUrl"; //$NON-NLS-1$
 
     private static final String CONFLUENCE_BASE_URL = PREFIX + ".confluence.baseUrl"; //$NON-NLS-1$
     private static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".confluence.parentPageName"; //$NON-NLS-1$
@@ -27,37 +24,36 @@ public class ConfluenceProperties {
     private static final String CONFLUENCE_PASSWORD = PREFIX + ".confluence.password"; //$NON-NLS-1$
     private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".confluence.spaceName"; //$NON-NLS-1$
     private static final String CONFLUENCE_SPACE_URL = PREFIX + ".confluence.spaceUrl"; //$NON-NLS-1$
+    private Properties properties;
 
     /**
      * The list of required properties.
      */
-    private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL, CONFLUENCE_BASE_URL,
+    private final static String[] REQUIRED_PROPERTIES = {CONFLUENCE_BASE_URL,
             CONFLUENCE_PARENT_PAGE, CONFLUENCE_USER, CONFLUENCE_PASSWORD, CONFLUENCE_SPACE_NAME,
             CONFLUENCE_SPACE_URL};
 
     /**
-     * The properties. Place any default values in the initializer.
+     * Creates a new ConfluenceProperties object and loads properties.
+     * 
+     * @param propFilePath the name of the properties file
+     * @throws RuntimeException if a required property isn't found in the file
      */
-    @SuppressWarnings("serial")
-    private static Properties properties = new Properties() {
-        {
-            put(MULE_SERVICE_BASE_URL, "localhost"); //$NON-NLS-1$
-        }
-    };
-
-    static {
-        loadProperties();
+    public ConfluenceProperties(InputStream stream) {
+        loadProperties(stream);
         validateProperties(REQUIRED_PROPERTIES);
     }
 
     /**
      * Validates that we have values for all required properties.
+     * 
+     * @throws RuntimeException if a required property isn't found in the file
      */
-    private static void validateProperties(String[] propertyNames) {
+    private void validateProperties(String[] propertyNames) {
         for (String propertyName : propertyNames) {
             String propertyValue = properties.getProperty(propertyName);
             if (propertyValue == null || propertyValue.equals("")) { //$NON-NLS-1$
-                throw new ExceptionInInitializerError("missing required property: " + propertyName); //$NON-NLS-1$
+                throw new RuntimeException("missing required property: " + propertyName); //$NON-NLS-1$
             }
         }
     }
@@ -66,10 +62,13 @@ public class ConfluenceProperties {
      * Loads the discovery environment properties. If an error occurs while loading the file, we log the
      * message, but do not throw an exception; the property validation will catch any required properties
      * that are missing.
+     * 
+     * @param stream an input stream from which to read properties
      */
-    private static void loadProperties() {
+    private void loadProperties(InputStream stream) {
+        properties = new Properties();
         try {
-            properties.load(ConfluenceProperties.class.getResourceAsStream(PROPERTIES_FILE));
+            properties.load(stream);
         } catch (IOException e) {
             String msg = "unable to load discovery environment properties"; //$NON-NLS-1$
             LOGGER.error(msg, e);
@@ -81,7 +80,7 @@ public class ConfluenceProperties {
      * 
      * @return the URL as a string.
      */
-    public static String getConfluenceBaseUrl() {
+    public String getConfluenceBaseUrl() {
         return properties.getProperty(CONFLUENCE_BASE_URL);
     }
 
@@ -90,7 +89,7 @@ public class ConfluenceProperties {
      * 
      * @return the name as a string.
      */
-    public static String getConfluenceParentPage() {
+    public String getConfluenceParentPage() {
         return properties.getProperty(CONFLUENCE_PARENT_PAGE);
     }
 
@@ -99,7 +98,7 @@ public class ConfluenceProperties {
      * 
      * @return the user name
      */
-    public static String getConfluenceUser() {
+    public String getConfluenceUser() {
         return properties.getProperty(CONFLUENCE_USER);
     }
 
@@ -108,7 +107,7 @@ public class ConfluenceProperties {
      * 
      * @return the password
      */
-    public static String getConfluencePassword() {
+    public String getConfluencePassword() {
         return properties.getProperty(CONFLUENCE_PASSWORD);
     }
 
@@ -117,7 +116,7 @@ public class ConfluenceProperties {
      * 
      * @return the name as a string.
      */
-    public static String getConfluenceSpaceName() {
+    public String getConfluenceSpaceName() {
         return properties.getProperty(CONFLUENCE_SPACE_NAME);
     }
 
@@ -126,7 +125,7 @@ public class ConfluenceProperties {
      * 
      * @return the URL as a string.
      */
-    public static String getConfluenceSpaceUrl() {
+    public String getConfluenceSpaceUrl() {
         return properties.getProperty(CONFLUENCE_SPACE_URL);
     }
 }
