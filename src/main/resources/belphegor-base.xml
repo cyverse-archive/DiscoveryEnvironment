@@ -65,7 +65,7 @@
     </bean>
 
     <bean id="casRoleFilter" class="org.iplantc.de.server.CasRoleFilter">
-        <property name="authorizedRoles" value="${org.iplantc.belphgor.cas.authorized-roles}" />
+        <property name="authorizedRoles" value="${org.iplantc.belphegor.cas.authorized-roles}" />
         <property name="roleAttributeName" value="${org.iplantc.belphegor.cas.role-attribute-name}" />
     </bean>
 </beans>
