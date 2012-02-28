@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:property-placeholder location="classpath:belphegor.properties" />
+
+    <bean id="casService" class="org.springframework.security.cas.ServiceProperties">
+        <property name="service" value="${org.iplantc.belphegor.cas.server-name}${org.iplantc.belphegor.cas.validation}" />
+    </bean>
+
+    <bean id="casAuthEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <property name="loginUrl" value="${org.iplantc.belphegor.cas.base-url}/login" />
+        <property name="serviceProperties" ref="casService" />
+    </bean>
+
+    <bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="filterProcessesUrl" value="${org.iplantc.belphegor.cas.validation}" />
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyReceptorUrl" value="${org.iplantc.belphegor.cas.proxy-receptor}" />
+        <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
+    </bean>
+
+    <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.server-name}/belphegor/login" />
+    </bean>
+
+    <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter" />
+
+    <bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.base-url}/logout" />
+        <constructor-arg index="1">
+            <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="${org.iplantc.belphegor.cas.logout-url}" />
+    </bean>
+
+    <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <property name="ticketValidator" ref="casTicketValidator" />
+        <property name="serviceProperties" ref="casService" />
+        <property name="key" value="tool_administration_utility" />
+        <property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" />
+    </bean>
+
+    <bean id="casTicketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.base-url}" />
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyCallbackUrl" value="${org.iplantc.belphegor.cas.server-name}${org.iplantc.belphegor.cas.proxy-receptor}" />
+        <property name="acceptAnyProxy" value="true" />
+    </bean>
+
+    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+    <bean id="authenticationUserDetailsService" class="org.springframework.security.cas.userdetails.GrantedAuthorityFromAssertionAttributesUserDetailsService">
+        <constructor-arg index="0">
+            <array>
+                <value>entitlement</value>
+            </array>
+        </constructor-arg>
+    </bean>
+
+    <bean id="casRoleFilter" class="org.iplantc.de.server.CasRoleFilter">
+        <property name="authorizedRoles" value="${org.iplantc.belphgor.cas.authorized-roles}" />
+        <property name="roleAttributeName" value="${org.iplantc.belphegor.cas.role-attribute-name}" />
+    </bean>
+</beans>

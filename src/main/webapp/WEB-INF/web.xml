@@ -9,6 +9,10 @@
         <param-value>belphegor.properties</param-value>
     </context-param>
     <context-param>
+        <param-name>appPropertyPrefix</param-name>
+        <param-value>org.iplantc.belphegor</param-value>
+    </context-param>
+    <context-param>
         <param-name>org.iplantc.initial-page</param-name>
         <param-value></param-value>
     </context-param>
@@ -20,101 +24,23 @@
         <param-name>org.iplantc.logout-forward</param-name>
         <param-value>http://iplantcollaborative.org</param-value>
     </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/classes/belphegor-base.xml
+            /WEB-INF/classes/belphegor-security.xml
+        </param-value>
+    </context-param>
 
-	<!-- CAS Step up -->
+	<!-- Filters -->
     <filter>
-        <filter-name>CAS Authentication Filter</filter-name>
-        <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-        <init-param>
-            <param-name>casServerLoginUrl</param-name>
-            <param-value>https://cas-server.iplantcollaborative.org/cas/login</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>https://cas-client.iplantcollaborative.org</param-value>
-        </init-param>
-    </filter>
-    <filter>
-        <filter-name>CAS Validation Filter</filter-name>
-        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-        <init-param>
-            <param-name>casServerUrlPrefix</param-name>
-            <param-value>https://cas-server.iplantcollaborative.org/cas</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>https://cas-client.iplantcollaborative.org</param-value>
-        </init-param>
-        <init-param>
-            <param-name>redirectAfterValidation</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>proxyReceptorUrl</param-name>
-            <param-value>/proxy-receptinator</param-value>
-        </init-param>
-        <init-param>
-            <param-name>proxyCallbackUrl</param-name>
-            <param-value>https://cas-client.iplantcollaborative.org/belphegor/proxy-receptinator</param-value>
-        </init-param>
-        <init-param>
-            <param-name>acceptAnyProxy</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>proxyGrantingTicketStorageClass</param-name>
-            <param-value>org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl</param-value>
-        </init-param>
-        <init-param>
-            <param-name>tolerance</param-name>
-            <param-value>5000</param-value>
-        </init-param>
-    </filter>
-    <filter>
-        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-        <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>CAS Single Sign Out Filter</filter-name>
-        <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>roleFilter</filter-name>
-        <filter-class>org.iplantc.de.server.CasRoleFilter</filter-class>
-        <init-param>
-            <param-name>authorizedRoles</param-name>
-            <param-value>core-services,tito-admin,dev</param-value>
-        </init-param>
-        <init-param>
-            <param-name>roleAttributeName</param-name>
-            <param-value>entitlement</param-value>
-        </init-param>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
-    <!-- CAS Step up -->
+    <!-- Filter Mapping Definitions -->
     <filter-mapping>
-        <filter-name>CAS Authentication Filter</filter-name>
-        <url-pattern>/</url-pattern>
-        <url-pattern>*.jsp</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>/belphegor/belphegor/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CAS Validation Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>roleFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>/belphegor/belphegor/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CAS Single Sign Out Filter</filter-name>
+        <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
@@ -179,9 +105,8 @@
         <url-pattern>/belphegor/sessionmanagement</url-pattern>
     </servlet-mapping>
 	
-    <!-- CAS Set up -->
     <listener>
-        <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
     <!-- Default page to serve -->
