@@ -16,7 +16,6 @@ else
 fi
 
 PROP_FILE="discoveryenvironment.properties"
-SEC_FILE="de-security.properties"
 
 TARGET_PATH="./src/main/resources/"
 
@@ -25,8 +24,7 @@ if [[ ! -e $TARGET_PATH ]]; then
     exit 1
 fi
 
-cp $CONFIGULON"/dev/"$DE_ENV"/"$PROP_FILE $TARGET_PATH && \
-cp $CONFIGULON"/dev/"$DE_ENV"/"$SEC_FILE $TARGET_PATH"security.properties"
+cp $CONFIGULON"/dev/"$DE_ENV"/"$PROP_FILE $TARGET_PATH
 
 if [[ $? ]]; then 
     echo "...bootstrapped! (you are free to go about your local development)" 
