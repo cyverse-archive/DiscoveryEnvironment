@@ -82,8 +82,8 @@
         <filter-name>roleFilter</filter-name>
         <filter-class>org.iplantc.de.server.CasRoleFilter</filter-class>
         <init-param>
-            <param-name>authorizedRole</param-name>
-            <param-value>dev</param-value>
+            <param-name>authorizedRoles</param-name>
+            <param-value>core-services,tito-admin,dev</param-value>
         </init-param>
         <init-param>
             <param-name>roleAttributeName</param-name>
