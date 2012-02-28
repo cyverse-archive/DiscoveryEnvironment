@@ -34,6 +34,32 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     }
 
     /**
+     * Creates a new page in the iPlant wiki as a child of the "List of Applications" page.
+     * 
+     * @param title the page title
+     * @param content the page content
+     * @return
+     * @throws RemoteException
+     * @throws ClientException
+     */
+    public String addPage(final String title, final String content) throws RemoteException,
+            ClientException {
+        final String parent = properties.getConfluenceParentPage();
+        final String space = properties.getConfluenceSpaceName();
+
+        callService(new ServiceCall<Void>() {
+            @Override
+            public Void doit() throws RemoteException, ClientException {
+                RemotePage page = new RemotePage();
+                storePage(page, title, space, parent, content, false, true);
+                return null;
+            }
+        });
+
+        return properties.getConfluenceSpaceUrl() + title;
+    }
+
+    /**
      * Adds a comment to an existing Confluence page and returns an object containing the new comment's
      * ID, etc.
      * 

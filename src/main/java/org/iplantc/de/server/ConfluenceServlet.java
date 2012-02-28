@@ -13,10 +13,8 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ConfluenceService;
 import org.swift.common.cli.CliClient.ClientException;
-import org.swift.common.cli.CliClient.ExitCode;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
-import org.swift.confluence.cli.ConfluenceClient;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
@@ -70,11 +68,6 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      */
     @Override
     public String addPage(String toolName, String description) {
-        String url = properties.getConfluenceBaseUrl();
-        String parent = properties.getConfluenceParentPage();
-        String user = properties.getConfluenceUser();
-        String password = properties.getConfluencePassword();
-        String space = properties.getConfluenceSpaceName();
         String content;
         try {
             content = getTemplate();
@@ -85,22 +78,12 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             content = description;
         }
 
-        // build command line for ConfluenceClient
-        String[] args;
         try {
-            String token = getConfluenceClient().getToken();
-            args = new String[] {
-                    "--server", url, "--user", user, "--password", password, "--login", token, "-a", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                    "addPage", "--space", space, "--title", toolName, "--content", content, "--parent", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
-                    parent};
+            getConfluenceClient().addPage(toolName, content);
         } catch (Exception e) {
             throw new RuntimeException("Can't create Confluence page!", e); //$NON-NLS-1$
         }
-        ExitCode code = new ConfluenceClient().doWork(args);
 
-        if (code != ExitCode.SUCCESS) {
-            throw new RuntimeException("Can't create Confluence page! Error code = " + code); //$NON-NLS-1$
-        }
         return properties.getConfluenceSpaceUrl() + toolName;
     }
 
