@@ -91,10 +91,6 @@
 		<servlet-class>com.google.gwt.junit.server.JUnitHostImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>dispatchServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.DispatchServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>dataApiServiceDispatcher</servlet-name>
 		<servlet-class>org.iplantc.de.server.DataApiServiceDispatcher</servlet-class>
 	</servlet>
@@ -147,10 +143,6 @@
 	<servlet-mapping>
 		<servlet-name>sessionManagementServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/sessionmanagement</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>dispatchServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/dispatch</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>dataApiServiceDispatcher</servlet-name>
