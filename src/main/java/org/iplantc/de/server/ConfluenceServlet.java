@@ -110,7 +110,6 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     @Override
     public void updatePage(String toolName, int avgRating) {
         String space = properties.getConfluenceSpaceName();
-        // String content = client.getPageContent(toolName, space);
         try {
             IPlantConfluenceClient client = getConfluenceClient();
             long pageId = client.getContentId(toolName, space);
