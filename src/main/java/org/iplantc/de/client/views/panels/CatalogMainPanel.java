@@ -238,7 +238,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             public void onSuccess(String url) {
                 makePublicWin.hide();
 
-                MessageBox.info(I18N.DISPLAY.success(), I18N.DISPLAY.makePublicSucess(url), null);
+                MessageBox.info(I18N.DISPLAY.makePublicSuccessTitle(),
+                        I18N.DISPLAY.makePublicSuccessMessage(url), null);
 
                 fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
             }
