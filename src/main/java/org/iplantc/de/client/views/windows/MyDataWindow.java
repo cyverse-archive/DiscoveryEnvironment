@@ -1,7 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -289,22 +288,18 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
     @Override
     public void folderMove(Map<String, String> folders) {
         if (folders != null) {
-            Iterator<String> itr = folders.keySet().iterator();
+            // remove from main panel
+            pnlMain.deleteDiskResources(new ArrayList<String>(folders.keySet()));
 
-            while (itr.hasNext()) {
-                String srcId = itr.next().toString();
+            for (String srcId : folders.keySet()) {
                 String destId = folders.get(srcId);
 
                 Folder src = model.getFolder(srcId);
                 Folder dest = model.getFolder(destId);
 
                 if (src != null && dest != null) {
-                    // remove from main panel
-                    pnlMain.deleteDiskResource(srcId);
-
                     // construct new Id
-                    String[] tokens = srcId.split("/"); //$NON-NLS-1$
-                    String newSrcId = destId + "/" + tokens[tokens.length - 1]; //$NON-NLS-1$
+                    String newSrcId = destId + "/" + DataUtils.parseNameFromPath(srcId); //$NON-NLS-1$
                     model.moveResource(src, newSrcId, destId);
                 }
             }
@@ -317,11 +312,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
     @Override
     public void fileMove(Map<String, String> files) {
         if (files != null) {
-            Iterator<String> itr = files.keySet().iterator();
-            while (itr.hasNext()) {
-                // remove from main panel
-                pnlMain.deleteDiskResource(itr.next().toString());
-            }
+            pnlMain.deleteDiskResources(new ArrayList<String>(files.keySet()));
         }
     }
 
