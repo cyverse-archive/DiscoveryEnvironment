@@ -17,14 +17,6 @@
         <param-value></param-value>
     </context-param>
     <context-param>
-        <param-name>org.iplantc.logout-url</param-name>
-        <param-value>https://cas-server.iplantcollaborative.org/cas/logout</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.logout-forward</param-name>
-        <param-value>http://iplantcollaborative.org</param-value>
-    </context-param>
-    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/classes/belphegor-base.xml
@@ -65,6 +57,11 @@
         <servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
     </servlet>
 	
+	<servlet>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
+	</servlet>
+
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
         <servlet-class>org.iplantc.de.server.DEServiceDispatcher</servlet-class>
@@ -96,6 +93,10 @@
         <servlet-name>sessionInitializationServlet</servlet-name>
         <url-pattern>/belphegor/login</url-pattern>
     </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/logout</url-pattern>
+	</servlet-mapping>
     <servlet-mapping>
         <servlet-name>propertyServlet</servlet-name>
         <url-pattern>/belphegor/properties</url-pattern>
