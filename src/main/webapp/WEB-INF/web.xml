@@ -62,7 +62,7 @@
 	
     <servlet>
         <servlet-name>sessionInitializationServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.SessionInitializationServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
     </servlet>
 	
     <servlet>
