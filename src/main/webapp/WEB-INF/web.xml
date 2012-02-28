@@ -95,7 +95,7 @@
     </servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>logoutSuccessServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/logout</url-pattern>
+		<url-pattern>/belphegor/logout</url-pattern>
 	</servlet-mapping>
     <servlet-mapping>
         <servlet-name>propertyServlet</servlet-name>

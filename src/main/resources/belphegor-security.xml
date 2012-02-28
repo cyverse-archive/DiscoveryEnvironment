@@ -11,13 +11,15 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+    <context:property-placeholder location="classpath:belphegor.properties" />
+
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="casAuthenticationProvider"/>
     </authentication-manager>
 
     <http use-expressions="true" entry-point-ref="casAuthEntryPoint">
         <intercept-url pattern="/belphegor/logout" access="permitAll" />
-        <intercept-url pattern="/**" access="isAuthenticated()" />
+        <intercept-url pattern="/**" access="hasAnyRole(${org.iplantc.belphegor.cas.authorized-groups})" />
         <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
         <logout logout-success-url="/belphegor/logout" />
         <custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />

@@ -56,16 +56,7 @@
     </bean>
 
     <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
-    <bean id="authenticationUserDetailsService" class="org.springframework.security.cas.userdetails.GrantedAuthorityFromAssertionAttributesUserDetailsService">
-        <constructor-arg index="0">
-            <array>
-                <value>entitlement</value>
-            </array>
-        </constructor-arg>
-    </bean>
-
-    <bean id="casRoleFilter" class="org.iplantc.de.server.CasRoleFilter">
-        <property name="authorizedRoles" value="${org.iplantc.belphegor.cas.authorized-roles}" />
-        <property name="roleAttributeName" value="${org.iplantc.belphegor.cas.role-attribute-name}" />
+    <bean id="authenticationUserDetailsService" class="org.iplantc.de.server.CasGroupUserDetailsService">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.group-attribute-name}" />
     </bean>
 </beans>
