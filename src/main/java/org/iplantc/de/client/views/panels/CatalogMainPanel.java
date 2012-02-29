@@ -828,8 +828,10 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 // marker = beginning of the display string up to the first space char
                 suffixMarker = suffixMarker.substring(0, markerLen);
                 int suffixStart = comment.lastIndexOf(suffixMarker);
-                comment = comment.substring(0, suffixStart);
-                comment = comment.trim();
+                if (suffixStart >= 0) {
+                    comment = comment.substring(0, suffixStart);
+                    comment = comment.trim();
+                }
             }
 
             // remove prefix
