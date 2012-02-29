@@ -160,7 +160,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         ExitCode code = doWork(new String[] {"-a", "login", "--server", address, "--user", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 "--password", password}); //$NON-NLS-1$
         if (code != ExitCode.SUCCESS)
-            throw new ClientException("doWork() returned exit code " + code); //$NON-NLS-1$
+            throw new ClientException("Login failure! Exit code = " + code); //$NON-NLS-1$
     }
 
     /** like getContentId(String, String, false) but can be used without going through doWork() */
