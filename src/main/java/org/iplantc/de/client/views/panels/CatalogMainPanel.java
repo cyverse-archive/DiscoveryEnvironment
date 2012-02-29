@@ -679,7 +679,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                                 @Override
                                 public void onFailure(Throwable caught) {
-                                    ErrorHandler.post(caught);
+                                    ErrorHandler.post(caught.getMessage(), caught);
                                 }
                             });
                 }
@@ -780,20 +780,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             if (commentId == null) {
                 dlg.unmaskDialog();
             } else {
-                ConfluenceServiceFacade.getInstance().getComment(commentId,
-                        new AsyncCallback<String>() {
-                            @Override
-                            public void onSuccess(String comment) {
-                                dlg.setText(removeCommentMarkup(comment));
-                                dlg.unmaskDialog();
-                            }
+                ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String comment) {
+                        dlg.setText(removeCommentMarkup(comment));
+                        dlg.unmaskDialog();
+                    }
 
-                            @Override
-                            public void onFailure(Throwable e) {
-                                ErrorHandler.post(e);
-                                dlg.unmaskDialog();
-                            }
-                        });
+                    @Override
+                    public void onFailure(Throwable e) {
+                        ErrorHandler.post(e.getMessage(), e);
+                        dlg.unmaskDialog();
+                    }
+                });
             }
             Command onConfirm = new Command() {
                 @Override
@@ -871,7 +870,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
+                    ErrorHandler.post(caught.getMessage(), caught);
                 }
             };
 
