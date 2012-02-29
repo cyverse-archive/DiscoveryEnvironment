@@ -238,7 +238,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getSearchAppServiceUrl() {
-        return getServiceUrl(SERVICE_URL_APP_SEARCH);
+        return serviceUrlMap.get(SERVICE_URL_APP_SEARCH);
     }
 
     /**

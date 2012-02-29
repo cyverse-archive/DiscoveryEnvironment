@@ -6,6 +6,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.widget.Component;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -47,13 +48,11 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      */
     @Override
     public void searchAnalysis(String search, AsyncCallback<String> callback) {
-        // FIXME integrate with a Conrad service
-        callback.onFailure(new Exception("Remote Search not implemented yet."));
-        // String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl() + "/" //$NON-NLS-1$
-        // + URL.encode(search);
-        //
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        // callService(wrapper, callback);
+        String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl() + "/" //$NON-NLS-1$
+                + URL.encode(search);
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        callService(wrapper, callback);
     }
 
     /**
