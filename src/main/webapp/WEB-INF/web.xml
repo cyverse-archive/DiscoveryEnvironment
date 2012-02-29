@@ -64,7 +64,7 @@
 
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.DEServiceDispatcher</servlet-class>
+        <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
     </servlet>
 	
     <servlet>
