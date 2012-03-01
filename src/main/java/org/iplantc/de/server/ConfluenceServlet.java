@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.iplantc.de.shared.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
 import org.swift.common.cli.CliClient.ClientException;
 import org.swift.common.soap.confluence.RemoteComment;
@@ -67,7 +68,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public String addPage(String toolName, String description) {
+    public String addPage(String toolName, String description) throws ConfluenceException {
         String content;
         try {
             content = getTemplate();
@@ -81,7 +82,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         try {
             getConfluenceClient().addPage(toolName, content);
         } catch (Exception e) {
-            throw new RuntimeException("Can't create Confluence page!", e); //$NON-NLS-1$
+            throw new ConfluenceException(e);
         }
 
         return properties.getConfluenceSpaceUrl() + toolName;
@@ -91,7 +92,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public void updatePage(String toolName, int avgRating) {
+    public void updatePage(String toolName, int avgRating) throws ConfluenceException {
         String space = properties.getConfluenceSpaceName();
         try {
             IPlantConfluenceClient client = getConfluenceClient();
@@ -124,7 +125,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             // update page
             client.storePage(page, toolName, space, null, content, true, false);
         } catch (Exception e) {
-            throw new RuntimeException("Can't update Confluence page!", e); //$NON-NLS-1$
+            throw new ConfluenceException(e);
         }
     }
 
@@ -176,13 +177,13 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public String addComment(String toolName, String comment) {
+    public String addComment(String toolName, String comment) throws ConfluenceException {
         String space = properties.getConfluenceSpaceName();
         try {
             RemoteComment confluenceComment = getConfluenceClient().addComment(space, toolName, comment);
             return String.valueOf(confluenceComment.getId());
         } catch (Exception e) {
-            throw new RuntimeException("Can't add comment to page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new ConfluenceException(e);
         }
     }
 
@@ -190,12 +191,11 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public void removeComment(String toolName, Long commentId) {
+    public void removeComment(String toolName, Long commentId) throws ConfluenceException {
         try {
             getConfluenceClient().removeComment(commentId);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            throw new ConfluenceException(e);
         }
     }
 
@@ -203,23 +203,23 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public void editComment(String toolName, Long commentId, String newComment) {
+    public void editComment(String toolName, Long commentId, String newComment)
+            throws ConfluenceException {
         try {
             getConfluenceClient().editComment(commentId, newComment);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Can't remove comment with id " + commentId + " from page '" + toolName + "'", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            throw new ConfluenceException(e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getComment(long commentId) {
+    public String getComment(long commentId) throws ConfluenceException {
         try {
             return getConfluenceClient().getComment(commentId);
         } catch (Exception e) {
-            throw new RuntimeException("Can't retrieve comment with id " + commentId, e); //$NON-NLS-1$
+            throw new ConfluenceException(e);
         }
     }
 
