@@ -68,7 +68,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public String addPage(String toolName, String description) {
+    public String addPage(String toolName, String description) throws ConfluenceException {
         String content;
         try {
             content = getTemplate();
@@ -82,7 +82,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         try {
             getConfluenceClient().addPage(toolName, content);
         } catch (Exception e) {
-            throw new RuntimeException("Can't create Confluence page!", e); //$NON-NLS-1$
+            throw new ConfluenceException(e);
         }
 
         return properties.getConfluenceSpaceUrl() + toolName;
