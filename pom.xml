@@ -5,7 +5,7 @@
 	<groupId>org.iplantc.admin.belphegor</groupId>
 	<artifactId>belphegor</artifactId>
 	<packaging>war</packaging>
-	<version>dev-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>Belphegor - Tool Integration Administrative Interface</name>
 	<url>http://projects.iplantcollaborative.org</url>
 	<properties>
@@ -47,27 +47,27 @@
 		<dependency>
 			<groupId>org.iplantc.de</groupId>
 			<artifactId>de-common</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>jsonutil</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>ui-commons</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>widgets</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>applications</artifactId>
-			<version>dev-SNAPSHOT</version>
+			<version>1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
             <groupId>org.iplantc.de</groupId>
