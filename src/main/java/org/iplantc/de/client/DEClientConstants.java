@@ -351,39 +351,11 @@ public interface DEClientConstants extends CommonUiConstants {
     String deHelpFile();
 
     /**
-     * The path to DE tools help file
-     * 
-     * @return path to help file
-     */
-    String deToolsHelpFile();
-
-    /**
-     * The path to the wiki page "Creating Documentation for Tools"
-     * 
-     * @return path to help file
-     */
-    String publishDocumentationUrl();
-
-    /**
      * The tag for DE catalog
      * 
      * @return path to help file
      */
     String deCatalog();
-
-    /**
-     * The path to DE help file
-     * 
-     * @return path to help file
-     */
-    String validAppWikiUrlPath();
-
-    /**
-     * A valid URL sample for DE help files.
-     * 
-     * @return A sample help file URL
-     */
-    String validAppWikiUrlExample();
 
     /**
      * The unique tag used to identify a viewer window.
