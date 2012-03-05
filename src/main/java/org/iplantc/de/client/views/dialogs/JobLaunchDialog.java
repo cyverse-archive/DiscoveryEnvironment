@@ -81,7 +81,7 @@ public class JobLaunchDialog extends Dialog {
 
     private void updateOkButton() {
         Button btnOk = getButtonById(Dialog.OK);
-        btnOk.setEnabled(fieldsValid() && isValidFolder); //$NON-NLS-1$
+        btnOk.setEnabled(fieldsValid() && isValidFolder);
     }
 
     private void initNameField() {
@@ -160,7 +160,12 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private void initDescriptionArea() {
-        areaDescription = new JobDescriptionTextArea();
+        areaDescription = new JobDescriptionTextArea() {
+            @Override
+            public void onKeyUp(FieldEvent fe) {
+                updateOkButton();
+            }
+        };
         areaDescription.setId("idJobDescription"); //$NON-NLS-1$
         areaDescription.setSize(320, 100);
         areaDescription.setSelectOnFocus(true);
@@ -201,7 +206,19 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private boolean fieldsValid() {
-        return fieldName.isValid() && areaDescription.isValid();
+        boolean nameValid = fieldName.isValid();
+        // clear the error icon when input changes from invalid to valid
+        if (nameValid) {
+            fieldName.clearInvalid();
+        }
+
+        boolean descValid = areaDescription.isValid();
+        // clear the error icon when input changes from invalid to valid
+        if (descValid) {
+            areaDescription.clearInvalid();
+        }
+
+        return nameValid && descValid;
     }
 
     private void init() {
