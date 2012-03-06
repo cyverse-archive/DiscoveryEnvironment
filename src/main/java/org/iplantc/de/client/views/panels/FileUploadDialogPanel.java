@@ -65,7 +65,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     private final List<FileUpload> fupload;
     private final List<TextArea> urls;
     private final String destFolder;
-    private MODE mode;
+    private final MODE mode;
 
     public static enum MODE {
         URL_ONLY, FILE_AND_URL
@@ -177,7 +177,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
         url.addKeyListener(new KeyListener() {
             @Override
-            public void componentKeyPress(ComponentEvent event) {
+            public void componentKeyUp(ComponentEvent event) {
                 if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
                     handleOkClick();
                 }
@@ -218,7 +218,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private void validateForm() {
-        getOkButton().setEnabled(isValidUploadForm());
+        boolean fileStatusIsBusy = fileStatus.getIconStyle().equals("x-status-busy"); //$NON-NLS-1$
+
+        getOkButton().setEnabled(isValidUploadForm() && !fileStatusIsBusy);
     }
 
     private void initOkButton() {
@@ -257,6 +259,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 urlField.setEnabled(validUrl);
 
                 if (validUrl) {
+                    urlField.setValue(url.trim());
                     destResourceIds.add(buildResourceId(DataUtils.parseNameFromPath(url)));
                 }
             }
@@ -347,7 +350,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 JSONObject jsonResponse = JsonUtil.getObject(JsonUtil.formatString(response));
                 JSONArray results = JsonUtil.getArray(jsonResponse, "results"); //$NON-NLS-1$
                 if (results == null) {
-                    throw new Exception(I18N.ERROR.fileUploadFailed(fupload.get(0).getFilename()));
+                    throw new Exception(response);
                 }
 
                 for (int i = 0; i < results.size(); i++) {
@@ -369,8 +372,17 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
-                hdlrUpload.onCompletion(fupload.get(0).getFilename(), response);
+            } catch (Exception caught) {
+                String firstFileName = ""; //$NON-NLS-1$
+
+                if (!fupload.isEmpty()) {
+                    firstFileName = fupload.get(0).getFilename();
+                } else if (!urls.isEmpty()) {
+                    firstFileName = DataUtils.parseNameFromPath(urls.get(0).getValue());
+                }
+
+                ErrorHandler.post(I18N.ERROR.fileUploadFailed(firstFileName), caught);
+                hdlrUpload.onAfterCompletion();
             }
 
             // we're done, so clear the busy notification
