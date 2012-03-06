@@ -239,15 +239,22 @@ public class DataUtils {
                     return;
                 }
 
+                List<String> duplicateFiles = new ArrayList<String>();
+
                 for (final String resourceId : diskResourceIds) {
                     // TODO add an extra check to make sure the resourceId key is found in paths?
                     boolean fileExists = JsonUtil.getBoolean(paths, resourceId, false);
 
                     if (fileExists) {
-                        String errMsg = I18N.ERROR.duplicateFile(parseNameFromPath(resourceId));
-                        onFailure(new Exception(errMsg));
-                        return;
+                        duplicateFiles.add(parseNameFromPath(resourceId));
                     }
+                }
+
+                if (!duplicateFiles.isEmpty()) {
+                    String errMsg = I18N.ERROR.fileExists(join(duplicateFiles, ", ")); //$NON-NLS-1$
+                    onFailure(new Exception(errMsg));
+
+                    return;
                 }
 
                 callback.onSuccess(response);
