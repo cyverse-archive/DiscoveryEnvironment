@@ -54,6 +54,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class AnalysisParameterViewerPanel extends ContentPanel {
 
+    private static final String ID_BTN_SAVE_AS = "idBtnSaveAs";
     private Grid<AnalysisParameter> grid;
     private ToolBar toolbar;
 
@@ -79,6 +80,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
     private Button buildSaveAsButton() {
         Button b = new Button(I18N.DISPLAY.saveAs());
+        b.setId(ID_BTN_SAVE_AS);
         b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
             @Override
@@ -166,16 +168,32 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
                 grid.getStore().removeAll();
                 grid.getStore().add(parameters);
-
+                setSaveButtonState();
+                setGridViewMsg();
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                System.out.println(caught.getMessage());
-                grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
+                setSaveButtonState();
+                setGridViewMsg();
             }
         });
 
+    }
+
+    private void setGridViewMsg() {
+        if (grid.getStore().getCount() <= 0) {
+            grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
+            grid.getView().refresh(false);
+        }
+    }
+
+    private void setSaveButtonState() {
+        if (grid.getStore().getCount() > 0) {
+            toolbar.getItemByItemId(ID_BTN_SAVE_AS).enable();
+        } else {
+            toolbar.getItemByItemId(ID_BTN_SAVE_AS).disable();
+        }
     }
 
     private void initGrid() {
