@@ -260,4 +260,34 @@ public class DataUtils {
             }
         });
     }
+
+    /**
+     * A helper method to join strings in a list into one string containing each item separated by glue.
+     * Works similar to JavaScript's Array.join(glue) function.
+     * 
+     * @param stringList
+     * @param glue
+     * @return A string containing each item in stringList separated by glue.
+     */
+    public static String join(List<String> stringList, String glue) {
+        if (stringList == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        boolean first = true;
+        for (String s : stringList) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(glue);
+            }
+
+            builder.append(s);
+        }
+
+        return builder.toString();
+    }
+
 }
