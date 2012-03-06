@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
@@ -63,7 +64,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     }
 
     private void init(String analysisId) {
-        setSize(515, 300);
+        setSize(505, 310);
         setLayout(new FitLayout());
         setHeaderVisible(false);
         retrieveData(analysisId);
@@ -199,12 +200,15 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     private void initGrid() {
         final ColumnModel colModel = buildColumnModel();
         grid = new Grid<AnalysisParameter>(new ListStore<AnalysisParameter>(), colModel);
+        grid.setStripeRows(true);
+        new QuickTip(grid);
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 150); //$NON-NLS-1$
-        ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 100); //$NON-NLS-1$
-        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 250); //$NON-NLS-1$
+        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 210); //$NON-NLS-1$
+        param_name.setRenderer(new ParamNameCellRenderer());
+        ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 75); //$NON-NLS-1$
+        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 200); //$NON-NLS-1$
         param_value.setRenderer(new ParamValueCellRenderer());
 
         List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
@@ -237,6 +241,15 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             } else {
                 return val;
             }
+        }
+    }
+
+    private class ParamNameCellRenderer implements GridCellRenderer<AnalysisParameter> {
+
+        @Override
+        public Object render(AnalysisParameter model, String property, ColumnData config, int rowIndex,
+                int colIndex, ListStore<AnalysisParameter> store, Grid<AnalysisParameter> grid) {
+            return "<span qtip='" + model.getParamName() + "'>" + model.getParamName() + "</span>";
         }
     }
 
