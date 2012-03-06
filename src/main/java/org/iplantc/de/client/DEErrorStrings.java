@@ -159,14 +159,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String appRemoveFailure();
 
     /**
-     * Localized text for display as the message notifying the user that the given filename is a
-     * duplicate file within their workspace.
-     * 
-     * @return a string representing the localized text.
-     */
-    String duplicateFile(String filename);
-
-    /**
      * Error message displayed when disk resource move fails.
      * 
      * @return localized error string.
