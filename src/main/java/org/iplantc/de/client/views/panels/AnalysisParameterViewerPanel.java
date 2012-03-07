@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
@@ -54,6 +55,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class AnalysisParameterViewerPanel extends ContentPanel {
 
+    private static final String ID_BTN_SAVE_AS = "idBtnSaveAs";
     private Grid<AnalysisParameter> grid;
     private ToolBar toolbar;
 
@@ -62,7 +64,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     }
 
     private void init(String analysisId) {
-        setSize(515, 300);
+        setSize(505, 310);
         setLayout(new FitLayout());
         setHeaderVisible(false);
         retrieveData(analysisId);
@@ -79,6 +81,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
     private Button buildSaveAsButton() {
         Button b = new Button(I18N.DISPLAY.saveAs());
+        b.setId(ID_BTN_SAVE_AS);
         b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
             @Override
@@ -166,27 +169,46 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
                 grid.getStore().removeAll();
                 grid.getStore().add(parameters);
-
+                setSaveButtonState();
+                setGridViewMsg();
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                System.out.println(caught.getMessage());
-                grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
+                setSaveButtonState();
+                setGridViewMsg();
             }
         });
 
     }
 
+    private void setGridViewMsg() {
+        if (grid.getStore().getCount() <= 0) {
+            grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
+            grid.getView().refresh(false);
+        }
+    }
+
+    private void setSaveButtonState() {
+        if (grid.getStore().getCount() > 0) {
+            toolbar.getItemByItemId(ID_BTN_SAVE_AS).enable();
+        } else {
+            toolbar.getItemByItemId(ID_BTN_SAVE_AS).disable();
+        }
+    }
+
     private void initGrid() {
         final ColumnModel colModel = buildColumnModel();
         grid = new Grid<AnalysisParameter>(new ListStore<AnalysisParameter>(), colModel);
+        grid.setStripeRows(true);
+        new QuickTip(grid);
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 150); //$NON-NLS-1$
-        ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 100); //$NON-NLS-1$
-        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 250); //$NON-NLS-1$
+        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 210); //$NON-NLS-1$
+        param_name.setRenderer(new ParamNameCellRenderer());
+        ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 75); //$NON-NLS-1$
+        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 200); //$NON-NLS-1$
         param_value.setRenderer(new ParamValueCellRenderer());
 
         List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
@@ -219,6 +241,15 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             } else {
                 return val;
             }
+        }
+    }
+
+    private class ParamNameCellRenderer implements GridCellRenderer<AnalysisParameter> {
+
+        @Override
+        public Object render(AnalysisParameter model, String property, ColumnData config, int rowIndex,
+                int colIndex, ListStore<AnalysisParameter> store, Grid<AnalysisParameter> grid) {
+            return "<span qtip='" + model.getParamName() + "'>" + model.getParamName() + "</span>";
         }
     }
 

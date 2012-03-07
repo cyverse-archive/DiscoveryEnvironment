@@ -370,7 +370,7 @@ public class MyAnalysesPanel extends ContentPanel {
             d.setResizable(false);
             d.setHeading(I18N.DISPLAY.viewParameters(ae.getName()));
             d.add(new AnalysisParameterViewerPanel(ae.getId()));
-            d.setSize(520, 320);
+            d.setSize(520, 375);
             d.setButtons(Dialog.OK);
             d.setHideOnButtonClick(true);
             d.show();

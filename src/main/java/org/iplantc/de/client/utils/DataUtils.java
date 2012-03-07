@@ -239,15 +239,22 @@ public class DataUtils {
                     return;
                 }
 
+                List<String> duplicateFiles = new ArrayList<String>();
+
                 for (final String resourceId : diskResourceIds) {
                     // TODO add an extra check to make sure the resourceId key is found in paths?
                     boolean fileExists = JsonUtil.getBoolean(paths, resourceId, false);
 
                     if (fileExists) {
-                        String errMsg = I18N.ERROR.duplicateFile(parseNameFromPath(resourceId));
-                        onFailure(new Exception(errMsg));
-                        return;
+                        duplicateFiles.add(parseNameFromPath(resourceId));
                     }
+                }
+
+                if (!duplicateFiles.isEmpty()) {
+                    String errMsg = I18N.ERROR.fileExists(join(duplicateFiles, ", ")); //$NON-NLS-1$
+                    onFailure(new Exception(errMsg));
+
+                    return;
                 }
 
                 callback.onSuccess(response);
@@ -260,4 +267,34 @@ public class DataUtils {
             }
         });
     }
+
+    /**
+     * A helper method to join strings in a list into one string containing each item separated by glue.
+     * Works similar to JavaScript's Array.join(glue) function.
+     * 
+     * @param stringList
+     * @param glue
+     * @return A string containing each item in stringList separated by glue.
+     */
+    public static String join(List<String> stringList, String glue) {
+        if (stringList == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        boolean first = true;
+        for (String s : stringList) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(glue);
+            }
+
+            builder.append(s);
+        }
+
+        return builder.toString();
+    }
+
 }

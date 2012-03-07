@@ -218,7 +218,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private void validateForm() {
-        boolean fileStatusIsBusy = fileStatus.getIconStyle().equals("x-status-busy"); //$NON-NLS-1$
+        boolean fileStatusIsBusy = "x-status-busy".equals(fileStatus.getIconStyle()); //$NON-NLS-1$
 
         getOkButton().setEnabled(isValidUploadForm() && !fileStatusIsBusy);
     }
