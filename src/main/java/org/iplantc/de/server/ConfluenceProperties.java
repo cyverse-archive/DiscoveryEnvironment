@@ -16,15 +16,16 @@ public class ConfluenceProperties {
     private final Logger LOGGER = Logger.getLogger(ConfluenceProperties.class);
 
     // The prefix for all of the properties.
-    private static final String PREFIX = "org.iplantc.discoveryenvironment"; //$NON-NLS-1$
+    private static final String PREFIX = "org.iplantc.discoveryenvironment.confluence"; //$NON-NLS-1$
 
-    private static final String CONFLUENCE_BASE_URL = PREFIX + ".confluence.baseUrl"; //$NON-NLS-1$
-    private static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".confluence.parentPageName"; //$NON-NLS-1$
-    private static final String CONFLUENCE_USER = PREFIX + ".confluence.user"; //$NON-NLS-1$
-    private static final String CONFLUENCE_PASSWORD = PREFIX + ".confluence.password"; //$NON-NLS-1$
-    private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".confluence.spaceName"; //$NON-NLS-1$
-    private static final String CONFLUENCE_SPACE_URL = PREFIX + ".confluence.spaceUrl"; //$NON-NLS-1$
-    private static final String CONFLUENCE_COMMENT_SUFFIX = PREFIX + ".confluence.ratingCommentSuffix"; //$NON-NLS-1$
+    private static final String CONFLUENCE_BASE_URL = PREFIX + ".baseUrl"; //$NON-NLS-1$
+    private static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".parentPageName"; //$NON-NLS-1$
+    private static final String CONFLUENCE_USER = PREFIX + ".user"; //$NON-NLS-1$
+    private static final String CONFLUENCE_PASSWORD = PREFIX + ".password"; //$NON-NLS-1$
+    private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".spaceName"; //$NON-NLS-1$
+    private static final String CONFLUENCE_SPACE_URL = PREFIX + ".spaceUrl"; //$NON-NLS-1$
+    /** this is an internationalized string #translate #i18n */
+    private static final String CONFLUENCE_COMMENT_SUFFIX = PREFIX + ".ratingCommentSuffix"; //$NON-NLS-1$
     private Properties properties;
 
     /**
