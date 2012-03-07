@@ -783,7 +783,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String comment) {
-                        dlg.setText(removeCommentMarkup(comment));
+                        dlg.setText(comment);
                         dlg.unmaskDialog();
                     }
 
@@ -797,50 +797,11 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             Command onConfirm = new Command() {
                 @Override
                 public void execute() {
-                    String comment = generateCommentMarkup(dlg.getComment(), score);
-                    persistRating(model, score, comment, parent);
+                    persistRating(model, score, dlg.getComment(), parent);
                 }
             };
             dlg.setCommand(onConfirm);
             dlg.show();
-        }
-
-        /** adds rating stars and the DE user name to a user-entered comment */
-        private String generateCommentMarkup(String comment, int score) {
-            StringBuilder markup = new StringBuilder();
-            // add full stars
-            for (int i = 0; i < score; i++)
-                markup.append("\u2605"); //$NON-NLS-1$
-            // add empty stars so it is 5 stars total
-            for (int i = 0; i < 5 - score; i++)
-                markup.append("\u2606"); //$NON-NLS-1$
-            markup.append(" ").append(comment).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-            markup.append(I18N.DISPLAY.ratingCommentSuffix(UserInfo.getInstance().getUsername()));
-            return markup.toString();
-        }
-
-        /** extracts the raw text from a comment by removing stars and the user name */
-        private String removeCommentMarkup(String comment) {
-            // remove suffix
-            String suffixMarker = I18N.DISPLAY.ratingCommentSuffix(""); //$NON-NLS-1$
-            int markerLen = suffixMarker.indexOf(' ');
-            if (markerLen >= 0) {
-                // marker = beginning of the display string up to the first space char
-                suffixMarker = suffixMarker.substring(0, markerLen);
-                int suffixStart = comment.lastIndexOf(suffixMarker);
-                if (suffixStart >= 0) {
-                    comment = comment.substring(0, suffixStart);
-                    comment = comment.trim();
-                }
-            }
-
-            // remove prefix
-            if (comment.length() >= 6) {
-                comment = comment.substring(6); // #chars added by generateCommentMarkup() at the
-                                                // beginning
-            }
-
-            return comment;
         }
 
         /** saves a rating to the database and the wiki page */

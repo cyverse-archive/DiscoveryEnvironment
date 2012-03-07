@@ -2,6 +2,7 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.EmailServiceFacade;
@@ -90,7 +91,9 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
             String comment, final String authorEmail, final AsyncCallback<String> callback) {
         // add comment to wiki page, then call rating service, then update avg on wiki page
         final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
-        confluenceService.addComment(appName, comment, new AsyncCallback<String>() {
+        String username = UserInfo.getInstance().getUsername();
+        confluenceService.addComment(appName, rating, username, comment,
+                new AsyncCallback<String>() {
             @Override
             public void onSuccess(final String commentId) {
                 // wrap the callback so it returns the comment id on success
@@ -169,7 +172,8 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
             final Long commentId, final String comment, final String authorEmail,
             final AsyncCallback<String> callback) {
         // update comment on wiki page, then call rating service, then update avg on wiki page
-        ConfluenceServiceFacade.getInstance().editComment(appName, commentId, comment,
+        String username = UserInfo.getInstance().getUsername();
+        ConfluenceServiceFacade.getInstance().editComment(appName, rating, username, commentId, comment,
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {

@@ -65,11 +65,14 @@ public class ConfluenceServiceFacade {
      * Adds a user comment to a tool description page.
      * 
      * @param toolName the name of the tool which is also the page title
+     * @param score the user's rating of the tool
+     * @param username the DE user who rated the tool
      * @param comment a comment
      * @param callback called after the service call finishes
      */
-    public void addComment(String toolName, String comment, AsyncCallback<String> callback) {
-        proxy.addComment(toolName, comment, callback);
+    public void addComment(String toolName, int score, String username, String comment,
+            AsyncCallback<String> callback) {
+        proxy.addComment(toolName, score, username, comment, callback);
     }
 
     /**
@@ -87,12 +90,15 @@ public class ConfluenceServiceFacade {
      * Changes an existing user comment on a tool description page.
      * 
      * @param toolName the name of the tool which is also the page title
+     * @param score the user's rating of the tool
+     * @param username the DE user who rated the tool
      * @param commentId the comment ID in Confluence
      * @param newComment the new comment text
      * @param callback called after the service call finishes
      */
-    void editComment(String toolName, long commentId, String newComment, AsyncCallback<String> callback) {
-        proxy.editComment(toolName, commentId, newComment, callback);
+    void editComment(String toolName, int score, String username, long commentId, String newComment,
+            AsyncCallback<String> callback) {
+        proxy.editComment(toolName, score, username, commentId, newComment, callback);
     }
 
     /**
