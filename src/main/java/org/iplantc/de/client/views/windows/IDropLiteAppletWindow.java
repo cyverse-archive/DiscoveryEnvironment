@@ -37,6 +37,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
@@ -84,7 +85,8 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         windowConfigData
                 .put(IDropLiteWindowConfig.MANAGE_DATA_CURRENT_PATH, new JSONString(refreshPath));
 
-        dispatchWindowDisplayMessage(windowConfigData);
+        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag() + IDropLite.DISPLAY_MODE_UPLOAD,
+                windowConfigData);
     }
 
     /**
@@ -106,12 +108,13 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         windowConfigData.put(IDropLiteWindowConfig.DOWNLOAD_PATHS,
                 JsonUtil.buildArrayFromStrings(resourceIds));
 
-        dispatchWindowDisplayMessage(windowConfigData);
+        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag() + IDropLite.DISPLAY_MODE_DOWNLOAD,
+                windowConfigData);
     }
 
-    private static void dispatchWindowDisplayMessage(JSONObject windowConfigData) {
+    private static void dispatchWindowDisplayMessage(String windowTag, JSONObject windowConfigData) {
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildConfigPayload(Constants.CLIENT.iDropLiteTag(),
+        JSONObject windowPayload = configFactory.buildConfigPayload(windowTag,
                 Constants.CLIENT.iDropLiteTag(), windowConfigData);
 
         String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
@@ -154,6 +157,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
             // Add button for alternative, simple download link panel.
             toolbar.add(buildSimpleDownloadButton());
+            contents.add(new Label(I18N.DISPLAY.idropLiteDownloadNotice()));
         }
 
         // These settings enable the window to be minimized or moved without reloading the applet.
@@ -343,7 +347,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                 int adjustSize = CONTENT_PADDING * 2;
 
                 return IDropLite.getAppletForDownload(appletData, contents.getWidth() - adjustSize,
-                        contents.getHeight() - adjustSize);
+                        contents.getHeight() - adjustSize - 20);
             }
         });
     }
