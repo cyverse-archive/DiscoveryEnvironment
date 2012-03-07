@@ -132,7 +132,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void init() {
-        setSize(640, 480);
+        setSize(800, 410);
         setResizable(false);
         setLayout(new FitLayout());
 
