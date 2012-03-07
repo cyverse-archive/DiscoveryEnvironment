@@ -35,7 +35,6 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -67,6 +66,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private Html htmlApplet;
     private Dialog dlgUpload;
     private boolean promptHide = true;
+    private ToolBar toolbar;
 
     /**
      * Opens an IDropLiteAppletWindow in Upload Mode for the given uploadDest, via the Window Manager.
@@ -129,32 +129,39 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void init() {
-        if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_UPLOAD) {
-            setHeading(I18N.DISPLAY.upload());
-
-            // Also add an alternative, simple upload form launcher.
-            setTopComponent(buildSimpleUploadToolbar());
-        } else if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_DOWNLOAD) {
-            setHeading(I18N.DISPLAY.download());
-
-            // Also add an alternative, simple download link panel.
-            setTopComponent(buildSimpleDownloadToolbar());
-        }
-
         setSize(640, 480);
         setResizable(false);
         setLayout(new FitLayout());
 
+        // Add window contents container for the applet or simple download links
         contents = new LayoutContainer();
         contents.setStyleAttribute("padding", Format.substitute("{0}px", CONTENT_PADDING)); //$NON-NLS-1$ //$NON-NLS-2$
         add(contents);
+
+        // Add a toobar for a simple mode button.
+        toolbar = new ToolBar();
+        setTopComponent(toolbar);
+
+        // Set the heading and add the correct simple mode button based on the applet display mode.
+        int displayMode = config.getDisplayMode().intValue();
+        if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
+            setHeading(I18N.DISPLAY.upload());
+
+            // Add button to launch alternative, simple upload form.
+            toolbar.add(buildSimpleUploadButton());
+        } else if (displayMode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
+            setHeading(I18N.DISPLAY.download());
+
+            // Add button for alternative, simple download link panel.
+            toolbar.add(buildSimpleDownloadButton());
+        }
 
         // These settings enable the window to be minimized or moved without reloading the applet.
         removeFromParentOnHide = false;
         setHideMode(HideMode.VISIBILITY);
     }
 
-    private ToolBar buildSimpleUploadToolbar() {
+    private Button buildSimpleUploadButton() {
         Button btnSimpleUpload = new Button(I18N.DISPLAY.simpleUploadForm(),
                 new SimpleFormSelectionListener() {
                     @Override
@@ -164,10 +171,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     }
                 });
 
-        ToolBar ret = new ToolBar();
-        ret.add(btnSimpleUpload);
-
-        return ret;
+        return btnSimpleUpload;
     }
 
     private void launchSimpleUploadDialog() {
@@ -199,7 +203,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         dlgUpload.show();
     }
 
-    private Component buildSimpleDownloadToolbar() {
+    private Button buildSimpleDownloadButton() {
         Button btnSimpleDownload = new Button(I18N.DISPLAY.simpleDownloadForm(),
                 new SimpleFormSelectionListener() {
                     @Override
@@ -209,15 +213,13 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     }
                 });
 
-        ToolBar ret = new ToolBar();
-        ret.add(btnSimpleDownload);
-
-        return ret;
+        return btnSimpleDownload;
     }
 
     private void showSimpleDownloadPanel() {
         // Replace the applet with the links panel.
         contents.removeAll();
+        toolbar.removeAll();
 
         VerticalPanel pnlLinks = new VerticalPanel();
 
