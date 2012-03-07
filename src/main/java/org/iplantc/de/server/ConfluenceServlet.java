@@ -177,14 +177,35 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public String addComment(String toolName, String comment) throws ConfluenceException {
+    public String addComment(String toolName, int score, String username, String comment)
+            throws ConfluenceException {
         String space = properties.getConfluenceSpaceName();
         try {
+            comment = generateCommentMarkup(comment, score, username);
             RemoteComment confluenceComment = getConfluenceClient().addComment(space, toolName, comment);
             return String.valueOf(confluenceComment.getId());
         } catch (Exception e) {
             throw new ConfluenceException(e);
         }
+    }
+
+    /** adds rating stars and the DE user name to a user-entered comment */
+    private String generateCommentMarkup(String comment, int score, String username) {
+        StringBuilder markup = new StringBuilder();
+        // add full stars
+        for (int i = 0; i < score; i++)
+            markup.append(BLACK_STAR);
+        // add empty stars so it is 5 stars total
+        for (int i = 0; i < 5 - score; i++)
+            markup.append(WHITE_STAR);
+        markup.append(" ").append(comment).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // replace placeholder with username
+        String suffix = properties.getRatingCommentSuffix();
+        suffix = suffix.replace("{0}", username); //$NON-NLS-1$
+        
+        markup.append(suffix);
+        return markup.toString();
     }
 
     /**
@@ -203,9 +224,10 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * {@inheritDoc}
      */
     @Override
-    public void editComment(String toolName, Long commentId, String newComment)
-            throws ConfluenceException {
+    public void editComment(String toolName, int score, String username, Long commentId,
+            String newComment) throws ConfluenceException {
         try {
+            newComment = generateCommentMarkup(newComment, score, username);
             getConfluenceClient().editComment(commentId, newComment);
         } catch (Exception e) {
             throw new ConfluenceException(e);
@@ -217,10 +239,35 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      */
     public String getComment(long commentId) throws ConfluenceException {
         try {
-            return getConfluenceClient().getComment(commentId);
+            String comment = getConfluenceClient().getComment(commentId);
+            return removeCommentMarkup(comment);
         } catch (Exception e) {
             throw new ConfluenceException(e);
         }
+    }
+
+    /** extracts the raw text from a comment by removing stars and the user name */
+    private String removeCommentMarkup(String comment) {
+        // remove suffix
+        String suffixMarker = properties.getRatingCommentSuffix();
+        int markerLen = suffixMarker.indexOf(' ');
+        if (markerLen >= 0) {
+            // marker = beginning of the display string up to the first space char
+            suffixMarker = suffixMarker.substring(0, markerLen);
+            int suffixStart = comment.lastIndexOf(suffixMarker);
+            if (suffixStart >= 0) {
+                comment = comment.substring(0, suffixStart);
+                comment = comment.trim();
+            }
+        }
+
+        // remove prefix
+        if (comment.length() >= 6) {
+            comment = comment.substring(6); // #chars added by generateCommentMarkup() at the
+                                            // beginning
+        }
+
+        return comment;
     }
 
     private IPlantConfluenceClient getConfluenceClient() throws SerializationException, ClientException {

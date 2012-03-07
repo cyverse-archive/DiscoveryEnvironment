@@ -24,14 +24,15 @@ public class ConfluenceProperties {
     private static final String CONFLUENCE_PASSWORD = PREFIX + ".confluence.password"; //$NON-NLS-1$
     private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".confluence.spaceName"; //$NON-NLS-1$
     private static final String CONFLUENCE_SPACE_URL = PREFIX + ".confluence.spaceUrl"; //$NON-NLS-1$
+    private static final String CONFLUENCE_COMMENT_SUFFIX = PREFIX + ".confluence.ratingCommentSuffix"; //$NON-NLS-1$
     private Properties properties;
 
     /**
      * The list of required properties.
      */
-    private final static String[] REQUIRED_PROPERTIES = {CONFLUENCE_BASE_URL,
-            CONFLUENCE_PARENT_PAGE, CONFLUENCE_USER, CONFLUENCE_PASSWORD, CONFLUENCE_SPACE_NAME,
-            CONFLUENCE_SPACE_URL};
+    private final static String[] REQUIRED_PROPERTIES = {CONFLUENCE_BASE_URL, CONFLUENCE_PARENT_PAGE,
+            CONFLUENCE_USER, CONFLUENCE_PASSWORD, CONFLUENCE_SPACE_NAME, CONFLUENCE_SPACE_URL,
+            CONFLUENCE_COMMENT_SUFFIX};
 
     /**
      * Creates a new ConfluenceProperties object and loads properties.
@@ -136,5 +137,15 @@ public class ConfluenceProperties {
      */
     public String getConfluenceSpaceUrl() {
         return properties.getProperty(CONFLUENCE_SPACE_URL);
+    }
+
+    /**
+     * Gets localized text that is added to rating comments for the wiki; contains a placeholder for the
+     * current DE user.
+     * 
+     * @return a string representing the localized text.
+     */
+    public String getRatingCommentSuffix() {
+        return properties.getProperty(CONFLUENCE_COMMENT_SUFFIX);
     }
 }
