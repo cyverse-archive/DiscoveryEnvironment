@@ -1070,15 +1070,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String selectJobOutputDir(String defaultPath);
 
     /**
-     * Localized text that is added to rating comments for the wiki; may contain wiki markup
-     * 
-     * @param user the name of the current DE user
-     * 
-     * @return a string representing the localized text.
-     */
-    String ratingCommentSuffix(String user);
-
-    /**
      * Localized text for analysis submit confirmation dialog
      * 
      * @return a string representing the localized text.
