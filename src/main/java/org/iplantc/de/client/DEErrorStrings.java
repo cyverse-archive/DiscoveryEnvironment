@@ -430,4 +430,18 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String saveParamFailed();
+
+    /**
+     * Error message displayed when a call to check duplicates failed
+     * 
+     * @return localized error string.
+     */
+    String duplicateCheckFailed();
+
+    /**
+     * Error message displayed when file already exists
+     * 
+     * @return localized error string.
+     */
+    String fileExist();
 }
