@@ -11,6 +11,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
@@ -34,6 +35,8 @@ import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanelSelectionModel;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -531,7 +534,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
      * 
      * @return true if a valid path could be parsed and a folder was found in it that could be expanded.
      */
-    protected boolean expandThenSelectPath(String path) {
+    public boolean expandThenSelectPath(String path) {
         if (path == null || path.isEmpty()) {
             return false;
         }
@@ -570,13 +573,42 @@ public class DataNavigationPanel extends AbstractDataPanel {
             // AsyncTreeLoaderCallBack will not be called if the parent is already expanded (it has
             // already loaded all of its children) or the parent does not have any subfolders. So the
             // next child to expand could not be found.
-            unsetCallbackAndSelectFolder(parent.getId());
-            displayRetrieveFolderError(paths.pop());
+            model.setTreeLoaderCallback(null);
+            maskingParent.unmask();
+            loadFolderAndSelect(parent, path);
         }
 
         // return true since this method or the AsyncTreeLoaderCallBack will select some folder along the
         // given path
         return true;
+    }
+
+    /**
+     * Loads a folder that exists on disk but not in the navigation tree, and inserts it into the tree.
+     * The folder's parent must exist.
+     * 
+     * @param parent the parent folder
+     * @param path path to the folder
+     */
+    private void loadFolderAndSelect(final Folder parent, final String path) {
+        new FolderServiceFacade().getFolderContents(path, false, new DiskResourceServiceCallback() {
+            @Override
+            public void onSuccess(String result) {
+                Folder newFolder = new Folder(JSONParser.parseStrict(result).isObject());
+                pnlTree.getStore().add(parent, newFolder, true);
+                selectFolder(path);
+            }
+
+            @Override
+            protected String getErrorMessageDefault() {
+                return I18N.ERROR.retrieveFolderInfoFailed();
+            }
+
+            @Override
+            protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                return getErrorMessageForFolders(code, path);
+            }
+        });
     }
 
     private void unsetCallbackAndSelectFolder(String path) {
