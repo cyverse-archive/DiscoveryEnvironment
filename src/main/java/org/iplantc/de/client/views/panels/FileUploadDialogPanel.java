@@ -394,9 +394,11 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 fileStatus.clearStatus("");
                 return;
             } else {
-                for (int i = 0; i < MAX_UPLOADS; i++) {
-                    if (!isValidFilename(fupload.get(i).getValue())) {
-                        form.remove(form.getItemByItemId(ID_WRAP + i));
+                if (mode.equals(MODE.FILE_AND_URL)) {
+                    for (int i = 0; i < MAX_UPLOADS; i++) {
+                        if (!isValidFilename(fupload.get(i).getValue())) {
+                            form.remove(form.getItemByItemId(ID_WRAP + i));
+                        }
                     }
                 }
                 form.submit();
