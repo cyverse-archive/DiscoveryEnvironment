@@ -9,19 +9,24 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
+import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.DiskResouceDuplicatesCheckCallback;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.FastMap;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.FormEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
+import com.extjs.gxt.ui.client.widget.HorizontalPanel;
+import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonBar;
@@ -36,6 +41,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,6 +53,12 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class FileUploadDialogPanel extends IPlantDialogPanel {
+    private static final String ID_WRAP = "idWrap";
+
+    private static final String ID_FILE_UPLD = "idFileUpld";
+
+    private static final String ID_BTN_RESET = "idBtnReset";
+
     private static final int FIELD_WIDTH = 475;
 
     private static final String URL_REGEX = "^(?:ftp|FTP|HTTPS?|https?)://[^/]+/.*[^/ ]$"; //$NON-NLS-1$
@@ -116,6 +128,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private void buildInternalLayout(FastMap<String> hiddenFields) {
+
+        form.add(fileStatus);
+
         // add any key/value pairs provided as hidden field
         for (String field : hiddenFields.keySet()) {
             Hidden hdn = new Hidden(field, hiddenFields.get(field));
@@ -126,9 +141,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             // then add the visual widgets
             form.add(new HTML(I18N.DISPLAY.fileUploadMaxSizeWarning()));
             for (int i = 0; i < MAX_UPLOADS; i++) {
-                FileUploadField uploadField = buildFileUpload();
-                fupload.add(uploadField);
-                form.add(uploadField);
+                HorizontalPanel uploadFieldPnl = buildFileUpload(i);
+                fupload.add((FileUploadField)uploadFieldPnl.getItemByItemId(ID_FILE_UPLD + i));
+                form.add(uploadFieldPnl);
             }
         }
 
@@ -140,8 +155,6 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             urls.add(url);
             form.add(url);
         }
-
-        form.add(fileStatus);
     }
 
     private TextArea buildUrlField() {
@@ -155,11 +168,24 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         url.setRegex(URL_REGEX);
         url.getMessages().setRegexText(I18N.DISPLAY.invalidImportUrl());
 
-        url.addListener(Events.Change, new Listener<FieldEvent>() {
+        url.addListener(Events.Valid, new Listener<FieldEvent>() {
+
             @Override
             public void handleEvent(FieldEvent be) {
                 validateForm();
+
             }
+
+        });
+
+        url.addListener(Events.Invalid, new Listener<FieldEvent>() {
+
+            @Override
+            public void handleEvent(FieldEvent be) {
+                getOkButton().setEnabled(false);
+
+            }
+
         });
 
         url.addKeyListener(new KeyListener() {
@@ -182,18 +208,54 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         return ret;
     }
 
-    private FileUploadField buildFileUpload() {
+    private HorizontalPanel buildFileUpload(int index) {
+        HorizontalPanel wrapper = new HorizontalPanel();
+        wrapper.setSpacing(5);
+        wrapper.setId(ID_WRAP + index);
         FileUploadField ret = new FileUploadField();
+        ret.setId(ID_FILE_UPLD + index);
         ret.setName("file");
-        ret.addListener(Events.Change, new Listener<FieldEvent>() {
+        ret.addListener(Events.Valid, new Listener<FieldEvent>() {
 
             @Override
             public void handleEvent(FieldEvent be) {
                 validateForm();
+            }
 
+        });
+
+        ret.addListener(Events.Invalid, new Listener<FieldEvent>() {
+
+            @Override
+            public void handleEvent(FieldEvent be) {
+                getOkButton().setEnabled(false);
+            }
+
+        });
+        ret.setAutoValidate(true);
+        ret.setWidth(275);
+
+        wrapper.add(ret);
+        wrapper.add(new Html("&nbsp;&nbsp;&nbsp;"));
+        wrapper.add(buildResetButton(ret));
+
+        return wrapper;
+    }
+
+    private Button buildResetButton(final FileUploadField field) {
+        Button reset = new Button();
+        reset.setToolTip(I18N.DISPLAY.reset());
+        reset.setId(ID_BTN_RESET);
+        reset.setIcon(AbstractImagePrototype.create(Resources.ICONS.arrow_undo()));
+        reset.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent ce) {
+                field.reset();
             }
         });
-        return ret;
+
+        return reset;
     }
 
     private void validateForm() {
@@ -216,7 +278,6 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             getOkButton().disable();
 
             // check for duplicate files already on the server, excluding any invalid upload fields
-            @SuppressWarnings("rawtypes")
             final FastMap<TextField<String>> destResourceMap = new FastMap<TextField<String>>();
             if (mode.equals(MODE.FILE_AND_URL)) {
                 for (FileUploadField uploadField : fupload) {
@@ -270,7 +331,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         }
 
         for (TextArea urlField : urls) {
-            if (urlField.isValid() && isValidFilename(urlField.getValue())) {
+            if (isValidFilename(urlField.getValue())) {
                 return true;
             }
         }
@@ -333,9 +394,9 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 fileStatus.clearStatus("");
                 return;
             } else {
-                for (TextField<String> field : fupload) {
-                    if (!isValidFilename(field.getValue())) {
-                        form.remove(field);
+                for (int i = 0; i < MAX_UPLOADS; i++) {
+                    if (!isValidFilename(fupload.get(i).getValue())) {
+                        form.remove(form.getItemByItemId(ID_WRAP + i));
                     }
                 }
                 form.submit();

@@ -1148,4 +1148,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String viewParamLbl();
 
+    /**
+     * Localized text for form reset
+     * 
+     * 
+     * @return a string representing the localized text.
+     */
+    String reset();
+
 }
