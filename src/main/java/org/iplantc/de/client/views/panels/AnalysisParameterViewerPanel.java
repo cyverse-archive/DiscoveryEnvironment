@@ -12,7 +12,6 @@ import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisParameter;
-import org.iplantc.de.client.models.JsAnalysisParameter;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
@@ -36,7 +35,6 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -158,12 +156,9 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             public void onSuccess(String result) {
                 JSONObject obj = JSONParser.parseStrict(result).isObject();
                 JSONArray arr = JsonUtil.getArray(obj, "parameters");
-                JsArray<JsAnalysisParameter> js_params = JsonUtil.asArrayOf(arr.toString());
                 List<AnalysisParameter> parameters = new ArrayList<AnalysisParameter>();
-                for (int i = 0; i < js_params.length(); i++) {
-                    JsAnalysisParameter jsp = js_params.get(i);
-                    AnalysisParameter param = new AnalysisParameter(jsp.getId(), jsp.getName(), jsp
-                            .getType(), jsp.getValue());
+                for (int i = 0; i < arr.size(); i++) {
+                    AnalysisParameter param = new AnalysisParameter(arr.get(i).isObject());
                     parameters.add(param);
                 }
 
@@ -201,14 +196,16 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         final ColumnModel colModel = buildColumnModel();
         grid = new Grid<AnalysisParameter>(new ListStore<AnalysisParameter>(), colModel);
         grid.setStripeRows(true);
+        grid.setAutoExpandColumn("param_value");
+        grid.getView().setForceFit(false);
         new QuickTip(grid);
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 210); //$NON-NLS-1$
+        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 175); //$NON-NLS-1$
         param_name.setRenderer(new ParamNameCellRenderer());
         ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 75); //$NON-NLS-1$
-        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 200); //$NON-NLS-1$
+        ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 325); //$NON-NLS-1$
         param_value.setRenderer(new ParamValueCellRenderer());
 
         List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
@@ -220,26 +217,34 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     private class ParamValueCellRenderer implements GridCellRenderer<AnalysisParameter> {
 
         @Override
-        public Object render(AnalysisParameter model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<AnalysisParameter> store, Grid<AnalysisParameter> grid) {
-            final String val = model.get(AnalysisParameter.PARAMETER_VALUE);
-            if (model.get(AnalysisParameter.PARAMETER_TYPE).equals("Input")) {
-                Hyperlink link = new Hyperlink(val, "analysis-param-value");
+        public Object render(final AnalysisParameter model, String property, ColumnData config,
+                int rowIndex, int colIndex, ListStore<AnalysisParameter> store,
+                Grid<AnalysisParameter> grid) {
+            final String full_text = model.get(AnalysisParameter.PARAMETER_VALUE).toString();
+
+            String info_type = model.getInfoType();
+            // At present,reference genome info types are not supported by DE viewers
+            boolean valid_info_type = !info_type.equalsIgnoreCase("ReferenceGenome")
+                    && !info_type.equalsIgnoreCase("ReferenceSequence")
+                    && !info_type.equalsIgnoreCase("ReferenceAnnotation");
+            if (model.get(AnalysisParameter.PARAMETER_TYPE).equals("Input") && valid_info_type) {
+                Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
                 link.addClickListener(new Listener<ComponentEvent>() {
 
                     @Override
                     public void handleEvent(ComponentEvent be) {
                         List<String> contexts = new ArrayList<String>();
                         DataContextBuilder builder = new DataContextBuilder();
-                        contexts.add(builder.build(val));
+                        contexts.add(builder.build(full_text));
                         DataViewContextExecutor executor = new DataViewContextExecutor();
                         executor.execute(contexts);
 
                     }
                 });
+                link.setToolTip(full_text);
                 return link;
             } else {
-                return val;
+                return "<span qtip='" + full_text + "'>" + full_text + "</span>";
             }
         }
     }
