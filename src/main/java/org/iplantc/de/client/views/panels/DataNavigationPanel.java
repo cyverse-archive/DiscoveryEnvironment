@@ -1,13 +1,16 @@
 package org.iplantc.de.client.views.panels;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
@@ -36,7 +39,6 @@ import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanelSelectionModel;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -53,7 +55,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class DataNavigationPanel extends AbstractDataPanel {
     private TreePanel<Folder> pnlTree;
     private boolean enableDragAndDrop = true;
-    private DataNavToolBar toolBar;
+    private final DataNavToolBar toolBar;
     private final Mode mode;
     private Component maskingParent;
     private ClientDataModel model;
@@ -270,7 +272,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
 
         if (target == null) {
             // the target is not yet loaded into the navigation tree.
-            return expandThenSelectPath(path);
+            return lazyLoadPath(path);
         }
 
         if (pnlTree != null) {
@@ -534,7 +536,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
      * 
      * @return true if a valid path could be parsed and a folder was found in it that could be expanded.
      */
-    public boolean expandThenSelectPath(String path) {
+    private boolean lazyLoadPath(String path) {
         if (path == null || path.isEmpty()) {
             return false;
         }
@@ -564,7 +566,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
         // start expanding the parent folders in order.
         maskingParent.mask(I18N.DISPLAY.loadingMask());
 
-        model.setTreeLoaderCallback(new AsyncTreeLoaderCallBack(paths));
+        AsyncTreeLoaderCallBack callback = new AsyncTreeLoaderCallBack(paths);
+        model.setTreeLoaderCallback(callback);
 
         // expand the first parent found that is already loaded in the model to load its children.
         expandFolder(parent);
@@ -572,10 +575,9 @@ public class DataNavigationPanel extends AbstractDataPanel {
         if (pnlTree.isExpanded(parent) || !parent.hasSubFolders()) {
             // AsyncTreeLoaderCallBack will not be called if the parent is already expanded (it has
             // already loaded all of its children) or the parent does not have any subfolders. So the
-            // next child to expand could not be found.
-            model.setTreeLoaderCallback(null);
-            maskingParent.unmask();
-            loadFolderAndSelect(parent, path);
+            // next child to expand could not be found. We'll reload parent to be sure we have its latest
+            // info, in case the next child was created by a service.
+            reloadFolderThenExpand(parent, path, callback);
         }
 
         // return true since this method or the AsyncTreeLoaderCallBack will select some folder along the
@@ -584,31 +586,67 @@ public class DataNavigationPanel extends AbstractDataPanel {
     }
 
     /**
-     * Loads a folder that exists on disk but not in the navigation tree, and inserts it into the tree.
-     * The folder's parent must exist.
+     * Re-loads a folder that may have a subfolder on disk but not in the navigation tree. If the folder
+     * is a root/home folder, then the entire Data Window is refreshed and the given path is expanded and
+     * selected.
      * 
-     * @param parent the parent folder
-     * @param path path to the folder
+     * @param target The target folder to refresh.
+     * @param path Path to the final folder in the lazy-load chain.
      */
-    private void loadFolderAndSelect(final Folder parent, final String path) {
-        new FolderServiceFacade().getFolderContents(path, false, new DiskResourceServiceCallback() {
-            @Override
-            public void onSuccess(String result) {
-                Folder newFolder = new Folder(JSONParser.parseStrict(result).isObject());
-                pnlTree.getStore().add(parent, newFolder, true);
-                selectFolder(path);
-            }
+    private void reloadFolderThenExpand(final Folder target, final String path,
+            final AsyncTreeLoaderCallBack callback) {
+        new FolderServiceFacade().getFolderContents(target.getId(), false,
+                new DiskResourceServiceCallback() {
+                    @Override
+                    public void onSuccess(String result) {
+                        JSONObject jsonTarget = JsonUtil.getObject(result);
+                        Folder freshFolder = new Folder(jsonTarget);
 
-            @Override
-            protected String getErrorMessageDefault() {
-                return I18N.ERROR.retrieveFolderInfoFailed();
-            }
+                        // Make sure the target folder with the latest info has subfolders.
+                        if (freshFolder.hasSubFolders()) {
+                            Folder parent = findFolder(DataUtils.parseParent(target.getId()));
 
-            @Override
-            protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
-                return getErrorMessageForFolders(code, path);
-            }
-        });
+                            if (parent == null) {
+                                // The folder we need to refresh is the home folder, so we'll brute-force
+                                // a refresh of the whole data window.
+                                model.setTreeLoaderCallback(null);
+
+                                ManageDataRefreshEvent event = new ManageDataRefreshEvent(tag, path);
+                                EventBus.getInstance().fireEvent(event);
+                            } else {
+                                // Remove and re-add the target folder with the latest info.
+                                model.deleteDiskResource(target.getId());
+                                freshFolder = model.createFolder(parent.getId(), jsonTarget);
+
+                                // Continue the lazy-loading process by expanding the target folder.
+                                expandFolder(freshFolder);
+                            }
+                        } else {
+                            // Let the lazy-load callback generate the error message for the missing
+                            // child folder.
+                            callback.onSuccess(Arrays.asList(freshFolder));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // There was a problem reloading the target folder, so stop lazy-loading and
+                        // display the error message.
+                        unsetCallbackAndSelectFolder(target.getId());
+
+                        super.onFailure(caught);
+                    }
+
+                    @Override
+                    protected String getErrorMessageDefault() {
+                        return I18N.ERROR.retrieveFolderInfoFailed();
+                    }
+
+                    @Override
+                    protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                        return getErrorMessageForFolders(code, target.getName());
+                    }
+                });
     }
 
     private void unsetCallbackAndSelectFolder(String path) {
