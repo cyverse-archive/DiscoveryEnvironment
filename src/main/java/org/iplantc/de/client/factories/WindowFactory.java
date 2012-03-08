@@ -49,7 +49,7 @@ public class WindowFactory {
                 ret = new DECatalogWindow(type, (BasicWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
-            } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
+            } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else {
                 ret = new WizardWindow(type);
