@@ -74,15 +74,14 @@ public class ConfluenceProperties {
         } catch (IOException e) {
             String msg = "unable to load discovery environment properties"; //$NON-NLS-1$
             LOGGER.error(msg, e);
-        }
- finally { // FIXME eclipse auto indent fail
+        } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
                     LOGGER.error("Cannot close input stream for file " + propFileName, e); //$NON-NLS-1$
-        }
-    }
+                }
+            }
         }
     }
 
