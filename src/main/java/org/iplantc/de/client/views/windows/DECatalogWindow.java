@@ -25,6 +25,7 @@ import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -41,10 +42,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class DECatalogWindow extends IPlantThreePanelWindow {
+    public static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
 
     private ArrayList<HandlerRegistration> handlers;
     private CatalogCategoryPanel catPanel;
     private CatalogMainPanel mainPanel;
+
     public static String WORKSPACE;
     public static String FAVORITES;
     public static String APPLICATIONS_UNDER_DEVLOPMENT;
@@ -173,6 +176,17 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     protected void compose() {
         pnlContents.add(catPanel, dataWest);
         pnlContents.add(mainPanel, dataCenter);
+    }
+
+    @Override
+    protected void onAfterLayout() {
+        super.onAfterLayout();
+
+        // CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
+        Component toolCollapseBtn = catPanel.getHeader().getTool(0);
+        if (toolCollapseBtn != null) {
+            toolCollapseBtn.setId(WEST_COLLAPSE_BTN_ID);
+        }
     }
 
     @Override
