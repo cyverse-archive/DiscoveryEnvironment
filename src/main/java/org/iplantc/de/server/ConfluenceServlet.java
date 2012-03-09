@@ -31,10 +31,10 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
     
     /** A filled star */
-    private static final String BLACK_STAR = "\u2605"; //$NON-NLS-1$
+    private static final String BLACK_STAR = "&#x2605;"; //$NON-NLS-1$
     
     /** An outlined star */
-    private static final String WHITE_STAR = "\u2606"; //$NON-NLS-1$
+    private static final String WHITE_STAR = "&#x2606;"; //$NON-NLS-1$
     
     /** Name of the session attribute that stores the authentication token */
     private static final String AUTH_TOKEN_ATTR = "confluenceToken"; //$NON-NLS-1$
@@ -261,10 +261,10 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             }
         }
 
-        // remove prefix
-        if (comment.length() >= 6) {
-            comment = comment.substring(6); // #chars added by generateCommentMarkup() at the
-                                            // beginning
+        // remove chars added at the beginning by generateCommentMarkup()
+        int prefixLen = BLACK_STAR.length() * 5 + 1; // assume BLACK_STAR.len == WHITE_STAR.len
+        if (comment.length() >= prefixLen) {
+            comment = comment.substring(prefixLen);
         }
 
         return comment;
