@@ -5,28 +5,26 @@ import java.util.List;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 
-import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.google.gwt.user.client.Element;
 
-public abstract class DataTextAreaPanel extends ContentPanel {
+public abstract class DataTextAreaPanel extends LayoutContainer {
     private boolean readyForResizeHandling;
     protected DataTextArea area;
     protected DiskResource file;
 
     protected DataTextAreaPanel() {
         area = new DataTextArea();
+        area.setPreventScrollbars(true);
 
         init();
     }
 
     protected void init() {
-        setVisible(false);
-        setBodyStyle("background-color: #EDEDED"); //$NON-NLS-1$
         setHeight(getInitialHeight());
-        setHeading(getHeadingText());
 
-        hide();
+        area.hide();
     }
 
     /**
@@ -85,18 +83,12 @@ public abstract class DataTextAreaPanel extends ContentPanel {
         area.setValue(value);
     }
 
-    public void update(final List<DiskResource> resources) {
-        // do we have one (and only one) file?
-        file = getSelectedFile(resources);
+    public void update(DiskResource resource) {
+        file = resource;
 
-        if (file == null) {
-            // we do not... simply hide
-            hide();
-        } else {
-            // getting the manifest sets a chain of rpc calls that will eventually
-            // lead to preview data being displayed
-            updateDisplay();
-        }
+        // getting the manifest sets a chain of rpc calls that will eventually
+        // lead to preview data being displayed
+        updateDisplay();
     }
 
     protected class DataTextArea extends TextArea {
@@ -117,7 +109,6 @@ public abstract class DataTextAreaPanel extends ContentPanel {
         protected void afterRender() {
             super.afterRender();
             el().setElementAttribute("spellcheck", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-            setHeight(116);   // reduce height so the scroll buttons are fully visible
         }
     }
 }

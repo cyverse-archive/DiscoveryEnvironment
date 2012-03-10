@@ -15,7 +15,6 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 
 public class DataDetailsPanel extends AbstractDataPanel {
     private DataDetailListPanel pnlDetails;
-    private DataPreviewPanel pnlPreview;
 //    private DataProvenancePanel pnlProvenance;
     private DataActionsPanel pnlActions;
 
@@ -49,10 +48,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
                     pnlDetails.layout();
                 }
 
-                if (pnlPreview != null) {
-                    pnlPreview.handleResize();
-                }
-
 //                if (pnlProvenance != null) {
 //                    pnlProvenance.handleResize();
 //                }
@@ -62,7 +57,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
 
     private void initPanels() {
         pnlDetails = new DataDetailListPanel();
-        pnlPreview = new DataPreviewPanel();
         // pnlProvenance = new DataProvenancePanel();
         pnlActions = new DataActionsPanel();
     }
@@ -81,7 +75,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
                             List<DiskResource> resources = event.getSelected();
 
                             pnlDetails.update(resources);
-                            pnlPreview.update(resources);
                             // pnlProvenance.update(resources);
                             pnlActions.update(resources);
                         }
@@ -96,7 +89,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
     protected void compose() {
         add(pnlActions);
         add(pnlDetails);
-        add(pnlPreview);
         // add(pnlProvenance);
     }
 

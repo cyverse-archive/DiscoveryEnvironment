@@ -30,6 +30,7 @@ import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
+import org.iplantc.de.client.views.panels.DataPreviewPanel;
 import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
 import org.iplantc.de.client.views.panels.MetadataEditorPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
@@ -48,6 +49,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Dialog;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
@@ -60,6 +62,8 @@ import com.extjs.gxt.ui.client.widget.grid.filters.GridFilters;
 import com.extjs.gxt.ui.client.widget.grid.filters.StringFilter;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.tips.ToolTip;
+import com.extjs.gxt.ui.client.widget.tips.ToolTipConfig;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
@@ -675,6 +679,7 @@ class NameCellRenderer implements GridCellRenderer<DiskResource> {
                     + model.getName(), "mydata_name"); //$NON-NLS-1$
         } else {
             link = new Hyperlink("<img src='./images/file.gif'/>&nbsp;" + model.getName(), "mydata_name"); //$NON-NLS-1$ //$NON-NLS-2$
+            addPreviewToolTip(link, model);
         }
 
         link.addListener(Events.OnClick, new Listener<BaseEvent>() {
@@ -689,6 +694,30 @@ class NameCellRenderer implements GridCellRenderer<DiskResource> {
         link.setWidth(model.getName().length());
 
         return link;
+    }
+
+    private void addPreviewToolTip(Component target, final DiskResource resource) {
+        ToolTipConfig ttConfig = new ToolTipConfig();
+        ttConfig.setShowDelay(1000);
+        ttConfig.setDismissDelay(0); // never hide tool tip while mouse is still over it
+        ttConfig.setAnchorToTarget(true);
+        ttConfig.setTitle(I18N.DISPLAY.preview() + ": " + resource.getName()); //$NON-NLS-1$
+
+        final LayoutContainer pnl = new LayoutContainer();
+        final DataPreviewPanel previewPanel = new DataPreviewPanel();
+        pnl.add(previewPanel);
+        ToolTip tip = new ToolTip(target, ttConfig) {
+            // overridden to populate the preview
+            @Override
+            protected void updateContent() {
+                getHeader().setText(title);
+                if (resource != null) {
+                    previewPanel.update(resource);
+                }
+            }
+        };
+        tip.setWidth(312);
+        tip.add(pnl);
     }
 }
 

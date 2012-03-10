@@ -5,9 +5,12 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 
+import com.extjs.gxt.ui.client.widget.Status;
 import com.google.gwt.json.client.JSONObject;
 
 public class DataPreviewPanel extends DataTextAreaPanel {
+    private Status waitIcon;
+
     public DataPreviewPanel() {
         super();
     }
@@ -15,17 +18,24 @@ public class DataPreviewPanel extends DataTextAreaPanel {
     @Override
     protected void init() {
         super.init();
+
+        waitIcon = new Status();
+        waitIcon.setBusy(""); //$NON-NLS-1$
+        add(waitIcon);
     }
 
     @Override
     protected void updateDisplay() {
         final String idFile = file.getId();
         final String fileName = file.getName();
+        waitIcon.show();
 
         FileEditorServiceFacade facade = new FileEditorServiceFacade();
         facade.getManifest(idFile, new DiskResourceServiceCallback() {
             @Override
             public void onSuccess(String result) {
+                waitIcon.clearStatus(""); //$NON-NLS-1$
+
                 // Check the current File ID against the requested ID for this response.
                 if (!isCurrentFileId(idFile)) {
                     // This response is no longer valid (a race condition occurred).
@@ -35,7 +45,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
 
                 if (result == null || result.isEmpty()) {
                     // the response is empty.
-                    hide();
+                    area.hide();
                     return;
                 }
 
@@ -49,13 +59,15 @@ public class DataPreviewPanel extends DataTextAreaPanel {
                 } else if (!urlDownload.isEmpty()) {
                     displayPreviewData(urlDownload, new GetRawDataCallback(idFile, fileName));
                 } else {
-                    hide();
+                    area.hide();
                 }
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                hide();
+                waitIcon.clearStatus(""); //$NON-NLS-1$
+
+                area.hide();
                 super.onFailure(caught);
             }
 
@@ -69,6 +81,17 @@ public class DataPreviewPanel extends DataTextAreaPanel {
                 return getErrorMessageForFiles(code, fileName);
             }
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void afterRender() {
+        super.afterRender();
+
+        // make room for the spinny icon
+        setHeight(getInitialHeight() + 25);
     }
 
     /**
@@ -90,7 +113,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
 
     @Override
     protected int getInitialHeight() {
-        return 140;
+        return 200;
     }
 
     private boolean isCurrentFileId(String idFile) {
@@ -132,12 +155,12 @@ public class DataPreviewPanel extends DataTextAreaPanel {
             }
 
             displayValue(result);
-            show();
+            area.show();
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            hide();
+            area.hide();
             super.onFailure(caught);
         }
 
