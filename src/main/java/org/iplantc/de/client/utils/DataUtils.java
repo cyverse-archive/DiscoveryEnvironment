@@ -1,18 +1,15 @@
 package org.iplantc.de.client.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.services.DiskResouceDuplicatesCheckCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
 
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DataUtils {
     public enum Action {
@@ -208,12 +205,6 @@ public class DataUtils {
         return canUploadToThisFolder(destination);
     }
 
-    public static void checkForDuplicateFilename(final String diskResourceId,
-            final AsyncCallback<String> callback) {
-        checkListForDuplicateFilenames(Arrays.asList(diskResourceId), callback);
-
-    }
-
     public static boolean isMetadtaUpdatable(DiskResource resource) {
         if (resource != null) {
             return resource.getPermissions().isWritable();
@@ -224,48 +215,9 @@ public class DataUtils {
     }
 
     public static void checkListForDuplicateFilenames(final List<String> diskResourceIds,
-            final AsyncCallback<String> callback) {
+            final DiskResouceDuplicatesCheckCallback callback) {
         final FolderServiceFacade facade = new FolderServiceFacade();
-        facade.diskResourcesExist(diskResourceIds, new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String response) {
-                JSONObject jsonResponse = JsonUtil.getObject(response);
-
-                String status = JsonUtil.getString(jsonResponse, "status"); //$NON-NLS-1$
-                JSONObject paths = JsonUtil.getObject(jsonResponse, "paths"); //$NON-NLS-1$
-
-                if (!status.equalsIgnoreCase("success") || paths == null) { //$NON-NLS-1$
-                    onFailure(new Exception(JsonUtil.getString(jsonResponse, "reason"))); //$NON-NLS-1$
-                    return;
-                }
-
-                List<String> duplicateFiles = new ArrayList<String>();
-
-                for (final String resourceId : diskResourceIds) {
-                    // TODO add an extra check to make sure the resourceId key is found in paths?
-                    boolean fileExists = JsonUtil.getBoolean(paths, resourceId, false);
-
-                    if (fileExists) {
-                        duplicateFiles.add(parseNameFromPath(resourceId));
-                    }
-                }
-
-                if (!duplicateFiles.isEmpty()) {
-                    String errMsg = I18N.ERROR.fileExists(join(duplicateFiles, ", ")); //$NON-NLS-1$
-                    onFailure(new Exception(errMsg));
-
-                    return;
-                }
-
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // could not check for duplicate files, so abort the move/upload operation.
-                callback.onFailure(caught);
-            }
-        });
+        facade.diskResourcesExist(diskResourceIds, callback);
     }
 
     /**

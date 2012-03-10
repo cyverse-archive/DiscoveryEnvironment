@@ -1,3 +1,9 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+response.setHeader("Cache-Control", "no-cache");
+response.setHeader("Pragma", "no-cache");
+response.setDateHeader("Expires", 0);
+%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- The HTML 4.01 Transitional DOCTYPE declaration-->
 <!-- above set at the top of the file will set     -->
@@ -8,11 +14,7 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=8" />   <!-- Remove this when GWT supports IE9 -->
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
 
 <!--                                                               -->
 <!-- Consider inlining CSS to reduce the number of requested files -->
@@ -34,24 +36,6 @@
 
 <script type="text/javascript" language="javascript"
 	src="discoveryenvironment/discoveryenvironment.nocache.js"></script>
-<!-- Google analytics -->
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-
-  _gaq.push(['_setAccount', 'UA-16039757-1']);
-
-  _gaq.push(['_trackPageview']);
-  (function() {
-
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-
-  })();
-
-</script>
 </head>
 
 <!--                                           -->
@@ -66,7 +50,7 @@
 	</div>
 
 	<!-- include for history support -->
-	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
+	<iframe src="javascript:''" id="__gwt_historyFrame"
 		style="position: absolute; width: 0; height: 0; border: 0">
 	</iframe>
 

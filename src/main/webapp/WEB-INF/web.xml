@@ -170,6 +170,6 @@
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
-		<welcome-file>Discoveryenvironment.html</welcome-file>
+		<welcome-file>Discoveryenvironment.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>

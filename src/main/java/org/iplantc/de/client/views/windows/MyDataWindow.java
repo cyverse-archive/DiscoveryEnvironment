@@ -114,7 +114,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
         if (model != null && model.getRootFolder() != null) {
             // select node from WindowConfig
-            pnlNavigation.expandThenSelectPath(config.getId());
+            selectConfigNode();
         }
     }
 

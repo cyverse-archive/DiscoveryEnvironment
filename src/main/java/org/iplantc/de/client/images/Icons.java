@@ -278,4 +278,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("drive_web.png")
     ImageResource urlImport();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("arrow_undo.png")
+    ImageResource arrow_undo();
+
 }
