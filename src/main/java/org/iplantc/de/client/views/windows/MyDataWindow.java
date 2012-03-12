@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.iplantc.core.metadata.client.JSONMetaDataObject;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
@@ -153,12 +152,9 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         public void onSuccess(String result) {
             unmask();
             seed(UserInfo.getInstance().getUsername(), result);
+
             // Select the folder set by the config
-            if (!selectConfigNode()) {
-                // The configured folder is not available
-                // select the root instead.
-                selectRootNode();
-            }
+            selectConfigNode();
         }
 
     }
@@ -181,16 +177,6 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
         return pnlNavigation.selectFolder(path);
 
-    }
-
-    private void selectRootNode() {
-        if (pnlNavigation != null) {
-            Folder root = model.getRootFolder();
-
-            if (root != null) {
-                pnlNavigation.selectFolder(root.getId());
-            }
-        }
     }
 
     public void removeEventHandlers() {
@@ -395,9 +381,15 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
             if (tag.equals(mdre.getTag())) {
                 pnlNavigation.removeTreePanel();
                 initModel();
-                JSONObject obj = new JSONObject();
-                obj.put(JSONMetaDataObject.ID, new JSONString(mdre.getCurrentFolderId()));
-                configure(new BasicWindowConfig(obj));
+
+                String currentFolderId = mdre.getCurrentFolderId();
+                if (currentFolderId != null && !currentFolderId.isEmpty()) {
+                    JSONObject jsonConfig = new JSONObject();
+                    jsonConfig.put(Folder.ID, new JSONString(currentFolderId));
+
+                    configure(new BasicWindowConfig(jsonConfig));
+                }
+
                 retrieveData(new RetrieveDataCallback());
             }
         }

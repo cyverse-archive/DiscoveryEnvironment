@@ -129,7 +129,10 @@ public class MyDataGrid extends Grid<DiskResource> {
     protected void init() {
         setBorders(true);
         setHeight(260);
+
+        getView().setEmptyText(I18N.DISPLAY.selectFolderToViewContents());
         getView().setShowDirtyCells(false);
+
         menuActions = buildActionsMenu();
     }
 

@@ -145,8 +145,6 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
             if (folderId != null) {
                 currentFolderId = folderId;
                 pnlNavigation.selectFolder(folderId);
-            } else {
-                pnlNavigation.selectFolder(model.getRootFolderId());
             }
         }
     }

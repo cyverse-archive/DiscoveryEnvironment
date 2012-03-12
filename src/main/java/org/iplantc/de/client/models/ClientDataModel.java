@@ -145,7 +145,7 @@ public class ClientDataModel {
         heirarchy.removeAll();
         if (items != null) {
             for (int i = 0; i < items.size(); i++) {
-                root = JsonUtil.getObject(items.get(i).toString());
+                root = JsonUtil.getObjectAt(items, i);
                 if (root != null) {
                     addRootFolder(root);
                 }
