@@ -1169,4 +1169,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String selectFolderToViewContents();
+
+    /**
+     * Localized text for a UI element that lets the user switch text wrapping on or off.
+     * 
+     * @return a string representing the localized text.
+     */
+    String wrap();
 }

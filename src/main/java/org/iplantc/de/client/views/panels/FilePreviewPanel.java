@@ -5,10 +5,13 @@ import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEvent;
 
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.user.client.Element;
@@ -86,10 +89,39 @@ public class FilePreviewPanel extends ViewerContentPanel {
             panel.setHeaderVisible(false);
             panel.setLayout(new FitLayout());
             panel.setWidth(getWidth());
+            panel.setBottomComponent(buildWrapCheckBox());
+
             panel.add(areaData);
 
             add(panel, centerData);
         }
+    }
+
+    /**
+     * Creates a check box that enables or disables text wrapping.
+     * 
+     * @return a new CheckBox
+     */
+    private CheckBox buildWrapCheckBox() {
+        final CheckBox cb = new CheckBox();
+        cb.setBoxLabel(I18N.DISPLAY.wrap());
+        cb.setValue(true);
+        cb.addListener(Events.Change, new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                // the "wrap" attribute cannot be changed on an existing text area, so make a new one
+                LayoutContainer parent = (LayoutContainer)areaData.getParent();
+                areaData.removeFromParent();
+                boolean wrap = Boolean.TRUE.equals(((FieldEvent)be).getValue());
+
+                // the <TextArea> DOM element is a child of areaData
+                areaData.el().getChild(0).dom.setAttribute("wrap", wrap ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+                parent.add(areaData);
+                parent.layout(true);
+            }
+        });
+        return cb;
     }
 
     /**
