@@ -109,6 +109,13 @@ public class FilePreviewPanel extends ViewerContentPanel {
         cb.addListener(Events.Change, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
+                // calculate the scroll bar position as a percentage of the total height
+                int scrollTop = areaData.getElement().getFirstChildElement().getScrollTop();
+                int scrollHeight = areaData.getElement().getFirstChildElement().getScrollHeight();
+                int visibleHeight = areaData.getHeight();
+                float scrollRatio = scrollHeight > visibleHeight ? (float)scrollTop
+                        / (scrollHeight - visibleHeight) : 0;
+
                 // the "wrap" attribute cannot be changed on an existing text area, so make a new one
                 LayoutContainer parent = (LayoutContainer)areaData.getParent();
                 areaData.removeFromParent();
@@ -119,6 +126,11 @@ public class FilePreviewPanel extends ViewerContentPanel {
 
                 parent.add(areaData);
                 parent.layout(true);
+
+                // restore scroll bar position (height may have changed, so restore relative position)
+                int newScrollHeight = areaData.getElement().getFirstChildElement().getScrollHeight();
+                float newScrollTop = (newScrollHeight - visibleHeight) * scrollRatio;
+                areaData.getElement().getFirstChildElement().setScrollTop(Math.round(newScrollTop));
             }
         });
         return cb;
