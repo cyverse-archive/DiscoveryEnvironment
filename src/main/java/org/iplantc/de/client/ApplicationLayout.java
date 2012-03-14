@@ -47,6 +47,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 
@@ -555,9 +556,12 @@ public class ApplicationLayout extends Viewport {
         public void setCount(int count) {
             if (count > 0) {
                 setHtml(Format.substitute("{0} <span class='iplantc-orange'>({1})</span>", text, count)); //$NON-NLS-1$
+                Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
             } else {
+                Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
                 setHtml(text);
             }
+
         }
     }
 }
