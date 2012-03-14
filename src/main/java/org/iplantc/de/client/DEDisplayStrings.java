@@ -1176,4 +1176,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String wrap();
+
+    /**
+     * Localized text for a dialog asking the user if they want to potentially override data in the
+     * output folder.
+     * 
+     * @return a string representing the localized text.
+     */
+    String confirmOutputFolder();
 }

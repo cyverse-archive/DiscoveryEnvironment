@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
@@ -112,9 +113,15 @@ public class JobLaunchDialog extends Dialog {
             @Override
             public void componentKeyUp(ComponentEvent event) {
                 if (event.getKeyCode() == KeyCodes.KEY_ENTER && fieldsValid()) {
-                    doExport();
                     // once you got a enter key, listen no more
                     fieldName.removeKeyListener(this);
+
+                    confirmOutputFolder(new Command() {
+                        @Override
+                        public void execute() {
+                            doExport();
+                        }
+                    });
                 }
             }
         });
@@ -191,7 +198,12 @@ public class JobLaunchDialog extends Dialog {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 if (fieldsValid()) {
-                    doExport();
+                    confirmOutputFolder(new Command() {
+                        @Override
+                        public void execute() {
+                            doExport();
+                        }
+                    });
                 }
             }
         });
@@ -203,6 +215,69 @@ public class JobLaunchDialog extends Dialog {
                 hide();
             }
         });
+    }
+
+    /**
+     * Warns the user about potentially overwriting data if an output folder other than the default
+     * folder is selected. If the user confirms, or if the output folder has been left at the default, a
+     * command is run.
+     * 
+     * @param onConfirm a command to run if the user clicks "yes"
+     */
+    private void confirmOutputFolder(final Command onConfirm) {
+        Folder folder = folderSelector.getSelectedFolder();
+        String defaultFolderId = folderSelector.getDefaultFolderId();
+
+        // if default folder selected, don't ask
+        if (folder == null || defaultFolderId.equals(folder.getId())) {
+            onConfirm.execute();
+        } else {
+            new FolderServiceFacade().getFolderContents(folder.getId(), new AsyncCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    // if the folder is empty, don't ask for confirmation
+                    if (isFolderEmpty(result)) {
+                        onConfirm.execute();
+                    }
+                    else {
+                        MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmOutputFolder(),
+                                new Listener<MessageBoxEvent>() {
+                            @Override
+                            public void handleEvent(MessageBoxEvent be) {
+                                if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                                    onConfirm.execute();
+                                }
+                            }
+                        });
+                    }
+                }
+    
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                }
+            });
+        }
+    }
+
+    /**
+     * Tests if a folder contains files or subfolders.
+     * 
+     * @param json folder metadata as returned by FolderServiceFacade.getFolderContents()
+     * @return true if empty, false if files or subfolders exist
+     */
+    private boolean isFolderEmpty(String json) {
+        JSONObject jsonObj = JsonUtil.getObject(json);
+        if (jsonObj == null) {
+            return false; // play it safe
+        }
+
+        if (JsonUtil.getBoolean(jsonObj, "hasSubDirs", false)) { //$NON-NLS-1$
+            return false;
+        }
+
+        JSONArray files = JsonUtil.getArray(jsonObj, "files");
+        return (files == null || files.size() <= 0);
     }
 
     private boolean fieldsValid() {
