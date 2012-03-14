@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.tito.client.ApplicationLayout;
+import org.iplantc.core.tito.client.controllers.ApplicationController;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -17,13 +19,12 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
+import org.iplantc.de.client.views.windows.IPlantWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -196,11 +197,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private void openTitoForEdit(final String id) {
-        WindowUtil.open(buildUrl(id));
-    }
-
-    private String buildUrl(final String id) {
-        return DEProperties.getInstance().getTitoBaseUrl() + "/?" + Constants.CLIENT.titoId() + "=" + id; //$NON-NLS-1$ //$NON-NLS-2$
+        // TODO launch Tito window with app open for edit
     }
 
     private MenuItem buildDeleteMenuItem() {
@@ -285,7 +282,15 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                WindowUtil.open(buildUrl("")); //$NON-NLS-1$
+                Window win = new IPlantWindow("tito") {
+                };
+                ApplicationController controller = ApplicationController.getInstance();
+                ApplicationLayout tito = new ApplicationLayout();
+                controller.init(tito);
+
+                win.setSize(800, 600);
+                win.add(tito);
+                win.show();
             }
         });
 

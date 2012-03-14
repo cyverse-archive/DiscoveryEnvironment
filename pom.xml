@@ -169,6 +169,11 @@
             <version>dev-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.iplantc.core</groupId>
+            <artifactId>tito</artifactId>
+            <version>dev-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.santuario</groupId>
             <artifactId>xmlsec.osgi</artifactId>
             <version>1.4.0</version>

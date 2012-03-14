@@ -20,11 +20,6 @@ public class DEProperties {
             + "unprotectedMuleServiceBaseUrl"; //$NON-NLS-1$
 
     /**
-     * Properties key of the base URL used to link to TITo.
-     */
-    private static final String TITO_BASE_URL = PROPERTY_NAME_PREFIX + "titoBaseUrl"; //$NON-NLS-1$
-
-    /**
      * Properties key used to indicate if server-push messaging is enabled. (under development)
      */
     private static final String SERVER_PUSH_ENABLED = PROPERTY_NAME_PREFIX + "serverPushEnabled"; //$NON-NLS-1$
@@ -140,11 +135,6 @@ public class DEProperties {
     }
 
     /**
-     * The base URL used to link to TITo.
-     */
-    private static String titoBaseUrl;
-
-    /**
      * Indicates if the server-push messaging heartbeat is enabled. (under development)
      */
     private boolean serverPushEnabled;
@@ -176,7 +166,6 @@ public class DEProperties {
         dataMgmtBaseUrl = properties.get(DATA_MGMT_BASE_URL);
         muleServiceBaseUrl = properties.get(MULE_SERVICE_BASE_URL);
         unproctedMuleServiceBaseUrl = properties.get(UNPROTECTED_MULE_SERVICE_BASE_URL);
-        titoBaseUrl = properties.get(TITO_BASE_URL);
         serverPushEnabled = Boolean.parseBoolean(properties.get(SERVER_PUSH_ENABLED));
         privateWorkspace = properties.get(PRIVATE_WORKSPACE);
         privateWorkspaceItems = properties.get(PRIVATE_WORKSPACE_ITEMS);
@@ -221,15 +210,6 @@ public class DEProperties {
      */
     public String getMuleServiceBaseUrl() {
         return muleServiceBaseUrl;
-    }
-
-    /**
-     * Gets the base URL to access TITo.
-     * 
-     * @return the base URL.
-     */
-    public String getTitoBaseUrl() {
-        return titoBaseUrl;
     }
 
     /**
