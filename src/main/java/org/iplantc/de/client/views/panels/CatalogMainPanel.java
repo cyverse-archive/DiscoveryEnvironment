@@ -282,13 +282,13 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                Window win = new IPlantWindow("tito") {
+                Window win = new IPlantWindow("tito", false, true, false, true) {
                 };
                 ApplicationController controller = ApplicationController.getInstance();
                 ApplicationLayout tito = new ApplicationLayout();
                 controller.init(tito);
-
                 win.setSize(800, 600);
+                win.setHeading(I18N.DISPLAY.create() + " " + I18N.DISPLAY.applications());
                 win.add(tito);
                 win.show();
             }
@@ -355,19 +355,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             getTemplateService().favoriteAnalysis(info.getWorkspaceId(), id, fav,
                     new AsyncCallback<String>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
 
-                }
+                        }
 
-                @Override
-                public void onSuccess(String result) {
-                    updateFavPreference(fav);
-                    checkAndBuildFavMenu(fav);
-                    fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
-                }
-            });
+                        @Override
+                        public void onSuccess(String result) {
+                            updateFavPreference(fav);
+                            checkAndBuildFavMenu(fav);
+                            fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
+                        }
+                    });
         } else {
             ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed());
         }
@@ -535,8 +535,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 UserInfo info = UserInfo.getInstance();
                 if (info != null) {
                     getTemplateService().deleteAnalysisFromWorkspace(info.getFullUsername(),
-                            selectedItem.getId(),
-                            new AsyncCallback<String>() {
+                            selectedItem.getId(), new AsyncCallback<String>() {
 
                                 @Override
                                 public void onFailure(Throwable caught) {
