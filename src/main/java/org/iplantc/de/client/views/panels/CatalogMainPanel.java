@@ -6,6 +6,8 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.tito.client.ApplicationLayout;
 import org.iplantc.core.tito.client.controllers.ApplicationController;
+import org.iplantc.core.tito.client.events.TemplateLoadEvent;
+import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -197,7 +199,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private void openTitoForEdit(final String id) {
-        // TODO launch Tito window with app open for edit
+        EventBus.getInstance().fireEvent(new TemplateLoadEvent(id, MODE.EDIT));
     }
 
     private MenuItem buildDeleteMenuItem() {
