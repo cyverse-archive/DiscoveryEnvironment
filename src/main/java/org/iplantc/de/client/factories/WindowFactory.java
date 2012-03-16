@@ -14,6 +14,7 @@ import org.iplantc.de.client.views.windows.MyAnalysesWindow;
 import org.iplantc.de.client.views.windows.MyDataWindow;
 import org.iplantc.de.client.views.windows.NotificationWindow;
 import org.iplantc.de.client.views.windows.PipelineEditorWindow;
+import org.iplantc.de.client.views.windows.TitoWindow;
 import org.iplantc.de.client.views.windows.WizardWindow;
 
 /**
@@ -51,6 +52,8 @@ public class WindowFactory {
                 ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
+            } else if (type.equals(Constants.CLIENT.titoTag())) {
+                ret = new TitoWindow(type);
             } else {
                 ret = new WizardWindow(type);
             }

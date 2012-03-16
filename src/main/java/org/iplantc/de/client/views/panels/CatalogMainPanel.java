@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.tito.client.ApplicationLayout;
-import org.iplantc.core.tito.client.controllers.ApplicationController;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
@@ -26,7 +24,7 @@ import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
-import org.iplantc.de.client.views.windows.IPlantWindow;
+import org.iplantc.de.client.views.windows.TitoWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -284,15 +282,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                Window win = new IPlantWindow("tito", false, true, false, true) {
-                };
-                ApplicationController controller = ApplicationController.getInstance();
-                ApplicationLayout tito = new ApplicationLayout();
-                controller.init(tito);
-                win.setSize(800, 600);
-                win.setHeading(I18N.DISPLAY.create() + " " + I18N.DISPLAY.applications());
-                win.add(tito);
-                win.show();
+                TitoWindow.launch();
             }
         });
 
