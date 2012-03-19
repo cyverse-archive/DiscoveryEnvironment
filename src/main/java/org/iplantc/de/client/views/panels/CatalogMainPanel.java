@@ -19,6 +19,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.utils.MessageDispatcher;
@@ -282,7 +283,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                TitoWindow.launch();
+                TitoWindow.launch(TitoWindowConfig.VIEW_NEW_TOOL, null);
             }
         });
 
