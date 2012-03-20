@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.core.tito.client.ApplicationLayout;
+import org.iplantc.core.tito.client.TitoPanel;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory;
@@ -21,7 +21,7 @@ import com.google.gwt.user.client.Element;
 
 public class TitoWindow extends IPlantWindow {
     private TitoWindowConfig config;
-    private ApplicationLayout tito;
+    private TitoPanel tito;
 
     /**
      * Dispatches a DISPLAY_WINDOW event so that the Window Manager will open the TitoWindow.
@@ -68,7 +68,7 @@ public class TitoWindow extends IPlantWindow {
     }
 
     private void compose() {
-        tito = new ApplicationLayout();
+        tito = new TitoPanel();
 
         add(tito);
     }
