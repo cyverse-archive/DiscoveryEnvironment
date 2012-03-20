@@ -1191,4 +1191,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String createApps();
+
+    /**
+     * Localized text for unsaved tito work warning
+     * 
+     * @return a string representing the localized text.
+     */
+
+    String navigateWarning();
 }

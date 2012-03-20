@@ -10,6 +10,11 @@ import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.MessageDispatcher;
 
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
@@ -78,14 +83,65 @@ public class TitoWindow extends IPlantWindow {
     }
 
     @Override
+    protected void doHide() {
+        if (tito.isDirty()) {
+            confirmNavigation(new CloseWarningMsgBoxListener());
+        } else {
+            super.doHide();
+        }
+    }
+
+    private void confirmNavigation(final Listener<MessageBoxEvent> listener) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                MessageBox.confirm(I18N.DISPLAY.confirmAction(), I18N.DISPLAY.navigateWarning(),
+                        listener);
+            }
+        });
+    }
+
+    @Override
     public void configure(WindowConfig config) {
         if (config instanceof TitoWindowConfig) {
             this.config = (TitoWindowConfig)config;
 
             if (isRendered()) {
-                updateViewFromConfig();
+                if (tito.isDirty()) {
+                    confirmNavigation(new EditWarningMsgBoxListener());
+                } else {
+                    updateViewFromConfig();
+                }
             }
         }
+    }
+
+    private class EditWarningMsgBoxListener implements Listener<MessageBoxEvent> {
+        @Override
+        public void handleEvent(MessageBoxEvent be) {
+            if (be.getButtonClicked().getText().equals("Yes")) { //$NON-NLS-1$
+                updateViewFromConfig();
+            }
+
+            MessageBox box = be.getMessageBox();
+            box.close();
+
+        }
+
+    }
+
+    private class CloseWarningMsgBoxListener implements Listener<MessageBoxEvent> {
+        @Override
+        public void handleEvent(MessageBoxEvent be) {
+            if (be.getButtonClicked().getText().equals("Yes")) { //$NON-NLS-1$
+                hide();
+            }
+
+            MessageBox box = be.getMessageBox();
+            box.close();
+
+        }
+
     }
 
     /**

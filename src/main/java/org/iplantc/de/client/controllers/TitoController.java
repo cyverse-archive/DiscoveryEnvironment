@@ -1,6 +1,5 @@
 package org.iplantc.de.client.controllers;
 
-import org.iplantc.core.tito.client.ApplicationLayout;
 import org.iplantc.core.tito.client.events.NewProjectEvent;
 import org.iplantc.core.tito.client.events.NewProjectEventHandler;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
@@ -17,7 +16,6 @@ import org.iplantc.de.client.views.windows.TitoWindow;
  */
 public class TitoController {
     private static TitoController instance;
-    private ApplicationLayout tito;
 
     private TitoController() {
         initListeners();
