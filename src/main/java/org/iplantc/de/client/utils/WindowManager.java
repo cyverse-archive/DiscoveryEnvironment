@@ -68,7 +68,7 @@ public class WindowManager {
      */
     public void add(IPlantWindow window) {
         if (window != null) {
-            windows.put(window.getTag(), window);
+            getWindows().put(window.getTag(), window);
             window.addWindowListener(listener);
         }
     }
@@ -80,7 +80,7 @@ public class WindowManager {
      * @return null on failure. Requested window on success.
      */
     public IPlantWindow getWindow(String tag) {
-        return windows.get(tag);
+        return getWindows().get(tag);
     }
 
     /**
@@ -89,8 +89,8 @@ public class WindowManager {
      * @param tag tag of the window to remove.
      */
     public void remove(String tag) {
-        windows.remove(tag);
-        if (windows.size() == 0) {
+        getWindows().remove(tag);
+        if (getWindows().size() == 0) {
             first_window_postion = null;
         }
     }
@@ -115,8 +115,8 @@ public class WindowManager {
      * @return
      */
     public int getCount() {
-        if (windows != null) {
-            return windows.size();
+        if (getWindows() != null) {
+            return getWindows().size();
         } else {
             return 0;
         }
@@ -130,7 +130,7 @@ public class WindowManager {
      */
     public void show(String tag) {
         if (tag != null) {
-            IPlantWindow window = windows.get(tag);
+            IPlantWindow window = getWindows().get(tag);
             if (window != null) {
                 if (getFirst_window_postion() != null) {
                     int new_x = getFirst_window_postion().x + ((getCount() - 1) * 10);
@@ -146,5 +146,12 @@ public class WindowManager {
             }
 
         }
+    }
+
+    /**
+     * @return the windows
+     */
+    public Map<String, IPlantWindow> getWindows() {
+        return windows;
     }
 }

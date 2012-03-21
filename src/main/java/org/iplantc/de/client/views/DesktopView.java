@@ -1,6 +1,7 @@
 package org.iplantc.de.client.views;
 
 import java.util.List;
+import java.util.Map;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -22,6 +23,9 @@ import org.iplantc.de.client.views.windows.IPlantWindow;
 import com.extjs.gxt.ui.client.core.DomQuery;
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.core.XDOM;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.WindowEvent;
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
@@ -37,6 +41,7 @@ import com.google.gwt.user.client.Element;
  * Provides user interface for desktop workspace area.
  */
 public class DesktopView extends ContentPanel {
+
     @SuppressWarnings("unused")
     private EditorController controllerEditor;
     private WindowManager mgrWindow;
@@ -135,6 +140,8 @@ public class DesktopView extends ContentPanel {
             el.setClassName("x-shortcuts"); //$NON-NLS-1$
             XDOM.getBody().appendChild(el);
         }
+
+        desktop.addListener(Events.Detach, new DeReloadListener());
 
         shortcutEl = new El(el);
     }
@@ -293,6 +300,17 @@ public class DesktopView extends ContentPanel {
                 onShow((IPlantWindow)we.getWindow());
             }
         });
+    }
+
+    private final class DeReloadListener implements Listener<ComponentEvent> {
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            System.out.println("Detach");
+            Map<String, IPlantWindow> windows = mgrWindow.getWindows();
+            for (IPlantWindow win : windows.values()) {
+                System.out.println("win-->" + win.getTag());
+            }
+        }
     }
 
     private void initEditorController() {
