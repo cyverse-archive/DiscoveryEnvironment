@@ -7,6 +7,7 @@ import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.json.client.JSONObject;
 
 /**
  * Window for displaying event notifications.
@@ -30,8 +31,6 @@ public class NotificationWindow extends IPlantWindow {
         configure(config);
     }
 
-
-
     private void init() {
         setId(tag);
         setHeading(I18N.DISPLAY.myNotifications());
@@ -50,5 +49,11 @@ public class NotificationWindow extends IPlantWindow {
             Category category = ((NotificationWindowConfig)config).getCategory();
             panel.filterBy(category);
         }
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

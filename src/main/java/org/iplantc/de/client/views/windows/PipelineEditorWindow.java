@@ -5,6 +5,7 @@ import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
 
 public class PipelineEditorWindow extends IPlantWindow {
@@ -41,5 +42,11 @@ public class PipelineEditorWindow extends IPlantWindow {
             hide();
         }
 
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

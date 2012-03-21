@@ -395,4 +395,10 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         }
 
     }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

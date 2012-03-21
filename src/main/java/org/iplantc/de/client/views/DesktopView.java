@@ -11,8 +11,12 @@ import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
+import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.utils.DEStateManager;
+import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.WindowManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
@@ -28,6 +32,7 @@ import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.WindowEvent;
 import com.extjs.gxt.ui.client.event.WindowListener;
+import com.extjs.gxt.ui.client.state.StateManager;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -141,7 +146,8 @@ public class DesktopView extends ContentPanel {
             XDOM.getBody().appendChild(el);
         }
 
-        desktop.addListener(Events.Detach, new DeReloadListener());
+        desktop.addListener(Events.Detach, new DEReloadListener());
+        desktop.addListener(Events.Render, new DEAfterRenderListener());
 
         shortcutEl = new El(el);
     }
@@ -302,15 +308,62 @@ public class DesktopView extends ContentPanel {
         });
     }
 
-    private final class DeReloadListener implements Listener<ComponentEvent> {
+    private final class DEReloadListener implements Listener<ComponentEvent> {
         @Override
         public void handleEvent(ComponentEvent be) {
-            System.out.println("Detach");
+            // before saving new state, clear old state
+            clearState();
             Map<String, IPlantWindow> windows = mgrWindow.getWindows();
             for (IPlantWindow win : windows.values()) {
                 System.out.println("win-->" + win.getTag());
+                saveWindowState(win.getTag(), win.getWindowState());
             }
         }
+
+        private void saveWindowState(String tag, JSONObject state) {
+            StateManager mgr = DEStateManager.getStateManager();
+            mgr.set(tag, state.toString());
+        }
+
+        private void clearState() {
+            List<String> tags = WindowFactory.getAllWindowTags();
+            StateManager mgr = DEStateManager.getStateManager();
+            for (String tag : tags) {
+                mgr.set(tag, null);
+            }
+        }
+    }
+
+    private final class DEAfterRenderListener implements Listener<ComponentEvent> {
+
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            List<String> tags = WindowFactory.getAllWindowTags();
+            StateManager mgr = DEStateManager.getStateManager();
+            for (String tag : tags) {
+                String state = mgr.getString(tag);
+                if (state != null) {
+                    String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
+                            buildPayload(tag));
+
+                    MessageDispatcher dispatcher = MessageDispatcher.getInstance();
+                    dispatcher.processMessage(json);
+                }
+            }
+        }
+
+        private String buildPayload(final String tag) {
+            StringBuffer ret = new StringBuffer();
+
+            ret.append("{"); //$NON-NLS-1$
+
+            ret.append("\"tag\": " + JsonUtil.quoteString(tag)); //$NON-NLS-1$
+
+            ret.append("}"); //$NON-NLS-1$
+
+            return ret.toString();
+        }
+
     }
 
     private void initEditorController() {

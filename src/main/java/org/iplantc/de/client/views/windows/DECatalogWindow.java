@@ -86,7 +86,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     /**
      * 
      * @param tag
-     * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to preselect a tool in the window
+     * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to
+     *            preselect a tool in the window
      */
     public DECatalogWindow(String tag, BasicWindowConfig config) {
         super(tag, config);
@@ -245,5 +246,11 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             }
         });
 
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

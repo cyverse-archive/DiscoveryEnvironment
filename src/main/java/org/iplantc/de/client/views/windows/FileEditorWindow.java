@@ -464,4 +464,10 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
     public void folderMove(Map<String, String> folders) {
         // intentionally do nothing... for now
     }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

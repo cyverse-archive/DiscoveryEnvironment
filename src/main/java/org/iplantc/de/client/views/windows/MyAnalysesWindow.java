@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -106,5 +107,11 @@ public class MyAnalysesWindow extends IPlantWindow {
         if (pnlAnlys != null && config != null) {
             pnlAnlys.updateSelection(config.getId());
         }
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

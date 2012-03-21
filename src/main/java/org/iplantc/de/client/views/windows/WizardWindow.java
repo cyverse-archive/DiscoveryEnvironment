@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -91,9 +92,10 @@ public class WizardWindow extends IPlantWindow {
         btnLaunchJob.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                // validate again because the user might have clicked the button without blurring an invalid field
+                // validate again because the user might have clicked the button without blurring an
+                // invalid field
                 List<String> errors = tblComponentVals.validate(false, true);
-                if (errors==null || errors.isEmpty()) {
+                if (errors == null || errors.isEmpty()) {
                     doJobLaunch();
                 }
             }
@@ -169,11 +171,13 @@ public class WizardWindow extends IPlantWindow {
 
                     @Override
                     public void onValid(WizardValidationEvent event) {
-                        // validate to see if all other fields are valid as well; if so, enable the button.
-                        // XXX button not re-enabled when valid input is entered into two previously valid fields,
+                        // validate to see if all other fields are valid as well; if so, enable the
+                        // button.
+                        // XXX button not re-enabled when valid input is entered into two previously
+                        // valid fields,
                         // but it'll have to do until the validation rewrite.
                         List<String> errors = tblComponentVals.validate(false, false);
-                        btnLaunchJob.setEnabled(errors==null || errors.isEmpty());
+                        btnLaunchJob.setEnabled(errors == null || errors.isEmpty());
                     }
                 }));
 
@@ -220,5 +224,11 @@ public class WizardWindow extends IPlantWindow {
         if (btn != null) {
             btn.updateText();
         }
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

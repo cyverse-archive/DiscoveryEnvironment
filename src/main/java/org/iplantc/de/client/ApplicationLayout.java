@@ -47,6 +47,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
@@ -226,7 +227,12 @@ public class ApplicationLayout extends Viewport {
         panel.setWidth(350);
         panel.setHeight(115);
         panel.setAutoHeight(true);
-        IPlantWindow win = new IPlantWindow("", false, false, false, true) { //$NON-NLS-1$
+        IPlantWindow win = new IPlantWindow("", false, false, false, true) {
+
+            @Override
+            public JSONObject getWindowState() {
+                return null;
+            }
         };
 
         win.getHeader().setIcon(AbstractImagePrototype.create(Resources.ICONS.whitelogo()));

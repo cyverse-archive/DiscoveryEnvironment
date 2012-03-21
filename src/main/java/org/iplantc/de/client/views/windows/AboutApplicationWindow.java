@@ -10,6 +10,8 @@ import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -97,5 +99,13 @@ public class AboutApplicationWindow extends IPlantWindow {
         pnlDetails.add(txt);
 
         return pnlDetails;
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        JSONObject obj = new JSONObject();
+        obj.put("isMaximized", JSONBoolean.getInstance(isMaximized()));
+        obj.put("isMinimized", JSONBoolean.getInstance(!isVisible()));
+        return obj;
     }
 }

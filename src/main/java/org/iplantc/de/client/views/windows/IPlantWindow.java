@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.Header;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -94,9 +95,16 @@ public abstract class IPlantWindow extends Window {
         header.setIcon(AbstractImagePrototype.create(Resources.ICONS.whitelogoSmall()));
         setBodyStyleName("accordianbody"); //$NON-NLS-1$
         setStyleAttribute("outline", "none"); //$NON-NLS-1$ //$NON-NLS-2$
-     }
+    }
 
-     /**
+    /**
+     * Returns the windows state information. State information includes
+     * 
+     * @return
+     */
+    public abstract JSONObject getWindowState();
+
+    /**
      * Initiate the status components.
      */
     protected void initStatus() {
@@ -104,7 +112,7 @@ public abstract class IPlantWindow extends Window {
         getHeader().addTool(status);
         status.hide();
     }
-    
+
     /**
      * Show the status widgets.
      */
@@ -112,8 +120,6 @@ public abstract class IPlantWindow extends Window {
         status.show();
         status.setBusy(""); //$NON-NLS-1$
     }
-
-
 
     /**
      * Retrieves the tag for the window.
@@ -136,14 +142,14 @@ public abstract class IPlantWindow extends Window {
                 doHide();
             }
         });
-        
+
         btnClose.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnClose.removeStyleName("x-tool-closewindow-hover");
             }
         });
-        
+
         btnClose.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -174,7 +180,7 @@ public abstract class IPlantWindow extends Window {
                 btnMaximize.addStyleName("x-tool-maximizewindow-hover");
             }
         });
-        
+
         btnMaximize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -196,14 +202,14 @@ public abstract class IPlantWindow extends Window {
                 btnMinimize.removeStyleName("x-tool-minimizewindow-hover");
             }
         });
-        
+
         btnMinimize.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnMinimize.addStyleName("x-tool-minimizewindow-hover");
             }
         });
-        
+
         btnMinimize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -224,14 +230,14 @@ public abstract class IPlantWindow extends Window {
                 restoreWindow();
             }
         });
-        
+
         btnRestore.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnRestore.addStyleName("x-tool-restorewindow-hover");
             }
         });
-        
+
         btnRestore.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
