@@ -482,19 +482,20 @@ public class NotificationPanel extends ContentPanel {
     }
 
     /**
-     * Returns true if at least one selected notification has a context.
+     * Returns true if exactly one selected notification has a context.
      * 
      * @return
      */
     private boolean hasContext() {
         List<Notification> selectedItems = grdNotifications.getSelectionModel().getSelectedItems();
+        int numContexts = 0;
         for (Notification notification : selectedItems) {
             String context = notification.getContext();
             if (context != null && !context.isEmpty()) {
-                return true;
+                numContexts++;
             }
         }
-        return false;
+        return numContexts == 1;
     }
 
     private class CategoryFilter implements StoreFilter<Notification> {
