@@ -320,8 +320,10 @@ public class DesktopView extends ContentPanel {
         }
 
         private void saveWindowState(String tag, JSONObject state) {
-            StateManager mgr = DEStateManager.getStateManager();
-            mgr.set(tag, state.toString());
+            if (state != null) {
+                StateManager mgr = DEStateManager.getStateManager();
+                mgr.set(tag, state.toString());
+            }
         }
 
         private void clearState() {
