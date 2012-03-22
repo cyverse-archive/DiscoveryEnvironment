@@ -1,12 +1,10 @@
 package org.iplantc.de.client.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 
+import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.util.Point;
 
@@ -14,9 +12,9 @@ import com.extjs.gxt.ui.client.util.Point;
  * Manages window widgets in the web "desktop" environment.
  */
 public class WindowManager {
-    private WindowListener listener;
+    private final WindowListener listener;
     private IPlantWindow activeWindow;
-    private Map<String, IPlantWindow> windows = new HashMap<String, IPlantWindow>();
+    private final FastMap<IPlantWindow> windows = new FastMap<IPlantWindow>();
     private Point first_window_postion;
 
     /**
@@ -151,7 +149,7 @@ public class WindowManager {
     /**
      * @return the windows
      */
-    public Map<String, IPlantWindow> getWindows() {
+    public FastMap<IPlantWindow> getWindows() {
         return windows;
     }
 }
