@@ -3,8 +3,7 @@ package org.iplantc.de.client.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.de.client.factories.EventJSONFactory;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.models.ShortcutDesc;
 import org.iplantc.de.client.utils.builders.DesktopBuilder;
 import org.iplantc.de.client.views.Shortcut;
@@ -19,30 +18,16 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
  * 
  */
 public class ShortcutManager {
-    private List<Shortcut> shortcuts = new ArrayList<Shortcut>();
+    private final List<Shortcut> shortcuts = new ArrayList<Shortcut>();
 
-    private SelectionListener<ComponentEvent> listener = new SelectionListener<ComponentEvent>() {
-        private String buildPayload(final String tag) {
-            StringBuffer ret = new StringBuffer();
-
-            ret.append("{"); //$NON-NLS-1$
-
-            ret.append("\"tag\": " + JsonUtil.quoteString(tag)); //$NON-NLS-1$
-
-            ret.append("}"); //$NON-NLS-1$
-
-            return ret.toString();
-        }
-
+    private final SelectionListener<ComponentEvent> listener = new SelectionListener<ComponentEvent>() {
         @Override
         public void componentSelected(ComponentEvent ce) {
             Shortcut shortcut = (Shortcut)ce.getComponent();
 
-            String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
-                    buildPayload(shortcut.getTag()));
-
-            MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-            dispatcher.processMessage(json);
+            // Dispatch window display action
+            WindowDispatcher dispatcher = new WindowDispatcher();
+            dispatcher.dispatchAction(shortcut.getTag());
         }
     };
 

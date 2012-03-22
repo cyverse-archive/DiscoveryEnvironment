@@ -2,20 +2,18 @@ package org.iplantc.de.client;
 
 import org.iplantc.core.client.widgets.MenuHyperlink;
 import org.iplantc.core.client.widgets.MenuLabel;
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.dispatchers.ActionDispatcher;
 import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
-import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.LogoutUtil;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationIconBar;
 import org.iplantc.de.client.views.windows.IPlantWindow;
@@ -364,24 +362,9 @@ public class ApplicationLayout extends Viewport {
         }
     }
 
-    private String buildPayload(final String tag) {
-        StringBuffer ret = new StringBuffer();
-
-        ret.append("{"); //$NON-NLS-1$
-
-        ret.append("\"tag\": " + JsonUtil.quoteString(tag)); //$NON-NLS-1$
-
-        ret.append("}"); //$NON-NLS-1$
-
-        return ret.toString();
-    }
-
     private void displayAboutDe() {
-        String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
-                buildPayload(Constants.CLIENT.myAboutTag()));
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        WindowDispatcher dispatcher = new WindowDispatcher();
+        dispatcher.dispatchAction(Constants.CLIENT.myAboutTag());
     }
 
     private Menu buildUserMenu() {

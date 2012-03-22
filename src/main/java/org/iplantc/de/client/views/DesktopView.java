@@ -7,16 +7,15 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.controllers.EditorController;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
-import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.DEStateManager;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.WindowManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
@@ -343,27 +342,12 @@ public class DesktopView extends ContentPanel {
             for (String tag : tags) {
                 String state = mgr.getString(tag);
                 if (state != null) {
-                    String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
-                            buildPayload(tag));
-
-                    MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-                    dispatcher.processMessage(json);
+                    // Dispatch window display action
+                    WindowDispatcher dispatcher = new WindowDispatcher();
+                    dispatcher.dispatchAction(tag);
                 }
             }
         }
-
-        private String buildPayload(final String tag) {
-            StringBuffer ret = new StringBuffer();
-
-            ret.append("{"); //$NON-NLS-1$
-
-            ret.append("\"tag\": " + JsonUtil.quoteString(tag)); //$NON-NLS-1$
-
-            ret.append("}"); //$NON-NLS-1$
-
-            return ret.toString();
-        }
-
     }
 
     private void initEditorController() {

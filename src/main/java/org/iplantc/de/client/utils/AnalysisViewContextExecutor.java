@@ -2,7 +2,10 @@ package org.iplantc.de.client.utils;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.factories.EventJSONFactory;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+
+import com.google.gwt.json.client.JSONObject;
 
 /**
  * Class used to execute analysis viewing contexts.
@@ -11,30 +14,19 @@ import org.iplantc.de.client.factories.EventJSONFactory;
  * 
  */
 public class AnalysisViewContextExecutor {
-    private String buildPayload(final String context) {
-        StringBuffer ret = new StringBuffer();
-
-        ret.append("{"); //$NON-NLS-1$
-
-        ret.append("\"tag\": " + JsonUtil.quoteString(Constants.CLIENT.myAnalysisTag())); //$NON-NLS-1$
-
-        ret.append(", \"config\": {\"type\": \"analysis_window\", \"data\": " + context + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        ret.append("}"); //$NON-NLS-1$
-
-        return ret.toString();
-    }
-
     /**
      * Execute a context.
      * 
      * @param context user intent as context.
      */
     public void execute(final String context) {
-        String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
-                buildPayload(context));
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig("analysis_window", //$NON-NLS-1$
+                JsonUtil.getObject(context));
 
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        // Dispatch window display action with this config
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.myAnalysisTag());
     }
 }
