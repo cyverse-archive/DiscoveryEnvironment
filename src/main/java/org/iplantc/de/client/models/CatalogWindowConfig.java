@@ -35,11 +35,29 @@ public class CatalogWindowConfig extends BasicWindowConfig {
     }
 
     /**
+     * Sets the ID of the category that should be selected in the catalog.
+     * 
+     * @param categoryId
+     */
+    public void setCategoryId(String categoryId) {
+        set(CATEGORY_ID, categoryId);
+    }
+
+    /**
      * Returns the tito ID of the application that should be selected in the catalog.
      * 
      * @return
      */
     public String getAppId() {
         return get(APP_ID);
+    }
+
+    /**
+     * Sets the tito ID of the application that should be selected in the catalog.
+     * 
+     * @param appId
+     */
+    public void setAppId(String appId) {
+        set(APP_ID, appId);
     }
 }
