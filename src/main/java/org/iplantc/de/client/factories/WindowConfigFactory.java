@@ -24,32 +24,24 @@ public class WindowConfigFactory {
      * @param objPayload payload from window JSON message.
      * @return newly created WindowConfig. null on failure.
      */
-    public WindowConfig build(final JSONObject objPayload) {
+    public WindowConfig build(final JSONObject objConfig) {
         WindowConfig ret = null; // assume failure
 
-        if (objPayload != null) {
-            JSONObject objData = JsonUtil.getObject(objPayload, "data"); //$NON-NLS-1$
+        if (objConfig != null) {
+            JSONObject objData = JsonUtil.getObject(objConfig, "data"); //$NON-NLS-1$
+            String type = JsonUtil.getString(objConfig, "type"); //$NON-NLS-1$
 
-            if (objData != null) {
-                JSONObject objConfig = JsonUtil.getObject(objData, "config"); //$NON-NLS-1$
-
-                if (objConfig != null) {
-                    objData = JsonUtil.getObject(objConfig, "data"); //$NON-NLS-1$
-                    String type = JsonUtil.getString(objConfig, "type"); //$NON-NLS-1$
-
-                    // notification window config
-                    if (type.equals("notification_window")) { //$NON-NLS-1$
-                        ret = new NotificationWindowConfig(objData);
-                    } else if (type.equals("analysis_window")) { //$NON-NLS-1$
-                        ret = new BasicWindowConfig(objData);
-                    } else if (type.equals("my_data_window")) { //$NON-NLS-1$
-                        ret = new BasicWindowConfig(objData);
-                    } else if (type.equals(Constants.CLIENT.deCatalog())) {
-                        ret = new CatalogWindowConfig(objData);
-                    } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
-                        ret = new IDropLiteWindowConfig(objData);
-                    }
-                }
+            // notification window config
+            if (type.equals("notification_window")) { //$NON-NLS-1$
+                ret = new NotificationWindowConfig(objData);
+            } else if (type.equals("analysis_window")) { //$NON-NLS-1$
+                ret = new BasicWindowConfig(objData);
+            } else if (type.equals("my_data_window")) { //$NON-NLS-1$
+                ret = new BasicWindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.deCatalog())) {
+                ret = new CatalogWindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
+                ret = new IDropLiteWindowConfig(objData);
             }
         }
 

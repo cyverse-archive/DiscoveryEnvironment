@@ -191,7 +191,8 @@ public class DesktopView extends ContentPanel {
                         if (objData != null) {
                             String tag = JsonUtil.getString(objData, "tag"); //$NON-NLS-1$
 
-                            WindowConfig config = factoryWindowConfig.build(objPayload);
+                            WindowConfig config = factoryWindowConfig.build(JsonUtil.getObject(objData,
+                                    "config")); //$NON-NLS-1$
 
                             showWindow(tag, config);
                         }
