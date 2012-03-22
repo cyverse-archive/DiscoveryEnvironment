@@ -13,15 +13,13 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.factories.EventJSONFactory;
-import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
@@ -71,16 +69,14 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             windowConfigData.put(CatalogWindowConfig.APP_ID, new JSONString(selectedAppId));
         }
 
-        // Build window payload with config
+        // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildConfigPayload(Constants.CLIENT.deCatalog(),
-                Constants.CLIENT.deCatalog(), windowConfigData);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(),
+                windowConfigData);
 
-        // Launch display window event with this payload
-        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        // Dispatch window display action with this config
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.deCatalog());
     }
 
     /**

@@ -61,8 +61,7 @@ public class WindowConfigFactory {
      * 
      * @return JSON message payload window config
      */
-    public JSONObject buildConfigPayload(final String tag, final String configType,
-            final JSONObject windowConfigData) {
+    public JSONObject buildWindowConfig(final String configType, final JSONObject windowConfigData) {
         if (windowConfigData == null) {
             return null;
         }
@@ -72,11 +71,7 @@ public class WindowConfigFactory {
         windowConfig.put("data", windowConfigData); //$NON-NLS-1$
         windowConfig.put("type", new JSONString(configType == null ? "" : configType)); //$NON-NLS-1$ //$NON-NLS-2$
 
-        JSONObject windowPayload = new JSONObject();
-        windowPayload.put("tag", new JSONString(tag == null ? "" : tag)); //$NON-NLS-1$ //$NON-NLS-2$
-        windowPayload.put("config", windowConfig); //$NON-NLS-1$
-
-        return windowPayload;
+        return windowConfig;
     }
 }
 

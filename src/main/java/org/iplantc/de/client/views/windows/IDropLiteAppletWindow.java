@@ -11,17 +11,15 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
-import org.iplantc.de.client.factories.EventJSONFactory;
-import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.IDropLite;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
@@ -113,14 +111,14 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private static void dispatchWindowDisplayMessage(String windowTag, JSONObject windowConfigData) {
+        // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildConfigPayload(windowTag,
-                Constants.CLIENT.iDropLiteTag(), windowConfigData);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
+                windowConfigData);
 
-        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        // Dispatch window display action with this config
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(windowTag);
     }
 
     public IDropLiteAppletWindow(String tag, IDropLiteWindowConfig config) {
