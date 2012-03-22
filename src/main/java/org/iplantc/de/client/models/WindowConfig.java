@@ -1,7 +1,10 @@
 package org.iplantc.de.client.models;
 
+import org.iplantc.core.jsonutil.JsonUtil;
+
 import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Base class for window configurations. A window configuration is specific to a type of window
@@ -21,13 +24,7 @@ public abstract class WindowConfig extends BaseModelData {
      */
     protected WindowConfig(JSONObject json) {
         for (String key : json.keySet()) {
-            String value = json.get(key).toString();
-
-            // strip quotes that JSON added
-            if (value.startsWith("\"") && value.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
-                value = value.substring(1);
-                value = value.substring(0, value.length() - 1);
-            }
+            String value = JsonUtil.getRawValueAsString(json.get(key));
 
             set(key, value);
         }
@@ -41,5 +38,18 @@ public abstract class WindowConfig extends BaseModelData {
      */
     public String getTagSuffix() {
         return ""; //$NON-NLS-1$
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        for (String key : getPropertyNames()) {
+            String value = get(key);
+            if (value != null) {
+                json.put(key, new JSONString(value));
+            }
+        }
+
+        return json;
     }
 }
