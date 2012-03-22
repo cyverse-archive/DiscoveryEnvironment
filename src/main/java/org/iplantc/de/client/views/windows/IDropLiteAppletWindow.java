@@ -79,14 +79,14 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     public static void launchIDropLiteUploadWindow(String uploadDest, String refreshPath) {
         JSONObject windowConfigData = new JSONObject();
 
+        windowConfigData.put(IDropLiteWindowConfig.TAG_SUFFIX, new JSONString("_upload")); //$NON-NLS-1$
         windowConfigData.put(IDropLiteWindowConfig.DISPLAY_MODE, new JSONNumber(
                 IDropLite.DISPLAY_MODE_UPLOAD));
         windowConfigData.put(IDropLiteWindowConfig.UPLOAD_DEST, new JSONString(uploadDest));
         windowConfigData
                 .put(IDropLiteWindowConfig.MANAGE_DATA_CURRENT_PATH, new JSONString(refreshPath));
 
-        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag() + IDropLite.DISPLAY_MODE_UPLOAD,
-                windowConfigData);
+        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag(), windowConfigData);
     }
 
     /**
@@ -103,13 +103,13 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
         JSONObject windowConfigData = new JSONObject();
 
+        windowConfigData.put(IDropLiteWindowConfig.TAG_SUFFIX, new JSONString("_download")); //$NON-NLS-1$
         windowConfigData.put(IDropLiteWindowConfig.DISPLAY_MODE, new JSONNumber(
                 IDropLite.DISPLAY_MODE_DOWNLOAD));
         windowConfigData.put(IDropLiteWindowConfig.DOWNLOAD_PATHS,
                 JsonUtil.buildArrayFromStrings(resourceIds));
 
-        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag() + IDropLite.DISPLAY_MODE_DOWNLOAD,
-                windowConfigData);
+        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag(), windowConfigData);
     }
 
     private static void dispatchWindowDisplayMessage(String windowTag, JSONObject windowConfigData) {

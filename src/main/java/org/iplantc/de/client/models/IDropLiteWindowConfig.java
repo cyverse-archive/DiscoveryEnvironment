@@ -18,12 +18,22 @@ public class IDropLiteWindowConfig extends WindowConfig {
     public static String UPLOAD_DEST = "uploadDest"; //$NON-NLS-1$
     public static String DOWNLOAD_PATHS = "paths"; //$NON-NLS-1$
     public static String MANAGE_DATA_CURRENT_PATH = "currentPath"; //$NON-NLS-1$
+    public static String TAG_SUFFIX = "tag_suffix"; //$NON-NLS-1$
 
     public IDropLiteWindowConfig(JSONObject json) {
         super(json);
 
         setDisplayMode(JsonUtil.getNumber(json, DISPLAY_MODE));
         setDownloadPaths(JsonUtil.getArray(json, DOWNLOAD_PATHS));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTagSuffix() {
+        String suffix = get(TAG_SUFFIX);
+        return suffix == null ? "" : suffix; //$NON-NLS-1$
     }
 
     public Number getDisplayMode() {

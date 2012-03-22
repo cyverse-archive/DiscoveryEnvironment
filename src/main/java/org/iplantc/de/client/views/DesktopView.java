@@ -83,17 +83,17 @@ public class DesktopView extends ContentPanel {
     }
 
     private void showWindow(final String type, final WindowConfig config) {
-        String test = type;
+        String tag = type;
         // if we have params, the unique window identifier will be type + params
         if (config != null) {
-            test += config.getTagSuffix();
+            tag += config.getTagSuffix();
         }
 
-        IPlantWindow window = mgrWindow.getWindow(test);
+        IPlantWindow window = mgrWindow.getWindow(tag);
 
         // do we already have this window?
         if (window == null) {
-            window = mgrWindow.add(type, config);
+            window = mgrWindow.add(tag, config);
         }
 
         // show the window and bring it to the front
