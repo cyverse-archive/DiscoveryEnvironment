@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import org.iplantc.de.shared.AsyncCallbackWrapper;
 
 /**
  * A singleton service that provides an asynchronous proxy to data services.
@@ -45,6 +46,7 @@ public class DEServiceFacade implements DEServiceAsync {
      * @param callback the callback for when the RPC call finishes.
      * @throws SerializationException
      */
+    @Override
     public void getServiceData(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
         proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
     }
@@ -56,6 +58,7 @@ public class DEServiceFacade implements DEServiceAsync {
      * @param callback the callback for when the RPC call finishes.
      * @throws SerializationException
      */
+    @Override
     public void getServiceData(MultiPartServiceWrapper wrapper, AsyncCallback<String> callback) {
         proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
     }

@@ -17,9 +17,11 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 
 /**
  * Defines the default view of the workspace.
@@ -68,6 +70,17 @@ public class DefaultWorkspaceView implements View {
     private void initNotificationManager() {
         NotificationManager mgrNotification = NotificationManager.getInstance();
         mgrNotification.init();
+    }
+
+    /**
+     * Initializes the session keepalive timer.
+     */
+    private void initKeepaliveTimer() {
+        String target = DEProperties.getInstance().getKeepaliveTarget();
+        int interval = DEProperties.getInstance().getKeepaliveInterval();
+        if (target != null && !target.equals("") && interval > 0) {
+            KeepaliveTimer.getInstance().start(target, interval);
+        }
     }
 
     /**
@@ -164,6 +177,7 @@ public class DefaultWorkspaceView implements View {
                 parseWorkspaceId(result);
                 initializeUserInfoAttributes();
                 initNotificationManager();
+                initKeepaliveTimer();
             }
         });
     }

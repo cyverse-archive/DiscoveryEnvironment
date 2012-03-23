@@ -73,6 +73,21 @@ public class DEProperties {
             + "defaultOutputFolderName"; //$NON-NLS-1$
 
     /**
+     * The prefix used for each of the keepalive configuration parameters.
+     */
+    private static final String KEEPALIVE_PREFIX = PROPERTY_NAME_PREFIX + "keepalive.";
+
+    /**
+     * The URL that we use for keepalive requests.
+     */
+    private static final String KEEPALIVE_TARGET = KEEPALIVE_PREFIX + "target";
+
+    /**
+     * The number of minutes between keepalive requests.
+     */
+    private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval";
+
+    /**
      * The single instance of this class.
      */
     private static DEProperties instance;
@@ -142,12 +157,22 @@ public class DEProperties {
     /**
      * The base URL used to link to TITo.
      */
-    private static String titoBaseUrl;
+    private String titoBaseUrl;
 
     /**
      * Indicates if the server-push messaging heartbeat is enabled. (under development)
      */
     private boolean serverPushEnabled;
+
+    /**
+     * The target URL that we use for keepalive requests.
+     */
+    private String keepaliveTarget;
+
+    /**
+     * The number of minutes between keepalive requests.
+     */
+    private int keepaliveInterval;
 
     /**
      * Force the constructor to be private.
@@ -182,17 +207,41 @@ public class DEProperties {
         privateWorkspaceItems = properties.get(PRIVATE_WORKSPACE_ITEMS);
         defaultBetaCategoryId = properties.get(DEFAULT_BETA_CATEGORY_ID);
         defaulyOutputFolderName = properties.get(DEFAULT_OUTPUT_FOLDER_NAME);
+        contextClickEnabled = getBoolean(properties, CONTEXT_CLICK_ENABLED, false);
+        notificationPollInterval = getInt(properties, NOTIFICATION_POLL_INTERVAL, 60);
+        keepaliveTarget = properties.get(KEEPALIVE_TARGET);
+        keepaliveInterval = getInt(properties, KEEPALIVE_INTERVAL, -1);
+    }
 
+    /**
+     * Obtains a boolean property value.
+     * 
+     * @param properties the property map.
+     * @param name the name of the property.
+     * @param defaultValue the default value to use.
+     * @return the property value or its default value.
+     */
+    private boolean getBoolean(Map<String, String> properties, String name, boolean defaultValue) {
         try {
-            contextClickEnabled = Boolean.parseBoolean(properties.get(CONTEXT_CLICK_ENABLED));
+            return Boolean.parseBoolean(properties.get(name));
         } catch (Exception e) {
-            contextClickEnabled = false;
+            return defaultValue;
         }
+    }
 
+    /**
+     * Obtains an integer property value.
+     * 
+     * @param properties the property map.
+     * @param name the name of the property.
+     * @param defaultValue the default value to use.
+     * @return the property value or its default value.
+     */
+    private int getInt(Map<String, String> properties, String name, int defaultValue) {
         try {
-            notificationPollInterval = Integer.parseInt(properties.get(NOTIFICATION_POLL_INTERVAL));
+            return Integer.parseInt(properties.get(name));
         } catch (Exception e) {
-            notificationPollInterval = 60; // default to polling every 60 seconds
+            return defaultValue;
         }
     }
 
@@ -274,5 +323,19 @@ public class DEProperties {
      */
     public String getDefaulyOutputFolderName() {
         return defaulyOutputFolderName;
+    }
+
+    /**
+     * @return the URL that we use for keepalive requests.
+     */
+    public String getKeepaliveTarget() {
+        return keepaliveTarget;
+    }
+
+    /**
+     * @return the number of minutes between keepalive requests.
+     */
+    public int getKeepaliveInterval() {
+        return keepaliveInterval;
     }
 }
