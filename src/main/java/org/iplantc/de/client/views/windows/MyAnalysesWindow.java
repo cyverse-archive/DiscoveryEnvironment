@@ -37,7 +37,7 @@ public class MyAnalysesWindow extends IPlantWindow {
 
     private void init(String tag) {
         setId(tag);
-        setHeading(I18N.DISPLAY.analyses());
+        setHeading(I18N.DISPLAY.results());
         setSize(700, 410);
 
         centerData = buildCenterData();
@@ -77,7 +77,7 @@ public class MyAnalysesWindow extends IPlantWindow {
 
         String idCurrentSelection = (config == null) ? null : config.getId();
 
-        pnlAnlys = new MyAnalysesPanel(I18N.DISPLAY.analysisOverview(), idCurrentSelection);
+        pnlAnlys = new MyAnalysesPanel(I18N.DISPLAY.resultsOverview(), idCurrentSelection);
 
         if (config != null) {
             pnlAnlys.updateSelection(this.config.getId());

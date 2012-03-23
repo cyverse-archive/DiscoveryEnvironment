@@ -446,7 +446,7 @@ public class ApplicationLayout extends Viewport {
                 countNotificationsAll, new NotificationAllListener(notificationMenu));
         lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle,
                 countNotificationsData, new NotificationDataListener(notificationMenu));
-        lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle,
+        lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.apps(), linkStyle,
                 countNotificationsAnalyses, new NotificationAnalysisListener(notificationMenu));
 
         notificationMenu.add(lblNotificationsAll);

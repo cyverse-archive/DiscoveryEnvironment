@@ -83,11 +83,11 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for notification category "analysis".
+     * Display text for notification category "apps".
      * 
      * @return a String representing the text.
      */
-    String notificationCategoryAnalysis();
+    String notificationCategoryApps();
 
     /**
      * 
@@ -115,35 +115,11 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for the "all notifications" link.
+     * Display text for the word app. This could be used in multiple contexts.
      * 
      * @return a String representing the text.
      */
-    String showAllNotifications();
-
-    /**
-     * 
-     * Display text for the tool tip on the analysis notification icon.
-     * 
-     * @return a String representing the text.
-     */
-    String notificationToolTipAnalysis();
-
-    /**
-     * 
-     * Display text for the tool tip on the data notification icon.
-     * 
-     * @return a String representing the text.
-     */
-    String notificationToolTipData();
-
-    /**
-     * 
-     * Display text for the word analysis. This could be used in multiple contexts.
-     * 
-     * @return a String representing the text.
-     */
-    String analysis();
+    String app();
 
     /**
      * 

@@ -276,7 +276,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private MenuItem buildNewAnalysis() {
-        MenuItem new_analysis = new MenuItem(I18N.DISPLAY.createNewAnalysis());
+        MenuItem new_analysis = new MenuItem(I18N.DISPLAY.createNewApp());
 
         new_analysis.setId("idNewAnalysis"); //$NON-NLS-1$
         new_analysis.setIcon(AbstractImagePrototype.create(Resources.ICONS.add()));

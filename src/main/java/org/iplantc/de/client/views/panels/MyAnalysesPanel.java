@@ -242,7 +242,7 @@ public class MyAnalysesPanel extends ContentPanel {
             }
         };
 
-        filter.setEmptyText(I18N.DISPLAY.filterAnalysesList());
+        filter.setEmptyText(I18N.DISPLAY.filterResultsList());
 
     }
 
@@ -276,7 +276,7 @@ public class MyAnalysesPanel extends ContentPanel {
         }
 
         analysisGrid.getStore().addFilter(new StoreFilterImpl());
-        analysisGrid.getView().setEmptyText(I18N.DISPLAY.noAnalyses());
+        analysisGrid.getView().setEmptyText(I18N.DISPLAY.noApps());
         add(analysisGrid);
         addGridEventListeners();
     }
@@ -314,7 +314,7 @@ public class MyAnalysesPanel extends ContentPanel {
     private void doDelete() {
         if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
             final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
-            MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesExecDeleteWarning(),
+            MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.resultDeleteWarning(),
                     new DeleteMessageBoxListener(execs));
         }
     }
@@ -443,7 +443,7 @@ public class MyAnalysesPanel extends ContentPanel {
             }
 
             if (items_to_delete == null || execs.size() != items_to_delete.size()) {
-                MessageBox.alert(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesNotDeleted(), null);
+                MessageBox.alert(I18N.DISPLAY.warning(), I18N.DISPLAY.resultsNotDeleted(), null);
             }
         }
     }
