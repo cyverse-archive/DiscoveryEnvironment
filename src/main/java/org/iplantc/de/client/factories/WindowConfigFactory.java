@@ -4,6 +4,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
+import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
@@ -37,7 +38,7 @@ public class WindowConfigFactory {
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) { //$NON-NLS-1$
                 ret = new BasicWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.myDataTag())) { //$NON-NLS-1$
-                ret = new BasicWindowConfig(objData);
+                ret = new DataWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new CatalogWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {

@@ -90,10 +90,20 @@ public class NotificationPanel extends ContentPanel {
     private AnalysisViewContextExecutor analysisContextExecutor;
 
     /**
+     * ids of notification that will be preselected
+     * 
+     */
+    private List<String> selectedIds;
+
+    /**
      * Creates a new NotificationPanel.
      */
     public NotificationPanel() {
         init();
+    }
+
+    public void selectNotifications(List<String> selectedIds) {
+        this.selectedIds = selectedIds;
     }
 
     /**
@@ -111,8 +121,24 @@ public class NotificationPanel extends ContentPanel {
         setMenu();
     }
 
+    private void select() {
+        ListStore<Notification> store = grdNotifications.getStore();
+        for (String id : selectedIds) {
+            Notification n = store.findModel("id", id);
+            if (n != null) {
+                checkBoxModel.select(n, true);
+            }
+        }
+    }
+
     private void buildNotificationGrid() {
-        NotificationManager notiMgr = NotificationManager.getInstance();
+        final NotificationManager notiMgr = NotificationManager.getInstance(new Command() {
+
+            @Override
+            public void execute() {
+                select();
+            }
+        });
 
         buildColumnModel();
 
@@ -464,7 +490,6 @@ public class NotificationPanel extends ContentPanel {
                         setMenu();
                     }
                 });
-
     }
 
     private void setMenu() {
@@ -550,5 +575,14 @@ public class NotificationPanel extends ContentPanel {
             renderer.setToolTip(message);
             return renderer;
         }
+    }
+
+    /**
+     * Get list of selected notification
+     * 
+     * @return a list containing selected notification objects
+     */
+    public List<Notification> getSelectedItems() {
+        return checkBoxModel.getSelectedItems();
     }
 }

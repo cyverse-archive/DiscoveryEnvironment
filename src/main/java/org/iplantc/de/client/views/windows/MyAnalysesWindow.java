@@ -94,7 +94,7 @@ public class MyAnalysesWindow extends IPlantWindow {
      * {@inheritDoc}
      */
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config != null) {
             this.config = (BasicWindowConfig)config;
         }

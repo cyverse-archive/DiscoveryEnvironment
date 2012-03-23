@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
@@ -21,6 +23,7 @@ import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.ClientDataModel;
+import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
@@ -29,6 +32,7 @@ import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -118,8 +122,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
             selectConfigNode();
             setWindowDisplayState();
             // reset the config here so that this folder is not selected every time the window in
-            // minimized
-            // and re-shown.
+            // minimized and re-shown.
             config = null;
 
         }
@@ -131,9 +134,9 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      * @param config
      */
     @Override
-    public void configure(WindowConfig config) {
-        if (config instanceof BasicWindowConfig) {
-            this.config = (BasicWindowConfig)config;
+    public void setWindowConfig(WindowConfig config) {
+        if (config instanceof DataWindowConfig) {
+            this.config = (DataWindowConfig)config;
         }
     }
 
@@ -165,8 +168,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
             selectConfigNode();
             setWindowDisplayState();
             // reset the config here so that this folder is not selected every time the window in
-            // minimized
-            // and re-shown.
+            // minimized and re-shown.
             config = null;
 
         }
@@ -195,11 +197,15 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      * @return true if a folder was found to select, false otherwise.
      */
     private boolean selectConfigNode() {
-        if (config == null) {
+        if (config == null || !(config instanceof DataWindowConfig)) {
             return false;
         }
 
-        String path = config.getId();
+        List<String> selectedIds = JsonUtil.buildStringList(((DataWindowConfig)config)
+                .getDiskResourceId());
+        pnlMain.setSelectedResource(selectedIds);
+
+        String path = ((DataWindowConfig)config).getFolderId();
         return pnlNavigation.selectFolder(path);
 
     }
@@ -412,7 +418,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
                     JSONObject jsonConfig = new JSONObject();
                     jsonConfig.put(Folder.ID, new JSONString(currentFolderId));
 
-                    configure(new BasicWindowConfig(jsonConfig));
+                    setWindowConfig(new BasicWindowConfig(jsonConfig));
                 }
 
                 retrieveData(new RetrieveDataCallback());
@@ -424,9 +430,23 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
     @Override
     public JSONObject getWindowState() {
         JSONObject obj = super.getWindowState();
-        if (pnlNavigation.getSelectedItem().getId() != null) {
-            obj.put("id", new JSONString(pnlNavigation.getSelectedItem().getId()));
+        if (pnlNavigation.getSelectedItem() != null) {
+            if (pnlNavigation.getSelectedItem().getId() != null) {
+                obj.put(DataWindowConfig.FOLDER_ID, new JSONString(pnlNavigation.getSelectedItem()
+                        .getId()));
+            }
         }
+
+        JSONArray arr = new JSONArray();
+        if (pnlMain.getSelectedItems().size() > 0) {
+
+            int i = 0;
+            for (DiskResource dr : pnlMain.getSelectedItems()) {
+                arr.set(i++, new JSONString(dr.getId()));
+            }
+        }
+
+        obj.put(DataWindowConfig.DISK_RESOURCE_IDS, arr);
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();

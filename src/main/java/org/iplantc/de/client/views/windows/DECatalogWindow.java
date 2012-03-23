@@ -132,7 +132,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config instanceof CatalogWindowConfig) {
             this.config = (CatalogWindowConfig)config;
         }

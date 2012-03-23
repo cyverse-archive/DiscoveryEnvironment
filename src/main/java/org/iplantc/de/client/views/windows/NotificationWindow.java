@@ -1,13 +1,21 @@
 package org.iplantc.de.client.views.windows;
 
+import java.util.List;
+
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Window for displaying event notifications.
@@ -28,7 +36,7 @@ public class NotificationWindow extends IPlantWindow {
         super(tag, false, true, true, true);
 
         init();
-        configure(config);
+        setWindowConfig(config);
     }
 
     private void init() {
@@ -44,16 +52,33 @@ public class NotificationWindow extends IPlantWindow {
     }
 
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config instanceof NotificationWindowConfig) {
             Category category = ((NotificationWindowConfig)config).getCategory();
             panel.filterBy(category);
+            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
+                    .getSelectedIds());
+            panel.selectNotifications(selectedIds);
         }
     }
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        JSONArray arr = new JSONArray();
+        if (panel.getSelectedItems().size() > 0) {
+
+            int i = 0;
+            for (Notification n : panel.getSelectedItems()) {
+                arr.set(i++, new JSONString(n.getId()));
+            }
+        }
+        obj.put(NotificationWindowConfig.SELECTED_IDS, arr);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myNotifyTag(), obj);
+        return windowConfig;
+
     }
 }

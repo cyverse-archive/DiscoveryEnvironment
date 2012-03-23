@@ -40,7 +40,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class DataMainPanel extends AbstractDataPanel implements DataContainer {
     private MyDataGrid grid;
     private Component maskingParent;
-    private final DiskResource selectedResource;
+    private List<String> selectedResourceIds;
     private boolean enableDragAndDrop = true;
 
     private ClientDataModel model;
@@ -51,12 +51,12 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
         this(tag, model, null);
     }
 
-    public DataMainPanel(final String tag, final ClientDataModel model, DiskResource selectedFile) {
+    public DataMainPanel(final String tag, final ClientDataModel model, List<String> selectedResourceId) {
         super(tag);
 
         this.model = model;
 
-        this.selectedResource = selectedFile;
+        this.setSelectedResource(selectedResourceId);
 
         toolbar = new DataMainToolBar(tag, this);
         setTopComponent(toolbar);
@@ -98,8 +98,6 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
         GridDropTarget target = new GridDropTargetImpl(grid);
         target.setAllowSelfAsSource(true);
     }
-
-
 
     /**
      * Disables Drag-and-Drop in the main data panel. Must be set before seed is called.
@@ -220,8 +218,10 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
                 store.add(resource);
             }
 
-            if (selectedResource != null) {
-                select(selectedResource);
+            if (selectedResourceIds != null) {
+                for (String id : selectedResourceIds) {
+                    select(id, true);
+                }
             }
 
             grid.getView().refresh(false);
@@ -277,13 +277,13 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
     /**
      * Tells the panel which file should be shown as "selected."
      * 
-     * @param resource the file in the data browser grid to select
+     * @param resourceId the file / folder in the data browser grid to select
      */
-    public void select(DiskResource resource) {
+    public void select(String resourceId, boolean keepExisting) {
         if (grid != null) {
-            DiskResource exists = findDiskResource(resource.getId());
+            DiskResource exists = findDiskResource(resourceId);
             if (exists != null) {
-                grid.getSelectionModel().select(exists, false);
+                grid.getSelectionModel().select(exists, keepExisting);
             }
         }
     }
@@ -390,6 +390,13 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
         }
 
         return null;
+    }
+
+    /**
+     * @param selectedResource the selectedResource to set
+     */
+    public void setSelectedResource(List<String> selectedResourceId) {
+        this.selectedResourceIds = selectedResourceId;
     }
 
     private class DiskResourceSelectedEventHandlerImpl implements DiskResourceSelectedEventHandler {

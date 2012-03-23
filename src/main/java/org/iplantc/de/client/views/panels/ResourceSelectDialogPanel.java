@@ -1,6 +1,7 @@
 package org.iplantc.de.client.views.panels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -165,7 +166,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
         pnlNavigation.disableDragAndDrop();
 
         // initialize the main view panel
-        pnlMain = new DataMainPanel(tag, model, selectedResource);
+        pnlMain = new DataMainPanel(tag, model, Arrays.asList(selectedResource.getId()));
         pnlMain.disableDragAndDrop();
 
         // initialize the selected file field
@@ -211,7 +212,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
             pnlNavigation.selectFolder(DataUtils.parseParent(resource.getId()));
         }
         if (pnlMain != null) {
-            pnlMain.select(resource);
+            pnlMain.select(resource.getId(), false);
         }
     }
 

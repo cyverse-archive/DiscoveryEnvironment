@@ -396,7 +396,8 @@ public abstract class IPlantWindow extends Window {
      * 
      * @param config
      */
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
+        // do nothing intentionally
     }
 
 }

@@ -2,15 +2,18 @@ package org.iplantc.de.client.models;
 
 import org.iplantc.de.client.utils.NotificationManager.Category;
 
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 
 /**
  * WindowConfig for notification windows.
  */
 public class NotificationWindowConfig extends WindowConfig {
-    private static final long serialVersionUID = 6533350718698752311L;
+    public static final String CATEGORY = "category";
+    public static final String SELECTED_IDS = "selectedIds";
 
-    private Category category;
+    private static final long serialVersionUID = 6533350718698752311L;
 
     /**
      * Creates a NotificationWindowConfig from the JSON parameter "category". This JSON parameter and any
@@ -20,8 +23,8 @@ public class NotificationWindowConfig extends WindowConfig {
      */
     public NotificationWindowConfig(JSONObject json) {
         super(json);
-        String categoryString = get("category"); //$NON-NLS-1$
-        category = Category.fromTypeString(categoryString);
+        String categoryString = get(CATEGORY); //$NON-NLS-1$
+        set(CATEGORY, Category.fromTypeString(categoryString));
     }
 
     /**
@@ -30,6 +33,10 @@ public class NotificationWindowConfig extends WindowConfig {
      * @return the category
      */
     public Category getCategory() {
-        return category;
+        return get(CATEGORY);
+    }
+
+    public JSONArray getSelectedIds() {
+        return JSONParser.parseStrict(get(SELECTED_IDS).toString()).isArray();
     }
 }

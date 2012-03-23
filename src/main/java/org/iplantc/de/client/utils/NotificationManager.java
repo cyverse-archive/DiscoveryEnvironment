@@ -85,10 +85,12 @@ public class NotificationManager {
     private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
     private final MessageServiceFacade facadeMessageService;
+    private Command storeLoadCompleteCallbackCmd;
 
-    private NotificationManager() {
+    private NotificationManager(Command storeLoadCompleteCallbackCmd) {
         facadeMessageService = new MessageServiceFacade();
         storeAll = new ListStore<Notification>();
+        this.storeLoadCompleteCallbackCmd = storeLoadCompleteCallbackCmd;
 
         // keep notifications sorted by time
         storeAll.setDefaultSort(PROP_TIMESTAMP, SortDir.DESC);
@@ -99,6 +101,10 @@ public class NotificationManager {
         registerEventHandlers();
 
         getExistingNotifications(null);
+    }
+
+    private NotificationManager() {
+        this(null);
     }
 
     private void initContextBuilders() {
@@ -162,6 +168,21 @@ public class NotificationManager {
         return instance;
     }
 
+    /**
+     * Return the shared, singleton instance of the manager.
+     * 
+     * @return a singleton reference to the notification manager.
+     */
+    public static NotificationManager getInstance(Command storeLoadCompleteCallback) {
+        if (instance == null) {
+            instance = new NotificationManager(storeLoadCompleteCallback);
+        } else {
+            instance.storeLoadCompleteCallbackCmd = storeLoadCompleteCallback;
+        }
+
+        return instance;
+    }
+
     private Notification getLastElement() {
         return storeAll.getAt(storeAll.getCount() - 1);
     }
@@ -214,6 +235,7 @@ public class NotificationManager {
                         if (callback != null) {
                             callback.execute();
                         }
+                        storeLoadCompleteCallbackCmd.execute();
                     }
                 });
     }

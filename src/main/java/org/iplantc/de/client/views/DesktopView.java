@@ -97,7 +97,7 @@ public class DesktopView extends ContentPanel {
 
         // show the window and bring it to the front
         if (window != null) {
-            window.configure(config);
+            window.setWindowConfig(config);
             mgrWindow.show(window.getTag());
         }
     }

@@ -36,7 +36,7 @@ public class Notification extends DEBaseModelData {
         if (message == null) {
             clear();
         } else {
-            set("id", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            set("id", new Date().getTime()); //$NON-NLS-1$ //$NON-NLS-2$
             set(PROP_CATEGORY, ""); //$NON-NLS-1$
             set(PROP_MESSAGE, message);
             set("context", null); //$NON-NLS-1$
