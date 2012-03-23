@@ -10,6 +10,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
@@ -18,7 +19,6 @@ import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
-import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -290,7 +290,8 @@ public class DataActionsPanel extends ContentPanel {
         public void handleEvent(ComponentEvent be) {
 
             if (DataUtils.isDownloadable(resources)) {
-                IDropLiteAppletWindow.launchIDropLiteDownloadWindow(resources);
+                IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
+                dispatcher.launchDownloadWindow(resources);
             } else {
                 showErrorMsg();
             }

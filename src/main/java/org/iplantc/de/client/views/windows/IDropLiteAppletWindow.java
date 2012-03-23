@@ -1,20 +1,14 @@
 package org.iplantc.de.client.views.windows;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
-import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
@@ -45,7 +39,6 @@ import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
@@ -66,60 +59,6 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private Dialog dlgUpload;
     private boolean promptHide = true;
     private ToolBar toolbar;
-
-    /**
-     * Opens an IDropLiteAppletWindow in Upload Mode for the given uploadDest, via the Window Manager.
-     * Closing this window will fire a ManageDataRefreshEvent with the given refreshPath.
-     * 
-     * @param uploadDest
-     * @param refreshPath
-     */
-    public static void launchIDropLiteUploadWindow(String uploadDest, String refreshPath) {
-        JSONObject windowConfigData = new JSONObject();
-
-        windowConfigData.put(IDropLiteWindowConfig.TAG_SUFFIX, new JSONString("_upload")); //$NON-NLS-1$
-        windowConfigData.put(IDropLiteWindowConfig.DISPLAY_MODE, new JSONNumber(
-                IDropLite.DISPLAY_MODE_UPLOAD));
-        windowConfigData.put(IDropLiteWindowConfig.UPLOAD_DEST, new JSONString(uploadDest));
-        windowConfigData
-                .put(IDropLiteWindowConfig.MANAGE_DATA_CURRENT_PATH, new JSONString(refreshPath));
-
-        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag(), windowConfigData);
-    }
-
-    /**
-     * Opens an IDropLiteAppletWindow in Download Mode for the given resources, via the Window Manager.
-     * 
-     * @param resources
-     */
-    public static void launchIDropLiteDownloadWindow(List<DiskResource> resources) {
-        ArrayList<String> resourceIds = new ArrayList<String>();
-
-        for (DiskResource resource : resources) {
-            resourceIds.add(resource.getId());
-        }
-
-        JSONObject windowConfigData = new JSONObject();
-
-        windowConfigData.put(IDropLiteWindowConfig.TAG_SUFFIX, new JSONString("_download")); //$NON-NLS-1$
-        windowConfigData.put(IDropLiteWindowConfig.DISPLAY_MODE, new JSONNumber(
-                IDropLite.DISPLAY_MODE_DOWNLOAD));
-        windowConfigData.put(IDropLiteWindowConfig.DOWNLOAD_PATHS,
-                JsonUtil.buildArrayFromStrings(resourceIds));
-
-        dispatchWindowDisplayMessage(Constants.CLIENT.iDropLiteTag(), windowConfigData);
-    }
-
-    private static void dispatchWindowDisplayMessage(String windowTag, JSONObject windowConfigData) {
-        // Build window config
-        WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
-                windowConfigData);
-
-        // Dispatch window display action with this config
-        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
-        dispatcher.dispatchAction(windowTag);
-    }
 
     public IDropLiteAppletWindow(String tag, IDropLiteWindowConfig config) {
         super(tag);
@@ -144,7 +83,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         setTopComponent(toolbar);
 
         // Set the heading and add the correct simple mode button based on the applet display mode.
-        int displayMode = config.getDisplayMode().intValue();
+        int displayMode = config.getDisplayMode();
         if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
             setHeading(I18N.DISPLAY.upload());
 
@@ -314,9 +253,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         if (htmlApplet == null) {
             contents.mask(I18N.DISPLAY.loadingMask());
 
-            if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_UPLOAD) {
+            int displayMode = config.getDisplayMode();
+            if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
                 buildUploadApplet();
-            } else if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_DOWNLOAD) {
+            } else if (displayMode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
                 buildDownloadApplet();
             }
         }

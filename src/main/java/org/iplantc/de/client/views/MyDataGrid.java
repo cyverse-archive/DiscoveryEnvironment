@@ -15,6 +15,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.FileDescriptionEditedEvent;
 import org.iplantc.de.client.events.FileDescriptionEditedEventHandler;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
@@ -35,7 +36,6 @@ import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
 import org.iplantc.de.client.views.panels.MetadataEditorPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
-import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -579,7 +579,8 @@ public class MyDataGrid extends Grid<DiskResource> {
             List<DiskResource> resources = getSelectionModel().getSelectedItems();
 
             if (DataUtils.isDownloadable(resources)) {
-                IDropLiteAppletWindow.launchIDropLiteDownloadWindow(resources);
+                IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
+                dispatcher.launchDownloadWindow(resources);
             } else {
                 showErrorMsg();
             }

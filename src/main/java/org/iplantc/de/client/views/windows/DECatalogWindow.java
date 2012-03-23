@@ -13,7 +13,7 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.dispatchers.CatalogWindowDispatcher;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
@@ -52,34 +52,6 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String BETA_GROUP_ID;
 
     /**
-     * Dispatches a DISPLAY_WINDOW event with the given App and Category ID in a DECatalogWindow config,
-     * so that the Window Manager will open the DECatalogWindow with that Category and App selected.
-     * 
-     * @param selectedCategoryId
-     * @param selectedAppId
-     */
-    public static void launchDECatalogWindow(String selectedCategoryId, String selectedAppId) {
-        // Build window config data
-        JSONObject windowConfigData = new JSONObject();
-
-        if (selectedCategoryId != null) {
-            windowConfigData.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(selectedCategoryId));
-        }
-        if (selectedAppId != null) {
-            windowConfigData.put(CatalogWindowConfig.APP_ID, new JSONString(selectedAppId));
-        }
-
-        // Build window config
-        WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(),
-                windowConfigData);
-
-        // Dispatch window display action with this config
-        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
-        dispatcher.dispatchAction(Constants.CLIENT.deCatalog());
-    }
-
-    /**
      * 
      * @param tag
      * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to
@@ -116,7 +88,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             @Override
             public void onSelection(AnalysisSelectEvent event) {
                 if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())) {
-                    DECatalogWindow.launchDECatalogWindow(event.getCategoryId(), event.getAppId());
+                    CatalogWindowDispatcher dispatcher = new CatalogWindowDispatcher();
+                    dispatcher.launchCatalogWindow(event.getCategoryId(), event.getAppId());
                 }
             }
         }));
