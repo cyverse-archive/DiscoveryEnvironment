@@ -196,7 +196,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, null, EMAIL,
                 new BasicEmailValidator(), 256);
 
-        descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
+        descField = buildTextArea(I18N.DISPLAY.appDesc(), true, analysis.getDescription(), DESC,
                 255);
         isDisabledField = new CheckBox();
         isDisabledField.setBoxLabel(I18N.DISPLAY.appDisabled());
