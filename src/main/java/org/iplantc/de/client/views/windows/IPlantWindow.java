@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.Header;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
+import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -98,11 +99,16 @@ public abstract class IPlantWindow extends Window {
     }
 
     /**
-     * Returns the windows state information. State information includes
+     * Returns the windows state information.
      * 
      * @return
      */
-    public abstract JSONObject getWindowState();
+    public JSONObject getWindowState() {
+        JSONObject obj = new JSONObject();
+        obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
+        obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
+        return obj;
+    }
 
     /**
      * Initiate the status components.
@@ -279,7 +285,7 @@ public abstract class IPlantWindow extends Window {
         fireEvent(Events.Restore, new WindowEvent(this));
     }
 
-    private void maximizeWindow() {
+    protected void maximizeWindow() {
         if (!maximized) {
             restoreSize = getSize();
             restorePos = getPosition(true);

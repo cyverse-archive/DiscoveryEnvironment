@@ -3,6 +3,7 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.AboutApplicationData;
 import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
 
@@ -10,7 +11,6 @@ import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
-import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -103,9 +103,10 @@ public class AboutApplicationWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = new JSONObject();
-        obj.put("isMaximized", JSONBoolean.getInstance(isMaximized()));
-        obj.put("isMinimized", JSONBoolean.getInstance(!isVisible()));
-        return obj;
+        // Build window config
+        JSONObject obj = super.getWindowState();
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), obj);
+        return windowConfig;
     }
 }

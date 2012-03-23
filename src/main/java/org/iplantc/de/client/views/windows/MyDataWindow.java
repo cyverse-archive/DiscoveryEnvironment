@@ -9,6 +9,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
@@ -17,6 +18,7 @@ import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.WindowConfig;
@@ -114,6 +116,12 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         if (model != null && model.getRootFolder() != null) {
             // select node from WindowConfig
             selectConfigNode();
+            setWindowDisplayState();
+            // reset the config here so that this folder is not selected every time the window in
+            // minimized
+            // and re-shown.
+            config = null;
+
         }
     }
 
@@ -155,8 +163,30 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
             // Select the folder set by the config
             selectConfigNode();
+            setWindowDisplayState();
+            // reset the config here so that this folder is not selected every time the window in
+            // minimized
+            // and re-shown.
+            config = null;
+
         }
 
+    }
+
+    private void setWindowDisplayState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+            return;
+        }
+
+        if (config.isWindowMaximized()) {
+            maximizeWindow();
+            return;
+        }
     }
 
     /**
@@ -170,11 +200,6 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         }
 
         String path = config.getId();
-
-        // reset the config here so that this folder is not selected every time the window in minimized
-        // and re-shown.
-        config = null;
-
         return pnlNavigation.selectFolder(path);
 
     }
@@ -398,7 +423,14 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        if (pnlNavigation.getSelectedItem().getId() != null) {
+            obj.put("id", new JSONString(pnlNavigation.getSelectedItem().getId()));
+        }
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myDataTag(), obj);
+        return windowConfig;
     }
 }

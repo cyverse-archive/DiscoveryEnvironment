@@ -11,11 +11,13 @@ import com.google.gwt.json.client.JSONString;
  * (Notifications, Analysis, etc.) and describes how a window should be presented. For example, data
  * could be filtered, or certain UI elements could be disabled.
  * 
- * @author hariolf
+ * @author hariolf, Paul
  * 
  */
 public abstract class WindowConfig extends BaseModelData {
     private static final long serialVersionUID = 3602295075858973528L;
+    public static final String IS_MAXIMIZED = "isMaximized";
+    public static final String IS_MINIMIZED = "isMinimized";
 
     /**
      * Constructs a WindowConfig and adds all JSON key/value pairs as BaseModelData parameters.
@@ -51,5 +53,21 @@ public abstract class WindowConfig extends BaseModelData {
         }
 
         return json;
+    }
+
+    public boolean isWindowMinimized() {
+        if (get(IS_MINIMIZED) != null) {
+            return Boolean.parseBoolean(get(IS_MINIMIZED).toString());
+        }
+
+        return false;
+    }
+
+    public boolean isWindowMaximized() {
+        if (get(IS_MAXIMIZED) != null) {
+            return Boolean.parseBoolean(get(IS_MAXIMIZED).toString());
+        }
+
+        return false;
     }
 }

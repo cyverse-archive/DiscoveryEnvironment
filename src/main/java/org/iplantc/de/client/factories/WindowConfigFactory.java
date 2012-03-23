@@ -32,11 +32,11 @@ public class WindowConfigFactory {
             String type = JsonUtil.getString(objConfig, "type"); //$NON-NLS-1$
 
             // notification window config
-            if (type.equals("notification_window")) { //$NON-NLS-1$
+            if (type.equals(Constants.CLIENT.myNotifyTag())) { //$NON-NLS-1$
                 ret = new NotificationWindowConfig(objData);
-            } else if (type.equals("analysis_window")) { //$NON-NLS-1$
+            } else if (type.equals(Constants.CLIENT.myAnalysisTag())) { //$NON-NLS-1$
                 ret = new BasicWindowConfig(objData);
-            } else if (type.equals("my_data_window")) { //$NON-NLS-1$
+            } else if (type.equals(Constants.CLIENT.myDataTag())) { //$NON-NLS-1$
                 ret = new BasicWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new CatalogWindowConfig(objData);
@@ -66,4 +66,3 @@ public class WindowConfigFactory {
         return windowConfig;
     }
 }
-

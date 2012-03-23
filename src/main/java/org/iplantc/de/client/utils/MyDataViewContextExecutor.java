@@ -22,7 +22,7 @@ public class MyDataViewContextExecutor {
     public void execute(final String context) {
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig("my_data_window", //$NON-NLS-1$
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myDataTag(), //$NON-NLS-1$
                 JsonUtil.getObject(context));
 
         // Dispatch window display action with this config

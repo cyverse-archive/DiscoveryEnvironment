@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.event.TreePanelEvent;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanelSelectionModel;
@@ -56,6 +57,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
     private TreePanel<Folder> pnlTree;
     private boolean enableDragAndDrop = true;
     private final DataNavToolBar toolBar;
+    @SuppressWarnings("unused")
     private final Mode mode;
     private Component maskingParent;
     private ClientDataModel model;
@@ -71,6 +73,14 @@ public class DataNavigationPanel extends AbstractDataPanel {
         this.mode = mode;
         toolBar = new DataNavToolBar(tag, mode);
         setTopComponent(toolBar);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void init() {
+        setLayout(new FitLayout());
     }
 
     /**
@@ -203,32 +213,6 @@ public class DataNavigationPanel extends AbstractDataPanel {
     @Override
     protected void setHeading() {
         setHeaderVisible(false);
-    }
-
-    @Override
-    protected void onResize(int width, int height) {
-        super.onResize(width, height);
-
-        resizeContents(getInnerWidth(), getInnerHeight());
-    }
-
-    @Override
-    protected void onAfterLayout() {
-        super.onAfterLayout();
-
-        resizeContents(getInnerWidth(), getInnerHeight());
-    }
-
-    /**
-     * Resizes this panel's inner tree panel.
-     * 
-     * @param width
-     * @param height
-     */
-    private void resizeContents(int width, int height) {
-        if (pnlTree != null) {
-            pnlTree.setHeight(height);
-        }
     }
 
     public void seed(final String lblRoot, final ClientDataModel model) {

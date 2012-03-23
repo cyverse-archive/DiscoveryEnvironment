@@ -22,7 +22,7 @@ public class AnalysisViewContextExecutor {
     public void execute(final String context) {
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig("analysis_window", //$NON-NLS-1$
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(), //$NON-NLS-1$
                 JsonUtil.getObject(context));
 
         // Dispatch window display action with this config

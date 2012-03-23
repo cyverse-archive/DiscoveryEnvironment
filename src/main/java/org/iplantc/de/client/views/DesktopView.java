@@ -315,7 +315,6 @@ public class DesktopView extends ContentPanel {
             clearState();
             Map<String, IPlantWindow> windows = mgrWindow.getWindows();
             for (IPlantWindow win : windows.values()) {
-                System.out.println("win-->" + win.getTag());
                 saveWindowState(win.getTag(), win.getWindowState());
             }
         }
@@ -323,6 +322,7 @@ public class DesktopView extends ContentPanel {
         private void saveWindowState(String tag, JSONObject state) {
             if (state != null) {
                 StateManager mgr = DEStateManager.getStateManager();
+                System.out.println("win-->" + state.toString());
                 mgr.set(tag, state.toString());
             }
         }
@@ -346,7 +346,7 @@ public class DesktopView extends ContentPanel {
                 String state = mgr.getString(tag);
                 if (state != null) {
                     // Dispatch window display action
-                    WindowDispatcher dispatcher = new WindowDispatcher();
+                    WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(state));
                     dispatcher.dispatchAction(tag);
                 }
             }
