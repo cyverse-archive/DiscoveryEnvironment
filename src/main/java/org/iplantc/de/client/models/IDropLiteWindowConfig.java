@@ -1,9 +1,12 @@
 package org.iplantc.de.client.models;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uidiskresource.client.models.DiskResource;
 
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 
 /**
  * A Window config for the idrop-lite applet window.
@@ -23,7 +26,6 @@ public class IDropLiteWindowConfig extends WindowConfig {
     public IDropLiteWindowConfig(JSONObject json) {
         super(json);
 
-        setDisplayMode(JsonUtil.getNumber(json, DISPLAY_MODE));
         setDownloadPaths(JsonUtil.getArray(json, DOWNLOAD_PATHS));
     }
 
@@ -36,27 +38,61 @@ public class IDropLiteWindowConfig extends WindowConfig {
         return suffix == null ? "" : suffix; //$NON-NLS-1$
     }
 
-    public Number getDisplayMode() {
-        return get(DISPLAY_MODE);
+    public int getDisplayMode() {
+        String mode = get(DISPLAY_MODE);
+
+        try {
+            return new Integer(mode);
+        } catch (Exception ignore) {
+            return 0;
+        }
     }
 
-    public void setDisplayMode(Number mode) {
-        set(DISPLAY_MODE, mode);
+    public void setDisplayMode(int mode) {
+        set(DISPLAY_MODE, String.valueOf(mode));
     }
 
     public String getUploadDest() {
         return get(UPLOAD_DEST);
     }
 
+    public void setUploadDest(String uploadDest) {
+        set(UPLOAD_DEST, uploadDest);
+    }
+
     public String getCurrentPath() {
         return get(MANAGE_DATA_CURRENT_PATH);
     }
 
+    public void setCurrentPath(String currentPath) {
+        set(MANAGE_DATA_CURRENT_PATH, currentPath);
+    }
+
     public JSONArray getDownloadPaths() {
-        return get(DOWNLOAD_PATHS);
+        String paths = get(DOWNLOAD_PATHS);
+
+        try {
+            return JSONParser.parseStrict(paths).isArray();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void setDownloadPaths(JSONArray paths) {
-        set(DOWNLOAD_PATHS, paths);
+        set(DOWNLOAD_PATHS, paths == null ? null : paths.toString());
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+
+        json.put(DISPLAY_MODE, new JSONNumber(getDisplayMode()));
+
+        JSONArray downloadPaths = getDownloadPaths();
+        if (downloadPaths != null) {
+            json.put(DOWNLOAD_PATHS, downloadPaths);
+        }
+
+        return json;
     }
 }

@@ -10,7 +10,7 @@ import com.google.gwt.json.client.JSONObject;
 public class NotificationWindowConfig extends WindowConfig {
     private static final long serialVersionUID = 6533350718698752311L;
 
-    private Category category;
+    private final Category category;
 
     /**
      * Creates a NotificationWindowConfig from the JSON parameter "category". This JSON parameter and any
@@ -20,6 +20,7 @@ public class NotificationWindowConfig extends WindowConfig {
      */
     public NotificationWindowConfig(JSONObject json) {
         super(json);
+
         String categoryString = get("category"); //$NON-NLS-1$
         category = Category.fromTypeString(categoryString);
     }

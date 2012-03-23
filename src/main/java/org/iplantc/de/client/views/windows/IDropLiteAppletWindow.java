@@ -144,7 +144,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         setTopComponent(toolbar);
 
         // Set the heading and add the correct simple mode button based on the applet display mode.
-        int displayMode = config.getDisplayMode().intValue();
+        int displayMode = config.getDisplayMode();
         if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
             setHeading(I18N.DISPLAY.upload());
 
@@ -314,9 +314,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         if (htmlApplet == null) {
             contents.mask(I18N.DISPLAY.loadingMask());
 
-            if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_UPLOAD) {
+            int displayMode = config.getDisplayMode();
+            if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
                 buildUploadApplet();
-            } else if (config.getDisplayMode().intValue() == IDropLite.DISPLAY_MODE_DOWNLOAD) {
+            } else if (displayMode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
                 buildDownloadApplet();
             }
         }
