@@ -1,7 +1,11 @@
 package org.iplantc.de.client.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.de.client.utils.IDropLite;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
@@ -22,6 +26,12 @@ public class IDropLiteWindowConfig extends WindowConfig {
     public static String DOWNLOAD_PATHS = "paths"; //$NON-NLS-1$
     public static String MANAGE_DATA_CURRENT_PATH = "currentPath"; //$NON-NLS-1$
     public static String TAG_SUFFIX = "tag_suffix"; //$NON-NLS-1$
+    public static String TAG_SUFFIX_UPLOAD = "_upload"; //$NON-NLS-1$
+    public static String TAG_SUFFIX_DOWNLOAD = "_download"; //$NON-NLS-1$
+
+    public IDropLiteWindowConfig() {
+        super(new JSONObject());
+    }
 
     public IDropLiteWindowConfig(JSONObject json) {
         super(json);
@@ -48,8 +58,19 @@ public class IDropLiteWindowConfig extends WindowConfig {
         }
     }
 
+    /**
+     * Sets the display mode, and also sets the appropriate TAG_SUFFIX value based on this mode.
+     * 
+     * @param mode
+     */
     public void setDisplayMode(int mode) {
         set(DISPLAY_MODE, String.valueOf(mode));
+
+        if (mode == IDropLite.DISPLAY_MODE_UPLOAD) {
+            set(TAG_SUFFIX, TAG_SUFFIX_UPLOAD);
+        } else if (mode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
+            set(TAG_SUFFIX, TAG_SUFFIX_DOWNLOAD);
+        }
     }
 
     public String getUploadDest() {
@@ -78,8 +99,32 @@ public class IDropLiteWindowConfig extends WindowConfig {
         }
     }
 
+    /**
+     * Stores the JSON array of paths.
+     * 
+     * @param paths
+     */
     public void setDownloadPaths(JSONArray paths) {
         set(DOWNLOAD_PATHS, paths == null ? null : paths.toString());
+    }
+
+    /**
+     * Stores the IDs (paths) from the given DiskResource list as a JSON array.
+     * 
+     * @param resources
+     */
+    public void setDownloadPaths(List<DiskResource> resources) {
+        if (resources == null) {
+            set(DOWNLOAD_PATHS, null);
+        } else {
+            ArrayList<String> resourceIds = new ArrayList<String>();
+
+            for (DiskResource resource : resources) {
+                resourceIds.add(resource.getId());
+            }
+
+            setDownloadPaths(JsonUtil.buildArrayFromStrings(resourceIds));
+        }
     }
 
     @Override

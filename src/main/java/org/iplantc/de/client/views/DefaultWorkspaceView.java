@@ -8,10 +8,10 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.ApplicationLayout;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.CatalogWindowDispatcher;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.utils.NotificationManager;
-import org.iplantc.de.client.views.windows.DECatalogWindow;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
@@ -42,7 +42,8 @@ public class DefaultWorkspaceView implements View {
         // show application if an appID is specified in the request string
         String appId = getAppId();
         if (appId != null) {
-            DECatalogWindow.launchDECatalogWindow(null, appId);
+            CatalogWindowDispatcher dispatcher = new CatalogWindowDispatcher();
+            dispatcher.launchCatalogWindow(null, appId);
         }
     }
 

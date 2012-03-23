@@ -10,6 +10,7 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderDeleteCallback;
@@ -18,7 +19,6 @@ import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.PanelHelper;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
-import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -164,7 +164,10 @@ public class DataNavToolBar extends ToolBar {
 
     private void promptUpload() {
         if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
-            IDropLiteAppletWindow.launchIDropLiteUploadWindow(getCurrentPath(), getCurrentPath());
+            String currentPath = getCurrentPath();
+
+            IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
+            dispatcher.launchUploadWindow(currentPath, currentPath);
         }
     }
 
