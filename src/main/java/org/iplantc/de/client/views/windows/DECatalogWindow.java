@@ -134,7 +134,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     public void configure(WindowConfig config) {
         if (config instanceof CatalogWindowConfig) {
-            selectConfigData((CatalogWindowConfig)config);
+            this.config = (CatalogWindowConfig)config;
         }
     }
 
@@ -150,13 +150,19 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     @Override
+    public void show() {
+        super.show();
+
+        if (config != null && config instanceof CatalogWindowConfig) {
+            selectConfigData((CatalogWindowConfig)config);
+        }
+
+    }
+
+    @Override
     protected void initPanels() {
         catPanel = new CatalogCategoryPanel();
         mainPanel = new CatalogMainPanel(Constants.CLIENT.deCatalog());
-
-        if (config instanceof CatalogWindowConfig) {
-            selectConfigData((CatalogWindowConfig)config);
-        }
     }
 
     protected void selectConfigData(CatalogWindowConfig catalogConfig) {
@@ -246,7 +252,18 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        if (mainPanel.getSelectedApp() != null) {
+            obj.put(CatalogWindowConfig.APP_ID, new JSONString(mainPanel.getSelectedApp().getId()));
+        }
+
+        if (mainPanel.getCurrentCategoryId() != null) {
+            obj.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(mainPanel.getCurrentCategoryId()));
+        }
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), obj);
+        return windowConfig;
     }
 }

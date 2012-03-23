@@ -122,6 +122,15 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         return model;
     }
 
+    /**
+     * Get the category id for the current seleciton the category tree
+     * 
+     * @return String category id
+     */
+    public String getCurrentCategoryId() {
+        return current_category.getId();
+    }
+
     private void addToolBarActions() {
         addToToolBar(new SeparatorToolItem());
         addToToolBar(buildNewButton());
@@ -343,19 +352,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             getTemplateService().favoriteAnalysis(info.getWorkspaceId(), id, fav,
                     new AsyncCallback<String>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
 
-                }
+                        }
 
-                @Override
-                public void onSuccess(String result) {
-                    updateFavPreference(fav);
-                    checkAndBuildFavMenu(fav);
-                    fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
-                }
-            });
+                        @Override
+                        public void onSuccess(String result) {
+                            updateFavPreference(fav);
+                            checkAndBuildFavMenu(fav);
+                            fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
+                        }
+                    });
         } else {
             ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed());
         }
@@ -523,8 +532,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 UserInfo info = UserInfo.getInstance();
                 if (info != null) {
                     getTemplateService().deleteAnalysisFromWorkspace(info.getFullUsername(),
-                            selectedItem.getId(),
-                            new AsyncCallback<String>() {
+                            selectedItem.getId(), new AsyncCallback<String>() {
 
                                 @Override
                                 public void onFailure(Throwable caught) {

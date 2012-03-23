@@ -1,6 +1,8 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
@@ -10,6 +12,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -111,7 +114,14 @@ public class MyAnalysesWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        if (pnlAnlys.getIdCurrentSelection() != null) {
+            obj.put("id", new JSONString(pnlAnlys.getIdCurrentSelection()));
+        }
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(), obj);
+        return windowConfig;
     }
 }
