@@ -145,8 +145,7 @@ public class PublishToWorldPanel extends LayoutContainer {
         left.add(integratorNameField, formData);
         left.add(emailField, formData);
 
-        right.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.categorySelect())),
-                formData);
+        right.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.categorySelect())), formData);
         right.add(categoryField, formData);
 
         top.add(left, new ColumnData(.5));
@@ -211,8 +210,7 @@ public class PublishToWorldPanel extends LayoutContainer {
         emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, getEmail(), EMAIL,
                 new BasicEmailValidator(), 256);
 
-        descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
-                255);
+        descField = buildTextArea("Analysis Description", true, analysis.getDescription(), DESC, 255);
 
         categoryField = buildCategoryField();
 
@@ -328,15 +326,15 @@ public class PublishToWorldPanel extends LayoutContainer {
 
                         // Also remove the public "Beta" category
                         TreeStore<AnalysisGroupTreeModel> store = wrapper.getStore();
-                        store.remove(store.findModel(AnalysisGroupTreeModel.ID, 
-                                DEProperties.getInstance().getDefaultBetaCategoryId()));
+                        store.remove(store.findModel(AnalysisGroupTreeModel.ID, DEProperties
+                                .getInstance().getDefaultBetaCategoryId()));
 
                         showCategorySelectionDialog(store);
                     }
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
+                        ErrorHandler.post("Failed to load categories.", caught);
                     }
                 });
     }

@@ -21,6 +21,14 @@ public class LocalStorageProvider extends Provider {
      */
     private LocalStorageProvider() {
         localStorage = Storage.getLocalStorageIfSupported();
+
+        // test settings
+
+        try {
+            setValue("dummy", "dummy");
+        } catch (Exception e) {
+            localStorage = null;
+        }
     }
 
     /**

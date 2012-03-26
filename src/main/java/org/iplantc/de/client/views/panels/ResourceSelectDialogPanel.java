@@ -166,7 +166,11 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
         pnlNavigation.disableDragAndDrop();
 
         // initialize the main view panel
-        pnlMain = new DataMainPanel(tag, model, Arrays.asList(selectedResource.getId()));
+        if (selectedResource != null) {
+            pnlMain = new DataMainPanel(tag, model, Arrays.asList(selectedResource.getId()));
+        } else {
+            pnlMain = new DataMainPanel(tag, model, null);
+        }
         pnlMain.disableDragAndDrop();
 
         // initialize the selected file field

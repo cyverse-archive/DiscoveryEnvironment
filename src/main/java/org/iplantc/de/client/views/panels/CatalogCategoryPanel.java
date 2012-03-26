@@ -9,7 +9,6 @@ import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCatego
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
@@ -54,7 +53,7 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
+                        ErrorHandler.post("Failed to load categories.", caught);
                     }
                 });
     }

@@ -276,7 +276,7 @@ public class MyAnalysesPanel extends ContentPanel {
         }
 
         analysisGrid.getStore().addFilter(new StoreFilterImpl());
-        analysisGrid.getView().setEmptyText(I18N.DISPLAY.noAnalyses());
+        analysisGrid.getView().setEmptyText("No Analyses!");
         add(analysisGrid);
         addGridEventListeners();
     }
@@ -300,7 +300,10 @@ public class MyAnalysesPanel extends ContentPanel {
             @Override
             public void handleEvent(BaseEvent be) {
                 setButtonState();
-                idCurrentSelection = analysisGrid.getSelectionModel().getSelectedItem().getId();
+                AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
+                if (ae != null) {
+                    idCurrentSelection = ae.getId();
+                }
             }
         });
         analysisGrid.getStore().addListener(Store.Update, new Listener<StoreEvent>() {
