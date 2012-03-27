@@ -22,6 +22,7 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
     public static final String STATUS_FAILURE = "failure"; //$NON-NLS-1$
     public static final String STATUS = "status"; //$NON-NLS-1$
     public static final String REASON = "reason"; //$NON-NLS-1$
+    public static final String MESSAGE = "message"; //$NON-NLS-1$
     public static final String PATHS = "paths"; //$NON-NLS-1$
     public static final String PATH = "path"; //$NON-NLS-1$
     public static final String ERROR_CODE = "error_code"; //$NON-NLS-1$
@@ -70,13 +71,31 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
 
         JSONObject jsonError = parseJsonError(caught);
         if (jsonError != null) {
+            // The exception message is a JSON object.
             String status = JsonUtil.getString(jsonError, STATUS);
             String reason = JsonUtil.getString(jsonError, REASON);
             String errCode = JsonUtil.getString(jsonError, ERROR_CODE);
 
-            ErrorCode code = ErrorCode.valueOf(errCode);
-            if (code != null) {
-                errMsg = getErrorMessageByCode(code, jsonError);
+            if (reason.isEmpty()) {
+                // Additional check for error message.
+                reason = JsonUtil.getString(jsonError, MESSAGE);
+            }
+
+            // Build a custom exception message from the parsed JSON object.
+            if (!errCode.isEmpty() || !reason.isEmpty() || !status.isEmpty()) {
+                // Lookup the error code
+                ErrorCode code = null;
+                try {
+                    code = ErrorCode.valueOf(errCode);
+                } catch (Exception ignore) {
+                    // intentionally ignore
+                }
+
+                if (code != null) {
+                    // Get a custom user error message for the error code and parsed JSON object.
+                    errMsg = getErrorMessageByCode(code, jsonError);
+                }
+
                 caught = new Exception(I18N.ERROR.dataServiceErrorReport(status, errCode, reason),
                         caught);
             }

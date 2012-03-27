@@ -208,7 +208,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         grid.addPlugin(expander);
         grid.setAutoExpandMax(2048);
         grid.getView().setForceFit(true);
-        grid.setToolTip(I18N.DISPLAY.analysesGridToolTip());
+        grid.setToolTip(I18N.DISPLAY.resultsGridToolTip());
         new QuickTip(grid);
 
         return grid;
@@ -280,7 +280,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.DISPLAY.analysesRetrievalFailure(), caught);
+                ErrorHandler.post(I18N.DISPLAY.resultsRetrievalFailure(), caught);
                 unmask();
             }
         });

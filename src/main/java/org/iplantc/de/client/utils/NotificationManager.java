@@ -46,7 +46,7 @@ public class NotificationManager {
         /** Data notifications */
         DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
-        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis());
+        ANALYSIS(I18N.CONSTANT.notificationCategoryApps());
 
         private String displayText;
 
@@ -143,7 +143,7 @@ public class NotificationManager {
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
-                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
+                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.app(), event.getMessage(),
                         analysisContextBuilder.build(event.getPayload()));
             }
         });
