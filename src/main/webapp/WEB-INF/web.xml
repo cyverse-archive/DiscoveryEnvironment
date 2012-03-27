@@ -106,6 +106,10 @@
 		<servlet-name>emailServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>emptyResponseServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
+	</servlet>
 
 	<!-- Servlet Mapping Definitions -->
 	<servlet-mapping>
@@ -159,6 +163,10 @@
 	<servlet-mapping>
 		<servlet-name>emailServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/email</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>emptyResponseServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/empty</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<session-timeout>60</session-timeout>
