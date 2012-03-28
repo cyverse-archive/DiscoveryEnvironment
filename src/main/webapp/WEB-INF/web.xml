@@ -121,7 +121,7 @@
 
     <!-- Default page to serve -->
     <welcome-file-list>
-        <welcome-file>belphegor.html</welcome-file>
+        <welcome-file>belphegor.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>
