@@ -88,6 +88,21 @@ public class ToolIntegrationAdminProperties {
             + "category.defaultTrashAnalysisGroupId";//$NON-NLS-1$
 
     /**
+     * The property name prefix for CAS session keepalive settings.
+     */
+    private static final String KEEPALIVE_PREFIX = PROPERTY_NAME_PREFIX + "keepalive."; //$NON-NLS-1$
+
+    /**
+     * The name of property containing the CAS session keepalive target URL.
+     */
+    private static final String KEEPALIVE_TARGET = KEEPALIVE_PREFIX + "target"; //$NON-NLS-1$
+
+    /**
+     * The name of the property containing the CAS session keepalive interval.
+     */
+    private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval"; //$NON-NLS-1$
+
+    /**
      * Properties key of the context click enabled option
      */
     private static final String CONTEXT_CLICK_ENABLED = PROPERTY_NAME_PREFIX + "contextMenu.enabled";//$NON-NLS-1$
@@ -97,6 +112,10 @@ public class ToolIntegrationAdminProperties {
     private String defaultTrashAnalysisGroupId;
 
     private boolean contextClickEnabled;
+
+    private String keepaliveTarget;
+
+    private int keepaliveInterval;
 
     public static ToolIntegrationAdminProperties getInstance() {
 
@@ -124,11 +143,40 @@ public class ToolIntegrationAdminProperties {
 
         defaultBetaAnalysisGroupId = properties.get(CATEGORY_DEFAULT_BETA_GROUP_ID);
         setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
+        contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
+        keepaliveTarget = properties.get(KEEPALIVE_TARGET);
+        keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
+    }
 
+    /**
+     * Gets a Boolean property value.
+     * 
+     * @param props the properties map.
+     * @param propName the name of the property to extract.
+     * @param defaultValue the default value to use.
+     * @return the property value or the default value if the property value can't be obtained.
+     */
+    private boolean getBooleanProperty(Map<String, String> props, String propName, boolean defaultValue) {
         try {
-            contextClickEnabled = Boolean.parseBoolean(properties.get(CONTEXT_CLICK_ENABLED));
+            return Boolean.parseBoolean(props.get(propName));
         } catch (Exception e) {
-            contextClickEnabled = false;
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Gets an integer property value.
+     * 
+     * @param props the properties map.
+     * @param propName the name of the property to extract.
+     * @param defaultValue the default value to use.
+     * @return the property value or the default value if the property value can't be obtained.
+     */
+    private int getIntProperty(Map<String, String> props, String propName, int defaultValue) {
+        try {
+            return Integer.parseInt(props.get(propName));
+        } catch (Exception e) {
+            return defaultValue;
         }
     }
 
@@ -269,5 +317,19 @@ public class ToolIntegrationAdminProperties {
      */
     public String getDefaultTrashAnalysisGroupId() {
         return defaultTrashAnalysisGroupId;
+    }
+
+    /**
+     * @return the URL to hit when sending keepalive requests.
+     */
+    public String getKeepaliveTarget() {
+        return keepaliveTarget;
+    }
+
+    /**
+     * @return the number of minutes between keepalive requests.
+     */
+    public int getKeepaliveInterval() {
+        return keepaliveInterval;
     }
 }

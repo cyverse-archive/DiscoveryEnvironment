@@ -13,6 +13,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -35,6 +36,10 @@ public class Belphegor implements EntryPoint {
         RootPanel.get().add(layoutApplication);
         setBrowserContextMenuEnabled(ToolIntegrationAdminProperties.getInstance()
                 .isContextClickEnabled());
+
+        String keepaliveTarget = ToolIntegrationAdminProperties.getInstance().getKeepaliveTarget();
+        int keepaliveInterval = ToolIntegrationAdminProperties.getInstance().getKeepaliveInterval();
+        KeepaliveTimer.getInstance().start(keepaliveTarget, keepaliveInterval);
     }
 
     private void setEntryPointTitle() {

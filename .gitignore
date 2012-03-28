@@ -16,3 +16,4 @@ war
 tomcat
 www-test
 *.json
+gwt-unitCache/

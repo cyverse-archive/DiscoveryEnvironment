@@ -2,7 +2,7 @@ package org.iplantc.admin.belphegor.client.services;
 
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
-import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.widget.Component;
@@ -199,7 +199,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         }
 
         if (maskingCaller != null) {
-            maskingCaller.mask(I18N.DISPLAY.loadingMask());
+            maskingCaller.mask(DeCommonI18N.DISPLAY.loadingMask());
         }
 
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);

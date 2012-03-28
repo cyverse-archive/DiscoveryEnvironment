@@ -77,6 +77,11 @@
         <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>deServiceDispatcher</servlet-name>
         <url-pattern>/belphegor/deservice</url-pattern>
@@ -105,7 +110,11 @@
         <servlet-name>sessionManagementServlet</servlet-name>
         <url-pattern>/belphegor/sessionmanagement</url-pattern>
     </servlet-mapping>
-	
+    <servlet-mapping>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <url-pattern>/belphegor/empty</url-pattern>
+    </servlet-mapping>
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
