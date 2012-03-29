@@ -1,8 +1,5 @@
 package org.iplantc.de.client.factories;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
@@ -20,8 +17,7 @@ import org.iplantc.de.client.views.windows.PipelineEditorWindow;
 import org.iplantc.de.client.views.windows.WizardWindow;
 
 /**
- * Defines a factory for the creation of windows. Note - If you add a new Window, you must add its tag to
- * get all tags
+ * Defines a factory for the creation of windows.
  * 
  * @see org.iplantc.de.client.views.windows.IPlantWindow
  */
@@ -61,17 +57,5 @@ public class WindowFactory {
         }
 
         return ret;
-    }
-
-    /**
-     * A utility method that returns the list of all tags for all the different type of windows.
-     * 
-     * @return
-     */
-    public static List<String> getAllWindowTags() {
-        return Arrays.asList(Constants.CLIENT.myDataTag(), Constants.CLIENT.myNotifyTag(),
-                Constants.CLIENT.myHelpTag(), Constants.CLIENT.myAboutTag(),
-                Constants.CLIENT.myAnalysisTag(), Constants.CLIENT.deCatalog(),
-                Constants.CLIENT.pipelineEditorTag(), Constants.CLIENT.iDropLiteTag());
     }
 }

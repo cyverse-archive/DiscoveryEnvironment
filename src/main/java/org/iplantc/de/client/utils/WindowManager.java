@@ -1,5 +1,8 @@
 package org.iplantc.de.client.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.windows.IPlantWindow;
@@ -151,5 +154,14 @@ public class WindowManager {
      */
     public FastMap<IPlantWindow> getWindows() {
         return windows;
+    }
+
+    public Map<String, String> getActiveWindowStates() {
+        Map<String, IPlantWindow> windows = getWindows();
+        Map<String, String> win_states = new HashMap<String, String>();
+        for (IPlantWindow win : windows.values()) {
+            win_states.put(win.getTag(), win.getWindowState().toString());
+        }
+        return win_states;
     }
 }

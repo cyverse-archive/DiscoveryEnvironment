@@ -1,6 +1,11 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.client.pipelines.views.panels.PipelineEditorPanel;
+import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.PipelineEditorWindowConfig;
+import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 
@@ -10,6 +15,7 @@ import com.google.gwt.user.client.Command;
 
 public class PipelineEditorWindow extends IPlantWindow {
     private PipelineEditorPanel editorPanel;
+    private WindowConfig config;
 
     public PipelineEditorWindow(String tag) {
         super(tag);
@@ -19,7 +25,7 @@ public class PipelineEditorWindow extends IPlantWindow {
     }
 
     private void init() {
-        setHeading("Automate Workflow");
+        setHeading(I18N.DISPLAY.pipeline());
         setLayout(new FitLayout());
         setSize(800, 410);
     }
@@ -28,6 +34,30 @@ public class PipelineEditorWindow extends IPlantWindow {
         editorPanel = new PipelineEditorPanel(new CatalogCategoryPanel(), new TemplateServiceFacade(),
                 new PublishCallbackCommand());
         add(editorPanel);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void show() {
+        super.show();
+        if (config != null) {
+            editorPanel.configure(((PipelineEditorWindowConfig)config).getPipelineConfig());
+        }
+    }
+
+    /**
+     * Applies a window configuration to the window.
+     * 
+     * @param config
+     */
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        if (config instanceof PipelineEditorWindowConfig) {
+            this.config = (PipelineEditorWindowConfig)config;
+        }
     }
 
     @Override
@@ -46,7 +76,13 @@ public class PipelineEditorWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        obj.put(PipelineEditorWindowConfig.PIPELINE_CONFIG, editorPanel.toJson());
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.pipelineEditorTag(),
+                obj);
+        return windowConfig;
     }
 }

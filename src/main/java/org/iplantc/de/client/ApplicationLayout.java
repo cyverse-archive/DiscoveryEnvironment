@@ -108,9 +108,6 @@ public class ApplicationLayout extends Viewport {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        if (notifyMgr == null) {
-                            notifyMgr = NotificationManager.getInstance();
-                        }
                         int analysesCount = ncue.getAnalysesCount();
                         int dataCount = ncue.getDataCount();
 
@@ -252,6 +249,9 @@ public class ApplicationLayout extends Viewport {
     public void assembleLayout() {
         drawNorth();
         assembleHeader();
+        if (notifyMgr == null) {
+            notifyMgr = NotificationManager.getInstance();
+        }
         notifyMgr.initNotificationCount();
     }
 

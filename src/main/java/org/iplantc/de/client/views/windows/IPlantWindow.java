@@ -34,7 +34,7 @@ public abstract class IPlantWindow extends Window {
     protected Status status;
     private Point restorePos;
     private Size restoreSize;
-    private boolean maximized;
+    protected boolean maximized;
     private ToolButton btnMinimize;
     private ToolButton btnMaximize;
     private ToolButton btnRestore;

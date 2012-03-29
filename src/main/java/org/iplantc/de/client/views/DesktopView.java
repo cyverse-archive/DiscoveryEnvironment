@@ -2,6 +2,7 @@ package org.iplantc.de.client.views;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -13,7 +14,6 @@ import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.ShortcutManager;
@@ -53,6 +53,8 @@ public class DesktopView extends ContentPanel {
     private LayoutContainer desktop;
     private IPlantTaskbar taskBar;
     private WindowConfigFactory factoryWindowConfig;
+
+    private static final String ACTIVE_WINDOWS = "active_windows";
 
     /**
      * Default constructor.
@@ -311,43 +313,31 @@ public class DesktopView extends ContentPanel {
     private final class DEReloadListener implements Listener<ComponentEvent> {
         @Override
         public void handleEvent(ComponentEvent be) {
-            // before saving new state, clear old state
-            clearState();
-            Map<String, IPlantWindow> windows = mgrWindow.getWindows();
-            for (IPlantWindow win : windows.values()) {
-                saveWindowState(win.getTag(), win.getWindowState());
-            }
+            saveWindowState(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
         }
 
-        private void saveWindowState(String tag, JSONObject state) {
+        private void saveWindowState(String tag, Map<String, String> state) {
             if (state != null) {
                 StateManager mgr = DEStateManager.getStateManager();
                 System.out.println("win-->" + state.toString());
-                mgr.set(tag, state.toString());
-            }
-        }
-
-        private void clearState() {
-            List<String> tags = WindowFactory.getAllWindowTags();
-            StateManager mgr = DEStateManager.getStateManager();
-            for (String tag : tags) {
-                mgr.set(tag, null);
+                mgr.set(tag, state);
             }
         }
     }
 
     private final class DEAfterRenderListener implements Listener<ComponentEvent> {
-
         @Override
         public void handleEvent(ComponentEvent be) {
-            List<String> tags = WindowFactory.getAllWindowTags();
             StateManager mgr = DEStateManager.getStateManager();
-            for (String tag : tags) {
-                String state = mgr.getString(tag);
-                if (state != null) {
-                    // Dispatch window display action
-                    WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(state));
-                    dispatcher.dispatchAction(tag);
+            Map<String, Object> win_state = mgr.getMap(ACTIVE_WINDOWS);
+            if (win_state != null) {
+                Set<String> tags = win_state.keySet();
+                for (String tag : tags) {
+                    if (win_state.get(tag) != null) {
+                        WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(win_state
+                                .get(tag).toString()));
+                        dispatcher.dispatchAction(tag);
+                    }
                 }
             }
         }
@@ -356,4 +346,5 @@ public class DesktopView extends ContentPanel {
     private void initEditorController() {
         controllerEditor = new EditorController(mgrWindow);
     }
+
 }

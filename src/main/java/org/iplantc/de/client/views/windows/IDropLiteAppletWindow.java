@@ -9,7 +9,9 @@ import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
+import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.DataUtils;
@@ -39,6 +41,7 @@ import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
@@ -113,6 +116,17 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                 });
 
         return btnSimpleUpload;
+    }
+
+    private void setWindowDisplayState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+            return;
+        }
     }
 
     private void launchSimpleUploadDialog() {
@@ -317,6 +331,8 @@ public class IDropLiteAppletWindow extends IPlantWindow {
             if (isVisible()) {
                 layout();
             }
+
+            setWindowDisplayState();
         }
 
         @Override
@@ -352,7 +368,13 @@ public class IDropLiteAppletWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        // Build window config
+        JSONObject obj = config.toJson();
+        obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
+        obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
+
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(), obj);
+        return windowConfig;
     }
 }

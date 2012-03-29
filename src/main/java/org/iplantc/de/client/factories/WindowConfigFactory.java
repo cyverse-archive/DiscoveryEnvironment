@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
+import org.iplantc.de.client.models.PipelineEditorWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
@@ -43,6 +44,8 @@ public class WindowConfigFactory {
                 ret = new CatalogWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteWindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
+                ret = new PipelineEditorWindowConfig(objData);
             }
         }
 

@@ -25,6 +25,7 @@ import com.google.gwt.json.client.JSONString;
  */
 public class NotificationWindow extends IPlantWindow {
     private NotificationPanel panel;
+    private WindowConfig config;
 
     /**
      * Constructs an instance given a unique identifier.
@@ -54,11 +55,37 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config instanceof NotificationWindowConfig) {
+            this.config = config;
+        }
+
+    }
+
+    private void setWindowDisplayState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+            return;
+        }
+
+        if (config.isWindowMaximized()) {
+            maximizeWindow();
+            return;
+        }
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if (config != null) {
             Category category = ((NotificationWindowConfig)config).getCategory();
             panel.filterBy(category);
             List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
                     .getSelectedIds());
             panel.selectNotifications(selectedIds);
+            setWindowDisplayState();
         }
     }
 

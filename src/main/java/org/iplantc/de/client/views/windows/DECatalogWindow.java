@@ -128,8 +128,25 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
         if (config != null && config instanceof CatalogWindowConfig) {
             selectConfigData((CatalogWindowConfig)config);
+            setWindowDisplayState();
         }
 
+    }
+
+    private void setWindowDisplayState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+            return;
+        }
+
+        if (config.isWindowMaximized()) {
+            maximizeWindow();
+            return;
+        }
     }
 
     @Override

@@ -1184,4 +1184,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String confirmOutputFolder();
+
+    /**
+     * Localized text for a UI button that lets user to create workflow
+     * 
+     * @return a string representing the localized text.
+     */
+    String pipeline();
+
 }
