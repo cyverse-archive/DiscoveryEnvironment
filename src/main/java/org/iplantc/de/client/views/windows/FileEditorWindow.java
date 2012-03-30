@@ -99,7 +99,7 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
         TreeHyperlinkGridPanel pnlTreeUrlTab = new TreeHyperlinkGridPanel(file, urls);
         pnlTreeUrlTab.setTabIndex(treeUrlTabIndex);
 
-        // panel.addTab(pnlTreeUrlTab, provenance);
+        panel.addTab(pnlTreeUrlTab);
 
         return pnlTreeUrlTab;
     }
