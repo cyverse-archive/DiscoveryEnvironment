@@ -5,6 +5,7 @@ import java.util.Map;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.ApplicationLayout;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
@@ -17,11 +18,9 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
-import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 
 /**
  * Defines the default view of the workspace.

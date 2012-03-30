@@ -34,6 +34,8 @@ import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.event.WindowEvent;
+import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
@@ -60,6 +62,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class IDropLiteAppletWindow extends IPlantWindow {
+    private final boolean appletFocusWorkaround = GXT.isChrome || GXT.isIE;
     private final int CONTENT_PADDING = 5;
     private final IDropLiteWindowConfig config;
 
@@ -129,6 +132,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         this.config = config;
 
         init();
+        initListeners();
     }
 
     private void init() {
@@ -139,6 +143,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         // Add window contents container for the applet or simple download links
         contents = new LayoutContainer();
         contents.setStyleAttribute("padding", Format.substitute("{0}px", CONTENT_PADDING)); //$NON-NLS-1$ //$NON-NLS-2$
+
         add(contents);
 
         // Add a toobar for a simple mode button.
@@ -163,6 +168,18 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         // These settings enable the window to be minimized or moved without reloading the applet.
         removeFromParentOnHide = false;
         setHideMode(HideMode.VISIBILITY);
+    }
+
+    private void initListeners() {
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowDeactivate(WindowEvent we) {
+                // In Chrome and IE, the applet always stays on top, blocking access to everything else.
+                if (appletFocusWorkaround) {
+                    minimize();
+                }
+            }
+        });
     }
 
     private Button buildSimpleUploadButton() {
@@ -271,8 +288,6 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private void promptRemoveApplet(final Command cmdRemoveAppletConfirmed) {
         // In Chrome and IE, the applet always stays on top, blocking access to the confirmation dialog,
         // which is modal and blocks access to everything else.
-        final boolean appletFocusWorkaround = GXT.isChrome || GXT.isIE;
-
         if (appletFocusWorkaround) {
             minimize();
         }
