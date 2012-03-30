@@ -10,11 +10,15 @@ import org.iplantc.de.client.views.windows.IPlantWindow;
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.util.Point;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.WindowManager;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Manages window widgets in the web "desktop" environment.
  */
-public class WindowManager {
+public class DEWindowManager extends WindowManager {
     private final WindowListener listener;
     private IPlantWindow activeWindow;
     private final FastMap<IPlantWindow> windows = new FastMap<IPlantWindow>();
@@ -25,7 +29,7 @@ public class WindowManager {
      * 
      * @param listener window listener.
      */
-    public WindowManager(WindowListener listener) {
+    public DEWindowManager(WindowListener listener) {
         this.listener = listener;
     }
 
@@ -36,6 +40,9 @@ public class WindowManager {
      */
     public void setActiveWindow(IPlantWindow window) {
         activeWindow = window;
+        if (window != null) {
+            bringToFront(window);
+        }
     }
 
     /**
@@ -56,9 +63,7 @@ public class WindowManager {
      */
     public IPlantWindow add(String tag, WindowConfig config) {
         IPlantWindow ret = WindowFactory.build(tag, config);
-
         add(ret);
-
         return ret;
     }
 
@@ -69,8 +74,10 @@ public class WindowManager {
      */
     public void add(IPlantWindow window) {
         if (window != null) {
-            getWindows().put(window.getTag(), window);
+            window.setId(window.getTag());
+            getDEWindows().put(window.getTag(), window);
             window.addWindowListener(listener);
+            register(window);
         }
     }
 
@@ -81,7 +88,7 @@ public class WindowManager {
      * @return null on failure. Requested window on success.
      */
     public IPlantWindow getWindow(String tag) {
-        return getWindows().get(tag);
+        return getDEWindows().get(tag);
     }
 
     /**
@@ -90,9 +97,10 @@ public class WindowManager {
      * @param tag tag of the window to remove.
      */
     public void remove(String tag) {
-        getWindows().remove(tag);
-        if (getWindows().size() == 0) {
+        IPlantWindow win = getDEWindows().remove(tag);
+        if (getDEWindows().size() == 0) {
             first_window_postion = null;
+            unregister(win);
         }
     }
 
@@ -116,8 +124,8 @@ public class WindowManager {
      * @return
      */
     public int getCount() {
-        if (getWindows() != null) {
-            return getWindows().size();
+        if (getDEWindows() != null) {
+            return getDEWindows().size();
         } else {
             return 0;
         }
@@ -131,7 +139,7 @@ public class WindowManager {
      */
     public void show(String tag) {
         if (tag != null) {
-            IPlantWindow window = getWindows().get(tag);
+            IPlantWindow window = getDEWindows().get(tag);
             if (window != null) {
                 if (getFirst_window_postion() != null) {
                     int new_x = getFirst_window_postion().x + ((getCount() - 1) * 10);
@@ -152,15 +160,19 @@ public class WindowManager {
     /**
      * @return the windows
      */
-    public FastMap<IPlantWindow> getWindows() {
+    public FastMap<IPlantWindow> getDEWindows() {
         return windows;
     }
 
     public Map<String, String> getActiveWindowStates() {
-        Map<String, IPlantWindow> windows = getWindows();
         Map<String, String> win_states = new HashMap<String, String>();
-        for (IPlantWindow win : windows.values()) {
-            win_states.put(win.getTag(), win.getWindowState().toString());
+        int index = 0;
+        for (Window win : getStack()) {
+            JSONObject state = ((IPlantWindow)win).getWindowState();
+            String tag = ((IPlantWindow)win).getTag();
+            state.put("order", new JSONString(index++ + ""));
+            state.put("tag", new JSONString(tag));
+            win_states.put(tag, state.toString());
         }
         return win_states;
     }

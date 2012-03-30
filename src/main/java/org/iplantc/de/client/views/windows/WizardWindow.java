@@ -195,12 +195,15 @@ public class WizardWindow extends IPlantWindow {
         EventBus eventbus = EventBus.getInstance();
 
         // unregister
-        for (HandlerRegistration reg : handlers) {
-            eventbus.removeHandler(reg);
+        if (handlers != null) {
+            for (HandlerRegistration reg : handlers) {
+                eventbus.removeHandler(reg);
+            }
+
+            // clear our list
+            handlers.clear();
         }
 
-        // clear our list
-        handlers.clear();
     }
 
     /**

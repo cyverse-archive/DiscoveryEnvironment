@@ -45,6 +45,8 @@ public class PipelineEditorWindow extends IPlantWindow {
         super.show();
         if (config != null) {
             editorPanel.configure(((PipelineEditorWindowConfig)config).getPipelineConfig());
+            // reset config
+            config = null;
         }
     }
 

@@ -1,5 +1,7 @@
 package org.iplantc.de.client.views;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,8 +18,8 @@ import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.DEStateManager;
+import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.ShortcutManager;
-import org.iplantc.de.client.utils.WindowManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
@@ -35,6 +37,7 @@ import com.extjs.gxt.ui.client.state.StateManager;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.google.gwt.json.client.JSONObject;
@@ -48,7 +51,7 @@ public class DesktopView extends ContentPanel {
 
     @SuppressWarnings("unused")
     private EditorController controllerEditor;
-    private WindowManager mgrWindow;
+    private DEWindowManager mgrWindow;
     private El shortcutEl;
     private LayoutContainer desktop;
     private IPlantTaskbar taskBar;
@@ -282,7 +285,7 @@ public class DesktopView extends ContentPanel {
     }
 
     private void initWindowManager() {
-        mgrWindow = new WindowManager(new WindowListener() {
+        mgrWindow = new DEWindowManager(new WindowListener() {
             @Override
             public void windowActivate(WindowEvent we) {
                 markActive((IPlantWindow)we.getWindow());
@@ -319,6 +322,10 @@ public class DesktopView extends ContentPanel {
         private void saveWindowState(String tag, Map<String, String> state) {
             if (state != null) {
                 StateManager mgr = DEStateManager.getStateManager();
+                List<Window> windows = mgrWindow.getStack();
+                for (Window w : windows) {
+                    System.out.println(((IPlantWindow)w).getTag());
+                }
                 System.out.println("win-->" + state.toString());
                 mgr.set(tag, state);
             }
@@ -332,15 +339,48 @@ public class DesktopView extends ContentPanel {
             Map<String, Object> win_state = mgr.getMap(ACTIVE_WINDOWS);
             if (win_state != null) {
                 Set<String> tags = win_state.keySet();
-                for (String tag : tags) {
-                    if (win_state.get(tag) != null) {
-                        WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(win_state
-                                .get(tag).toString()));
-                        dispatcher.dispatchAction(tag);
+                if (tags.size() > 0) {
+                    for (JSONObject state : getOrderedState(tags, win_state)) {
+                        if (state != null) {
+                            WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(state
+                                    .toString()));
+                            dispatcher.dispatchAction(JsonUtil.getString(state, "tag"));
+                        }
                     }
                 }
             }
         }
+
+        private List<JSONObject> getOrderedState(Set<String> tags, Map<String, Object> win_state) {
+            List<JSONObject> temp = new ArrayList<JSONObject>();
+            for (String tag : tags) {
+                JSONObject obj = JsonUtil.getObject(win_state.get(tag).toString());
+                temp.add(obj);
+            }
+            java.util.Collections.sort(temp, new WindowOrderComparator());
+            return temp;
+
+        }
+    }
+
+    private class WindowOrderComparator implements Comparator<JSONObject> {
+        @Override
+        public int compare(JSONObject arg0, JSONObject arg1) {
+            if (arg0 != null && arg1 != null) {
+                try {
+                    int temp1 = Integer.parseInt(JsonUtil.getString(arg0, "order"));
+                    int temp2 = Integer.parseInt(JsonUtil.getString(arg1, "order"));
+                    return temp1 - temp2;
+                } catch (Exception e) {
+                    // if order is not present, dont care about it
+                    return 0;
+                }
+            } else {
+                // if any of object is null, dont care about ordering
+                return 0;
+            }
+        }
+
     }
 
     private void initEditorController() {

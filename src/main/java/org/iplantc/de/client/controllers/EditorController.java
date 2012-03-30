@@ -18,7 +18,7 @@ import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.utils.WindowManager;
+import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.views.windows.FileEditorWindow;
 import org.iplantc.de.client.views.windows.FileWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
@@ -31,7 +31,7 @@ import com.google.gwt.json.client.JSONValue;
  * Defines a controller for editor windows.
  */
 public class EditorController implements DataMonitor {
-    private final WindowManager mgrWindow;
+    private final DEWindowManager mgrWindow;
     private final List<FileWindow> fileWindows = new ArrayList<FileWindow>();
 
     /**
@@ -39,7 +39,7 @@ public class EditorController implements DataMonitor {
      * 
      * @param mgrWindow manager for window objects.
      */
-    public EditorController(WindowManager mgrWindow) {
+    public EditorController(DEWindowManager mgrWindow) {
         this.mgrWindow = mgrWindow;
 
         initEventListeners();
