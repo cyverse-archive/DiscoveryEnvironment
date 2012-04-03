@@ -13,6 +13,7 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
@@ -146,7 +147,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         if (executor != null && dr instanceof File && this.callertag.equals(tag)) {
             DataContextBuilder builder = new DataContextBuilder();
 
-            executor.execute(builder.build(dr, DataUtils.parseParent(dr.getId())));
+            executor.execute(builder.build(dr, DiskResourceUtil.parseParent(dr.getId())));
         }
     }
 

@@ -2,8 +2,8 @@ package org.iplantc.de.client.commands.data;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.controllers.DataMonitor;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONObject;
 
@@ -17,7 +17,7 @@ public class FileSaveAsCommand implements DataCommand {
     private File getFileInfo(final JSONObject objData) {
         File ret = new File(objData);
         if (ret.getName() == null || ret.getName().isEmpty()) {
-            ret.setName(DataUtils.parseNameFromPath(ret.getId()));
+            ret.setName(DiskResourceUtil.parseNameFromPath(ret.getId()));
         }
 
         return ret;

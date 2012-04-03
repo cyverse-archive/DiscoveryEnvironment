@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.PipelineEditorWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -46,6 +47,8 @@ public class WindowConfigFactory {
                 ret = new IDropLiteWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.wizardTag())) {
+                ret = new WizardWindowConfig(objData);
             }
         }
 

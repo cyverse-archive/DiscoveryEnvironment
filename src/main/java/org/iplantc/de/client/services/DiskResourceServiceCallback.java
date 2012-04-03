@@ -2,8 +2,8 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONArray;
@@ -29,24 +29,7 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
     protected Component maskedCaller;
 
     protected enum ErrorCode {
-        ERR_DOES_NOT_EXIST,
-        ERR_EXISTS,
-        ERR_NOT_WRITEABLE,
-        ERR_NOT_READABLE,
-        ERR_WRITEABLE,
-        ERR_READABLE,
-        ERR_NOT_A_USER,
-        ERR_NOT_A_FILE,
-        ERR_NOT_A_FOLDER,
-        ERR_IS_A_FILE,
-        ERR_IS_A_FOLDER,
-        ERR_INVALID_JSON,
-        ERR_BAD_OR_MISSING_FIELD,
-        ERR_NOT_AUTHORIZED,
-        ERR_MISSING_QUERY_PARAMETER,
-        ERR_INCOMPLETE_DELETION,
-        ERR_INCOMPLETE_MOVE,
-        ERR_INCOMPLETE_RENAME
+        ERR_DOES_NOT_EXIST, ERR_EXISTS, ERR_NOT_WRITEABLE, ERR_NOT_READABLE, ERR_WRITEABLE, ERR_READABLE, ERR_NOT_A_USER, ERR_NOT_A_FILE, ERR_NOT_A_FOLDER, ERR_IS_A_FILE, ERR_IS_A_FOLDER, ERR_INVALID_JSON, ERR_BAD_OR_MISSING_FIELD, ERR_NOT_AUTHORIZED, ERR_MISSING_QUERY_PARAMETER, ERR_INCOMPLETE_DELETION, ERR_INCOMPLETE_MOVE, ERR_INCOMPLETE_RENAME
     }
 
     public void setMaskedCaller(Component maskedCaller) {
@@ -242,7 +225,7 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
                 }
 
                 String path = JsonUtil.getRawValueAsString(paths.get(i));
-                filenames.append(DataUtils.parseNameFromPath(path));
+                filenames.append(DiskResourceUtil.parseNameFromPath(path));
             }
         }
 

@@ -7,6 +7,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
@@ -301,7 +302,8 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
                 if (validUrl) {
                     urlField.setValue(url.trim());
-                    destResourceMap.put(buildResourceId(DataUtils.parseNameFromPath(url)), urlField);
+                    destResourceMap.put(buildResourceId(DiskResourceUtil.parseNameFromPath(url)),
+                            urlField);
                 }
             }
 
@@ -443,7 +445,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 if (!fupload.isEmpty()) {
                     firstFileName = fupload.get(0).getValue();
                 } else if (!urls.isEmpty()) {
-                    firstFileName = DataUtils.parseNameFromPath(urls.get(0).getValue());
+                    firstFileName = DiskResourceUtil.parseNameFromPath(urls.get(0).getValue());
                 }
 
                 ErrorHandler.post(I18N.ERROR.fileUploadFailed(firstFileName), caught);

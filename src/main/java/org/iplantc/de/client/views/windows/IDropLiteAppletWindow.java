@@ -5,6 +5,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
@@ -14,7 +15,6 @@ import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
-import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.IDropLite;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
@@ -187,7 +187,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         for (int i = 0,size = downloadPaths.size(); i < size; i++) {
             final String path = JsonUtil.getRawValueAsString(downloadPaths.get(i));
 
-            Hyperlink link = new Hyperlink(DataUtils.parseNameFromPath(path), "de_hyperlink"); //$NON-NLS-1$
+            Hyperlink link = new Hyperlink(DiskResourceUtil.parseNameFromPath(path), "de_hyperlink"); //$NON-NLS-1$
             link.addClickListener(new Listener<ComponentEvent>() {
                 @Override
                 public void handleEvent(ComponentEvent be) {

@@ -11,9 +11,11 @@ import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
+import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.LogoutUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.views.DesktopView;
 import org.iplantc.de.client.views.panels.NotificationIconBar;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 
@@ -26,6 +28,7 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.state.StateManager;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
@@ -192,6 +195,10 @@ public class ApplicationLayout extends Viewport {
     }
 
     private void doLogout() {
+        // clean up state from local storage
+        StateManager sm = DEStateManager.getStateManager();
+        sm.set(DesktopView.ACTIVE_WINDOWS, null);
+
         ActionDispatcher actionDispatcher = new DefaultActionDispatcher();
         if (GXT.isIE) {
             showLogoutMessage();

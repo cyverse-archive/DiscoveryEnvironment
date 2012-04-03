@@ -7,10 +7,14 @@ import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
 import org.iplantc.de.client.events.JobLaunchedEventHandler;
 import org.iplantc.de.client.events.WizardValidationEvent;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
@@ -39,17 +43,18 @@ public class WizardWindow extends IPlantWindow {
     private ComponentValueTable tblComponentVals;
 
     private List<HandlerRegistration> handlers;
+    private WizardWindowConfig config;
 
     /**
      * Constructs an instance of the object given an identifier.
      * 
      * @param tag a unique identifier used as a "window handle."
      */
-    public WizardWindow(String tag) {
+    public WizardWindow(String tag, WindowConfig config) {
         super(tag, false, true, false, true);
 
         tblComponentVals = new ComponentValueTable(new WizardValidationBroadcastStrategy());
-
+        this.config = (WizardWindowConfig)config;
         init();
         build();
     }
@@ -119,35 +124,23 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void build() {
-        TemplateServiceFacade facade = new TemplateServiceFacade();
+        if (config != null) {
+            initWizard(((WizardWindowConfig)config).get(WizardWindowConfig.WIZARD_CONFIG).toString());
+        } else {
+            TemplateServiceFacade facade = new TemplateServiceFacade();
+            facade.getTemplate(tag, new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
+                }
 
-        facade.getTemplate(tag, new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
-            }
+                @Override
+                public void onSuccess(String json) {
+                    initWizard(json);
+                }
+            });
+        }
 
-            @Override
-            public void onSuccess(String json) {
-                WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
-                WizardBuilder builder = new WizardBuilder();
-                setHeading(container.getLabel());
-
-                ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
-                ContentPanel pnlLaunchButton = buildButtonPanel();
-
-                add(pnlGroupContainer);
-                add(pnlLaunchButton);
-
-                layout();
-
-                pnlGroupContainer.setSize(getInnerWidth(),
-                        getInnerHeight() - pnlLaunchButton.getHeight());
-
-                registerEventHandlers();
-                enableValidation();
-            }
-        });
     }
 
     private void handleJobLaunch(final String name) {
@@ -229,9 +222,59 @@ public class WizardWindow extends IPlantWindow {
         }
     }
 
+    /**
+     * Applies a window configuration to the window.
+     * 
+     * @param config
+     */
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        if (config instanceof WizardWindowConfig) {
+            this.config = (WizardWindowConfig)config;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void show() {
+        super.show();
+    }
+
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowState();
+        obj.put(WizardWindowConfig.WIZARD_CONFIG,
+                tblComponentVals.getWizardPorpertyGroupContainerAsJson());
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), obj);
+        return windowConfig;
+    }
+
+    private void initWizard(String json) {
+        WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
+        WizardBuilder builder = new WizardBuilder();
+        setHeading(container.getLabel());
+
+        final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
+        final ContentPanel pnlLaunchButton = buildButtonPanel();
+        pnlLaunchButton.addListener(Events.Render, new Listener<BaseEvent>() {
+
+            @Override
+            public void handleEvent(BaseEvent be) {
+                pnlGroupContainer.setSize(getInnerWidth(),
+                        getInnerHeight() - pnlLaunchButton.getHeight());
+
+            }
+        });
+
+        add(pnlGroupContainer);
+        add(pnlLaunchButton);
+
+        layout();
+
+        registerEventHandlers();
+        enableValidation();
     }
 }

@@ -98,9 +98,9 @@ public class DEWindowManager extends WindowManager {
      */
     public void remove(String tag) {
         IPlantWindow win = getDEWindows().remove(tag);
+        unregister(win);
         if (getDEWindows().size() == 0) {
             first_window_postion = null;
-            unregister(win);
         }
     }
 

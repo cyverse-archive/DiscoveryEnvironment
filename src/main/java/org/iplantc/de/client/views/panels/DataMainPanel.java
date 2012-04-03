@@ -8,6 +8,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.FolderData;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
@@ -316,15 +317,15 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
             // Update the IDs of all disk resources loaded in the grid's store.
             ListStore<DiskResource> store = grid.getStore();
             for (DiskResource resource : store.getModels()) {
-                resource.setId(path + "/" + DataUtils.parseNameFromPath(resource.getId())); //$NON-NLS-1$
+                resource.setId(path + "/" + DiskResourceUtil.parseNameFromPath(resource.getId())); //$NON-NLS-1$
             }
-        } else if (model.isCurrentPage(DataUtils.parseParent(path))) {
+        } else if (model.isCurrentPage(DiskResourceUtil.parseParent(path))) {
             // A folder inside the currently viewed folder was renamed.
             DiskResource resource = findDiskResource(pathOrig);
 
             if (resource != null) {
                 resource.setId(path);
-                resource.setName(DataUtils.parseNameFromPath(path));
+                resource.setName(DiskResourceUtil.parseNameFromPath(path));
 
                 grid.getStore().update(resource);
             }
@@ -337,7 +338,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
 
             if (resource != null) {
                 // drop the path from our name
-                resource.setName(DataUtils.parseNameFromPath(nameNew));
+                resource.setName(DiskResourceUtil.parseNameFromPath(nameNew));
 
                 // our id is the fully qualified path and name
                 resource.setId(nameNew);

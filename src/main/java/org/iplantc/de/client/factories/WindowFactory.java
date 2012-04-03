@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
@@ -52,7 +53,7 @@ public class WindowFactory {
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else {
-                ret = new WizardWindow(type);
+                ret = new WizardWindow(type, (WizardWindowConfig)config);
             }
         }
 

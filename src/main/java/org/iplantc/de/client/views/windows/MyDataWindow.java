@@ -11,6 +11,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.DataController;
@@ -26,7 +27,6 @@ import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
-import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.panels.DataDetailsPanel;
 import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;
@@ -244,7 +244,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
                 model.deleteDiskResource(path);
 
                 if (model.isCurrentPage(path)) {
-                    Folder folder = model.getFolder(DataUtils.parseParent(path));
+                    Folder folder = model.getFolder(DiskResourceUtil.parseParent(path));
 
                     if (folder != null) {
                         EventBus.getInstance().fireEvent(new DiskResourceSelectedEvent(folder, tag));
@@ -317,7 +317,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
                 if (src != null && dest != null) {
                     // construct new Id
-                    String newSrcId = destId + "/" + DataUtils.parseNameFromPath(srcId); //$NON-NLS-1$
+                    String newSrcId = destId + "/" + DiskResourceUtil.parseNameFromPath(srcId); //$NON-NLS-1$
                     model.moveResource(src, newSrcId, destId);
                 }
             }

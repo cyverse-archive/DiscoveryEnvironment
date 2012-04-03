@@ -82,7 +82,9 @@ public class FileSelector extends DiskResourceSelector implements IFileSelector 
     public void setSelectedFile(File file) {
         super.setSelectedResource(file);
 
-        dlgFileSelect.select(file);
+        if (dlgFileSelect != null) {
+            dlgFileSelect.select(file);
+        }
     }
 
     /**

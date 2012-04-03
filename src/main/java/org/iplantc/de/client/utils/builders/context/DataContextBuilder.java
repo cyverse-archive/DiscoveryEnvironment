@@ -2,7 +2,7 @@ package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
-import org.iplantc.de.client.utils.DataUtils;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -115,8 +115,8 @@ public class DataContextBuilder extends AbstractContextBuilder {
             ret = "{"; //$NON-NLS-1$
 
             ret += "\"id\": " + JsonUtil.quoteString(idDiskResource) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"name\": " + JsonUtil.quoteString(DataUtils.parseNameFromPath(idDiskResource)) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"idParent\": " + JsonUtil.quoteString(DataUtils.parseParent(idDiskResource)); //$NON-NLS-1$
+            ret += "\"name\": " + JsonUtil.quoteString(DiskResourceUtil.parseNameFromPath(idDiskResource)) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
+            ret += "\"idParent\": " + JsonUtil.quoteString(DiskResourceUtil.parseParent(idDiskResource)); //$NON-NLS-1$
 
             ret += "}"; //$NON-NLS-1$
         }

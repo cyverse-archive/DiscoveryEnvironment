@@ -7,6 +7,7 @@ import java.util.List;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog.DialogOkClickHandler;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
@@ -15,7 +16,6 @@ import org.iplantc.de.client.models.AnalysisParameter;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.SaveAsDialog;
@@ -113,8 +113,8 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         private String fileName;
 
         public SaveasServiceCallbackHandler(String path) {
-            this.fileName = DataUtils.parseNameFromPath(path);
-            this.parentFolder = DataUtils.parseParent(path);
+            this.fileName = DiskResourceUtil.parseNameFromPath(path);
+            this.parentFolder = DiskResourceUtil.parseParent(path);
         }
 
         @Override

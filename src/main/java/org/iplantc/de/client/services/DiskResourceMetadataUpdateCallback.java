@@ -1,8 +1,8 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONObject;
 
@@ -37,10 +37,10 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
     protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
         if (type.equals(TYPE.FILE)) {
             return getErrorMessageForFiles(code,
-                    DataUtils.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
+                    DiskResourceUtil.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
         } else {
             return getErrorMessageForFolders(code,
-                    DataUtils.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
+                    DiskResourceUtil.parseNameFromPath(JsonUtil.getString(jsonError, PATH)));
         }
     }
 

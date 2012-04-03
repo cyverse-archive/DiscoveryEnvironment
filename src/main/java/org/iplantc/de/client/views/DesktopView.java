@@ -57,7 +57,7 @@ public class DesktopView extends ContentPanel {
     private IPlantTaskbar taskBar;
     private WindowConfigFactory factoryWindowConfig;
 
-    private static final String ACTIVE_WINDOWS = "active_windows";
+    public static final String ACTIVE_WINDOWS = "active_windows";
 
     /**
      * Default constructor.

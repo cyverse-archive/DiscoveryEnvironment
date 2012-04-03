@@ -9,6 +9,7 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
@@ -362,7 +363,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
                 // if the target folder is one of the src folders, don't allow a drop there
                 String srcId = src.getId();
 
-                if (srcId.equals(destId) || DataUtils.parseParent(srcId).equals(destId)) {
+                if (srcId.equals(destId) || DiskResourceUtil.parseParent(srcId).equals(destId)) {
                     event.setCancelled(true);
                     eventStatus.setStatus(false);
                 }
@@ -531,13 +532,13 @@ public class DataNavigationPanel extends AbstractDataPanel {
 
         // find the first parent folder that is already loaded into the model that can be expanded,
         // pushing all parent folders in between it and the given path onto the stack.
-        String parentPath = DataUtils.parseParent(path);
+        String parentPath = DiskResourceUtil.parseParent(path);
         Folder parent = findFolder(parentPath);
 
         while (parent == null && !parentPath.isEmpty()) {
             paths.push(parentPath);
 
-            parentPath = DataUtils.parseParent(parentPath);
+            parentPath = DiskResourceUtil.parseParent(parentPath);
             parent = findFolder(parentPath);
         }
 
@@ -588,7 +589,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
 
                         // Make sure the target folder with the latest info has subfolders.
                         if (freshFolder.hasSubFolders()) {
-                            Folder parent = findFolder(DataUtils.parseParent(target.getId()));
+                            Folder parent = findFolder(DiskResourceUtil.parseParent(target.getId()));
 
                             if (parent == null) {
                                 // The folder we need to refresh is the home folder, so we'll brute-force
@@ -643,7 +644,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
         Scheduler.get().scheduleDeferred(new Command() {
             @Override
             public void execute() {
-                String errMsgFolderName = I18N.ERROR.folderNotFound(DataUtils.parseNameFromPath(path));
+                String errMsgFolderName = I18N.ERROR.folderNotFound(DiskResourceUtil
+                        .parseNameFromPath(path));
                 Exception errFullPath = new Exception(I18N.ERROR.folderNotFound(path));
 
                 ErrorHandler.post(errMsgFolderName, errFullPath);
@@ -673,7 +675,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
             if (nextFolder == null) {
                 // the next folder to expand or select was not found, even after the parent's subfolders
                 // were loaded, so stop the process here and select the deepest folder we could load.
-                unsetCallbackAndSelectFolder(DataUtils.parseParent(path));
+                unsetCallbackAndSelectFolder(DiskResourceUtil.parseParent(path));
                 displayRetrieveFolderError(path);
 
                 return;
