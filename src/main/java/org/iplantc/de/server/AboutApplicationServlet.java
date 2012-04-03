@@ -26,7 +26,7 @@ public class AboutApplicationServlet extends RemoteServiceServlet implements Abo
      */
     private static final long serialVersionUID = 6046105023536377635L;
 
-    private static final String MANIFEST_LOC = "/WEB-INF/classes/MANIFEST.MF"; //$NON-NLS-1$
+    private static final String MANIFEST_LOC = "/META-INF/MANIFEST.MF"; //$NON-NLS-1$
     private static final String BUILD_NUMBER_ATTRIBUTE = "Hudson-Build-Number"; //$NON-NLS-1$
 
     /**
@@ -56,16 +56,22 @@ public class AboutApplicationServlet extends RemoteServiceServlet implements Abo
         String buildNumber = getBuildNumberFromManifest();
         LOG.debug("Build number stored in the MANIFEST.MF is " + buildNumber); //$NON-NLS-1$
         String relVersion = getReleaseVersion();
+
         // at some point the information gathered here will be more involved as it will
         // include versioning about the software components in use (bwa, cufflinks, etc)
         String json = "{ \"buildnumber\": \"" + buildNumber + "\", \"release\": \"" + relVersion //$NON-NLS-1$ //$NON-NLS-2$
                 + "\" }"; //$NON-NLS-1$
         LOG.debug("the about application JSON is: " + json); //$NON-NLS-1$
+
         return json;
     }
 
+    /**
+     * Get the release version that is stored in the application properties file.
+     * 
+     * @return a string representation of the release version.
+     */
     private String getReleaseVersion() {
-        // TODO: fetch from the metadata service or grab from a properties file.
         String version = RELEASE_VERSION;
         return (StringUtils.isNotEmpty(version)) ? version : DEFAULT_RELEASE_VERSION;
     }
