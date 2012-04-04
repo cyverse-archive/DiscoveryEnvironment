@@ -3,11 +3,8 @@ package org.iplantc.de.client;
 import org.iplantc.core.client.widgets.factory.WizardWidgetFactory;
 import org.iplantc.core.client.widgets.panels.BarcodeSelectorPanel;
 import org.iplantc.core.client.widgets.panels.ClipperSelectorPanel;
-import org.iplantc.core.client.widgets.panels.ComplexMatePanel;
-import org.iplantc.core.client.widgets.panels.G2PPreProcessingFilePanel;
 import org.iplantc.core.client.widgets.panels.MultiFileSelector;
 import org.iplantc.core.client.widgets.panels.PercentEntryPanel;
-import org.iplantc.core.client.widgets.panels.SimpleMatePanel;
 import org.iplantc.core.client.widgets.panels.WizardCheckboxPanel;
 import org.iplantc.core.client.widgets.panels.WizardFileSelectorPanel;
 import org.iplantc.core.client.widgets.panels.WizardLabelPanel;
@@ -108,24 +105,9 @@ public class GwtTestWidgetFactory extends GWTTestCase {
         assertTrue(w instanceof XBasePairsTextField);
     }
 
-    public void testBuildPreProcessingFiles() {
-        Widget w = doValidBuildTest("PreProcessingFiles", "string", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        assertTrue(w instanceof G2PPreProcessingFilePanel);
-    }
-
     public void testBuildSingleEndReadFiles() {
         Widget w = doValidBuildTest("MultiFileSelector", "string", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         assertTrue(w instanceof MultiFileSelector);
-    }
-
-    public void testBuildTophatMateFile() {
-        Widget w = doValidBuildTest("TophatMateFile", "string", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        assertTrue(w instanceof SimpleMatePanel);
-    }
-
-    public void testBuildMateFile() {
-        Widget w = doValidBuildTest("MateFile", "string", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        assertTrue(w instanceof ComplexMatePanel);
     }
 
     public void testBuildBarcodeSelector() {
