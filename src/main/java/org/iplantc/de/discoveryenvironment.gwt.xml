@@ -37,6 +37,7 @@
 	<inherits name="org.iplantc.core.applications"/>
 	<inherits name="org.iplantc.core.pipelines"/>
 	<inherits name="org.iplantc.core.Widgets"/>
+    <inherits name="org.iplantc.core.tito"/>
 	<!-- for server push -->
 	<inherits name="com.google.gwt.rpc.RPC" />
 	

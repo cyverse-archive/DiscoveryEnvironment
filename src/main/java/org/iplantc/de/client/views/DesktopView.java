@@ -6,6 +6,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.controllers.EditorController;
+import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
@@ -39,6 +40,8 @@ import com.google.gwt.user.client.Element;
 public class DesktopView extends ContentPanel {
     @SuppressWarnings("unused")
     private EditorController controllerEditor;
+    @SuppressWarnings("unused")
+    private TitoController controllerTito;
     private WindowManager mgrWindow;
     private El shortcutEl;
     private LayoutContainer desktop;
@@ -68,6 +71,7 @@ public class DesktopView extends ContentPanel {
         initTaskbar();
         initWindowManager();
         initEditorController();
+        controllerTito = TitoController.getInstance();
         initDesktop();
         initShortcuts();
     }

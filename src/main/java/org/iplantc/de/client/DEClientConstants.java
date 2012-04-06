@@ -384,4 +384,11 @@ public interface DEClientConstants extends CommonUiConstants {
      * @return the relative path
      */
     String iDropLiteArchivePath();
+
+    /**
+     * The unique tag used to identify the Tito window.
+     * 
+     * @return the tag.
+     */
+    String titoTag();
 }

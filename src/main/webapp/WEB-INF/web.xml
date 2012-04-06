@@ -110,6 +110,14 @@
 		<servlet-name>emptyResponseServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
 	</servlet>
+	<servlet>
+        <servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
+        <servlet-class>org.iplantc.de.server.AuthenticationValidatingServiceDispatcher</servlet-class>
+    </servlet>
+	<servlet>
+        <servlet-name>toolSubmitServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.NewToolRequestServlet</servlet-class>
+    </servlet>
 
 	<!-- Servlet Mapping Definitions -->
 	<servlet-mapping>
@@ -136,6 +144,10 @@
 		<servlet-name>deServiceDispatcher</servlet-name>
 		<url-pattern>/discoveryenvironment/deservice</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
+        <url-pattern>/discoveryenvironment/auth-de-service</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
 		<url-pattern>/discoveryenvironment/unsecureddeservice</url-pattern>
@@ -168,6 +180,11 @@
 		<servlet-name>emptyResponseServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/empty</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>toolSubmitServlet</servlet-name>
+        <url-pattern>/discoveryenvironment/new_tool_request</url-pattern>
+    </servlet-mapping>
+
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>

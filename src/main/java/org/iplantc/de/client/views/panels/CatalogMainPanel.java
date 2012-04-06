@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.tito.client.events.TemplateLoadEvent;
+import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -17,13 +19,13 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
+import org.iplantc.de.client.views.windows.TitoWindow;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -196,11 +198,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private void openTitoForEdit(final String id) {
-        WindowUtil.open(buildUrl(id));
-    }
-
-    private String buildUrl(final String id) {
-        return DEProperties.getInstance().getTitoBaseUrl() + "/?" + Constants.CLIENT.titoId() + "=" + id; //$NON-NLS-1$ //$NON-NLS-2$
+        EventBus.getInstance().fireEvent(new TemplateLoadEvent(id, MODE.EDIT));
     }
 
     private MenuItem buildDeleteMenuItem() {
@@ -285,7 +283,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                WindowUtil.open(buildUrl("")); //$NON-NLS-1$
+                TitoWindow.launch(TitoWindowConfig.VIEW_NEW_TOOL, null);
             }
         });
 
@@ -350,19 +348,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             getTemplateService().favoriteAnalysis(info.getWorkspaceId(), id, fav,
                     new AsyncCallback<String>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
 
-                }
+                        }
 
-                @Override
-                public void onSuccess(String result) {
-                    updateFavPreference(fav);
-                    checkAndBuildFavMenu(fav);
-                    fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
-                }
-            });
+                        @Override
+                        public void onSuccess(String result) {
+                            updateFavPreference(fav);
+                            checkAndBuildFavMenu(fav);
+                            fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
+                        }
+                    });
         } else {
             ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed());
         }
@@ -530,8 +528,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 UserInfo info = UserInfo.getInstance();
                 if (info != null) {
                     getTemplateService().deleteAnalysisFromWorkspace(info.getFullUsername(),
-                            selectedItem.getId(),
-                            new AsyncCallback<String>() {
+                            selectedItem.getId(), new AsyncCallback<String>() {
 
                                 @Override
                                 public void onFailure(Throwable caught) {
