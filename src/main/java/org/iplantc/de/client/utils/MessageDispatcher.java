@@ -106,7 +106,7 @@ public class MessageDispatcher {
      * 
      * @param json message JSON.
      */
-    public void processMessage(final String json) {
+    public void processMessage(final JSONObject json) {
         dispatch(EventFactory.getInstance().build(json));
     }
 }

@@ -16,11 +16,13 @@ import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.ClientDataModel;
@@ -120,7 +122,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         if (model != null && model.getRootFolder() != null) {
             // select node from WindowConfig
             selectConfigNode();
-            setWindowDisplayState();
+            setWindowViewState();
             // reset the config here so that this folder is not selected every time the window in
             // minimized and re-shown.
             config = null;
@@ -163,32 +165,14 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         public void onSuccess(String result) {
             unmask();
             seed(UserInfo.getInstance().getUsername(), result);
-
             // Select the folder set by the config
             selectConfigNode();
-            setWindowDisplayState();
+            setWindowViewState();
             // reset the config here so that this folder is not selected every time the window in
-            // minimized and re-shown.
             config = null;
 
         }
 
-    }
-
-    private void setWindowDisplayState() {
-        if (config == null) {
-            return;
-        }
-
-        if (config.isWindowMinimized()) {
-            minimize();
-            return;
-        }
-
-        if (config.isWindowMaximized()) {
-            maximizeWindow();
-            return;
-        }
     }
 
     /**
@@ -416,9 +400,9 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
                 String currentFolderId = mdre.getCurrentFolderId();
                 if (currentFolderId != null && !currentFolderId.isEmpty()) {
                     JSONObject jsonConfig = new JSONObject();
-                    jsonConfig.put(Folder.ID, new JSONString(currentFolderId));
+                    jsonConfig.put(DataWindowConfig.FOLDER_ID, new JSONString(currentFolderId));
 
-                    setWindowConfig(new BasicWindowConfig(jsonConfig));
+                    setWindowConfig(new DataWindowConfig(jsonConfig));
                 }
 
                 retrieveData(new RetrieveDataCallback());
@@ -429,7 +413,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         if (pnlNavigation.getSelectedItem() != null) {
             if (pnlNavigation.getSelectedItem().getId() != null) {
                 obj.put(DataWindowConfig.FOLDER_ID, new JSONString(pnlNavigation.getSelectedItem()
@@ -451,6 +435,8 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myDataTag(), obj);
-        return windowConfig;
+
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myDataTag(), ActionType.DISPLAY_WINDOW);
     }
 }

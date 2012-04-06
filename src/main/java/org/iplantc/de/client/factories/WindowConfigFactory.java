@@ -49,6 +49,8 @@ public class WindowConfigFactory {
                 ret = new PipelineEditorWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.wizardTag())) {
                 ret = new WizardWindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.dataViewerTag())) {
+                ret = new BasicWindowConfig(objData);
             }
         }
 

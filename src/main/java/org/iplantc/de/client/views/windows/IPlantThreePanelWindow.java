@@ -12,9 +12,6 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.google.gwt.user.client.Element;
 
 public abstract class IPlantThreePanelWindow extends IPlantWindow {
-    protected final String tag;
-    protected BasicWindowConfig config;
-
     protected ContentPanel pnlContents;
     protected BorderLayoutData dataWest;
     protected BorderLayoutData dataCenter;
@@ -27,9 +24,6 @@ public abstract class IPlantThreePanelWindow extends IPlantWindow {
      */
     protected IPlantThreePanelWindow(final String tag, final BasicWindowConfig config) {
         super(tag, false, true, true, true);
-
-        this.tag = tag;
-        this.config = config;
 
         init();
 

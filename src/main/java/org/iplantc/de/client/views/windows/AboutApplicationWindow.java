@@ -3,6 +3,8 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.AboutApplicationData;
 import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
@@ -104,9 +106,10 @@ public class AboutApplicationWindow extends IPlantWindow {
     @Override
     public JSONObject getWindowState() {
         // Build window config
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myAboutTag(), ActionType.DISPLAY_WINDOW);
     }
 }

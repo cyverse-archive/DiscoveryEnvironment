@@ -5,7 +5,7 @@ import org.iplantc.de.client.I18N;
 
 import com.extjs.gxt.ui.client.util.Format;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Builder class to create JSON for an analysis launched payload event.
@@ -33,16 +33,23 @@ public class AnalysisLaunchedEventJSONBuilder extends AbstractEventJSONBuilder {
      * {@inheritDoc}
      */
     @Override
-    public String build(String json) {
-        String ret = null; // assume failure
+    public JSONObject build(JSONObject json) {
+        JSONObject ret = null; // assume failure
 
         if (json != null) {
-            JSONObject jsonObj = JSONParser.parseStrict(json).isObject();
+            ret = new JSONObject();
+            // JSONObject jsonObj = JSONParser.parseStrict(json).isObject();
+            //
+            // if (jsonObj != null) {
+            //                ret = "{\"type\": \"analysis\", \"message\": {\"id\": \"id_message\", \"text\": \"" //$NON-NLS-1$
+            //                        + buildMessageText(jsonObj) + "\"}}"; //$NON-NLS-1$
+            // }
 
-            if (jsonObj != null) {
-                ret = "{\"type\": \"analysis\", \"message\": {\"id\": \"id_message\", \"text\": \"" //$NON-NLS-1$
-                        + buildMessageText(jsonObj) + "\"}}"; //$NON-NLS-1$
-            }
+            ret.put("type", new JSONString("analysis"));
+            JSONObject message = new JSONObject();
+            message.put("id", new JSONString("id_message"));
+            message.put("text", new JSONString(buildMessageText(json)));
+            ret.put("message", message);
         }
 
         return ret;

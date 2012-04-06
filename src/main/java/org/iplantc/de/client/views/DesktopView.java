@@ -8,21 +8,26 @@ import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.controllers.EditorController;
-import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.services.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.DEWindowManager;
+import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
+import org.iplantc.de.client.views.windows.FileViewerWindow;
+import org.iplantc.de.client.views.windows.FileWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 
 import com.extjs.gxt.ui.client.core.DomQuery;
@@ -40,7 +45,9 @@ import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
@@ -49,8 +56,6 @@ import com.google.gwt.user.client.Element;
  */
 public class DesktopView extends ContentPanel {
 
-    @SuppressWarnings("unused")
-    private EditorController controllerEditor;
     private DEWindowManager mgrWindow;
     private El shortcutEl;
     private LayoutContainer desktop;
@@ -81,7 +86,6 @@ public class DesktopView extends ContentPanel {
         initEventHandlers();
         initTaskbar();
         initWindowManager();
-        initEditorController();
         initDesktop();
         initShortcuts();
     }
@@ -168,43 +172,7 @@ public class DesktopView extends ContentPanel {
         });
 
         // window payload events
-        eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandler() {
-            private boolean isWindowDisplayPayload(final JSONObject objPayload) {
-                boolean ret = false; // assume failure
-
-                // do we have a payload?
-                if (objPayload != null) {
-                    // get our action
-                    String action = JsonUtil.getString(objPayload, "action"); //$NON-NLS-1$
-
-                    if (action.equals("display_window")) { //$NON-NLS-1$
-                        ret = true;
-                    }
-                }
-
-                return ret;
-            }
-
-            @Override
-            public void onFire(WindowPayloadEvent event) {
-                JSONObject objPayload = event.getPayload();
-
-                if (objPayload != null) {
-                    if (isWindowDisplayPayload(objPayload)) {
-                        JSONObject objData = JsonUtil.getObject(objPayload, "data"); //$NON-NLS-1$
-
-                        if (objData != null) {
-                            String tag = JsonUtil.getString(objData, "tag"); //$NON-NLS-1$
-
-                            WindowConfig config = factoryWindowConfig.build(JsonUtil.getObject(objData,
-                                    "config")); //$NON-NLS-1$
-
-                            showWindow(tag, config);
-                        }
-                    }
-                }
-            }
-        });
+        eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandlerImpl());
     }
 
     /**
@@ -342,9 +310,8 @@ public class DesktopView extends ContentPanel {
                 if (tags.size() > 0) {
                     for (JSONObject state : getOrderedState(tags, win_state)) {
                         if (state != null) {
-                            WindowDispatcher dispatcher = new WindowDispatcher(JsonUtil.getObject(state
-                                    .toString()));
-                            dispatcher.dispatchAction(JsonUtil.getString(state, "tag"));
+                            MessageDispatcher dispatcher = new MessageDispatcher();
+                            dispatcher.processMessage(state);
                         }
                     }
                 }
@@ -383,8 +350,165 @@ public class DesktopView extends ContentPanel {
 
     }
 
-    private void initEditorController() {
-        controllerEditor = new EditorController(mgrWindow);
-    }
+    private class WindowPayloadEventHandlerImpl implements WindowPayloadEventHandler {
+        private boolean isWindowDisplayPayload(final JSONObject objPayload) {
+            boolean ret = false; // assume failure
 
+            // do we have a payload?
+            if (objPayload != null) {
+                // get our action
+                String action = JsonUtil.getString(objPayload, "action"); //$NON-NLS-1$
+
+                if (action.equals("display_window")) { //$NON-NLS-1$
+                    ret = true;
+                }
+            }
+
+            return ret;
+        }
+
+        private boolean payloadContainsAction(String action, final JSONObject payload) {
+            return JsonUtil.getString(payload, "action").equals(action); //$NON-NLS-1$
+        }
+
+        private boolean isViewerPayload(final JSONObject objPayload) {
+            return payloadContainsAction("display_viewer", objPayload); //$NON-NLS-1$
+        }
+
+        private boolean isTreeViewerPayload(final JSONObject objPayload) {
+            return payloadContainsAction("display_viewer_add_treetab", objPayload); //$NON-NLS-1$
+        }
+
+        @Override
+        public void onFire(WindowPayloadEvent event) {
+            JSONObject objPayload = event.getPayload();
+
+            if (objPayload != null) {
+                if (isWindowDisplayPayload(objPayload)) {
+                    JSONObject objData = JsonUtil.getObject(objPayload, "data"); //$NON-NLS-1$
+
+                    if (objData != null) {
+                        String tag = JsonUtil.getString(objData, "tag"); //$NON-NLS-1$
+
+                        WindowConfig config = factoryWindowConfig.build(JsonUtil.getObject(objData,
+                                "config")); //$NON-NLS-1$
+
+                        showWindow(tag, config);
+                    }
+                } else {
+                    if (isViewerPayload(objPayload)) {
+                        addFileWindows(objPayload, false);
+                    } else if (isTreeViewerPayload(objPayload)) {
+                        addFileWindows(objPayload, true);
+                    }
+                }
+            }
+        }
+
+        private void addFileWindows(final JSONObject objPayload, boolean addTreeTab) {
+            if (objPayload != null) {
+                JSONObject objData = JsonUtil.getObject(objPayload, "data"); //$NON-NLS-1$
+
+                WindowConfig config = factoryWindowConfig.build(JsonUtil.getObject(objData, "config")); //$NON-NLS-1$
+
+                if (config != null)
+                    System.out.println("config==>" + config.toString());
+
+                if (objData != null) {
+                    JSONValue valFiles = objData.get("files"); //$NON-NLS-1$
+
+                    if (!JsonUtil.isEmpty(valFiles)) {
+                        String tag;
+                        JSONArray files = valFiles.isArray();
+
+                        // loop through our sub-folders and recursively add them
+                        for (int i = 0,len = files.size(); i < len; i++) {
+                            JSONObject file = JsonUtil.getObjectAt(files, i);
+
+                            FileIdentifier identifier = buildFileIdentifier(file);
+
+                            if (identifier != null) {
+                                tag = Constants.CLIENT.fileEditorTag() + identifier.getFileId();
+
+                                addFileWindow(tag, identifier, addTreeTab, config);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private FileIdentifier buildFileIdentifier(final JSONObject objData) {
+            FileIdentifier ret = null; // assume failure
+
+            if (objData != null) {
+                String id = JsonUtil.getString(objData, "id"); //$NON-NLS-1$
+                String name = JsonUtil.getString(objData, "name"); //$NON-NLS-1$
+                String idParent = JsonUtil.getString(objData, "idParent"); //$NON-NLS-1$
+
+                ret = new FileIdentifier(name, idParent, id);
+            }
+
+            return ret;
+        }
+
+        private void buildNewWindow(final String tag, final FileIdentifier file, final String json,
+                boolean addTreeTab, WindowConfig config) {
+            if (json != null) {
+                FileWindow window;
+                FileViewerWindow editorWindow = new FileViewerWindow(tag, file, json);
+
+                if (addTreeTab) {
+                    editorWindow.loadTreeTab();
+                }
+                editorWindow.setWindowConfig(config);
+                window = editorWindow;
+                mgrWindow.add(window);
+                mgrWindow.show(tag);
+
+            }
+        }
+
+        private void retrieveFileManifest(final String tag, final FileIdentifier file,
+                final boolean addTreeTab, final WindowConfig config) {
+            FileEditorServiceFacade facade = new FileEditorServiceFacade();
+
+            facade.getManifest(file.getFileId(), new DiskResourceServiceCallback() {
+                @Override
+                public void onSuccess(String result) {
+                    if (result != null) {
+                        buildNewWindow(tag, file, result, addTreeTab, config);
+                    } else {
+                        onFailure(null);
+                    }
+                }
+
+                @Override
+                protected String getErrorMessageDefault() {
+                    return I18N.ERROR.unableToRetrieveFileManifest(file.getFilename());
+                }
+
+                @Override
+                protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                    return getErrorMessageForFiles(code, file.getFilename());
+                }
+            });
+        }
+
+        private void addFileWindow(final String tag, final FileIdentifier file, boolean addTreeTab,
+                WindowConfig config) {
+            IPlantWindow window = mgrWindow.getWindow(tag);
+
+            // do we already have a window for this file... let's bring it to the front
+            if (window != null) {
+                window.setWindowConfig(config);
+                window.show();
+                window.toFront();
+                window.refresh();
+            } else {
+                retrieveFileManifest(tag, file, addTreeTab, config);
+            }
+        }
+
+    }
 }

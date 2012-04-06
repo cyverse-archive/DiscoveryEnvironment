@@ -25,6 +25,11 @@ public class WindowDispatcher implements ActionDispatcher {
 
     @Override
     public void dispatchAction(String tag) {
+        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
+        dispatcher.processMessage(getDispatchJson(tag, ActionType.DISPLAY_WINDOW));
+    }
+
+    public JSONObject getDispatchJson(String tag, ActionType type) {
         JSONObject windowPayload = new JSONObject();
         windowPayload.put("tag", new JSONString(tag == null ? "" : tag)); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -32,10 +37,7 @@ public class WindowDispatcher implements ActionDispatcher {
             windowPayload.put("config", windowConfig); //$NON-NLS-1$
         }
 
-        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        return EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload);
     }
 
 }

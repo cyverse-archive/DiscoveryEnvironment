@@ -14,6 +14,8 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.CatalogWindowDispatcher;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
@@ -128,25 +130,10 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
         if (config != null && config instanceof CatalogWindowConfig) {
             selectConfigData((CatalogWindowConfig)config);
-            setWindowDisplayState();
+            setWindowViewState();
+            config = null;
         }
 
-    }
-
-    private void setWindowDisplayState() {
-        if (config == null) {
-            return;
-        }
-
-        if (config.isWindowMinimized()) {
-            minimize();
-            return;
-        }
-
-        if (config.isWindowMaximized()) {
-            maximizeWindow();
-            return;
-        }
     }
 
     @Override
@@ -242,7 +229,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
+        ;
         if (mainPanel.getSelectedApp() != null) {
             obj.put(CatalogWindowConfig.APP_ID, new JSONString(mainPanel.getSelectedApp().getId()));
         }
@@ -254,6 +242,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.deCatalog(), ActionType.DISPLAY_WINDOW);
     }
 }

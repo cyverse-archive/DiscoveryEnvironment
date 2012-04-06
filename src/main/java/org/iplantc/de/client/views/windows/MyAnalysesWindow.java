@@ -2,6 +2,8 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
@@ -109,12 +111,15 @@ public class MyAnalysesWindow extends IPlantWindow {
 
         if (pnlAnlys != null && config != null) {
             pnlAnlys.updateSelection(config.getId());
+            setWindowViewState();
+            config = null;
         }
+
     }
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         if (pnlAnlys.getIdCurrentSelection() != null) {
             obj.put("id", new JSONString(pnlAnlys.getIdCurrentSelection()));
         }
@@ -122,6 +127,7 @@ public class MyAnalysesWindow extends IPlantWindow {
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(), obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myAnalysisTag(), ActionType.DISPLAY_WINDOW);
     }
 }

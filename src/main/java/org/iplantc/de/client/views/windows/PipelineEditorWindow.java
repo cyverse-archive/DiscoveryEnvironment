@@ -3,6 +3,8 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.client.pipelines.views.panels.PipelineEditorPanel;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.PipelineEditorWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
@@ -45,9 +47,11 @@ public class PipelineEditorWindow extends IPlantWindow {
         super.show();
         if (config != null) {
             editorPanel.configure(((PipelineEditorWindowConfig)config).getPipelineConfig());
+            setWindowViewState();
             // reset config
             config = null;
         }
+
     }
 
     /**
@@ -78,13 +82,15 @@ public class PipelineEditorWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         obj.put(PipelineEditorWindowConfig.PIPELINE_CONFIG, editorPanel.toJson());
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.pipelineEditorTag(),
                 obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.pipelineEditorTag(),
+                ActionType.DISPLAY_WINDOW);
     }
 }

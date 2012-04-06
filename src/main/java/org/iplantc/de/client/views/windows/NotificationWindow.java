@@ -5,6 +5,8 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.models.NotificationWindowConfig;
@@ -60,22 +62,6 @@ public class NotificationWindow extends IPlantWindow {
 
     }
 
-    private void setWindowDisplayState() {
-        if (config == null) {
-            return;
-        }
-
-        if (config.isWindowMinimized()) {
-            minimize();
-            return;
-        }
-
-        if (config.isWindowMaximized()) {
-            maximizeWindow();
-            return;
-        }
-    }
-
     @Override
     public void show() {
         super.show();
@@ -85,13 +71,14 @@ public class NotificationWindow extends IPlantWindow {
             List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
                     .getSelectedIds());
             panel.selectNotifications(selectedIds);
-            setWindowDisplayState();
+            setWindowViewState();
+            config = null;
         }
     }
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         JSONArray arr = new JSONArray();
         if (panel.getSelectedItems().size() > 0) {
 
@@ -105,7 +92,8 @@ public class NotificationWindow extends IPlantWindow {
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myNotifyTag(), obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myNotifyTag(), ActionType.DISPLAY_WINDOW);
 
     }
 }

@@ -6,6 +6,8 @@ import org.iplantc.de.client.utils.builders.event.json.EventJSONBuilder;
 import org.iplantc.de.client.utils.builders.event.json.UploadEventJSONBuilder;
 import org.iplantc.de.client.utils.builders.event.json.ViewerWindowLaunchEventJSONBuilder;
 
+import com.google.gwt.json.client.JSONObject;
+
 /**
  * Factory class to build a valid data event json from type and RPC success JSON.
  * 
@@ -76,9 +78,9 @@ public class EventJSONFactory {
      * @param json json returned from the success of a data related RPC call.
      * @return new json that can be processed by the message dispatcher.
      */
-    public static String build(ActionType type, final String json) {
+    public static JSONObject build(ActionType type, final JSONObject json) {
         EventJSONBuilder builder = getBuilder(type);
 
-        return (builder == null) ? "" : builder.build(json); //$NON-NLS-1$
+        return (builder == null) ? null : builder.build(json); //$NON-NLS-1$
     }
 }

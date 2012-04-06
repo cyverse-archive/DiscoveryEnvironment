@@ -2,6 +2,7 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -31,6 +32,7 @@ public abstract class IPlantWindow extends Window {
     private final String WINDOW_STYLE_MAXIMIZED = "x-window-maximized"; //$NON-NLS-1$
     private final String WINDOW_STYLE_DRAGGABLE = "x-window-draggable"; //$NON-NLS-1$
     protected String tag;
+    protected BasicWindowConfig config;
     protected Status status;
     private Point restorePos;
     private Size restoreSize;
@@ -99,15 +101,60 @@ public abstract class IPlantWindow extends Window {
     }
 
     /**
+     * Constructs an instance of the window.
+     * 
+     * The parameters passed (isMinimizable, isMaximizable, isClosable) control the appearance of the
+     * titlebar and potential functionality.
+     * 
+     * @param tag a unique identifier for the window.
+     * @param haveStatus true indicates the window has a status area.
+     * @param isMinimizable true indicates that a window is minimizable.
+     * @param isMaximizable true indicates that a window is maximizable.
+     * @param isClosable true indicates that a window can be closed.
+     */
+    protected IPlantWindow(String tag, boolean haveStatus, boolean isMinimizable, boolean isMaximizable,
+            boolean isClosable, BasicWindowConfig config) {
+        this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
+        this.config = config;
+    }
+
+    /**
      * Returns the windows state information.
      * 
      * @return
      */
-    public JSONObject getWindowState() {
+    public abstract JSONObject getWindowState();
+
+    /**
+     * Returns the windows view state information
+     * 
+     * @return
+     */
+    protected JSONObject getWindowViewState() {
         JSONObject obj = new JSONObject();
         obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
         obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
         return obj;
+    }
+
+    /**
+     * Sets windows view state
+     * 
+     */
+    protected void setWindowViewState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+            return;
+        }
+
+        if (config.isWindowMaximized()) {
+            maximizeWindow();
+            return;
+        }
     }
 
     /**

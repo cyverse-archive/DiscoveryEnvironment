@@ -9,9 +9,11 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.JobLaunchedEvent;
 import org.iplantc.de.client.events.JobLaunchedEventHandler;
 import org.iplantc.de.client.events.WizardValidationEvent;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
@@ -240,16 +242,18 @@ public class WizardWindow extends IPlantWindow {
     @Override
     public void show() {
         super.show();
+        setWindowViewState();
     }
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowState();
+        JSONObject obj = super.getWindowViewState();
         obj.put(WizardWindowConfig.WIZARD_CONFIG,
                 tblComponentVals.getWizardPorpertyGroupContainerAsJson());
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), obj);
-        return windowConfig;
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.wizardTag(), ActionType.DISPLAY_WINDOW);
     }
 
     private void initWizard(String json) {

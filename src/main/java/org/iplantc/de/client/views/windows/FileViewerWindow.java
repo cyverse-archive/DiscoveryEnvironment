@@ -12,12 +12,19 @@ import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.commands.RPCSuccessCommand;
+import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
+import org.iplantc.de.client.events.DataPayloadEvent;
+import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEvent;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEventHandler;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
+import org.iplantc.de.client.utils.DataViewContextExecutor;
+import org.iplantc.de.client.utils.TreeViewContextExecutor;
+import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.panels.FilePreviewPanel;
 import org.iplantc.de.client.views.panels.ImagePanel;
 import org.iplantc.de.client.views.panels.RawDataPanel;
@@ -41,13 +48,14 @@ import com.google.gwt.user.client.Element;
  * @author amuir
  * 
  */
-public class FileEditorWindow extends FileWindow implements DataMonitor {
+public class FileViewerWindow extends FileWindow implements DataMonitor {
     private int numLoadingTabs;
     private ViewerWindowTabPanel panel;
     private int treeUrlTabIndex;
     private boolean isPdfPanel;
     private boolean isDirty;
     private Map<String, RPCSuccessCommand> commands;
+    private boolean isViewTree;
 
     /**
      * Constructs an instance given a window identifier (tag) and file identifier.
@@ -55,16 +63,31 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
      * @param tag a string that uniquely identifies each instance of a window
      * @param file a unique identifier for a file
      */
-    public FileEditorWindow(final String tag, final FileIdentifier file, final String manifest) {
+    public FileViewerWindow(final String tag, final FileIdentifier file, final String manifest) {
         super(tag, file, manifest);
 
         treeUrlTabIndex = 1;
-
         // add a tree url tab, if the manifest already has urls
         JSONArray urls = getManifestTreeUrls();
         if (urls != null) {
             addTreeTab(urls);
+            isViewTree = true;
+        } else {
+            isViewTree = false;
         }
+
+        initListeners();
+    }
+
+    private void initListeners() {
+        EventBus eventbus = EventBus.getInstance();
+        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
+            @Override
+            public void onFire(DataPayloadEvent event) {
+                DataController controller = DataController.getInstance();
+                controller.handleEvent(FileViewerWindow.this, event.getPayload());
+            }
+        });
     }
 
     /**
@@ -99,8 +122,7 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
         TreeHyperlinkGridPanel pnlTreeUrlTab = new TreeHyperlinkGridPanel(file, urls);
         pnlTreeUrlTab.setTabIndex(treeUrlTabIndex);
 
-        // panel.addTab(pnlTreeUrlTab, provenance);
-
+        panel.addTab(pnlTreeUrlTab);
         return pnlTreeUrlTab;
     }
 
@@ -131,9 +153,7 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
      */
     @Override
     protected void clearPanel() {
-        // if (panel != null) {
-        // panel.removeAll();
-        // }
+
     }
 
     private void updateStatus(int numTabs) {
@@ -232,6 +252,7 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
      */
     public void loadTreeTab() {
         treeUrlTabIndex = 0;
+        isViewTree = true;
 
         JSONArray urls = getManifestTreeUrls();
         if (urls != null) {
@@ -276,15 +297,6 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
     /**
      * {@inheritDoc}
      */
-    // @Override
-    // protected void updatePanelProvenance(String provenance) {
-    // this.provenance = provenance;
-    // panel.updateProvenance(provenance);
-    // }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void onRender(Element parent, int index) {
         super.onRender(parent, index);
@@ -294,12 +306,13 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
     @Override
     public void show() {
         super.show();
-
         // PDF files will not display any tabs in this window
         // so we'll hide this window since there are no tabs to render
         if (isPdfPanel) {
             hide();
         }
+        setWindowViewState();
+        config = null;
     }
 
     /**
@@ -428,9 +441,8 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
     public void fileRename(final String id, final String name) {
         // has our file been renamed?
         if (file.getFileId().equals(id)) {
-            // we need to reset our heading and update our provenance
+            // we need to reset our heading
             setHeading(name);
-            // updateProvenance();
         }
     }
 
@@ -447,7 +459,25 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
      */
     @Override
     public void deleteResources(List<String> folders, List<String> files) {
-        // intentionally do nothing
+        // if this file is deleted, close this window
+        for (String f : files) {
+            if (f.equals(file.getFileId())) {
+                if (hidden) {
+                    show();
+                }
+                hide();
+            }
+        }
+
+        for (String f : folders) {
+            if ((f + "/").startsWith(file.getParentId())) {
+                if (hidden) {
+                    show();
+                }
+                hide();
+            }
+        }
+
     }
 
     @Override
@@ -467,7 +497,20 @@ public class FileEditorWindow extends FileWindow implements DataMonitor {
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowViewState();
+        WindowConfigFactory factory = new WindowConfigFactory();
+        JSONObject config = factory.buildWindowConfig(Constants.CLIENT.dataViewerTag(), obj);
+        DataContextBuilder builder = new DataContextBuilder();
+
+        if (isViewTree) {
+            TreeViewContextExecutor executor = new TreeViewContextExecutor();
+            executor.setConfig(config);
+            return executor.getDispatchJson(builder.build(file.getFileId()));
+        } else {
+            DataViewContextExecutor executor = new DataViewContextExecutor();
+            executor.setConfig(config);
+            return executor.getDispatchJson(builder.build(file.getFileId()));
+        }
+
     }
 }

@@ -49,7 +49,11 @@ public class DataWindowConfig extends BasicWindowConfig {
      * @return
      */
     public JSONArray getDiskResourceId() {
-        return JSONParser.parseStrict(get(DISK_RESOURCE_IDS).toString()).isArray();
+        if (get(DISK_RESOURCE_IDS) != null && !get(DISK_RESOURCE_IDS).toString().isEmpty()) {
+            return JSONParser.parseStrict(get(DISK_RESOURCE_IDS).toString()).isArray();
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -260,7 +260,7 @@ public class DataActionsPanel extends ContentPanel {
                 DataContextBuilder builder = new DataContextBuilder();
 
                 for (DiskResource resource : resources) {
-                    contexts.add(builder.build(resource, null));
+                    contexts.add(builder.build(resource.getId()));
                 }
 
                 DataViewContextExecutor executor = new DataViewContextExecutor();
@@ -278,7 +278,7 @@ public class DataActionsPanel extends ContentPanel {
                 DataContextBuilder builder = new DataContextBuilder();
 
                 TreeViewContextExecutor executor = new TreeViewContextExecutor();
-                executor.execute(builder.build(resources.get(0), null));
+                executor.execute(builder.build(resources.get(0).getId()));
             } else {
                 showErrorMsg();
             }
