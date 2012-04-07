@@ -182,7 +182,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
         <servlet-name>toolSubmitServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/new_tool_request</url-pattern>
+        <url-pattern>/tito/new_tool_request</url-pattern>
     </servlet-mapping>
 
 	<session-config>
