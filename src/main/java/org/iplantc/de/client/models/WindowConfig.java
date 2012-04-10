@@ -18,6 +18,10 @@ public abstract class WindowConfig extends BaseModelData {
     private static final long serialVersionUID = 3602295075858973528L;
     public static final String IS_MAXIMIZED = "isMaximized";
     public static final String IS_MINIMIZED = "isMinimized";
+    public static final String WIN_LEFT = "win_left";
+    public static final String WIN_TOP = "win_top";
+    public static final String WIN_WIDTH = "width";
+    public static final String WIN_HEIGHT = "height";
 
     /**
      * Constructs a WindowConfig and adds all JSON key/value pairs as BaseModelData parameters.

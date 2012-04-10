@@ -9,17 +9,11 @@ import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
-import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
-import org.iplantc.de.client.utils.DEStateManager;
-import org.iplantc.de.client.utils.LogoutUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
-import org.iplantc.de.client.views.DesktopView;
 import org.iplantc.de.client.views.panels.NotificationIconBar;
-import org.iplantc.de.client.views.windows.IPlantWindow;
 
-import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
@@ -28,7 +22,6 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.state.StateManager;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
@@ -47,9 +40,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -195,44 +186,8 @@ public class ApplicationLayout extends Viewport {
     }
 
     private void doLogout() {
-        // clean up state from local storage
-        StateManager sm = DEStateManager.getStateManager();
-        sm.set(DesktopView.ACTIVE_WINDOWS, null);
-
         ActionDispatcher actionDispatcher = new DefaultActionDispatcher();
-        if (GXT.isIE) {
-            showLogoutMessage();
-            return;
-        } else {
-            actionDispatcher.dispatchAction(Constants.CLIENT.logoutTag());
-        }
-    }
-
-    private void showLogoutMessage() {
-        ContentPanel panel = new ContentPanel();
-        Html html = panel.addText(LogoutUtil.buildLogoutMessageText());
-        html.setStyleAttribute("padding", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
-        html.setStyleAttribute("height", "115px"); //$NON-NLS-1$ //$NON-NLS-2$
-        panel.setHeaderVisible(false);
-        panel.setWidth(350);
-        panel.setHeight(115);
-        panel.setAutoHeight(true);
-        IPlantWindow win = new IPlantWindow("", false, false, false, true) {
-
-            @Override
-            public JSONObject getWindowState() {
-                return null;
-            }
-        };
-
-        win.getHeader().setIcon(AbstractImagePrototype.create(Resources.ICONS.whitelogo()));
-        win.setHeading(I18N.DISPLAY.logoutMessageTitle());
-        win.setWidth(350);
-        win.setHeight(115);
-        win.setBodyBorder(false);
-        win.add(panel);
-        win.setModal(true);
-        win.show();
+        actionDispatcher.dispatchAction(Constants.CLIENT.logoutTag());
     }
 
     private void drawNorth() {

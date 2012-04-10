@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -134,6 +135,10 @@ public abstract class IPlantWindow extends Window {
         JSONObject obj = new JSONObject();
         obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
         obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
+        obj.put(WindowConfig.WIN_LEFT, new JSONString(getAbsoluteLeft() + ""));
+        obj.put(WindowConfig.WIN_TOP, new JSONString(getAbsoluteTop() + ""));
+        obj.put(WindowConfig.WIN_WIDTH, new JSONString(getWidth() + ""));
+        obj.put(WindowConfig.WIN_HEIGHT, new JSONString(getHeight() + ""));
         return obj;
     }
 
@@ -148,12 +153,34 @@ public abstract class IPlantWindow extends Window {
 
         if (config.isWindowMinimized()) {
             minimize();
-            return;
+        } else if (config.isWindowMaximized()) {
+            maximizeWindow();
+        } else {
+            setWindowPosition();
+            setWinSize();
         }
 
-        if (config.isWindowMaximized()) {
-            maximizeWindow();
-            return;
+    }
+
+    private void setWinSize() {
+        if (config != null && config.get(WindowConfig.WIN_WIDTH) != null
+                && !config.get(WindowConfig.WIN_WIDTH).toString().isEmpty()
+                && config.get(WindowConfig.WIN_HEIGHT) != null
+                && !config.get(WindowConfig.WIN_HEIGHT).toString().isEmpty()) {
+            int width = Integer.parseInt(config.get(WindowConfig.WIN_WIDTH).toString());
+            int height = Integer.parseInt(config.get(WindowConfig.WIN_HEIGHT).toString());
+            setSize(width, height);
+        }
+    }
+
+    private void setWindowPosition() {
+        if (config != null && config.get(WindowConfig.WIN_LEFT) != null
+                && !config.get(WindowConfig.WIN_LEFT).toString().isEmpty()
+                && config.get(WindowConfig.WIN_TOP) != null
+                && !config.get(WindowConfig.WIN_TOP).toString().isEmpty()) {
+            int left = Integer.parseInt(config.get(WindowConfig.WIN_LEFT).toString());
+            int top = Integer.parseInt(config.get(WindowConfig.WIN_TOP).toString());
+            setPosition(left, top);
         }
     }
 

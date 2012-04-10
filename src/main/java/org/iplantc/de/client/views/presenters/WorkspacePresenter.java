@@ -20,7 +20,6 @@ public class WorkspacePresenter extends Presenter {
     private void addViews() {
         addView("workspace", new DefaultWorkspaceView()); //$NON-NLS-1$
         addView("login", new LoginView()); //$NON-NLS-1$
-        addView("logout", new LoginView()); //$NON-NLS-1$
     }
 
     /**

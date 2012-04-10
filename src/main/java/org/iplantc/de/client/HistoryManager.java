@@ -3,7 +3,6 @@ package org.iplantc.de.client;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.events.LogoutEvent;
 import org.iplantc.de.client.events.LogoutEventHandler;
-import org.iplantc.de.client.utils.LogoutUtil;
 import org.iplantc.de.client.utils.MessagePoller;
 import org.iplantc.de.client.views.presenters.Presenter;
 import org.iplantc.de.client.views.presenters.WorkspacePresenter;
@@ -11,7 +10,6 @@ import org.iplantc.de.client.views.presenters.WorkspacePresenter;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 
 /**
  * Provides management of history tokens and coordinates the necessary operations with its' presenter.
@@ -46,7 +44,6 @@ public class HistoryManager implements ValueChangeHandler<String> {
 
                 resetEventHandlers();
                 handleToken(event.getHistoryToken());
-                redirectToLogoutPage();
             }
         });
     }
@@ -113,12 +110,5 @@ public class HistoryManager implements ValueChangeHandler<String> {
         }
 
         return ret;
-    }
-
-    /**
-     * Perform logout redirection.
-     */
-    private void redirectToLogoutPage() {
-        Window.Location.assign(LogoutUtil.buildLogoutUrl());
     }
 }

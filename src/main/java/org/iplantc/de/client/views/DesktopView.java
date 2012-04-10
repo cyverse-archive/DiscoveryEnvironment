@@ -7,10 +7,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.LogoutEvent;
+import org.iplantc.de.client.events.LogoutEventHandler;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
@@ -19,8 +23,9 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.utils.DEStateManager;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.utils.DEWindowManager;
+import org.iplantc.de.client.utils.LogoutUtil;
 import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
@@ -38,11 +43,9 @@ import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.WindowEvent;
 import com.extjs.gxt.ui.client.event.WindowListener;
-import com.extjs.gxt.ui.client.state.StateManager;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.google.gwt.json.client.JSONArray;
@@ -50,6 +53,8 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Provides user interface for desktop workspace area.
@@ -61,6 +66,13 @@ public class DesktopView extends ContentPanel {
     private LayoutContainer desktop;
     private IPlantTaskbar taskBar;
     private WindowConfigFactory factoryWindowConfig;
+    // following variables are required for checking
+    // save session state rpc is completed and then redirect
+    // to logout
+    private boolean session_save_completed = false;
+    private final int SESSION_SAVE_TIMEOUT = 10000;
+    private int expired_time = 0;
+    private final int INTERVEL = 1000;
 
     public static final String ACTIVE_WINDOWS = "active_windows";
 
@@ -155,7 +167,7 @@ public class DesktopView extends ContentPanel {
         }
 
         desktop.addListener(Events.Detach, new DEReloadListener());
-        desktop.addListener(Events.Render, new DEAfterRenderListener());
+        // desktop.addListener(Events.Render, new DEAfterRenderListener());
 
         shortcutEl = new El(el);
     }
@@ -173,15 +185,82 @@ public class DesktopView extends ContentPanel {
 
         // window payload events
         eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandlerImpl());
+
+        // save session to database on logout
+        eventbus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
+            @Override
+            public void onLogout(LogoutEvent event) {
+                MonitorSessionPersistance();
+                persistUserSession();
+            }
+        });
+    }
+
+    private void MonitorSessionPersistance() {
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                if (session_save_completed || (expired_time == SESSION_SAVE_TIMEOUT)) {
+                    cancel();
+                    redirectToLogoutPage();
+                } else {
+                    expired_time = expired_time + INTERVEL;
+                }
+
+            }
+        };
+        timer.scheduleRepeating(INTERVEL);
     }
 
     /**
-     * Sets the background color of the Desktop to the given CSS color value.
-     * 
-     * @param cssColor
+     * Perform logout redirection.
      */
-    public void setBackgroundColor(String cssColor) {
-        // setBodyStyle("background-color: " + cssColor);
+    private void redirectToLogoutPage() {
+        com.google.gwt.user.client.Window.Location.assign(LogoutUtil.buildLogoutUrl());
+    }
+
+    private void persistUserSession() {
+        UserSessionServiceFacade session = new UserSessionServiceFacade();
+        JSONObject obj = JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates());
+        if (obj != null) {
+            session.saveUserSession(UserInfo.getInstance().getFullUsername(), obj,
+                    new AsyncCallback<String>() {
+
+                        @Override
+                        public void onSuccess(String result) {
+                            session_save_completed = true;
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught);
+                            session_save_completed = true;
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Restore users work session
+     * 
+     */
+    public void restoreUserSession() {
+        UserSessionServiceFacade session = new UserSessionServiceFacade();
+        session.getUserSession(UserInfo.getInstance().getFullUsername(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                System.out.println("session restore failed===>" + caught.toString());
+                ErrorHandler.post(caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject obj = JsonUtil.getObject(result);
+                restoreWindows(JsonUtil.getMapFromJSONObject(obj));
+            }
+        });
     }
 
     /**
@@ -284,50 +363,34 @@ public class DesktopView extends ContentPanel {
     private final class DEReloadListener implements Listener<ComponentEvent> {
         @Override
         public void handleEvent(ComponentEvent be) {
-            saveWindowState(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
-        }
-
-        private void saveWindowState(String tag, Map<String, String> state) {
-            if (state != null) {
-                StateManager mgr = DEStateManager.getStateManager();
-                List<Window> windows = mgrWindow.getStack();
-                for (Window w : windows) {
-                    System.out.println(((IPlantWindow)w).getTag());
-                }
-                System.out.println("win-->" + state.toString());
-                mgr.set(tag, state);
-            }
+            persistUserSession();
         }
     }
 
-    private final class DEAfterRenderListener implements Listener<ComponentEvent> {
-        @Override
-        public void handleEvent(ComponentEvent be) {
-            StateManager mgr = DEStateManager.getStateManager();
-            Map<String, Object> win_state = mgr.getMap(ACTIVE_WINDOWS);
-            if (win_state != null) {
-                Set<String> tags = win_state.keySet();
-                if (tags.size() > 0) {
-                    for (JSONObject state : getOrderedState(tags, win_state)) {
-                        if (state != null) {
-                            MessageDispatcher dispatcher = new MessageDispatcher();
-                            dispatcher.processMessage(state);
-                        }
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void restoreWindows(Map win_state) {
+        if (win_state != null) {
+            Set<String> tags = win_state.keySet();
+            if (tags.size() > 0) {
+                for (JSONObject state : getOrderedState(tags, win_state)) {
+                    if (state != null) {
+                        MessageDispatcher dispatcher = new MessageDispatcher();
+                        dispatcher.processMessage(state);
                     }
                 }
             }
         }
+    }
 
-        private List<JSONObject> getOrderedState(Set<String> tags, Map<String, Object> win_state) {
-            List<JSONObject> temp = new ArrayList<JSONObject>();
-            for (String tag : tags) {
-                JSONObject obj = JsonUtil.getObject(win_state.get(tag).toString());
-                temp.add(obj);
-            }
-            java.util.Collections.sort(temp, new WindowOrderComparator());
-            return temp;
-
+    private List<JSONObject> getOrderedState(Set<String> tags, Map<String, Object> win_state) {
+        List<JSONObject> temp = new ArrayList<JSONObject>();
+        for (String tag : tags) {
+            JSONObject obj = JsonUtil.getObject(win_state.get(tag).toString());
+            temp.add(obj);
         }
+        java.util.Collections.sort(temp, new WindowOrderComparator());
+        return temp;
+
     }
 
     private class WindowOrderComparator implements Comparator<JSONObject> {
@@ -350,6 +413,13 @@ public class DesktopView extends ContentPanel {
 
     }
 
+    /**
+     * 
+     * A event handler for WindowPayLoadEvent
+     * 
+     * @author sriram
+     * 
+     */
     private class WindowPayloadEventHandlerImpl implements WindowPayloadEventHandler {
         private boolean isWindowDisplayPayload(final JSONObject objPayload) {
             boolean ret = false; // assume failure
@@ -410,9 +480,6 @@ public class DesktopView extends ContentPanel {
                 JSONObject objData = JsonUtil.getObject(objPayload, "data"); //$NON-NLS-1$
 
                 WindowConfig config = factoryWindowConfig.build(JsonUtil.getObject(objData, "config")); //$NON-NLS-1$
-
-                if (config != null)
-                    System.out.println("config==>" + config.toString());
 
                 if (objData != null) {
                     JSONValue valFiles = objData.get("files"); //$NON-NLS-1$
