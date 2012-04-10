@@ -43,11 +43,11 @@ public class TitoWindow extends IPlantWindow {
 
         // Build window payload with config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildConfigPayload(Constants.CLIENT.titoTag(),
-                Constants.CLIENT.titoTag(), windowConfigData);
+        JSONObject windowPayload = configFactory.buildWindowConfig(Constants.CLIENT.titoTag(),
+                windowConfigData);
 
         // Launch display window event with this payload
-        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
+        JSONObject json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload);
 
         MessageDispatcher dispatcher = MessageDispatcher.getInstance();
         dispatcher.processMessage(json);
@@ -102,7 +102,7 @@ public class TitoWindow extends IPlantWindow {
     }
 
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config instanceof TitoWindowConfig) {
             this.config = (TitoWindowConfig)config;
 
@@ -173,5 +173,11 @@ public class TitoWindow extends IPlantWindow {
         } else if (TitoWindowConfig.VIEW_NEW_WORKFLOW.equals(viewMode)) {
             tito.newWorkflow();
         }
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -16,13 +16,6 @@ public class GwtTestEventFactory extends GWTTestCase {
         assertNull(event);
     }
 
-    public void testNullJsonString() {
-        String json = null;
-        MessagePayloadEvent<?> event = EventFactory.getInstance().build(json);
-
-        assertNull(event);
-    }
-
     public void testAnalysisPayloadEventBuild() {
         String json = "{\"type\": \"analysis\", " //$NON-NLS-1$
                 + "\"message\": {\"id\": \"someId\", \"text\": \"here's a message\"}, " //$NON-NLS-1$

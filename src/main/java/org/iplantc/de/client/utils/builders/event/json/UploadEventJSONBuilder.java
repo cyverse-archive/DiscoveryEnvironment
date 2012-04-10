@@ -5,7 +5,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Builder class to create JSON for an upload payload event.
@@ -39,16 +39,22 @@ public class UploadEventJSONBuilder extends AbstractEventJSONBuilder {
      * {@inheritDoc}
      */
     @Override
-    public String build(final String json) {
-        String ret = null; // assume failure
+    public JSONObject build(final JSONObject json) {
+        JSONObject ret = null; // assume failure
 
         if (json != null) {
-            JSONObject jsonObj = JSONParser.parseStrict(json).isObject();
-
-            if (jsonObj != null) {
-                ret = "{\"type\": \"data\", \"message\": {\"id\": \"someId\", \"text\": \"" //$NON-NLS-1$
-                        + buildMessageText(jsonObj) + "\"}, \"payload\": " + buildPayload(jsonObj) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            // JSONObject jsonObj = JSONParser.parseStrict(json).isObject();
+            //
+            // if (jsonObj != null) {
+            //                ret = "{\"type\": \"data\", \"message\": {\"id\": \"someId\", \"text\": \"" //$NON-NLS-1$
+            //                        + buildMessageText(jsonObj) + "\"}, \"payload\": " + buildPayload(jsonObj) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+            // }
+            ret = new JSONObject();
+            ret.put("type", new JSONString("data"));
+            JSONObject message = new JSONObject();
+            message.put("id", new JSONString("someId"));
+            message.put("text", new JSONString(buildMessageText(json)));
+            ret.put("message", message);
         }
 
         return ret;

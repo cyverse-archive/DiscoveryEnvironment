@@ -1,11 +1,11 @@
 package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uidiskresource.client.models.DiskResource;
-import org.iplantc.de.client.utils.DataUtils;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Build a JSON string to provide context when a user clicks on an item with a data context associated
@@ -63,40 +63,16 @@ public class DataContextBuilder extends AbstractContextBuilder {
                         String id = JsonUtil.getString(file, "id"); //$NON-NLS-1$
                         String name = JsonUtil.getString(file, "name"); //$NON-NLS-1$
                         String idParent = getParentId(objPayload);
+                        JSONObject obj = new JSONObject();
 
-                        ret = "{"; //$NON-NLS-1$
+                        obj.put("id", new JSONString(id));
+                        obj.put("name", new JSONString(name));
+                        obj.put("idParent", new JSONString(idParent));
 
-                        ret += "\"id\": " + JsonUtil.quoteString(id) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-                        ret += "\"name\": " + JsonUtil.quoteString(name) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-                        ret += "\"idParent\": " + JsonUtil.quoteString(idParent); //$NON-NLS-1$
-
-                        ret += "}"; //$NON-NLS-1$
+                        ret = obj.toString();
                     }
                 }
             }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Build context json from a disk resource and parent folder.
-     * 
-     * @param resource resource containing id, and name of resource.
-     * @param idParentFolder unique identifier for this disk resource's parent folder.
-     * @return String representation of context JSON. null on failure.
-     */
-    public String build(final DiskResource resource, final String idParentFolder) {
-        String ret = null; // assume failure
-
-        if (resource != null) {
-            ret = "{"; //$NON-NLS-1$
-
-            ret += "\"id\": " + JsonUtil.quoteString(resource.getId()) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"name\": " + JsonUtil.quoteString(resource.getName()) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"idParent\": " + JsonUtil.quoteString(idParentFolder); //$NON-NLS-1$
-
-            ret += "}"; //$NON-NLS-1$
         }
 
         return ret;
@@ -109,18 +85,16 @@ public class DataContextBuilder extends AbstractContextBuilder {
      * @return String representation of context JSON. null on failure.
      */
     public String build(final String idDiskResource) {
-        String ret = null; // assume failure
-
-        if (idDiskResource != null) {
-            ret = "{"; //$NON-NLS-1$
-
-            ret += "\"id\": " + JsonUtil.quoteString(idDiskResource) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"name\": " + JsonUtil.quoteString(DataUtils.parseNameFromPath(idDiskResource)) + ", "; //$NON-NLS-1$ //$NON-NLS-2$
-            ret += "\"idParent\": " + JsonUtil.quoteString(DataUtils.parseParent(idDiskResource)); //$NON-NLS-1$
-
-            ret += "}"; //$NON-NLS-1$
+        if (idDiskResource == null || idDiskResource.isEmpty()) {
+            return null;
         }
 
-        return ret;
+        JSONObject obj = new JSONObject();
+
+        obj.put("id", new JSONString(idDiskResource));
+        obj.put("name", new JSONString(DiskResourceUtil.parseNameFromPath(idDiskResource)));
+        obj.put("idParent", new JSONString(DiskResourceUtil.parseParent(idDiskResource)));
+
+        return obj.toString();
     }
 }

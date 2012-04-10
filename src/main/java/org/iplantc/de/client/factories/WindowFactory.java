@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
@@ -56,7 +57,7 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.titoTag())) {
                 ret = new TitoWindow(type, (TitoWindowConfig)config);
             } else {
-                ret = new WizardWindow(type);
+                ret = new WizardWindow(type, (WizardWindowConfig)config);
             }
         }
 

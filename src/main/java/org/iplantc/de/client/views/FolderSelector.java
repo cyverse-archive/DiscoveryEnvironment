@@ -93,8 +93,9 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
     @Override
     public void setSelectedFolder(Folder folder) {
         super.setSelectedResource(folder);
-
-        dlgFolderSelect.select(folder);
+        if (dlgFolderSelect != null) {
+            dlgFolderSelect.select(folder);
+        }
     }
 
     /**

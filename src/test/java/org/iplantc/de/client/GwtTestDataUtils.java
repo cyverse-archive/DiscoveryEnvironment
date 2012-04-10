@@ -7,6 +7,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.Permissions;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataUtils.Action;
 
@@ -202,31 +203,31 @@ public class GwtTestDataUtils extends GWTTestCase {
     }
 
     public void testParseParentEmpty() {
-        String parent = DataUtils.parseParent(null);
+        String parent = DiskResourceUtil.parseParent(null);
         assertEquals("", parent);
 
-        parent = DataUtils.parseParent("");
+        parent = DiskResourceUtil.parseParent("");
         assertEquals("", parent);
     }
 
     public void testParseParent() {
-        String parent = DataUtils.parseParent("/iplant/home/ipctest/analyses/1");
+        String parent = DiskResourceUtil.parseParent("/iplant/home/ipctest/analyses/1");
         assertEquals("/iplant/home/ipctest/analyses", parent);
     }
 
     public void testParseNameEmpty() {
-        String name = DataUtils.parseNameFromPath(null);
+        String name = DiskResourceUtil.parseNameFromPath(null);
         assertEquals("", name);
 
-        name = DataUtils.parseNameFromPath("");
+        name = DiskResourceUtil.parseNameFromPath("");
         assertEquals("", name);
     }
 
     public void testParseName() {
-        String name = DataUtils.parseNameFromPath("/iplant/home/ipctest/analyses/1");
+        String name = DiskResourceUtil.parseNameFromPath("/iplant/home/ipctest/analyses/1");
         assertEquals("1", name);
 
-        name = DataUtils.parseNameFromPath("/iplant/home/ipctest/analyses/space name");
+        name = DiskResourceUtil.parseNameFromPath("/iplant/home/ipctest/analyses/space name");
         assertEquals("space name", name);
     }
 

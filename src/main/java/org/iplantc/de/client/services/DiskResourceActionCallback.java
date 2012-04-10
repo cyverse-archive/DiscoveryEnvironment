@@ -35,7 +35,7 @@ public abstract class DiskResourceActionCallback extends DiskResourceServiceCall
             JSONObject jsonResult = getJsonResponse(result);
             JSONObject jsonPayload = buildPayload(jsonResult);
 
-            String json = EventJSONFactory.build(getActionType(), jsonPayload.toString());
+            JSONObject json = EventJSONFactory.build(getActionType(), jsonPayload);
 
             MessageDispatcher.getInstance().processMessage(json);
 

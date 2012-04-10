@@ -55,8 +55,8 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     public void onCompletion(String sourceUrl, String response) {
         try {
             JSONObject payload = buildPayload(sourceUrl, response);
-            String json = EventJSONFactory.build(EventJSONFactory.ActionType.UPLOAD_COMPLETE,
-                    payload.toString());
+            JSONObject json = EventJSONFactory.build(EventJSONFactory.ActionType.UPLOAD_COMPLETE,
+                    payload);
 
             MessageDispatcher dispatcher = MessageDispatcher.getInstance();
             dispatcher.processMessage(json);

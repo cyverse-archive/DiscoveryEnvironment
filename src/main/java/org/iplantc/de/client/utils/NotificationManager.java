@@ -13,6 +13,7 @@ import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
@@ -85,10 +86,20 @@ public class NotificationManager {
     private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
     private final MessageServiceFacade facadeMessageService;
+    private Command storeLoadCompleteCallbackCmd;
 
-    private NotificationManager() {
+    private final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
+    private final String DATA_NOTIFI_COUNT = "dataNotificationCount";
+    private final String ANALYSES_NOTIFI_COUNT = "analysesNotificationCount";
+
+    private int totalNotificationCount;
+    private int dataNotificationCount;
+    private int analysesNotificationCount;
+
+    private NotificationManager(Command storeLoadCompleteCallbackCmd) {
         facadeMessageService = new MessageServiceFacade();
         storeAll = new ListStore<Notification>();
+        this.storeLoadCompleteCallbackCmd = storeLoadCompleteCallbackCmd;
 
         // keep notifications sorted by time
         storeAll.setDefaultSort(PROP_TIMESTAMP, SortDir.DESC);
@@ -99,6 +110,31 @@ public class NotificationManager {
         registerEventHandlers();
 
         getExistingNotifications(null);
+
+    }
+
+    public void initNotificationCount() {
+        totalNotificationCount = (DEStateManager.getStateManager().get(TOTAL_NOTIFI_COUNT) != null && (!DEStateManager
+                .getStateManager().get(TOTAL_NOTIFI_COUNT).equals(""))) ? Integer
+                .parseInt(DEStateManager.getStateManager().get(TOTAL_NOTIFI_COUNT).toString()) : 0;
+
+        dataNotificationCount = (DEStateManager.getStateManager().get(DATA_NOTIFI_COUNT) != null && (!DEStateManager
+                .getStateManager().get(DATA_NOTIFI_COUNT).equals(""))) ? Integer.parseInt(DEStateManager
+                .getStateManager().get(DATA_NOTIFI_COUNT).toString()) : 0;
+
+        analysesNotificationCount = (DEStateManager.getStateManager().get(ANALYSES_NOTIFI_COUNT) != null && (!DEStateManager
+                .getStateManager().get(ANALYSES_NOTIFI_COUNT).equals(""))) ? Integer
+                .parseInt(DEStateManager.getStateManager().get(ANALYSES_NOTIFI_COUNT).toString()) : 0;
+
+        final EventBus eventbus = EventBus.getInstance();
+        NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getDataNotificationCount(),
+                getAnalysesNotificationCount());
+        eventbus.fireEvent(ncue);
+
+    }
+
+    private NotificationManager() {
+        this(null);
     }
 
     private void initContextBuilders() {
@@ -128,7 +164,7 @@ public class NotificationManager {
     }
 
     private void registerEventHandlers() {
-        EventBus eventbus = EventBus.getInstance();
+        final EventBus eventbus = EventBus.getInstance();
 
         // handle data events
         eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
@@ -136,6 +172,10 @@ public class NotificationManager {
             public void onFire(DataPayloadEvent event) {
                 addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
                         dataContextBuilder.build(event.getPayload()));
+                setDataNotificationCount(getDataNotificationCount() + 1);
+                NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
+                        getDataNotificationCount(), getAnalysesNotificationCount());
+                eventbus.fireEvent(ncue);
             }
         });
 
@@ -145,6 +185,10 @@ public class NotificationManager {
             public void onFire(AnalysisPayloadEvent event) {
                 addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.app(), event.getMessage(),
                         analysisContextBuilder.build(event.getPayload()));
+                setAnalysesNotificationCount(getAnalysesNotificationCount() + 1);
+                NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
+                        getDataNotificationCount(), getAnalysesNotificationCount());
+                eventbus.fireEvent(ncue);
             }
         });
     }
@@ -157,6 +201,21 @@ public class NotificationManager {
     public static NotificationManager getInstance() {
         if (instance == null) {
             instance = new NotificationManager();
+        }
+
+        return instance;
+    }
+
+    /**
+     * Return the shared, singleton instance of the manager.
+     * 
+     * @return a singleton reference to the notification manager.
+     */
+    public static NotificationManager getInstance(Command storeLoadCompleteCallback) {
+        if (instance == null) {
+            instance = new NotificationManager(storeLoadCompleteCallback);
+        } else {
+            instance.storeLoadCompleteCallbackCmd = storeLoadCompleteCallback;
         }
 
         return instance;
@@ -213,6 +272,9 @@ public class NotificationManager {
                         poller.start();
                         if (callback != null) {
                             callback.execute();
+                        }
+                        if (storeLoadCompleteCallbackCmd != null) {
+                            storeLoadCompleteCallbackCmd.execute();
                         }
                     }
                 });
@@ -323,5 +385,64 @@ public class NotificationManager {
      */
     public ListStore<Notification> getNotifications() {
         return storeAll;
+    }
+
+    /**
+     * 
+     * persist total notification count
+     * 
+     * @param total
+     */
+    public void setTotalNotificationCount(int total) {
+        DEStateManager.getStateManager().set(TOTAL_NOTIFI_COUNT, total + "");
+        totalNotificationCount = total;
+    }
+
+    /**
+     * get total notification count
+     * 
+     * @return
+     */
+    public int getTotalNotificationCount() {
+        return totalNotificationCount;
+    }
+
+    /**
+     * 
+     * persist data notification count
+     * 
+     * @param total
+     */
+    public void setDataNotificationCount(int total) {
+        DEStateManager.getStateManager().set(DATA_NOTIFI_COUNT, total + "");
+        dataNotificationCount = total;
+    }
+
+    /**
+     * get data notification count
+     * 
+     * @return
+     */
+    public int getDataNotificationCount() {
+        return dataNotificationCount;
+    }
+
+    /**
+     * persist analyses notification count
+     * 
+     * @param total
+     */
+    public void setAnalysesNotificationCount(int total) {
+        DEStateManager.getStateManager().set(ANALYSES_NOTIFI_COUNT, total + "");
+        analysesNotificationCount = total;
+    }
+
+    /**
+     * get analyses notification count
+     * 
+     * @return
+     */
+    public int getAnalysesNotificationCount() {
+        return analysesNotificationCount;
     }
 }

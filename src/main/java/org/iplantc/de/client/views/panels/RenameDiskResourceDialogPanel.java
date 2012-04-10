@@ -2,7 +2,7 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.client.widgets.validator.JobNameValidator;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
-import org.iplantc.de.client.utils.DataUtils;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
 import com.extjs.gxt.ui.client.widget.Component;
 
@@ -37,7 +37,7 @@ public abstract class RenameDiskResourceDialogPanel extends IPlantPromptPanel {
             if (name.length() > 0) {
                 if ((nameOrig == null) || (!name.equals(nameOrig.trim()))) {
                     String srcName = id;
-                    String destName = DataUtils.parseParent(id) + "/" + name; //$NON-NLS-1$
+                    String destName = DiskResourceUtil.parseParent(id) + "/" + name; //$NON-NLS-1$
 
                     callRenameService(srcName, destName);
                 }

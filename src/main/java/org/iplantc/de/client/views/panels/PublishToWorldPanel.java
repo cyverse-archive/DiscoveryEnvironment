@@ -145,8 +145,7 @@ public class PublishToWorldPanel extends LayoutContainer {
         left.add(integratorNameField, formData);
         left.add(emailField, formData);
 
-        right.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.categorySelect())),
-                formData);
+        right.add(new Label(buildRequiredFieldLabel(I18N.DISPLAY.categorySelect())), formData);
         right.add(categoryField, formData);
 
         top.add(left, new ColumnData(.5));
@@ -328,8 +327,8 @@ public class PublishToWorldPanel extends LayoutContainer {
 
                         // Also remove the public "Beta" category
                         TreeStore<AnalysisGroupTreeModel> store = wrapper.getStore();
-                        store.remove(store.findModel(AnalysisGroupTreeModel.ID, 
-                                DEProperties.getInstance().getDefaultBetaCategoryId()));
+                        store.remove(store.findModel(AnalysisGroupTreeModel.ID, DEProperties
+                                .getInstance().getDefaultBetaCategoryId()));
 
                         showCategorySelectionDialog(store);
                     }

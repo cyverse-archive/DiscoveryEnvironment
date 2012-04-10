@@ -1,12 +1,23 @@
 package org.iplantc.de.client.views.windows;
 
+import java.util.List;
+
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Window for displaying event notifications.
@@ -16,6 +27,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
  */
 public class NotificationWindow extends IPlantWindow {
     private NotificationPanel panel;
+    private WindowConfig config;
 
     /**
      * Constructs an instance given a unique identifier.
@@ -27,10 +39,8 @@ public class NotificationWindow extends IPlantWindow {
         super(tag, false, true, true, true);
 
         init();
-        configure(config);
+        setWindowConfig(config);
     }
-
-
 
     private void init() {
         setId(tag);
@@ -45,10 +55,45 @@ public class NotificationWindow extends IPlantWindow {
     }
 
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config instanceof NotificationWindowConfig) {
+            this.config = config;
+        }
+
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if (config != null) {
             Category category = ((NotificationWindowConfig)config).getCategory();
             panel.filterBy(category);
+            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
+                    .getSelectedIds());
+            panel.selectNotifications(selectedIds);
+            setWindowViewState();
+            config = null;
         }
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        JSONObject obj = super.getWindowViewState();
+        JSONArray arr = new JSONArray();
+        if (panel.getSelectedItems().size() > 0) {
+
+            int i = 0;
+            for (Notification n : panel.getSelectedItems()) {
+                arr.set(i++, new JSONString(n.getId()));
+            }
+        }
+        obj.put(NotificationWindowConfig.SELECTED_IDS, arr);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myNotifyTag(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myNotifyTag(), ActionType.DISPLAY_WINDOW);
+
     }
 }

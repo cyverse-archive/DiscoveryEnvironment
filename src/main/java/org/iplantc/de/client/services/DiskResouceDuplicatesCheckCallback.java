@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -64,7 +64,7 @@ public abstract class DiskResouceDuplicatesCheckCallback extends DiskResourceSer
             boolean fileExists = JsonUtil.getBoolean(paths, resourceId, false);
 
             if (fileExists) {
-                duplicateFiles.add(DataUtils.parseNameFromPath(resourceId));
+                duplicateFiles.add(DiskResourceUtil.parseNameFromPath(resourceId));
             }
         }
 

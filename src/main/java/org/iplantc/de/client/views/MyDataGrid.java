@@ -15,8 +15,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.FileDescriptionEditedEvent;
-import org.iplantc.de.client.events.FileDescriptionEditedEventHandler;
+import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.images.Resources;
@@ -35,7 +34,6 @@ import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
 import org.iplantc.de.client.views.panels.MetadataEditorPanel;
 import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
 import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
-import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -146,7 +144,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         if (executor != null && dr instanceof File && this.callertag.equals(tag)) {
             DataContextBuilder builder = new DataContextBuilder();
 
-            executor.execute(builder.build(dr, DataUtils.parseParent(dr.getId())));
+            executor.execute(builder.build(dr.getId()));
         }
     }
 
@@ -464,18 +462,6 @@ public class MyDataGrid extends Grid<DiskResource> {
                     }
                 }));
 
-        handlers.add(eventbus.addHandler(FileDescriptionEditedEvent.TYPE,
-                new FileDescriptionEditedEventHandler() {
-                    @Override
-                    public void onEditComplete(FileDescriptionEditedEvent event) {
-                        File f = (File)getStore().findModel("id", event.getId()); //$NON-NLS-1$
-                        if (f != null) {
-                            f.setDescription(JsonUtil.formatString(event.getDescription()));
-                            getStore().update(f);
-
-                        }
-                    }
-                }));
     }
 
     private void showErrorMsg() {
@@ -529,7 +515,7 @@ public class MyDataGrid extends Grid<DiskResource> {
                 DataContextBuilder builder = new DataContextBuilder();
 
                 for (DiskResource resource : resources) {
-                    contexts.add(builder.build(resource, null));
+                    contexts.add(builder.build(resource.getId()));
                 }
 
                 DataViewContextExecutor executor = new DataViewContextExecutor();
@@ -549,7 +535,7 @@ public class MyDataGrid extends Grid<DiskResource> {
                 TreeViewContextExecutor executor = new TreeViewContextExecutor();
 
                 for (DiskResource resource : resources) {
-                    executor.execute(builder.build(resource, null));
+                    executor.execute(builder.build(resource.getId()));
                 }
             } else {
                 showErrorMsg();
@@ -579,7 +565,8 @@ public class MyDataGrid extends Grid<DiskResource> {
             List<DiskResource> resources = getSelectionModel().getSelectedItems();
 
             if (DataUtils.isDownloadable(resources)) {
-                IDropLiteAppletWindow.launchIDropLiteDownloadWindow(resources);
+                IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
+                dispatcher.launchDownloadWindow(resources);
             } else {
                 showErrorMsg();
             }

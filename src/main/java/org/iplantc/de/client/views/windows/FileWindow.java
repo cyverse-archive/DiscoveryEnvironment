@@ -7,6 +7,8 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.events.FileEditorWindowClosedEvent;
+import org.iplantc.de.client.models.BasicWindowConfig;
+import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.WindowEvent;
 import com.extjs.gxt.ui.client.event.WindowListener;
@@ -50,8 +52,6 @@ public abstract class FileWindow extends IPlantWindow {
             this.manifest = JsonUtil.getObject(manifest);
         }
 
-        config();
-
         init();
     }
 
@@ -76,13 +76,17 @@ public abstract class FileWindow extends IPlantWindow {
         constructPanel();
         setSize(640, 438);
         setLayout(new FitLayout());
+        initListeners();
     }
 
     /**
-     * Called before init(), adds a listener.
+     * Applies a window configuration to the window.
+     * 
+     * @param config
      */
-    protected void config() {
-        initListeners();
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        this.config = (BasicWindowConfig)config;
     }
 
     private void initListeners() {

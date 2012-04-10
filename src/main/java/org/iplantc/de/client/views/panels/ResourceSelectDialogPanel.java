@@ -1,6 +1,7 @@
 package org.iplantc.de.client.views.panels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
@@ -16,7 +18,6 @@ import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.models.ClientDataModel;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -165,7 +166,11 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
         pnlNavigation.disableDragAndDrop();
 
         // initialize the main view panel
-        pnlMain = new DataMainPanel(tag, model, selectedResource);
+        if (selectedResource != null) {
+            pnlMain = new DataMainPanel(tag, model, Arrays.asList(selectedResource.getId()));
+        } else {
+            pnlMain = new DataMainPanel(tag, model, null);
+        }
         pnlMain.disableDragAndDrop();
 
         // initialize the selected file field
@@ -208,10 +213,10 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
      */
     public void select(DiskResource resource) {
         if (pnlNavigation != null) {
-            pnlNavigation.selectFolder(DataUtils.parseParent(resource.getId()));
+            pnlNavigation.selectFolder(DiskResourceUtil.parseParent(resource.getId()));
         }
         if (pnlMain != null) {
-            pnlMain.select(resource);
+            pnlMain.select(resource.getId(), false);
         }
     }
 
@@ -332,7 +337,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
                 model.deleteDiskResource(path);
 
                 if (model.isCurrentPage(path)) {
-                    Folder folder = model.getFolder(DataUtils.parseParent(path));
+                    Folder folder = model.getFolder(DiskResourceUtil.parseParent(path));
 
                     if (folder != null) {
                         EventBus.getInstance().fireEvent(new DiskResourceSelectedEvent(folder, tag));

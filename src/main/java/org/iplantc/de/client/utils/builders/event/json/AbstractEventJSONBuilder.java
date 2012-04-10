@@ -1,8 +1,7 @@
 package org.iplantc.de.client.utils.builders.event.json;
 
-import org.iplantc.core.jsonutil.JsonUtil;
-
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Abstract class to provide basic functionality for event JSON builders.
@@ -27,20 +26,27 @@ public abstract class AbstractEventJSONBuilder implements EventJSONBuilder {
      * 
      * @param action action associated with this payload.
      * @param objJson JSONObj returned from an RPC call.
-     * @return JSON string for the payload.
+     * @return JSON object for the payload.
      */
-    protected String buildPayload(final JSONObject objJson) {
-        StringBuffer ret = new StringBuffer();
+    protected JSONObject buildPayload(final JSONObject objJson) {
+        // StringBuffer ret = new StringBuffer();
+        //
+        //        ret.append("{\"action\": " + JsonUtil.quoteString(action)); //$NON-NLS-1$
+        //
+        // if (objJson != null) {
+        //            ret.append(", \"data\": "); //$NON-NLS-1$
+        // ret.append(objJson.toString());
+        // }
+        //
+        //        ret.append("}"); //$NON-NLS-1$
+        //
+        // return ret.toString();
 
-        ret.append("{\"action\": " + JsonUtil.quoteString(action)); //$NON-NLS-1$
-
+        JSONObject ret = new JSONObject();
+        ret.put("action", new JSONString(action));
         if (objJson != null) {
-            ret.append(", \"data\": "); //$NON-NLS-1$
-            ret.append(objJson.toString());
+            ret.put("data", objJson);
         }
-
-        ret.append("}"); //$NON-NLS-1$
-
-        return ret.toString();
+        return ret;
     }
 }

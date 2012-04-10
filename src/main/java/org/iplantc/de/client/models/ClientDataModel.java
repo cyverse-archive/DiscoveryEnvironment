@@ -10,9 +10,9 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.FolderData;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.FolderServiceFacade;
-import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -230,7 +230,7 @@ public class ClientDataModel {
             List<Folder> subfolders = heirarchy.getChildren(ret, true);
 
             ret.setId(pathNew);
-            ret.setName(DataUtils.parseNameFromPath(pathNew));
+            ret.setName(DiskResourceUtil.parseNameFromPath(pathNew));
 
             heirarchy.update(ret);
 
@@ -288,7 +288,7 @@ public class ClientDataModel {
         heirarchy.remove(src);
         heirarchy.add(dest, src, true);
 
-        updateHasSubFolders(getFolder(DataUtils.parseParent(srcId)));
+        updateHasSubFolders(getFolder(DiskResourceUtil.parseParent(srcId)));
     }
 
     private void addFoldersToPage(final JSONObject objJson) {
@@ -370,7 +370,7 @@ public class ClientDataModel {
 
             heirarchy.remove(folder);
 
-            updateHasSubFolders(getFolder(DataUtils.parseParent(folder.getId())));
+            updateHasSubFolders(getFolder(DiskResourceUtil.parseParent(folder.getId())));
         }
     }
 

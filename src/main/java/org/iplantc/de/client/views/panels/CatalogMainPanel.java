@@ -16,13 +16,12 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.UserEvent;
-import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 import org.iplantc.de.client.views.windows.TitoWindow;
@@ -56,7 +55,6 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -124,6 +122,15 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         model.getColumnById(Analysis.RATING).setRenderer(new VotingCellRenderer());
 
         return model;
+    }
+
+    /**
+     * Get the category id for the current seleciton the category tree
+     * 
+     * @return String category id
+     */
+    public String getCurrentCategoryId() {
+        return current_category.getId();
     }
 
     private void addToolBarActions() {
@@ -300,14 +307,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         new_analysis.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                JSONObject payload = new JSONObject();
-                payload.put("tag", new JSONString(Constants.CLIENT.pipelineEditorTag())); //$NON-NLS-1$
-
-                String json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_WINDOW,
-                        payload.toString());
-
-                MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-                dispatcher.processMessage(json);
+                // Dispatch window display action
+                WindowDispatcher dispatcher = new WindowDispatcher();
+                dispatcher.dispatchAction(Constants.CLIENT.pipelineEditorTag());
             }
         });
 

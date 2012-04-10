@@ -7,10 +7,16 @@ import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.JobLaunchedEvent;
 import org.iplantc.de.client.events.JobLaunchedEventHandler;
 import org.iplantc.de.client.events.WizardValidationEvent;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
@@ -25,6 +31,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -38,17 +45,18 @@ public class WizardWindow extends IPlantWindow {
     private ComponentValueTable tblComponentVals;
 
     private List<HandlerRegistration> handlers;
+    private WizardWindowConfig config;
 
     /**
      * Constructs an instance of the object given an identifier.
      * 
      * @param tag a unique identifier used as a "window handle."
      */
-    public WizardWindow(String tag) {
+    public WizardWindow(String tag, WindowConfig config) {
         super(tag, false, true, false, true);
 
         tblComponentVals = new ComponentValueTable(new WizardValidationBroadcastStrategy());
-
+        this.config = (WizardWindowConfig)config;
         init();
         build();
     }
@@ -91,9 +99,10 @@ public class WizardWindow extends IPlantWindow {
         btnLaunchJob.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                // validate again because the user might have clicked the button without blurring an invalid field
+                // validate again because the user might have clicked the button without blurring an
+                // invalid field
                 List<String> errors = tblComponentVals.validate(false, true);
-                if (errors==null || errors.isEmpty()) {
+                if (errors == null || errors.isEmpty()) {
                     doJobLaunch();
                 }
             }
@@ -117,35 +126,23 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void build() {
-        TemplateServiceFacade facade = new TemplateServiceFacade();
+        if (config != null) {
+            initWizard(((WizardWindowConfig)config).get(WizardWindowConfig.WIZARD_CONFIG).toString());
+        } else {
+            TemplateServiceFacade facade = new TemplateServiceFacade();
+            facade.getTemplate(tag, new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
+                }
 
-        facade.getTemplate(tag, new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
-            }
+                @Override
+                public void onSuccess(String json) {
+                    initWizard(json);
+                }
+            });
+        }
 
-            @Override
-            public void onSuccess(String json) {
-                WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
-                WizardBuilder builder = new WizardBuilder();
-                setHeading(container.getLabel());
-
-                ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
-                ContentPanel pnlLaunchButton = buildButtonPanel();
-
-                add(pnlGroupContainer);
-                add(pnlLaunchButton);
-
-                layout();
-
-                pnlGroupContainer.setSize(getInnerWidth(),
-                        getInnerHeight() - pnlLaunchButton.getHeight());
-
-                registerEventHandlers();
-                enableValidation();
-            }
-        });
     }
 
     private void handleJobLaunch(final String name) {
@@ -169,11 +166,13 @@ public class WizardWindow extends IPlantWindow {
 
                     @Override
                     public void onValid(WizardValidationEvent event) {
-                        // validate to see if all other fields are valid as well; if so, enable the button.
-                        // XXX button not re-enabled when valid input is entered into two previously valid fields,
+                        // validate to see if all other fields are valid as well; if so, enable the
+                        // button.
+                        // XXX button not re-enabled when valid input is entered into two previously
+                        // valid fields,
                         // but it'll have to do until the validation rewrite.
                         List<String> errors = tblComponentVals.validate(false, false);
-                        btnLaunchJob.setEnabled(errors==null || errors.isEmpty());
+                        btnLaunchJob.setEnabled(errors == null || errors.isEmpty());
                     }
                 }));
 
@@ -191,12 +190,15 @@ public class WizardWindow extends IPlantWindow {
         EventBus eventbus = EventBus.getInstance();
 
         // unregister
-        for (HandlerRegistration reg : handlers) {
-            eventbus.removeHandler(reg);
+        if (handlers != null) {
+            for (HandlerRegistration reg : handlers) {
+                eventbus.removeHandler(reg);
+            }
+
+            // clear our list
+            handlers.clear();
         }
 
-        // clear our list
-        handlers.clear();
     }
 
     /**
@@ -220,5 +222,63 @@ public class WizardWindow extends IPlantWindow {
         if (btn != null) {
             btn.updateText();
         }
+    }
+
+    /**
+     * Applies a window configuration to the window.
+     * 
+     * @param config
+     */
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        if (config instanceof WizardWindowConfig) {
+            this.config = (WizardWindowConfig)config;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void show() {
+        super.show();
+        setWindowViewState();
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        JSONObject obj = super.getWindowViewState();
+        obj.put(WizardWindowConfig.WIZARD_CONFIG,
+                tblComponentVals.getWizardPorpertyGroupContainerAsJson());
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.wizardTag(), ActionType.DISPLAY_WINDOW);
+    }
+
+    private void initWizard(String json) {
+        WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
+        WizardBuilder builder = new WizardBuilder();
+        setHeading(container.getLabel());
+
+        final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
+        final ContentPanel pnlLaunchButton = buildButtonPanel();
+        pnlLaunchButton.addListener(Events.Render, new Listener<BaseEvent>() {
+
+            @Override
+            public void handleEvent(BaseEvent be) {
+                pnlGroupContainer.setSize(getInnerWidth(),
+                        getInnerHeight() - pnlLaunchButton.getHeight());
+
+            }
+        });
+
+        add(pnlGroupContainer);
+        add(pnlLaunchButton);
+
+        layout();
+
+        registerEventHandlers();
+        enableValidation();
     }
 }

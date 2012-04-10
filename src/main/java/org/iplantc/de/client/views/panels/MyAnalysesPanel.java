@@ -67,7 +67,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private String idWorkspace;
 
-    private final String idCurrentSelection;
+    private String idCurrentSelection;
 
     private final AnalysisServiceFacade facadeAnalysisService;
 
@@ -271,8 +271,8 @@ public class MyAnalysesPanel extends ContentPanel {
 
         buildCheckBoxSelectionModel(menus);
         analysisGrid = MyAnalysesGrid.createInstance(sm);
-        if (idCurrentSelection != null && analysisGrid.getStore() != null) {
-            analysisGrid.setCurrentSelection(idCurrentSelection);
+        if (getIdCurrentSelection() != null && analysisGrid.getStore() != null) {
+            analysisGrid.setCurrentSelection(getIdCurrentSelection());
         }
 
         analysisGrid.getStore().addFilter(new StoreFilterImpl());
@@ -300,6 +300,10 @@ public class MyAnalysesPanel extends ContentPanel {
             @Override
             public void handleEvent(BaseEvent be) {
                 setButtonState();
+                AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
+                if (ae != null) {
+                    idCurrentSelection = ae.getId();
+                }
             }
         });
         analysisGrid.getStore().addListener(Store.Update, new Listener<StoreEvent>() {
@@ -414,6 +418,13 @@ public class MyAnalysesPanel extends ContentPanel {
         if (analysisGrid != null) {
             analysisGrid.selectModel(idCurrentSelection);
         }
+    }
+
+    /**
+     * @return the idCurrentSelection
+     */
+    public String getIdCurrentSelection() {
+        return idCurrentSelection;
     }
 
     private final class DeleteSeviceCallback implements AsyncCallback<String> {

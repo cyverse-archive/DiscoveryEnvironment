@@ -3,6 +3,9 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.AboutApplicationData;
 import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
 
@@ -10,6 +13,7 @@ import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -97,5 +101,15 @@ public class AboutApplicationWindow extends IPlantWindow {
         pnlDetails.add(txt);
 
         return pnlDetails;
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        // Build window config
+        JSONObject obj = super.getWindowViewState();
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myAboutTag(), ActionType.DISPLAY_WINDOW);
     }
 }

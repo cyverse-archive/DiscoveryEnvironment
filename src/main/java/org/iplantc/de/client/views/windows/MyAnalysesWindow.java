@@ -1,6 +1,10 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
@@ -9,6 +13,8 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -90,7 +96,7 @@ public class MyAnalysesWindow extends IPlantWindow {
      * {@inheritDoc}
      */
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config != null) {
             this.config = (BasicWindowConfig)config;
         }
@@ -105,6 +111,23 @@ public class MyAnalysesWindow extends IPlantWindow {
 
         if (pnlAnlys != null && config != null) {
             pnlAnlys.updateSelection(config.getId());
+            setWindowViewState();
+            config = null;
         }
+
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        JSONObject obj = super.getWindowViewState();
+        if (pnlAnlys.getIdCurrentSelection() != null) {
+            obj.put("id", new JSONString(pnlAnlys.getIdCurrentSelection()));
+        }
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.myAnalysisTag(), ActionType.DISPLAY_WINDOW);
     }
 }

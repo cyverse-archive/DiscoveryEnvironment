@@ -13,7 +13,8 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.factories.EventJSONFactory;
+import org.iplantc.de.client.dispatchers.CatalogWindowDispatcher;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.BasicWindowConfig;
@@ -21,7 +22,6 @@ import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
@@ -54,39 +54,10 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String BETA_GROUP_ID;
 
     /**
-     * Dispatches a DISPLAY_WINDOW event with the given App and Category ID in a DECatalogWindow config,
-     * so that the Window Manager will open the DECatalogWindow with that Category and App selected.
-     * 
-     * @param selectedCategoryId
-     * @param selectedAppId
-     */
-    public static void launchDECatalogWindow(String selectedCategoryId, String selectedAppId) {
-        // Build window config data
-        JSONObject windowConfigData = new JSONObject();
-
-        if (selectedCategoryId != null) {
-            windowConfigData.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(selectedCategoryId));
-        }
-        if (selectedAppId != null) {
-            windowConfigData.put(CatalogWindowConfig.APP_ID, new JSONString(selectedAppId));
-        }
-
-        // Build window payload with config
-        WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildConfigPayload(Constants.CLIENT.deCatalog(),
-                Constants.CLIENT.deCatalog(), windowConfigData);
-
-        // Launch display window event with this payload
-        String json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload.toString());
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
-    }
-
-    /**
      * 
      * @param tag
-     * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to preselect a tool in the window
+     * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to
+     *            preselect a tool in the window
      */
     public DECatalogWindow(String tag, BasicWindowConfig config) {
         super(tag, config);
@@ -119,7 +90,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             @Override
             public void onSelection(AnalysisSelectEvent event) {
                 if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())) {
-                    DECatalogWindow.launchDECatalogWindow(event.getCategoryId(), event.getAppId());
+                    CatalogWindowDispatcher dispatcher = new CatalogWindowDispatcher();
+                    dispatcher.launchCatalogWindow(event.getCategoryId(), event.getAppId());
                 }
             }
         }));
@@ -135,9 +107,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     @Override
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
         if (config instanceof CatalogWindowConfig) {
-            selectConfigData((CatalogWindowConfig)config);
+            this.config = (CatalogWindowConfig)config;
         }
     }
 
@@ -153,13 +125,21 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     @Override
+    public void show() {
+        super.show();
+
+        if (config != null && config instanceof CatalogWindowConfig) {
+            selectConfigData((CatalogWindowConfig)config);
+            setWindowViewState();
+            config = null;
+        }
+
+    }
+
+    @Override
     protected void initPanels() {
         catPanel = new CatalogCategoryPanel();
         mainPanel = new CatalogMainPanel(Constants.CLIENT.deCatalog());
-
-        if (config instanceof CatalogWindowConfig) {
-            selectConfigData((CatalogWindowConfig)config);
-        }
     }
 
     protected void selectConfigData(CatalogWindowConfig catalogConfig) {
@@ -245,5 +225,24 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
             }
         });
 
+    }
+
+    @Override
+    public JSONObject getWindowState() {
+        JSONObject obj = super.getWindowViewState();
+        ;
+        if (mainPanel.getSelectedApp() != null) {
+            obj.put(CatalogWindowConfig.APP_ID, new JSONString(mainPanel.getSelectedApp().getId()));
+        }
+
+        if (mainPanel.getCurrentCategoryId() != null) {
+            obj.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(mainPanel.getCurrentCategoryId()));
+        }
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.deCatalog(), ActionType.DISPLAY_WINDOW);
     }
 }

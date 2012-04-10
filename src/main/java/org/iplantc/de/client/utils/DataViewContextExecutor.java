@@ -2,7 +2,10 @@ package org.iplantc.de.client.utils;
 
 import java.util.List;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.factories.EventJSONFactory;
+
+import com.google.gwt.json.client.JSONObject;
 
 /**
  * Class used to execute data viewing contexts.
@@ -11,6 +14,8 @@ import org.iplantc.de.client.factories.EventJSONFactory;
  * 
  */
 public class DataViewContextExecutor {
+    private JSONObject config;
+
     private String buildHeader() {
         return "{\"files\": ["; //$NON-NLS-1$
     }
@@ -40,24 +45,34 @@ public class DataViewContextExecutor {
     }
 
     private String buildFooter() {
-        return "]}"; //$NON-NLS-1$
+        return "}"; //$NON-NLS-1$
     }
 
     private void doExecute(final String body) {
+
+        JSONObject obj = getDispatchJson(body);
+
+        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
+        dispatcher.processMessage(obj);
+    }
+
+    public JSONObject getDispatchJson(final String jsonPayload) {
         // header
         String payload = buildHeader();
 
         // body
-        payload += body;
+        payload += jsonPayload;
+        payload += "]";
+        if (config != null) {
+            payload = payload + ",\"config\":" + config.toString();
+        }
 
         // footer
         payload += buildFooter();
 
-        String json = EventJSONFactory
-                .build(EventJSONFactory.ActionType.DISPLAY_VIEWER_WINDOWS, payload);
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
+        JSONObject json = EventJSONFactory.build(EventJSONFactory.ActionType.DISPLAY_VIEWER_WINDOWS,
+                JsonUtil.getObject(payload));
+        return json;
     }
 
     /**
@@ -78,5 +93,19 @@ public class DataViewContextExecutor {
     public void execute(final List<String> jsonPayloads) {
         // execute
         doExecute(buildBody(jsonPayloads));
+    }
+
+    /**
+     * @param config the config to set
+     */
+    public void setConfig(JSONObject config) {
+        this.config = config;
+    }
+
+    /**
+     * @return the config
+     */
+    public JSONObject getConfig() {
+        return config;
     }
 }

@@ -1157,4 +1157,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
 
     String navigateWarning();
+
+    /**
+     * Localized text for a UI button that lets user to create workflow
+     * 
+     * @return a string representing the localized text.
+     */
+    String pipeline();
+
 }

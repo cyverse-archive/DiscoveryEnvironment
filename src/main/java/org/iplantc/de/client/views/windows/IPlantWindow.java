@@ -2,6 +2,7 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -18,6 +19,9 @@ import com.extjs.gxt.ui.client.widget.Header;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -29,10 +33,11 @@ public abstract class IPlantWindow extends Window {
     private final String WINDOW_STYLE_MAXIMIZED = "x-window-maximized"; //$NON-NLS-1$
     private final String WINDOW_STYLE_DRAGGABLE = "x-window-draggable"; //$NON-NLS-1$
     protected String tag;
+    protected BasicWindowConfig config;
     protected Status status;
     private Point restorePos;
     private Size restoreSize;
-    private boolean maximized;
+    protected boolean maximized;
     private ToolButton btnMinimize;
     private ToolButton btnMaximize;
     private ToolButton btnRestore;
@@ -94,9 +99,92 @@ public abstract class IPlantWindow extends Window {
         header.setIcon(AbstractImagePrototype.create(Resources.ICONS.whitelogoSmall()));
         setBodyStyleName("accordianbody"); //$NON-NLS-1$
         setStyleAttribute("outline", "none"); //$NON-NLS-1$ //$NON-NLS-2$
-     }
+    }
 
-     /**
+    /**
+     * Constructs an instance of the window.
+     * 
+     * The parameters passed (isMinimizable, isMaximizable, isClosable) control the appearance of the
+     * titlebar and potential functionality.
+     * 
+     * @param tag a unique identifier for the window.
+     * @param haveStatus true indicates the window has a status area.
+     * @param isMinimizable true indicates that a window is minimizable.
+     * @param isMaximizable true indicates that a window is maximizable.
+     * @param isClosable true indicates that a window can be closed.
+     */
+    protected IPlantWindow(String tag, boolean haveStatus, boolean isMinimizable, boolean isMaximizable,
+            boolean isClosable, BasicWindowConfig config) {
+        this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
+        this.config = config;
+    }
+
+    /**
+     * Returns the windows state information.
+     * 
+     * @return
+     */
+    public abstract JSONObject getWindowState();
+
+    /**
+     * Returns the windows view state information
+     * 
+     * @return
+     */
+    protected JSONObject getWindowViewState() {
+        JSONObject obj = new JSONObject();
+        obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
+        obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
+        obj.put(WindowConfig.WIN_LEFT, new JSONString(getAbsoluteLeft() + ""));
+        obj.put(WindowConfig.WIN_TOP, new JSONString(getAbsoluteTop() + ""));
+        obj.put(WindowConfig.WIN_WIDTH, new JSONString(getWidth() + ""));
+        obj.put(WindowConfig.WIN_HEIGHT, new JSONString(getHeight() + ""));
+        return obj;
+    }
+
+    /**
+     * Sets windows view state
+     * 
+     */
+    protected void setWindowViewState() {
+        if (config == null) {
+            return;
+        }
+
+        if (config.isWindowMinimized()) {
+            minimize();
+        } else if (config.isWindowMaximized()) {
+            maximizeWindow();
+        } else {
+            setWindowPosition();
+            setWinSize();
+        }
+
+    }
+
+    private void setWinSize() {
+        if (config != null && config.get(WindowConfig.WIN_WIDTH) != null
+                && !config.get(WindowConfig.WIN_WIDTH).toString().isEmpty()
+                && config.get(WindowConfig.WIN_HEIGHT) != null
+                && !config.get(WindowConfig.WIN_HEIGHT).toString().isEmpty()) {
+            int width = Integer.parseInt(config.get(WindowConfig.WIN_WIDTH).toString());
+            int height = Integer.parseInt(config.get(WindowConfig.WIN_HEIGHT).toString());
+            setSize(width, height);
+        }
+    }
+
+    private void setWindowPosition() {
+        if (config != null && config.get(WindowConfig.WIN_LEFT) != null
+                && !config.get(WindowConfig.WIN_LEFT).toString().isEmpty()
+                && config.get(WindowConfig.WIN_TOP) != null
+                && !config.get(WindowConfig.WIN_TOP).toString().isEmpty()) {
+            int left = Integer.parseInt(config.get(WindowConfig.WIN_LEFT).toString());
+            int top = Integer.parseInt(config.get(WindowConfig.WIN_TOP).toString());
+            setPosition(left, top);
+        }
+    }
+
+    /**
      * Initiate the status components.
      */
     protected void initStatus() {
@@ -104,7 +192,7 @@ public abstract class IPlantWindow extends Window {
         getHeader().addTool(status);
         status.hide();
     }
-    
+
     /**
      * Show the status widgets.
      */
@@ -112,8 +200,6 @@ public abstract class IPlantWindow extends Window {
         status.show();
         status.setBusy(""); //$NON-NLS-1$
     }
-
-
 
     /**
      * Retrieves the tag for the window.
@@ -136,14 +222,14 @@ public abstract class IPlantWindow extends Window {
                 doHide();
             }
         });
-        
+
         btnClose.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnClose.removeStyleName("x-tool-closewindow-hover");
             }
         });
-        
+
         btnClose.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -174,7 +260,7 @@ public abstract class IPlantWindow extends Window {
                 btnMaximize.addStyleName("x-tool-maximizewindow-hover");
             }
         });
-        
+
         btnMaximize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -196,14 +282,14 @@ public abstract class IPlantWindow extends Window {
                 btnMinimize.removeStyleName("x-tool-minimizewindow-hover");
             }
         });
-        
+
         btnMinimize.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnMinimize.addStyleName("x-tool-minimizewindow-hover");
             }
         });
-        
+
         btnMinimize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -224,14 +310,14 @@ public abstract class IPlantWindow extends Window {
                 restoreWindow();
             }
         });
-        
+
         btnRestore.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 btnRestore.addStyleName("x-tool-restorewindow-hover");
             }
         });
-        
+
         btnRestore.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
@@ -273,7 +359,7 @@ public abstract class IPlantWindow extends Window {
         fireEvent(Events.Restore, new WindowEvent(this));
     }
 
-    private void maximizeWindow() {
+    protected void maximizeWindow() {
         if (!maximized) {
             restoreSize = getSize();
             restorePos = getPosition(true);
@@ -384,7 +470,8 @@ public abstract class IPlantWindow extends Window {
      * 
      * @param config
      */
-    public void configure(WindowConfig config) {
+    public void setWindowConfig(WindowConfig config) {
+        // do nothing intentionally
     }
 
 }
