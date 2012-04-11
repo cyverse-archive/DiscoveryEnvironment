@@ -5,8 +5,8 @@ import org.iplantc.core.tito.client.events.NewProjectEventHandler;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
 import org.iplantc.core.tito.client.events.TemplateLoadEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.dispatchers.TitoWindowDispatcher;
 import org.iplantc.de.client.models.TitoWindowConfig;
-import org.iplantc.de.client.views.windows.TitoWindow;
 
 /**
  * A controller class that initializes the Tito window via event handlers.
@@ -16,8 +16,10 @@ import org.iplantc.de.client.views.windows.TitoWindow;
  */
 public class TitoController {
     private static TitoController instance;
+    private TitoWindowDispatcher dispatcher;
 
     private TitoController() {
+        dispatcher = new TitoWindowDispatcher();
         initListeners();
     }
 
@@ -38,19 +40,10 @@ public class TitoController {
 
     private class NewProjectEventHandlerImpl implements NewProjectEventHandler {
         @Override
-        public void newInterface() {
-            TitoWindow.launch(TitoWindowConfig.VIEW_NEW_INTERFACE, null);
-        }
-
-        @Override
         public void newTool() {
-            TitoWindow.launch(TitoWindowConfig.VIEW_NEW_TOOL, null);
+            dispatcher.launchTitoWindow(TitoWindowConfig.VIEW_NEW_TOOL, null);
         }
 
-        @Override
-        public void newWorkflow() {
-            TitoWindow.launch(TitoWindowConfig.VIEW_NEW_WORKFLOW, null);
-        }
     }
 
     private class TemplateLoadEventHandlerImpl implements TemplateLoadEventHandler {
@@ -63,7 +56,7 @@ public class TitoController {
                 viewMode = TitoWindowConfig.VIEW_APP_COPY;
             }
 
-            TitoWindow.launch(viewMode, event.getIdTemplate());
+            dispatcher.launchTitoWindow(viewMode, event.getIdTemplate());
         }
     }
 }

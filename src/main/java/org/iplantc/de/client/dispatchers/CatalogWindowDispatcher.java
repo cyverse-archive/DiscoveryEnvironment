@@ -15,14 +15,6 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class CatalogWindowDispatcher extends WindowDispatcher {
 
-    public CatalogWindowDispatcher() {
-        super();
-    }
-
-    public CatalogWindowDispatcher(JSONObject windowConfig) {
-        super(windowConfig);
-    }
-
     /**
      * Launches the DECatalogWindow with the Category and App selected for the given IDs. If an ID is
      * null, then the default for that category is selected.

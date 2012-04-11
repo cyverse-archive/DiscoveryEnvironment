@@ -230,7 +230,6 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     public JSONObject getWindowState() {
         JSONObject obj = super.getWindowViewState();
-        ;
         if (mainPanel.getSelectedApp() != null) {
             obj.put(CatalogWindowConfig.APP_ID, new JSONString(mainPanel.getSelectedApp().getId()));
         }

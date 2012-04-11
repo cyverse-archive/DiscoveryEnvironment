@@ -3,12 +3,11 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.tito.client.TitoPanel;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.factories.EventJSONFactory;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.utils.MessageDispatcher;
 
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -19,39 +18,16 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 
+/**
+ * 
+ * A window for Tito editor
+ * 
+ * @author sriram
+ * 
+ */
 public class TitoWindow extends IPlantWindow {
     private TitoWindowConfig config;
     private TitoPanel tito;
-
-    /**
-     * Dispatches a DISPLAY_WINDOW event so that the Window Manager will open the TitoWindow.
-     */
-    public static void launch() {
-        launch(null, null);
-    }
-
-    public static void launch(String view, String id) {
-        // Build window config data
-        JSONObject windowConfigData = new JSONObject();
-
-        if (view != null) {
-            windowConfigData.put(TitoWindowConfig.VIEW, new JSONString(view));
-        }
-        if (id != null) {
-            windowConfigData.put(TitoWindowConfig.APP_ID, new JSONString(id));
-        }
-
-        // Build window payload with config
-        WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowPayload = configFactory.buildWindowConfig(Constants.CLIENT.titoTag(),
-                windowConfigData);
-
-        // Launch display window event with this payload
-        JSONObject json = EventJSONFactory.build(ActionType.DISPLAY_WINDOW, windowPayload);
-
-        MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-        dispatcher.processMessage(json);
-    }
 
     public TitoWindow(String tag, TitoWindowConfig config) {
         super(tag, false, true, false, true);
@@ -168,16 +144,19 @@ public class TitoWindow extends IPlantWindow {
             tito.copy(config.getAppId());
         } else if (TitoWindowConfig.VIEW_NEW_TOOL.equals(viewMode)) {
             tito.newTool();
-        } else if (TitoWindowConfig.VIEW_NEW_INTERFACE.equals(viewMode)) {
-            tito.newInterface();
-        } else if (TitoWindowConfig.VIEW_NEW_WORKFLOW.equals(viewMode)) {
-            tito.newWorkflow();
+        } else if (TitoWindowConfig.VIEW_APP_EDIT_FROM_JSON.equals(viewMode)) {
+            tito.loadFromJson(config.getAppJson());
         }
     }
 
     @Override
     public JSONObject getWindowState() {
-        // TODO Auto-generated method stub
-        return null;
+        JSONObject obj = super.getWindowViewState();
+        obj.put(TitoWindowConfig.VIEW, new JSONString(TitoWindowConfig.VIEW_APP_EDIT_FROM_JSON));
+        obj.put(TitoWindowConfig.APP_JSON, tito.getTitoConfig());
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.titoTag(), obj);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        return dispatcher.getDispatchJson(Constants.CLIENT.titoTag(), ActionType.DISPLAY_WINDOW);
     }
 }

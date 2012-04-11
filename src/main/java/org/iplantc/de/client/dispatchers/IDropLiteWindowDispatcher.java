@@ -19,10 +19,6 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class IDropLiteWindowDispatcher extends WindowDispatcher {
 
-    public IDropLiteWindowDispatcher() {
-        super();
-    }
-
     /**
      * Launches an idrop-lite window in upload mode with the given upload and refresh paths.
      * 
