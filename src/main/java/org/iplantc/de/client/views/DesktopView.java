@@ -7,13 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.events.LogoutEvent;
 import org.iplantc.de.client.events.LogoutEventHandler;
 import org.iplantc.de.client.events.UserEvent;
@@ -47,8 +46,10 @@ import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
@@ -236,7 +237,7 @@ public class DesktopView extends ContentPanel {
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            ErrorHandler.post(caught);
+                            GWT.log(I18N.ERROR.saveSessionFailed(), caught);
                             session_save_completed = true;
                         }
                     });
@@ -253,9 +254,9 @@ public class DesktopView extends ContentPanel {
 
             @Override
             public void onFailure(Throwable caught) {
-                System.out.println("session restore failed===>" + caught.toString());
-                ErrorHandler.post(caught);
-
+                GWT.log(I18N.ERROR.loadSessionFailed(), caught);
+                MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(),
+                        null);
             }
 
             @Override
