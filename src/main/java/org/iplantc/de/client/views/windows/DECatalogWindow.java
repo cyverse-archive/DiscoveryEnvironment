@@ -13,7 +13,6 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.dispatchers.CatalogWindowDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
@@ -86,15 +85,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
 
-        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE, new AnalysisSelectEventHandler() {
-            @Override
-            public void onSelection(AnalysisSelectEvent event) {
-                if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())) {
-                    CatalogWindowDispatcher dispatcher = new CatalogWindowDispatcher();
-                    dispatcher.launchCatalogWindow(event.getCategoryId(), event.getAppId());
-                }
-            }
-        }));
+        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE,
+                new AnalysisSelectedEventHandlerImpl()));
     }
 
     @Override
@@ -127,9 +119,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     public void show() {
         super.show();
-
         if (config != null && config instanceof CatalogWindowConfig) {
-            selectConfigData((CatalogWindowConfig)config);
+            selectConfigData();
             setWindowViewState();
             config = null;
         }
@@ -142,9 +133,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         mainPanel = new CatalogMainPanel(Constants.CLIENT.deCatalog());
     }
 
-    protected void selectConfigData(CatalogWindowConfig catalogConfig) {
-        String appID = catalogConfig.getAppId();
-        String categoryID = catalogConfig.getCategoryId();
+    protected void selectConfigData() {
+        String appID = ((CatalogWindowConfig)config).getAppId();
+        String categoryID = ((CatalogWindowConfig)config).getCategoryId();
 
         // The category panel will select the first root node by default, which is the workspace, if
         // this category ID is null.
@@ -183,6 +174,26 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     protected int getEastWidth() {
         return 200;
+    }
+
+    private final class AnalysisSelectedEventHandlerImpl implements AnalysisSelectEventHandler {
+        @Override
+        public void onSelection(AnalysisSelectEvent event) {
+            if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())
+                    || Constants.CLIENT.titoTag().equals(event.getSourceTag())) {
+                JSONObject obj = new JSONObject();
+                String cat = (event.getCategoryId() != null && !event.getCategoryId().isEmpty()) ? event
+                        .getCategoryId() : WORKSPACE;
+                obj.put(CatalogWindowConfig.APP_ID, new JSONString(event.getAppId()));
+                obj.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(cat));
+                CatalogWindowConfig config = new CatalogWindowConfig(obj);
+                setWindowConfig(config);
+                // deselect the current category before applying new config
+                catPanel.deSelectCurrentCategory();
+                selectConfigData();
+
+            }
+        }
     }
 
     private class AnalysisCategorySelectedEventHandlerImpl implements

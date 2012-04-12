@@ -12,7 +12,6 @@ public class TitoWindowConfig extends WindowConfig {
     public static final String VIEW = "view";
     public static final String VIEW_NEW_TOOL = "new_tool";
     public static final String VIEW_APP_EDIT = "app_edit";
-    public static final String VIEW_APP_COPY = "app_copy";
     public static final String VIEW_APP_EDIT_FROM_JSON = "app_edit_json";
     public static final String APP_JSON = "appJson";
 

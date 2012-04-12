@@ -44,7 +44,7 @@ public class TitoWindow extends IPlantWindow {
     }
 
     private void compose() {
-        tito = new TitoPanel();
+        tito = new TitoPanel(tag);
 
         add(tito);
     }
@@ -140,8 +140,6 @@ public class TitoWindow extends IPlantWindow {
 
         if (TitoWindowConfig.VIEW_APP_EDIT.equals(viewMode)) {
             tito.load(config.getAppId());
-        } else if (TitoWindowConfig.VIEW_APP_COPY.equals(viewMode)) {
-            tito.copy(config.getAppId());
         } else if (TitoWindowConfig.VIEW_NEW_TOOL.equals(viewMode)) {
             tito.newTool();
         } else if (TitoWindowConfig.VIEW_APP_EDIT_FROM_JSON.equals(viewMode)) {

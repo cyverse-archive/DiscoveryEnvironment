@@ -24,6 +24,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
 
+    /**
+     * An util method to force deselect a category programmatically
+     * 
+     */
+    public void deSelectCurrentCategory() {
+        categoryPanel.getSelectionModel().deselectAll();
+    }
+
     private String getCategoryNameWorkspace() {
         return DECatalogWindow.WORKSPACE;
     }

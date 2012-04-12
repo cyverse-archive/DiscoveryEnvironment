@@ -52,10 +52,7 @@ public class TitoController {
             String viewMode = null;
             if (event.getMode() == TemplateLoadEvent.MODE.EDIT) {
                 viewMode = TitoWindowConfig.VIEW_APP_EDIT;
-            } else if (event.getMode() == TemplateLoadEvent.MODE.COPY) {
-                viewMode = TitoWindowConfig.VIEW_APP_COPY;
             }
-
             dispatcher.launchTitoWindow(viewMode, event.getIdTemplate());
         }
     }

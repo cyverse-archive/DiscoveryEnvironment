@@ -417,9 +417,12 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                         if (JsonUtil.getBoolean(exportable, "can-export", false)) { //$NON-NLS-1$
                             copyAnalysis(id);
+                            org.iplantc.core.uicommons.client.events.EventBus.getInstance().fireEvent(
+                                    new AnalysisGroupCountUpdateEvent(true, null));
                         } else {
                             ErrorHandler.post(JsonUtil.getString(exportable, "cause")); //$NON-NLS-1$
                         }
+
                     }
 
                     @Override
