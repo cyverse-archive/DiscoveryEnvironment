@@ -224,21 +224,26 @@ public class DesktopView extends ContentPanel {
     }
 
     private void persistUserSession() {
-        UserSessionServiceFacade session = new UserSessionServiceFacade();
         JSONObject obj = JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates());
         if (obj != null) {
+            final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
+                    I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
+
+            UserSessionServiceFacade session = new UserSessionServiceFacade();
             session.saveUserSession(UserInfo.getInstance().getFullUsername(), obj,
                     new AsyncCallback<String>() {
 
                         @Override
                         public void onSuccess(String result) {
                             session_save_completed = true;
+                            savingMask.close();
                         }
 
                         @Override
                         public void onFailure(Throwable caught) {
                             GWT.log(I18N.ERROR.saveSessionFailed(), caught);
                             session_save_completed = true;
+                            savingMask.close();
                         }
                     });
         }
@@ -249,12 +254,16 @@ public class DesktopView extends ContentPanel {
      * 
      */
     public void restoreUserSession() {
+        final MessageBox loadingMask = MessageBox.wait(I18N.DISPLAY.loadingSession(),
+                I18N.DISPLAY.loadingSessionWaitNotice(), I18N.DISPLAY.loadingMask());
+
         UserSessionServiceFacade session = new UserSessionServiceFacade();
         session.getUserSession(UserInfo.getInstance().getFullUsername(), new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 GWT.log(I18N.ERROR.loadSessionFailed(), caught);
+                loadingMask.close();
                 MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(),
                         null);
             }
@@ -263,6 +272,7 @@ public class DesktopView extends ContentPanel {
             public void onSuccess(String result) {
                 JSONObject obj = JsonUtil.getObject(result);
                 restoreWindows(JsonUtil.getMapFromJSONObject(obj));
+                loadingMask.close();
             }
         });
     }
