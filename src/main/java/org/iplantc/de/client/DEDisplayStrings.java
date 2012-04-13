@@ -1165,4 +1165,31 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String pipeline();
 
+    /**
+     * Localized text for a user state saving message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String savingSession();
+
+    /**
+     * Localized text for a user state saving wait message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String savingSessionWaitNotice();
+
+    /**
+     * Localized text for a user state loading message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String loadingSession();
+
+    /**
+     * Localized text for a user state loading wait message.
+     * 
+     * @return a string representing the localized text.
+     */
+    String loadingSessionWaitNotice();
 }

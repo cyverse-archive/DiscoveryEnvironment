@@ -444,4 +444,25 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String fileExist();
+
+    /**
+     * Error message displayed when user state could not be saved.
+     * 
+     * @return localized error string.
+     */
+    String saveSessionFailed();
+
+    /**
+     * Error message displayed when user state could not be loaded.
+     * 
+     * @return localized error string.
+     */
+    String loadSessionFailed();
+
+    /**
+     * Notification message displayed when user state could not be loaded.
+     * 
+     * @return localized error string.
+     */
+    String loadSessionFailureNotice();
 }
