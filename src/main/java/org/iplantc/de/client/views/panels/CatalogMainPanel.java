@@ -6,6 +6,7 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
+import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -543,8 +544,12 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                                 @Override
                                 public void onSuccess(String result) {
+                                    AnalysisDeleteEvent event = new AnalysisDeleteEvent(selectedItem
+                                            .getId());
+                                    EventBus.getInstance().fireEvent(event);
                                     analysisGrid.getStore().remove(selectedItem);
                                     fireAnalysisGroupCountUpdateEvent(false, null);
+
                                 }
                             });
                 }

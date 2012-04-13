@@ -1,6 +1,12 @@
 package org.iplantc.de.client.views.windows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.iplantc.core.tito.client.TitoPanel;
+import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
+import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEventHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -14,6 +20,7 @@ import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
@@ -29,12 +36,31 @@ public class TitoWindow extends IPlantWindow {
     private TitoWindowConfig config;
     private TitoPanel tito;
 
+    protected List<HandlerRegistration> handlers;
+
     public TitoWindow(String tag, TitoWindowConfig config) {
         super(tag, false, true, false, true);
 
         this.config = config;
 
         init();
+        initHandlers();
+    }
+
+    private void initHandlers() {
+        EventBus eventbus = EventBus.getInstance();
+
+        handlers = new ArrayList<HandlerRegistration>();
+
+        handlers.add(eventbus.addHandler(AnalysisDeleteEvent.TYPE, new AnalysisDeleteEventHandler() {
+            @Override
+            public void onDelete(AnalysisDeleteEvent ade) {
+                if (tito != null && ade.getId() != null && ade.getId().equals(tito.getId())) {
+                    hide();
+                }
+            }
+        }));
+
     }
 
     private void init() {
@@ -51,11 +77,25 @@ public class TitoWindow extends IPlantWindow {
 
     @Override
     public void cleanup() {
+        removeEventHandlers();
+
         if (tito != null) {
             tito.cleanup();
         }
 
         super.cleanup();
+    }
+
+    public void removeEventHandlers() {
+        EventBus eventbus = EventBus.getInstance();
+
+        // unregister
+        for (HandlerRegistration reg : handlers) {
+            eventbus.removeHandler(reg);
+        }
+
+        // clear our list
+        handlers.clear();
     }
 
     @Override
