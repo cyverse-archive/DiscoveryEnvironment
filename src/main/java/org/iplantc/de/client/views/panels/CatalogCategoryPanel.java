@@ -4,16 +4,9 @@ import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEve
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEventHandler;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
-import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * 
@@ -48,25 +41,6 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
         return DECatalogWindow.BETA_GROUP_ID;
     }
 
-    private void getData() {
-        TemplateServiceFacade facade = new TemplateServiceFacade();
-
-        facade.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
-                new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        AnalysisToolGroupStoreWrapper wrapper = new AnalysisToolGroupStoreWrapper();
-                        wrapper.updateWrapper(result);
-                        seed(wrapper.getStore());
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.appGroupsLoadFailure(), caught);
-                    }
-                });
-    }
-
     @Override
     protected void initListeners() {
         super.initListeners();
@@ -77,15 +51,6 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
                         updadteGroupDisplayName(event);
                     }
                 });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void afterRender() {
-        super.afterRender();
-        getData();
     }
 
     /**

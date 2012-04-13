@@ -9,8 +9,10 @@ import org.iplantc.core.uiapplications.client.events.AnalysisSelectEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisSelectEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -119,12 +121,34 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     public void show() {
         super.show();
-        if (config != null && config instanceof CatalogWindowConfig) {
-            selectConfigData();
-            setWindowViewState();
-            config = null;
-        }
+    }
 
+    private void getData() {
+        TemplateServiceFacade facade = new TemplateServiceFacade();
+
+        facade.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        AnalysisToolGroupStoreWrapper wrapper = new AnalysisToolGroupStoreWrapper();
+                        wrapper.updateWrapper(result);
+                        catPanel.seed(wrapper.getStore());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.appGroupsLoadFailure(), caught);
+                    }
+                });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void afterRender() {
+        super.afterRender();
+        getData();
     }
 
     @Override
@@ -226,6 +250,11 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
                 }
 
                 mainPanel.seed(analyses, group);
+                if (config != null && config instanceof CatalogWindowConfig) {
+                    selectConfigData();
+                    setWindowViewState();
+                    config = null;
+                }
                 unmask();
             }
 

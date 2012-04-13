@@ -131,7 +131,11 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
      * @return String category id
      */
     public String getCurrentCategoryId() {
-        return current_category.getId();
+        if (current_category != null) {
+            return current_category.getId();
+        } else {
+            return null;
+        }
     }
 
     private void addToolBarActions() {

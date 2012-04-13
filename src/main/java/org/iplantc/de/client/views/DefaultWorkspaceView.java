@@ -35,7 +35,6 @@ public class DefaultWorkspaceView implements View {
     private void doWorkspaceDisplay() {
         DesktopView view = new DesktopView();
         layout.replaceCenterPanel(view);
-        view.restoreUserSession();
     }
 
     private String parseWorkspaceId(String json) {

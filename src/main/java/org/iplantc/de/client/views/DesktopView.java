@@ -1,14 +1,9 @@
 package org.iplantc.de.client.views;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
@@ -23,10 +18,9 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.LogoutUtil;
-import org.iplantc.de.client.utils.MessageDispatcher;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
@@ -46,17 +40,15 @@ import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.widget.ComponentHelper;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Provides user interface for desktop workspace area.
@@ -77,6 +69,8 @@ public class DesktopView extends ContentPanel {
     private int expired_time = 0;
     private final int INTERVEL = 1000;
 
+    private DEStateManager mgrState;
+
     public static final String ACTIVE_WINDOWS = "active_windows";
 
     /**
@@ -93,6 +87,7 @@ public class DesktopView extends ContentPanel {
 
         setLayout(new RowLayout());
         add(desktop, new RowData(1, 1));
+        mgrState.restoreUserSession();
     }
 
     private void init() {
@@ -101,9 +96,14 @@ public class DesktopView extends ContentPanel {
         initEventHandlers();
         initTaskbar();
         initWindowManager();
+        initStateManager();
         controllerTito = TitoController.getInstance();
         initDesktop();
         initShortcuts();
+    }
+
+    private void initStateManager() {
+        mgrState = DEStateManager.getInstance(mgrWindow);
     }
 
     private void showWindow(final String type, final WindowConfig config) {
@@ -171,8 +171,6 @@ public class DesktopView extends ContentPanel {
         }
 
         desktop.addListener(Events.Detach, new DEReloadListener());
-        // desktop.addListener(Events.Render, new DEAfterRenderListener());
-
         shortcutEl = new El(el);
     }
 
@@ -195,7 +193,13 @@ public class DesktopView extends ContentPanel {
             @Override
             public void onLogout(LogoutEvent event) {
                 MonitorSessionPersistance();
-                persistUserSession();
+                mgrState.persistUserSession(false, new Command() {
+                    @Override
+                    public void execute() {
+                        session_save_completed = true;
+
+                    }
+                });
             }
         });
     }
@@ -206,6 +210,7 @@ public class DesktopView extends ContentPanel {
             public void run() {
                 if (session_save_completed || (expired_time == SESSION_SAVE_TIMEOUT)) {
                     cancel();
+                    mgrState.stop();
                     redirectToLogoutPage();
                 } else {
                     expired_time = expired_time + INTERVEL;
@@ -221,60 +226,6 @@ public class DesktopView extends ContentPanel {
      */
     private void redirectToLogoutPage() {
         com.google.gwt.user.client.Window.Location.assign(LogoutUtil.buildLogoutUrl());
-    }
-
-    private void persistUserSession() {
-        JSONObject obj = JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates());
-        if (obj != null) {
-            final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
-                    I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
-
-            UserSessionServiceFacade session = new UserSessionServiceFacade();
-            session.saveUserSession(UserInfo.getInstance().getFullUsername(), obj,
-                    new AsyncCallback<String>() {
-
-                        @Override
-                        public void onSuccess(String result) {
-                            session_save_completed = true;
-                            savingMask.close();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            GWT.log(I18N.ERROR.saveSessionFailed(), caught);
-                            session_save_completed = true;
-                            savingMask.close();
-                        }
-                    });
-        }
-    }
-
-    /**
-     * Restore users work session
-     * 
-     */
-    public void restoreUserSession() {
-        final MessageBox loadingMask = MessageBox.wait(I18N.DISPLAY.loadingSession(),
-                I18N.DISPLAY.loadingSessionWaitNotice(), I18N.DISPLAY.loadingMask());
-
-        UserSessionServiceFacade session = new UserSessionServiceFacade();
-        session.getUserSession(UserInfo.getInstance().getFullUsername(), new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                GWT.log(I18N.ERROR.loadSessionFailed(), caught);
-                loadingMask.close();
-                MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(),
-                        null);
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                JSONObject obj = JsonUtil.getObject(result);
-                restoreWindows(JsonUtil.getMapFromJSONObject(obj));
-                loadingMask.close();
-            }
-        });
     }
 
     /**
@@ -377,54 +328,8 @@ public class DesktopView extends ContentPanel {
     private final class DEReloadListener implements Listener<ComponentEvent> {
         @Override
         public void handleEvent(ComponentEvent be) {
-            persistUserSession();
+            mgrState.persistUserSession(false, null);
         }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void restoreWindows(Map win_state) {
-        if (win_state != null) {
-            Set<String> tags = win_state.keySet();
-            if (tags.size() > 0) {
-                for (JSONObject state : getOrderedState(tags, win_state)) {
-                    if (state != null) {
-                        MessageDispatcher dispatcher = new MessageDispatcher();
-                        dispatcher.processMessage(state);
-                    }
-                }
-            }
-        }
-    }
-
-    private List<JSONObject> getOrderedState(Set<String> tags, Map<String, Object> win_state) {
-        List<JSONObject> temp = new ArrayList<JSONObject>();
-        for (String tag : tags) {
-            JSONObject obj = JsonUtil.getObject(win_state.get(tag).toString());
-            temp.add(obj);
-        }
-        java.util.Collections.sort(temp, new WindowOrderComparator());
-        return temp;
-
-    }
-
-    private class WindowOrderComparator implements Comparator<JSONObject> {
-        @Override
-        public int compare(JSONObject arg0, JSONObject arg1) {
-            if (arg0 != null && arg1 != null) {
-                try {
-                    int temp1 = Integer.parseInt(JsonUtil.getString(arg0, "order"));
-                    int temp2 = Integer.parseInt(JsonUtil.getString(arg1, "order"));
-                    return temp1 - temp2;
-                } catch (Exception e) {
-                    // if order is not present, dont care about it
-                    return 0;
-                }
-            } else {
-                // if any of object is null, dont care about ordering
-                return 0;
-            }
-        }
-
     }
 
     /**

@@ -114,17 +114,17 @@ public class NotificationManager {
     }
 
     public void initNotificationCount() {
-        totalNotificationCount = (DEStateManager.getStateManager().get(TOTAL_NOTIFI_COUNT) != null && (!DEStateManager
-                .getStateManager().get(TOTAL_NOTIFI_COUNT).equals(""))) ? Integer
-                .parseInt(DEStateManager.getStateManager().get(TOTAL_NOTIFI_COUNT).toString()) : 0;
+        totalNotificationCount = (LocalStorageProvider.getInstance().get(TOTAL_NOTIFI_COUNT) != null && (!LocalStorageProvider
+                .getInstance().get(TOTAL_NOTIFI_COUNT).equals(""))) ? Integer
+                .parseInt(LocalStorageProvider.getInstance().get(TOTAL_NOTIFI_COUNT).toString()) : 0;
 
-        dataNotificationCount = (DEStateManager.getStateManager().get(DATA_NOTIFI_COUNT) != null && (!DEStateManager
-                .getStateManager().get(DATA_NOTIFI_COUNT).equals(""))) ? Integer.parseInt(DEStateManager
-                .getStateManager().get(DATA_NOTIFI_COUNT).toString()) : 0;
+        dataNotificationCount = (LocalStorageProvider.getInstance().get(DATA_NOTIFI_COUNT) != null && (!LocalStorageProvider
+                .getInstance().get(DATA_NOTIFI_COUNT).equals(""))) ? Integer
+                .parseInt(LocalStorageProvider.getInstance().get(DATA_NOTIFI_COUNT).toString()) : 0;
 
-        analysesNotificationCount = (DEStateManager.getStateManager().get(ANALYSES_NOTIFI_COUNT) != null && (!DEStateManager
-                .getStateManager().get(ANALYSES_NOTIFI_COUNT).equals(""))) ? Integer
-                .parseInt(DEStateManager.getStateManager().get(ANALYSES_NOTIFI_COUNT).toString()) : 0;
+        analysesNotificationCount = (LocalStorageProvider.getInstance().get(ANALYSES_NOTIFI_COUNT) != null && (!LocalStorageProvider
+                .getInstance().get(ANALYSES_NOTIFI_COUNT).equals(""))) ? Integer
+                .parseInt(LocalStorageProvider.getInstance().get(ANALYSES_NOTIFI_COUNT).toString()) : 0;
 
         final EventBus eventbus = EventBus.getInstance();
         NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getDataNotificationCount(),
@@ -394,7 +394,7 @@ public class NotificationManager {
      * @param total
      */
     public void setTotalNotificationCount(int total) {
-        DEStateManager.getStateManager().set(TOTAL_NOTIFI_COUNT, total + "");
+        LocalStorageProvider.getInstance().set(TOTAL_NOTIFI_COUNT, total + "");
         totalNotificationCount = total;
     }
 
@@ -414,7 +414,7 @@ public class NotificationManager {
      * @param total
      */
     public void setDataNotificationCount(int total) {
-        DEStateManager.getStateManager().set(DATA_NOTIFI_COUNT, total + "");
+        LocalStorageProvider.getInstance().set(DATA_NOTIFI_COUNT, total + "");
         dataNotificationCount = total;
     }
 
@@ -433,7 +433,7 @@ public class NotificationManager {
      * @param total
      */
     public void setAnalysesNotificationCount(int total) {
-        DEStateManager.getStateManager().set(ANALYSES_NOTIFI_COUNT, total + "");
+        LocalStorageProvider.getInstance().set(ANALYSES_NOTIFI_COUNT, total + "");
         analysesNotificationCount = total;
     }
 
