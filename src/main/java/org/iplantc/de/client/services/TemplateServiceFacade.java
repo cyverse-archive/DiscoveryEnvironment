@@ -280,11 +280,13 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    public void deleteAnalysisFromWorkspace(String email, String analysisId,
+    public void deleteAnalysisFromWorkspace(String user, String email, String analysisId,
             AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl() + "delete-workflow";
+
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(analysisId));
+        body.put("user", new JSONString(user));
         body.put("email", new JSONString(email));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,

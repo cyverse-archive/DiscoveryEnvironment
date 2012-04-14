@@ -536,28 +536,32 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             Button btn = ce.getButtonClicked();
             // did the user click yes?
             if (btn.getItemId().equals(Dialog.YES)) {
-                UserInfo info = UserInfo.getInstance();
-                if (info != null) {
-                    getTemplateService().deleteAnalysisFromWorkspace(info.getFullUsername(),
-                            selectedItem.getId(), new AsyncCallback<String>() {
-
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
-                                }
-
-                                @Override
-                                public void onSuccess(String result) {
-                                    AnalysisDeleteEvent event = new AnalysisDeleteEvent(selectedItem
-                                            .getId());
-                                    EventBus.getInstance().fireEvent(event);
-                                    analysisGrid.getStore().remove(selectedItem);
-                                    fireAnalysisGroupCountUpdateEvent(false, null);
-
-                                }
-                            });
-                }
+                deleteAnalysisFromWorkspace(selectedItem);
             }
+        }
+
+        private void deleteAnalysisFromWorkspace(final Analysis app) {
+            UserInfo user = UserInfo.getInstance();
+            if (user == null || app == null) {
+                return;
+            }
+
+            getTemplateService().deleteAnalysisFromWorkspace(user.getUsername(), user.getFullUsername(),
+                    app.getId(), new AsyncCallback<String>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
+                        }
+
+                        @Override
+                        public void onSuccess(String result) {
+                            AnalysisDeleteEvent event = new AnalysisDeleteEvent(app.getId());
+                            EventBus.getInstance().fireEvent(event);
+                            analysisGrid.getStore().remove(app);
+                            fireAnalysisGroupCountUpdateEvent(false, null);
+                        }
+                    });
         }
     }
 
