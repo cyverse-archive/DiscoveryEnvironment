@@ -209,6 +209,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
 
         // start with an empty grid
         store.removeAll();
+        grid.getView().setEmptyText(I18N.DISPLAY.noItemsToDisplay());
 
         FolderData page = model.getPage();
 
