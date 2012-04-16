@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
@@ -35,6 +35,9 @@ public class DEStateManager {
     private final int SAVE_INTERVAL = 60000;
 
     private Timer t;
+
+    public static final String ACTIVE_WINDOWS = "active_windows";
+    public static final String NOTIFI_COUNT = "notification_count";
 
     private DEStateManager() {
         start();
@@ -77,22 +80,24 @@ public class DEStateManager {
     }
 
     public void persistUserSession(final boolean runInBackground, final Command callback) {
-        JSONObject obj = JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates());
+        final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
+                I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
+
+        if (runInBackground) {
+            savingMask.close();
+        } else {
+            savingMask.show();
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put(ACTIVE_WINDOWS, JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates()));
+        obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
+
         if (obj != null) {
             final byte[] tempHash = JsonUtil.generateHash(obj.toString());
             if (ByteArrayComparer.arraysEqual(hash, tempHash)) {
                 return;
             } else {
-
-                final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
-                        I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
-
-                if (runInBackground) {
-                    savingMask.close();
-                } else {
-                    savingMask.show();
-                }
-
                 UserSessionServiceFacade session = new UserSessionServiceFacade();
                 session.saveUserSession(UserInfo.getInstance().getFullUsername(), obj,
                         new AsyncCallback<String>() {
@@ -142,10 +147,23 @@ public class DEStateManager {
             @Override
             public void onSuccess(String result) {
                 JSONObject obj = JsonUtil.getObject(result);
-                restoreWindows(JsonUtil.getMapFromJSONObject(obj));
+                JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
+                restoreWindows(JsonUtil.getMapFromJSONObject(win_states));
+                restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
                 loadingMask.close();
             }
         });
+    }
+
+    private void restoreNotificationCountStatus(JSONObject obj) {
+        if (obj != null) {
+            int data_count = Integer.parseInt(JsonUtil.getString(obj,
+                    NotificationManager.DATA_NOTIFI_COUNT));
+            int anal_count = Integer.parseInt(JsonUtil.getString(obj,
+                    NotificationManager.ANALYSES_NOTIFI_COUNT));
+            NotificationManager.getInstance().initNotificationCount(data_count, anal_count);
+        }
+
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -12,7 +12,7 @@ public class GwtTestNotificationWindowConfig extends GWTTestCase {
 
     @Test
     public void testNotificationWindowConfigJSONObject() {
-        Category category = Category.ANALYSIS;
+        Category category = Category.APPS;
         String fooParameter = "blah 12345"; // a parameter not used by NotificationWindowConfig that the //$NON-NLS-1$
                                             // constructor should still add as a BaseModelObject
                                             // parameter

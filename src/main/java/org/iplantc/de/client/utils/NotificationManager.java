@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -47,7 +48,7 @@ public class NotificationManager {
         /** Data notifications */
         DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
-        ANALYSIS(I18N.CONSTANT.notificationCategoryApps());
+        APPS(I18N.CONSTANT.notificationCategoryApps());
 
         private String displayText;
 
@@ -86,20 +87,18 @@ public class NotificationManager {
     private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
     private final MessageServiceFacade facadeMessageService;
-    private Command storeLoadCompleteCallbackCmd;
 
-    private final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
-    private final String DATA_NOTIFI_COUNT = "dataNotificationCount";
-    private final String ANALYSES_NOTIFI_COUNT = "analysesNotificationCount";
+    public static final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
+    public static final String DATA_NOTIFI_COUNT = "dataNotificationCount";
+    public static final String ANALYSES_NOTIFI_COUNT = "analysesNotificationCount";
 
     private int totalNotificationCount;
     private int dataNotificationCount;
     private int analysesNotificationCount;
 
-    private NotificationManager(Command storeLoadCompleteCallbackCmd) {
+    private NotificationManager() {
         facadeMessageService = new MessageServiceFacade();
         storeAll = new ListStore<Notification>();
-        this.storeLoadCompleteCallbackCmd = storeLoadCompleteCallbackCmd;
 
         // keep notifications sorted by time
         storeAll.setDefaultSort(PROP_TIMESTAMP, SortDir.DESC);
@@ -109,32 +108,22 @@ public class NotificationManager {
 
         registerEventHandlers();
 
-        getExistingNotifications(null);
+        initMessagePoller();
 
     }
 
-    public void initNotificationCount() {
-        totalNotificationCount = (LocalStorageProvider.getInstance().get(TOTAL_NOTIFI_COUNT) != null && (!LocalStorageProvider
-                .getInstance().get(TOTAL_NOTIFI_COUNT).equals(""))) ? Integer
-                .parseInt(LocalStorageProvider.getInstance().get(TOTAL_NOTIFI_COUNT).toString()) : 0;
+    public void initNotificationCount(int data_count, int anal_count) {
+        totalNotificationCount = data_count + anal_count;
 
-        dataNotificationCount = (LocalStorageProvider.getInstance().get(DATA_NOTIFI_COUNT) != null && (!LocalStorageProvider
-                .getInstance().get(DATA_NOTIFI_COUNT).equals(""))) ? Integer
-                .parseInt(LocalStorageProvider.getInstance().get(DATA_NOTIFI_COUNT).toString()) : 0;
+        dataNotificationCount = data_count;
 
-        analysesNotificationCount = (LocalStorageProvider.getInstance().get(ANALYSES_NOTIFI_COUNT) != null && (!LocalStorageProvider
-                .getInstance().get(ANALYSES_NOTIFI_COUNT).equals(""))) ? Integer
-                .parseInt(LocalStorageProvider.getInstance().get(ANALYSES_NOTIFI_COUNT).toString()) : 0;
+        analysesNotificationCount = anal_count;
 
         final EventBus eventbus = EventBus.getInstance();
         NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getDataNotificationCount(),
                 getAnalysesNotificationCount());
         eventbus.fireEvent(ncue);
 
-    }
-
-    private NotificationManager() {
-        this(null);
     }
 
     private void initContextBuilders() {
@@ -183,7 +172,7 @@ public class NotificationManager {
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
-                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.app(), event.getMessage(),
+                addFromEventHandler(Category.APPS, I18N.CONSTANT.app(), event.getMessage(),
                         analysisContextBuilder.build(event.getPayload()));
                 setAnalysesNotificationCount(getAnalysesNotificationCount() + 1);
                 NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
@@ -207,25 +196,6 @@ public class NotificationManager {
     }
 
     /**
-     * Return the shared, singleton instance of the manager.
-     * 
-     * @return a singleton reference to the notification manager.
-     */
-    public static NotificationManager getInstance(Command storeLoadCompleteCallback) {
-        if (instance == null) {
-            instance = new NotificationManager(storeLoadCompleteCallback);
-        } else {
-            instance.storeLoadCompleteCallbackCmd = storeLoadCompleteCallback;
-        }
-
-        return instance;
-    }
-
-    private Notification getLastElement() {
-        return storeAll.getAt(storeAll.getCount() - 1);
-    }
-
-    /**
      * Add a new notification.
      * 
      * @param category category for this notification.
@@ -237,50 +207,10 @@ public class NotificationManager {
             notification.setCategory(category);
 
             storeAll.add(notification);
-            // sort doesn't happen automatically on add()
-            storeAll.sort(PROP_TIMESTAMP, SortDir.DESC);
-
-            // we want to enforce a rolling list of MAX_NOTIFICATIONS size.
-            if (storeAll.getCount() > MAX_NOTIFICATIONS) {
-                // if we're over the MAX, drop the last element
-                storeAll.remove(getLastElement());
-            }
         }
     }
 
-    private void getExistingNotifications(final Command callback) {
-        UserInfo info = UserInfo.getInstance();
-
-        facadeMessageService.getNotifications(info.getUsername(), MAX_NOTIFICATIONS,
-                new AsyncCallback<String>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.notificationRetrievalFail(), caught);
-
-                        MessagePoller poller = MessagePoller.getInstance();
-                        poller.start();
-                        if (callback != null) {
-                            callback.execute();
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        addInitialNotificationsToStore(result);
-
-                        MessagePoller poller = MessagePoller.getInstance();
-                        poller.start();
-                        if (callback != null) {
-                            callback.execute();
-                        }
-                        if (storeLoadCompleteCallbackCmd != null) {
-                            storeLoadCompleteCallbackCmd.execute();
-                        }
-                    }
-                });
-    }
-
-    private void addInitialNotificationsToStore(final String json) {
+    public void addInitialNotificationsToStore(final String json) {
         JSONObject objMessages = JSONParser.parseStrict(json).isObject();
 
         if (objMessages != null) {
@@ -300,6 +230,9 @@ public class NotificationManager {
                     }
                 }
             }
+
+            // sort doesn't happen automatically on add()
+            storeAll.sort(PROP_TIMESTAMP, SortDir.DESC);
         }
     }
 
@@ -311,7 +244,7 @@ public class NotificationManager {
             if (type.equals("data")) { //$NON-NLS-1$
                 addItemToStore(Category.DATA, objMessage, dataContextBuilder.build(objPayload));
             } else if (type.equals("analysis")) { //$NON-NLS-1$
-                addItemToStore(Category.ANALYSIS, objMessage, analysisContextBuilder.build(objPayload));
+                addItemToStore(Category.APPS, objMessage, analysisContextBuilder.build(objPayload));
             }
         }
     }
@@ -348,6 +281,30 @@ public class NotificationManager {
                 }
             });
         }
+    }
+
+    public void getExistingNotifications(final Command callback) {
+        UserInfo info = UserInfo.getInstance();
+        MessageServiceFacade facadeMessageService = new MessageServiceFacade();
+        facadeMessageService.getNotifications(info.getUsername(), NotificationManager.MAX_NOTIFICATIONS,
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.notificationRetrievalFail(), caught);
+
+                        if (callback != null) {
+                            callback.execute();
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        addInitialNotificationsToStore(result);
+                        if (callback != null) {
+                            callback.execute();
+                        }
+                    }
+                });
     }
 
     /**
@@ -394,7 +351,6 @@ public class NotificationManager {
      * @param total
      */
     public void setTotalNotificationCount(int total) {
-        LocalStorageProvider.getInstance().set(TOTAL_NOTIFI_COUNT, total + "");
         totalNotificationCount = total;
     }
 
@@ -414,7 +370,6 @@ public class NotificationManager {
      * @param total
      */
     public void setDataNotificationCount(int total) {
-        LocalStorageProvider.getInstance().set(DATA_NOTIFI_COUNT, total + "");
         dataNotificationCount = total;
     }
 
@@ -433,7 +388,6 @@ public class NotificationManager {
      * @param total
      */
     public void setAnalysesNotificationCount(int total) {
-        LocalStorageProvider.getInstance().set(ANALYSES_NOTIFI_COUNT, total + "");
         analysesNotificationCount = total;
     }
 
@@ -444,5 +398,22 @@ public class NotificationManager {
      */
     public int getAnalysesNotificationCount() {
         return analysesNotificationCount;
+    }
+
+    private void initMessagePoller() {
+        MessagePoller poller = MessagePoller.getInstance();
+        poller.start();
+    }
+
+    public void cleanup() {
+        storeAll.removeAll();
+    }
+
+    public JSONObject getNotificationCountStatus() {
+        JSONObject obj = new JSONObject();
+        obj.put(TOTAL_NOTIFI_COUNT, new JSONString(totalNotificationCount + ""));
+        obj.put(ANALYSES_NOTIFI_COUNT, new JSONString(analysesNotificationCount + ""));
+        obj.put(DATA_NOTIFI_COUNT, new JSONString(dataNotificationCount + ""));
+        return obj;
     }
 }

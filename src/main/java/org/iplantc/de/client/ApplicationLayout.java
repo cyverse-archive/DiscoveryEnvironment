@@ -214,7 +214,6 @@ public class ApplicationLayout extends Viewport {
         if (notifyMgr == null) {
             notifyMgr = NotificationManager.getInstance();
         }
-        notifyMgr.initNotificationCount();
     }
 
     /**
@@ -309,7 +308,7 @@ public class ApplicationLayout extends Viewport {
             lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
             lblNotificationsAnalyses.setCount(notifyMgr.getAnalysesNotificationCount());
 
-            NotificationIconBar.showNotificationWindow(Category.ANALYSIS);
+            NotificationIconBar.showNotificationWindow(Category.APPS);
         }
     }
 

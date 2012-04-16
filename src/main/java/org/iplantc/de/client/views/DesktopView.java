@@ -71,8 +71,6 @@ public class DesktopView extends ContentPanel {
 
     private DEStateManager mgrState;
 
-    public static final String ACTIVE_WINDOWS = "active_windows";
-
     /**
      * Default constructor.
      */

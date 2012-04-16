@@ -37,6 +37,10 @@ public class NotificationWindowConfig extends WindowConfig {
     }
 
     public JSONArray getSelectedIds() {
-        return JSONParser.parseStrict(get(SELECTED_IDS).toString()).isArray();
+        if (get(SELECTED_IDS) != null && !get(SELECTED_IDS).toString().isEmpty()) {
+            return JSONParser.parseStrict(get(SELECTED_IDS).toString()).isArray();
+        } else {
+            return null;
+        }
     }
 }

@@ -11,6 +11,7 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
@@ -18,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Command;
 
 /**
  * Window for displaying event notifications.
@@ -65,15 +67,52 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void show() {
         super.show();
-        if (config != null) {
-            Category category = ((NotificationWindowConfig)config).getCategory();
-            panel.filterBy(category);
-            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
-                    .getSelectedIds());
-            panel.selectNotifications(selectedIds);
-            setWindowViewState();
-            config = null;
-        }
+    }
+
+    private void applyWindowConfig() {
+        Category category = ((NotificationWindowConfig)config).getCategory();
+        panel.filterBy(category);
+        List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
+                .getSelectedIds());
+        panel.selectNotifications(selectedIds);
+        setWindowViewState();
+        config = null;
+    }
+
+    private void retrieveData() {
+        mask(I18N.DISPLAY.loadingMask());
+        Command cmd = new Command() {
+            @Override
+            public void execute() {
+                unmask();
+                if (config != null) {
+                    applyWindowConfig();
+                }
+
+            }
+
+        };
+        NotificationManager.getInstance().getExistingNotifications(cmd);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        NotificationManager.getInstance().cleanup();
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void afterRender() {
+        super.afterRender();
+
+        retrieveData();
     }
 
     @Override
