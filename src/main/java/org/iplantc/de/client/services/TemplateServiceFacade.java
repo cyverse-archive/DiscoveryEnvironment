@@ -2,9 +2,9 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -15,6 +15,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 
 /**
  * Provides access to remote services for operations related to job submission templates.
@@ -33,8 +34,6 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
-
-
 
     /**
      * {@inheritDoc}
@@ -92,23 +91,22 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         // add comment to wiki page, then call rating service, then update avg on wiki page
         final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
         String username = UserInfo.getInstance().getUsername();
-        confluenceService.addComment(appName, rating, username, comment,
-                new AsyncCallback<String>() {
+        confluenceService.addComment(appName, rating, username, comment, new AsyncCallback<String>() {
             @Override
             public void onSuccess(final String commentId) {
                 // wrap the callback so it returns the comment id on success
                 rateAnalysis(appName, analysisId, rating, commentId, authorEmail,
                         new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        callback.onSuccess(commentId);
-                    }
+                            @Override
+                            public void onSuccess(String result) {
+                                callback.onSuccess(commentId);
+                            }
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-                });
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                callback.onFailure(caught);
+                            }
+                        });
             }
 
             @Override
@@ -166,7 +164,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
             ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
         }
     }
-    
+
     @Override
     public void updateRating(final String analysisId, final int rating, final String appName,
             final Long commentId, final String comment, final String authorEmail,

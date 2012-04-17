@@ -1,6 +1,6 @@
 package org.iplantc.de.client.services;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;

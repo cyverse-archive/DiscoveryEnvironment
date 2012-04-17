@@ -1,7 +1,7 @@
 package org.iplantc.de.client.utils;
 
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.MessageServiceFacade;
 
 import com.google.gwt.user.client.Timer;

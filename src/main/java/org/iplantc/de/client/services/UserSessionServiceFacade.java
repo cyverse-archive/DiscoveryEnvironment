@@ -1,10 +1,11 @@
 package org.iplantc.de.client.services;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 
 /**
  * A service facade to save and retrieve user session

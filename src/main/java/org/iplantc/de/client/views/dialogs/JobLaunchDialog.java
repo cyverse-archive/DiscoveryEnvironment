@@ -6,11 +6,11 @@ import org.iplantc.core.client.widgets.validator.JobNameValidator;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.FolderCreateCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
@@ -238,20 +238,19 @@ public class JobLaunchDialog extends Dialog {
                     // if the folder is empty, don't ask for confirmation
                     if (isFolderEmpty(result)) {
                         onConfirm.execute();
-                    }
-                    else {
+                    } else {
                         MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmOutputFolder(),
                                 new Listener<MessageBoxEvent>() {
-                            @Override
-                            public void handleEvent(MessageBoxEvent be) {
-                                if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
-                                    onConfirm.execute();
-                                }
-                            }
-                        });
+                                    @Override
+                                    public void handleEvent(MessageBoxEvent be) {
+                                        if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                                            onConfirm.execute();
+                                        }
+                                    }
+                                });
                     }
                 }
-    
+
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(caught);

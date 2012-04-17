@@ -1,9 +1,10 @@
 package org.iplantc.de.client.services;
 
-import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 
 /**
  * Provides access to remote services to acquire messages and notifications.

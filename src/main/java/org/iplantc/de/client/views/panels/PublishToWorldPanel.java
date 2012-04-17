@@ -10,9 +10,9 @@ import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.dialogs.CategorySelectionDialog;
@@ -210,8 +210,7 @@ public class PublishToWorldPanel extends LayoutContainer {
         emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, getEmail(), EMAIL,
                 new BasicEmailValidator(), 256);
 
-        descField = buildTextArea(I18N.DISPLAY.appDesc(), true, analysis.getDescription(), DESC,
-                255);
+        descField = buildTextArea(I18N.DISPLAY.appDesc(), true, analysis.getDescription(), DESC, 255);
 
         categoryField = buildCategoryField();
 
