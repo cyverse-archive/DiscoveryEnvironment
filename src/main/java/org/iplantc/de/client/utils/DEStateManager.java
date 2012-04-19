@@ -99,28 +99,27 @@ public class DEStateManager {
                 return;
             } else {
                 UserSessionServiceFacade session = new UserSessionServiceFacade();
-                session.saveUserSession(UserInfo.getInstance().getFullUsername(), obj,
-                        new AsyncCallback<String>() {
+                session.saveUserSession(obj, new AsyncCallback<String>() {
 
-                            @Override
-                            public void onSuccess(String result) {
-                                if (callback != null) {
-                                    callback.execute();
-                                }
-                                savingMask.close();
-                                // update hash
-                                hash = tempHash;
-                            }
+                    @Override
+                    public void onSuccess(String result) {
+                        if (callback != null) {
+                            callback.execute();
+                        }
+                        savingMask.close();
+                        // update hash
+                        hash = tempHash;
+                    }
 
-                            @Override
-                            public void onFailure(Throwable caught) {
-                                GWT.log(I18N.ERROR.saveSessionFailed(), caught);
-                                if (callback != null) {
-                                    callback.execute();
-                                }
-                                savingMask.close();
-                            }
-                        });
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        GWT.log(I18N.ERROR.saveSessionFailed(), caught);
+                        if (callback != null) {
+                            callback.execute();
+                        }
+                        savingMask.close();
+                    }
+                });
             }
         }
     }
@@ -134,7 +133,7 @@ public class DEStateManager {
                 I18N.DISPLAY.loadingSessionWaitNotice(), I18N.DISPLAY.loadingMask());
 
         UserSessionServiceFacade session = new UserSessionServiceFacade();
-        session.getUserSession(UserInfo.getInstance().getFullUsername(), new AsyncCallback<String>() {
+        session.getUserSession(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {

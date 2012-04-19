@@ -15,16 +15,14 @@ import org.iplantc.core.uicommons.client.DEServiceFacade;
  */
 public class UserSessionServiceFacade {
 
-    public void getUserSession(String userName, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
-                + "sessions/" + userName; //$NON-NLS-1$
+    public void getUserSession(AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    public void saveUserSession(String userName, JSONObject json, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
-                + "sessions/" + userName; //$NON-NLS-1$
+    public void saveUserSession(JSONObject json, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 json.toString());
