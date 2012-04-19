@@ -328,7 +328,7 @@ public class ApplicationLayout extends Viewport {
                         doLogout();
                         userMenu.hide();
                     }
-                }, I18N.DISPLAY.logoutToolTipText()));
+                }, null));
 
         return userMenu;
     }
