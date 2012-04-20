@@ -1,8 +1,5 @@
 package org.iplantc.de.client.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.windows.IPlantWindow;
@@ -164,16 +161,16 @@ public class DEWindowManager extends WindowManager {
         return windows;
     }
 
-    public Map<String, String> getActiveWindowStates() {
-        Map<String, String> win_states = new HashMap<String, String>();
+    public JSONObject getActiveWindowStates() {
+        JSONObject obj = new JSONObject();
         int index = 0;
         for (Window win : getStack()) {
             JSONObject state = ((IPlantWindow)win).getWindowState();
             String tag = ((IPlantWindow)win).getTag();
             state.put("order", new JSONString(index++ + ""));
             state.put("tag", new JSONString(tag));
-            win_states.put(tag, state.toString());
+            obj.put(tag, state);
         }
-        return win_states;
+        return obj;
     }
 }

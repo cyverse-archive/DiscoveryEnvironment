@@ -3,11 +3,9 @@ package org.iplantc.de.client.utils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
@@ -90,7 +88,7 @@ public class DEStateManager {
         }
 
         JSONObject obj = new JSONObject();
-        obj.put(ACTIVE_WINDOWS, JsonUtil.getJSONObjectFromMap(mgrWindow.getActiveWindowStates()));
+        obj.put(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
         obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
 
         if (obj != null) {
@@ -147,7 +145,7 @@ public class DEStateManager {
             public void onSuccess(String result) {
                 JSONObject obj = JsonUtil.getObject(result);
                 JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
-                restoreWindows(JsonUtil.getMapFromJSONObject(win_states));
+                restoreWindows(win_states);
                 restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
                 loadingMask.close();
             }
@@ -165,8 +163,7 @@ public class DEStateManager {
 
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void restoreWindows(Map win_state) {
+    private void restoreWindows(JSONObject win_state) {
         if (win_state != null) {
             Set<String> tags = win_state.keySet();
             if (tags.size() > 0) {
@@ -180,7 +177,7 @@ public class DEStateManager {
         }
     }
 
-    private List<JSONObject> getOrderedState(Set<String> tags, Map<String, Object> win_state) {
+    private List<JSONObject> getOrderedState(Set<String> tags, JSONObject win_state) {
         List<JSONObject> temp = new ArrayList<JSONObject>();
         for (String tag : tags) {
             JSONObject obj = JsonUtil.getObject(win_state.get(tag).toString());
