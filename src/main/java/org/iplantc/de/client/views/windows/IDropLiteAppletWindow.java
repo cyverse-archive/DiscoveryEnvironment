@@ -1,5 +1,7 @@
 package org.iplantc.de.client.views.windows;
 
+import java.util.List;
+
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -43,7 +45,6 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
@@ -200,10 +201,8 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         final String address = GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet()
                 + "?user=" + UserInfo.getInstance().getUsername(); //$NON-NLS-1$
 
-        JSONArray downloadPaths = config.getDownloadPaths();
-        for (int i = 0,size = downloadPaths.size(); i < size; i++) {
-            final String path = JsonUtil.getRawValueAsString(downloadPaths.get(i));
-
+        List<String> downloadPaths = config.getFileDownloadPaths();
+        for (final String path : downloadPaths) {
             Hyperlink link = new Hyperlink(DiskResourceUtil.parseNameFromPath(path), "de_hyperlink"); //$NON-NLS-1$
             link.addClickListener(new Listener<ComponentEvent>() {
                 @Override
