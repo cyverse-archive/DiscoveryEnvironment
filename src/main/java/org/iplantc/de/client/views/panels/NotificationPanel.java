@@ -124,10 +124,12 @@ public class NotificationPanel extends ContentPanel {
 
     private void select() {
         ListStore<Notification> store = grdNotifications.getStore();
-        for (String id : selectedIds) {
-            Notification n = store.findModel("id", id);
-            if (n != null) {
-                checkBoxModel.select(n, true);
+        if (selectedIds != null) {
+            for (String id : selectedIds) {
+                Notification n = store.findModel("id", id);
+                if (n != null) {
+                    checkBoxModel.select(n, true);
+                }
             }
         }
     }
@@ -475,6 +477,15 @@ public class NotificationPanel extends ContentPanel {
      */
     public void filterBy(Category category) {
         dropdown.setValue(dropdown.findModel(category));
+    }
+
+    /**
+     * get current filter for notification window
+     * 
+     * @return {@link Category} category
+     */
+    public Category getCurrentFilter() {
+        return dropdown.getValue().getValue();
     }
 
     private void addGridEventListeners() {

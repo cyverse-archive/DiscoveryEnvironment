@@ -5,7 +5,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.BasicWindowConfig;
+import org.iplantc.de.client.models.AnalysesWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.Element;
 public class MyAnalysesWindow extends IPlantWindow {
     private BorderLayoutData centerData;
     private MyAnalysesPanel pnlAnlys;
-    private BasicWindowConfig config;
+    private WindowConfig config;
 
     /**
      * Instantiate from a tag.
@@ -33,7 +33,7 @@ public class MyAnalysesWindow extends IPlantWindow {
      * @param tag unique tag identifying this window.
      * @param config a window configuration
      */
-    public MyAnalysesWindow(String tag, BasicWindowConfig config) {
+    public MyAnalysesWindow(String tag, WindowConfig config) {
         super(tag, false, true, true, true);
 
         this.config = config;
@@ -80,12 +80,13 @@ public class MyAnalysesWindow extends IPlantWindow {
     protected void onRender(Element parent, int index) {
         super.onRender(parent, index);
 
-        String idCurrentSelection = (config == null) ? null : config.getId();
+        String idCurrentSelection = (config == null) ? null : ((AnalysesWindowConfig)config)
+                .getAnalysisId();
 
         pnlAnlys = new MyAnalysesPanel(I18N.DISPLAY.resultsOverview(), idCurrentSelection);
 
         if (config != null) {
-            pnlAnlys.updateSelection(this.config.getId());
+            pnlAnlys.updateSelection(idCurrentSelection);
         }
 
         add(pnlAnlys, centerData);
@@ -97,7 +98,7 @@ public class MyAnalysesWindow extends IPlantWindow {
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config != null) {
-            this.config = (BasicWindowConfig)config;
+            this.config = (AnalysesWindowConfig)config;
         }
     }
 
@@ -109,7 +110,7 @@ public class MyAnalysesWindow extends IPlantWindow {
         super.show();
 
         if (pnlAnlys != null && config != null) {
-            pnlAnlys.updateSelection(config.getId());
+            pnlAnlys.updateSelection(((AnalysesWindowConfig)config).getAnalysisId());
             setWindowViewState();
             config = null;
         }
@@ -119,11 +120,11 @@ public class MyAnalysesWindow extends IPlantWindow {
     @Override
     public JSONObject getWindowState() {
         // Build config data
-        BasicWindowConfig configData = new BasicWindowConfig(config);
+        AnalysesWindowConfig configData = new AnalysesWindowConfig(config);
         storeWindowViewState(configData);
 
         if (pnlAnlys.getIdCurrentSelection() != null) {
-            configData.setId(pnlAnlys.getIdCurrentSelection());
+            configData.setAnalysisId(pnlAnlys.getIdCurrentSelection());
         }
 
         // Build window config

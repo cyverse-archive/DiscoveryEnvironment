@@ -11,7 +11,7 @@ import com.google.gwt.json.client.JSONObject;
  * @author hariolf
  * 
  */
-public class CatalogWindowConfig extends BasicWindowConfig {
+public class CatalogWindowConfig extends WindowConfig {
     private static final long serialVersionUID = 5958689143280824320L;
 
     public static final String CATEGORY_ID = "categoryID"; //$NON-NLS-1$

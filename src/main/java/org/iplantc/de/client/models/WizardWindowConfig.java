@@ -10,7 +10,7 @@ import com.google.gwt.json.client.JSONObject;
  * @author sriram
  * 
  */
-public class WizardWindowConfig extends BasicWindowConfig {
+public class WizardWindowConfig extends WindowConfig {
 
     /**
      * 

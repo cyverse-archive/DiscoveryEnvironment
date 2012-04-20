@@ -8,10 +8,10 @@ import java.util.List;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisExecution;
+import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.views.MyAnalysesGrid;
@@ -386,7 +386,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
         if (ae != null && ae.getResultFolderId() != null && !ae.getResultFolderId().isEmpty()) {
             JSONObject context = new JSONObject();
-            context.put(Folder.ID, new JSONString(ae.getResultFolderId()));
+            context.put(DataWindowConfig.FOLDER_ID, new JSONString(ae.getResultFolderId()));
 
             MyDataViewContextExecutor contextExec = new MyDataViewContextExecutor();
             contextExec.execute(context.toString());

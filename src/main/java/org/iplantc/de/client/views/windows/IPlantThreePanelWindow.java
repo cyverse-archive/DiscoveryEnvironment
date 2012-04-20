@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.client.models.BasicWindowConfig;
+import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
@@ -22,7 +22,7 @@ public abstract class IPlantThreePanelWindow extends IPlantWindow {
      * @param tag a unique identifier for the window.
      * @param config a window configuration
      */
-    protected IPlantThreePanelWindow(final String tag, final BasicWindowConfig config) {
+    protected IPlantThreePanelWindow(final String tag, final WindowConfig config) {
         super(tag, false, true, true, true);
 
         init();

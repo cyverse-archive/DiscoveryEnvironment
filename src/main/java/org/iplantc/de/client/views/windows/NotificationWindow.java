@@ -64,16 +64,19 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void show() {
         super.show();
+        applyWindowConfig();
     }
 
     private void applyWindowConfig() {
-        Category category = ((NotificationWindowConfig)config).getCategory();
-        panel.filterBy(category);
-        List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
-                .getSelectedIds());
-        panel.selectNotifications(selectedIds);
-        setWindowViewState();
-        config = null;
+        if (config != null) {
+            Category category = ((NotificationWindowConfig)config).getCategory();
+            panel.filterBy(category);
+            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
+                    .getSelectedIds());
+            panel.selectNotifications(selectedIds);
+            setWindowViewState();
+            config = null;
+        }
     }
 
     private void retrieveData() {
@@ -118,6 +121,7 @@ public class NotificationWindow extends IPlantWindow {
         storeWindowViewState(configData);
 
         configData.setSelectedIds(panel.getSelectedItems());
+        configData.setCategory(panel.getCurrentFilter());
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();

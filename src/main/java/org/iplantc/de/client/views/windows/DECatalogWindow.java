@@ -19,7 +19,6 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
@@ -59,7 +58,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
      * @param config this may be a BasicWindowConfig or a CatalogWindowConfig; the latter can be used to
      *            preselect a tool in the window
      */
-    public DECatalogWindow(String tag, BasicWindowConfig config) {
+    public DECatalogWindow(String tag, WindowConfig config) {
         super(tag, config);
         initHandlers();
         initConstants();
@@ -283,7 +282,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), configData);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.deCatalog(), ActionType.DISPLAY_WINDOW);
     }

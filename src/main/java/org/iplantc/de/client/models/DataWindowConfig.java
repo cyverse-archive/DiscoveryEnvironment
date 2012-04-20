@@ -16,7 +16,7 @@ import com.google.gwt.json.client.JSONObject;
  * @author sriram
  * 
  */
-public class DataWindowConfig extends BasicWindowConfig {
+public class DataWindowConfig extends WindowConfig {
 
     /**
      * 

@@ -23,7 +23,6 @@ import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
@@ -53,7 +52,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
     /**
      * {@inheritDoc}
      */
-    public MyDataWindow(final String tag, final BasicWindowConfig config) {
+    public MyDataWindow(final String tag, final WindowConfig config) {
         super(tag, config);
 
         initHandlers();

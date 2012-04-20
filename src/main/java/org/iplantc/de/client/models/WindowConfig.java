@@ -13,7 +13,7 @@ import com.google.gwt.json.client.JSONString;
  * @author hariolf, Paul
  * 
  */
-public abstract class WindowConfig extends JSONObject {
+public class WindowConfig extends JSONObject {
     private static final long serialVersionUID = 3602295075858973528L;
     public static final String IS_MAXIMIZED = "isMaximized"; //$NON-NLS-1$
     public static final String IS_MINIMIZED = "isMinimized"; //$NON-NLS-1$
@@ -27,12 +27,20 @@ public abstract class WindowConfig extends JSONObject {
      * 
      * @param json
      */
-    protected WindowConfig(JSONObject json) {
+    public WindowConfig(JSONObject json) {
         if (json != null) {
             for (String key : json.keySet()) {
                 put(key, json.get(key));
             }
         }
+    }
+
+    /**
+     * Construct a empty WindowConfig
+     * 
+     */
+    public WindowConfig() {
+
     }
 
     /**

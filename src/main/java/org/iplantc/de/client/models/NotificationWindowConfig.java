@@ -29,12 +29,23 @@ public class NotificationWindowConfig extends WindowConfig {
     }
 
     /**
+     *  
+     */
+    public NotificationWindowConfig() {
+        super();
+    }
+
+    /**
      * Returns the notification category.
      * 
      * @return the category
      */
     public Category getCategory() {
         return Category.fromTypeString(JsonUtil.getRawValueAsString(get(CATEGORY)));
+    }
+
+    public void setCategory(Category category) {
+        setString(CATEGORY, category.toString());
     }
 
     public JSONArray getSelectedIds() {

@@ -9,10 +9,11 @@ import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
-import org.iplantc.de.client.views.panels.NotificationIconBar;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -40,6 +41,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
@@ -262,7 +264,7 @@ public class ApplicationLayout extends Viewport {
             lblNotificationsData.setCount(0);
             lblNotificationsAnalyses.setCount(0);
 
-            NotificationIconBar.showNotificationWindow(Category.ALL);
+            showNotificationWindow(Category.ALL);
         }
     }
 
@@ -285,7 +287,7 @@ public class ApplicationLayout extends Viewport {
             lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
             lblNotificationsData.setCount(notifyMgr.getDataNotificationCount());
 
-            NotificationIconBar.showNotificationWindow(Category.DATA);
+            showNotificationWindow(Category.DATA);
         }
     }
 
@@ -308,7 +310,7 @@ public class ApplicationLayout extends Viewport {
             lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
             lblNotificationsAnalyses.setCount(notifyMgr.getAnalysesNotificationCount());
 
-            NotificationIconBar.showNotificationWindow(Category.APPS);
+            showNotificationWindow(Category.APPS);
         }
     }
 
@@ -453,6 +455,19 @@ public class ApplicationLayout extends Viewport {
         // and its top is aligned with the anchor's bottom.
         Point point = anchor.getPosition(false);
         actionsMenu.showAt(point.x + anchor.getWidth() - 110, point.y + anchor.getHeight());
+    }
+
+    /** Makes the notification window visible and filters by a category */
+    private void showNotificationWindow(final Category category) {
+        NotificationWindowConfig config = new NotificationWindowConfig();
+        config.setCategory(category);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory
+                .buildWindowConfig(Constants.CLIENT.myNotifyTag(), config);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
     }
 
     /**

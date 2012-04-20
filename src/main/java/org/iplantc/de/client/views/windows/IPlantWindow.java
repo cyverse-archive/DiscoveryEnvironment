@@ -3,7 +3,6 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -34,7 +33,7 @@ public abstract class IPlantWindow extends Window {
     private final String WINDOW_STYLE_MAXIMIZED = "x-window-maximized"; //$NON-NLS-1$
     private final String WINDOW_STYLE_DRAGGABLE = "x-window-draggable"; //$NON-NLS-1$
     protected String tag;
-    protected BasicWindowConfig config;
+    protected WindowConfig config;
     protected Status status;
     private Point restorePos;
     private Size restoreSize;
@@ -115,7 +114,7 @@ public abstract class IPlantWindow extends Window {
      * @param isClosable true indicates that a window can be closed.
      */
     protected IPlantWindow(String tag, boolean haveStatus, boolean isMinimizable, boolean isMaximizable,
-            boolean isClosable, BasicWindowConfig config) {
+            boolean isClosable, WindowConfig config) {
         this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
         this.config = config;
     }

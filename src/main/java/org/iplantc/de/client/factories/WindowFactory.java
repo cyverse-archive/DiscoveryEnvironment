@@ -1,7 +1,6 @@
 package org.iplantc.de.client.factories;
 
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.models.BasicWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
@@ -37,7 +36,7 @@ public class WindowFactory {
 
         if (type != null) {
             if (type.equals(Constants.CLIENT.myDataTag())) {
-                ret = new MyDataWindow(type, (BasicWindowConfig)config);
+                ret = new MyDataWindow(type, config);
             } else if (type.equals(Constants.CLIENT.myNotifyTag())) {
                 ret = new NotificationWindow(type, (NotificationWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.myHelpTag())) {
@@ -47,9 +46,9 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAboutTag())) {
                 ret = new AboutApplicationWindow(type);
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
-                ret = new MyAnalysesWindow(type, (BasicWindowConfig)config);
+                ret = new MyAnalysesWindow(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
-                ret = new DECatalogWindow(type, (BasicWindowConfig)config);
+                ret = new DECatalogWindow(type, config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
