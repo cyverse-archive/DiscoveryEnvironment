@@ -174,7 +174,7 @@ public abstract class IPlantWindow extends Window {
         Number width = JsonUtil.getNumber(config, WindowConfig.WIN_WIDTH);
         Number height = JsonUtil.getNumber(config, WindowConfig.WIN_HEIGHT);
 
-        if (width != null && height != null) {
+        if (width != null && height != null && width.intValue() > 0 && height.intValue() > 0) {
             setSize(width.intValue(), height.intValue());
         }
     }
@@ -183,7 +183,7 @@ public abstract class IPlantWindow extends Window {
         Number left = JsonUtil.getNumber(config, WindowConfig.WIN_LEFT);
         Number top = JsonUtil.getNumber(config, WindowConfig.WIN_TOP);
 
-        if (left != null && top != null) {
+        if (left != null && top != null && left.intValue() > 0 && top.intValue() > 0) {
             setPosition(left.intValue(), top.intValue());
         }
     }
