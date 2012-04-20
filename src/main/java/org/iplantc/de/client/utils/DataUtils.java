@@ -13,9 +13,14 @@ import com.google.gwt.i18n.client.NumberFormat;
 
 public class DataUtils {
     public enum Action {
-        RenameFolder(I18N.DISPLAY.rename()), RenameFile(I18N.DISPLAY.rename()), Delete(I18N.DISPLAY
-                .delete()), View(I18N.DISPLAY.view()), ViewTree(I18N.DISPLAY.viewTreeViewer()), Download(
-                I18N.DISPLAY.download()), Metadata(I18N.DISPLAY.metadata());
+        RenameFolder(I18N.DISPLAY.rename()),
+        RenameFile(I18N.DISPLAY.rename()),
+        Delete(I18N.DISPLAY.delete()),
+        View(I18N.DISPLAY.view()),
+        ViewTree(I18N.DISPLAY.viewTreeViewer()),
+        SimpleDownload(I18N.DISPLAY.simpleDownload()),
+        Download(I18N.DISPLAY.download()),
+        Metadata(I18N.DISPLAY.metadata());
 
         private final String displayText;
 
@@ -54,17 +59,19 @@ public class DataUtils {
 
             if (size > 0) {
                 if (size == 1) {
+                    ret.add(Action.Metadata);
                     if (hasFolders) {
                         ret.add(Action.RenameFolder);
                     } else {
                         ret.add(Action.RenameFile);
                         ret.add(Action.View);
                         ret.add(Action.ViewTree);
+                        ret.add(Action.SimpleDownload);
                     }
-                    ret.add(Action.Metadata);
                 } else {
                     if (!hasFolders) {
                         ret.add(Action.View);
+                        ret.add(Action.SimpleDownload);
                     }
                 }
 

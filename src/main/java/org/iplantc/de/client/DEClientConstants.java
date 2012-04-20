@@ -391,4 +391,11 @@ public interface DEClientConstants extends CommonUiConstants {
      * @return the tag.
      */
     String titoTag();
+
+    /**
+     * The unique tag used to identify the Simple Download links window.
+     * 
+     * @return the tag.
+     */
+    String simpleDownloadTag();
 }

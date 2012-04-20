@@ -3,9 +3,9 @@ package org.iplantc.de.client.factories;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
+import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
@@ -15,6 +15,7 @@ import org.iplantc.de.client.views.windows.MyAnalysesWindow;
 import org.iplantc.de.client.views.windows.MyDataWindow;
 import org.iplantc.de.client.views.windows.NotificationWindow;
 import org.iplantc.de.client.views.windows.PipelineEditorWindow;
+import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
 import org.iplantc.de.client.views.windows.TitoWindow;
 import org.iplantc.de.client.views.windows.WizardWindow;
 
@@ -55,8 +56,10 @@ public class WindowFactory {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.titoTag())) {
                 ret = new TitoWindow(type, (TitoWindowConfig)config);
+            } else if (type.equals(Constants.CLIENT.simpleDownloadTag())) {
+                ret = new SimpleDownloadWindow(type, (SimpleDownloadWindowConfig)config);
             } else {
-                ret = new WizardWindow(type, (WizardWindowConfig)config);
+                ret = new WizardWindow(type, config);
             }
         }
 

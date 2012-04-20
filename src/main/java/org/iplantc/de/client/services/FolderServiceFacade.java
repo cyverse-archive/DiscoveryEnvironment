@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -282,6 +287,20 @@ public class FolderServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
         callService(callback, wrapper);
+    }
+
+    /**
+     * Opens a window to download the file with the given path.
+     * 
+     * @param path Path of the file to download.
+     */
+    public void simpleDownload(String path) {
+        // We must proxy the download requests through a servlet, since the actual download service may
+        // be on a port behind a firewall that the servlet can access, but the client can not.
+        String address = Format.substitute("{0}{1}?user={2}&path={3}", GWT.getModuleBaseURL(), //$NON-NLS-1$
+                Constants.CLIENT.fileDownloadServlet(), UserInfo.getInstance().getUsername(), path);
+
+        WindowUtil.open(URL.encode(address), "width=100,height=100"); //$NON-NLS-1$
     }
 
     /**

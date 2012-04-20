@@ -11,6 +11,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
+import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
@@ -99,6 +100,10 @@ public class DataActionsPanel extends ContentPanel {
                 ret = new ViewTreeListenerImpl();
                 break;
 
+            case SimpleDownload:
+                ret = new SimpleDownloadListenerImpl();
+                break;
+
             case Download:
                 ret = new DownloadListenerImpl();
                 break;
@@ -165,7 +170,7 @@ public class DataActionsPanel extends ContentPanel {
             final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
 
             MetadataEditorDialog d = new MetadataEditorDialog(
-                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep);
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep); //$NON-NLS-1$
 
             d.setSize(500, 300);
             d.setResizable(false);
@@ -282,6 +287,39 @@ public class DataActionsPanel extends ContentPanel {
             } else {
                 showErrorMsg();
             }
+        }
+    }
+
+    private class SimpleDownloadListenerImpl implements Listener<ComponentEvent> {
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            if (DataUtils.isDownloadable(resources)) {
+                if (resources.size() == 1) {
+                    downloadNow(resources.get(0).getId());
+                } else {
+                    launchDownloadWindow();
+                }
+            } else {
+                showErrorMsg();
+            }
+        }
+
+        private void downloadNow(String path) {
+            FolderServiceFacade service = new FolderServiceFacade();
+            service.simpleDownload(path);
+        }
+
+        private void launchDownloadWindow() {
+            List<String> paths = new ArrayList<String>();
+
+            for (DiskResource resource : resources) {
+                if (resource instanceof File) {
+                    paths.add(resource.getId());
+                }
+            }
+
+            SimpleDownloadWindowDispatcher dispatcher = new SimpleDownloadWindowDispatcher();
+            dispatcher.launchDownloadWindow(paths);
         }
     }
 

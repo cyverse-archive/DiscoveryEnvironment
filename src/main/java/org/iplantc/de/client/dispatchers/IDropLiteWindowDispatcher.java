@@ -27,14 +27,14 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
      */
     public void launchUploadWindow(String uploadDest, String currentPath) {
         // Build window config
-        IDropLiteWindowConfig config = new IDropLiteWindowConfig();
-        config.setDisplayMode(IDropLite.DISPLAY_MODE_UPLOAD);
-        config.setUploadDest(uploadDest);
-        config.setCurrentPath(currentPath);
+        IDropLiteWindowConfig configData = new IDropLiteWindowConfig();
+        configData.setDisplayMode(IDropLite.DISPLAY_MODE_UPLOAD);
+        configData.setUploadDest(uploadDest);
+        configData.setCurrentPath(currentPath);
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
-                config);
+                configData);
 
         // Dispatch window display action with this config
         setConfig(windowConfig);
@@ -48,13 +48,13 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
      */
     public void launchDownloadWindow(List<DiskResource> resources) {
         // Build window config
-        IDropLiteWindowConfig config = new IDropLiteWindowConfig();
-        config.setDisplayMode(IDropLite.DISPLAY_MODE_DOWNLOAD);
-        config.setDownloadPaths(resources);
+        IDropLiteWindowConfig configData = new IDropLiteWindowConfig();
+        configData.setDisplayMode(IDropLite.DISPLAY_MODE_DOWNLOAD);
+        configData.setDownloadPaths(resources);
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
-                config);
+                configData);
 
         // Dispatch window display action with this config
         setConfig(windowConfig);
