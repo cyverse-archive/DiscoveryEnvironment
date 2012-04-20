@@ -1,13 +1,12 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
@@ -15,17 +14,14 @@ import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.services.FolderServiceFacade;
-import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.IDropLite;
 import org.iplantc.de.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
 import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.HideMode;
-import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -37,13 +33,9 @@ import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
@@ -63,7 +55,6 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private LayoutContainer contents;
     private Html htmlApplet;
     private Dialog dlgUpload;
-    private boolean promptHide = true;
     private ToolBar toolbar;
 
     public IDropLiteAppletWindow(String tag, IDropLiteWindowConfig config) {
@@ -80,7 +71,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         setResizable(false);
         setLayout(new FitLayout());
 
-        // Add window contents container for the applet or simple download links
+        // Add window contents container for the applet
         contents = new LayoutContainer();
         contents.setStyleAttribute("padding", Format.substitute("{0}px", CONTENT_PADDING)); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -90,6 +81,14 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         toolbar = new ToolBar();
         setTopComponent(toolbar);
 
+        // These settings enable the window to be minimized or moved without reloading the applet.
+        removeFromParentOnHide = false;
+        setHideMode(HideMode.VISIBILITY);
+
+        initViewMode();
+    }
+
+    private void initViewMode() {
         // Set the heading and add the correct simple mode button based on the applet display mode.
         int displayMode = config.getDisplayMode();
         if (displayMode == IDropLite.DISPLAY_MODE_UPLOAD) {
@@ -100,14 +99,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         } else if (displayMode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
             setHeading(I18N.DISPLAY.download());
 
-            // Add button for alternative, simple download link panel.
+            // Add button for alternative, simple download window.
             toolbar.add(buildSimpleDownloadButton());
             contents.add(new Label(I18N.DISPLAY.idropLiteDownloadNotice()));
         }
-
-        // These settings enable the window to be minimized or moved without reloading the applet.
-        removeFromParentOnHide = false;
-        setHideMode(HideMode.VISIBILITY);
     }
 
     private void initListeners() {
@@ -180,60 +175,27 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                 new SimpleFormSelectionListener() {
                     @Override
                     public void removeAppletConfirmed() {
-                        promptHide = false;
-                        showSimpleDownloadPanel();
+                        confirmHide();
+                        launchSimpleDownloadWindow();
                     }
                 });
 
         return btnSimpleDownload;
     }
 
-    private void showSimpleDownloadPanel() {
-        // Replace the applet with the links panel.
-        contents.removeAll();
-        toolbar.removeAll();
-
-        VerticalPanel pnlLinks = new VerticalPanel();
-
-        // We must proxy the download requests through a servlet, since the actual download service may
-        // be on a port behind a firewall that the servlet can access, but the client can not.
-        final String address = GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet()
-                + "?user=" + UserInfo.getInstance().getUsername(); //$NON-NLS-1$
-
-        JSONArray downloadPaths = config.getDownloadPaths();
-        for (int i = 0,size = downloadPaths.size(); i < size; i++) {
-            final String path = JsonUtil.getRawValueAsString(downloadPaths.get(i));
-
-            Hyperlink link = new Hyperlink(DiskResourceUtil.parseNameFromPath(path), "de_hyperlink"); //$NON-NLS-1$
-            link.addClickListener(new Listener<ComponentEvent>() {
-                @Override
-                public void handleEvent(ComponentEvent be) {
-                    WindowUtil.open(URL.encode(address + "&path=" + path), "width=100,height=100"); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-            });
-
-            pnlLinks.add(link);
-        }
-
-        contents.add(pnlLinks);
-
-        // Turn on scrolling here, in case there are more links than can fit in the window.
-        setScrollMode(Scroll.AUTO);
-        layout();
+    private void launchSimpleDownloadWindow() {
+        SimpleDownloadWindowDispatcher dispatcher = new SimpleDownloadWindowDispatcher();
+        dispatcher.launchDownloadWindow(config.getFileDownloadPaths());
     }
 
     @Override
     protected void doHide() {
-        if (promptHide) {
-            promptRemoveApplet(new Command() {
-                @Override
-                public void execute() {
-                    confirmHide();
-                }
-            });
-        } else {
-            confirmHide();
-        }
+        promptRemoveApplet(new Command() {
+            @Override
+            public void execute() {
+                confirmHide();
+            }
+        });
     }
 
     private void promptRemoveApplet(final Command cmdRemoveAppletConfirmed) {

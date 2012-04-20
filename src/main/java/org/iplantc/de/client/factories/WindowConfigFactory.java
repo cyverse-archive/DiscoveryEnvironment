@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.PipelineEditorWindowConfig;
+import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
@@ -54,6 +55,8 @@ public class WindowConfigFactory {
                 ret = new WizardWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.dataViewerTag())) {
                 ret = new WindowConfig(objData);
+            } else if (type.equals(Constants.CLIENT.simpleDownloadTag())) {
+                ret = new SimpleDownloadWindowConfig(objData);
             }
         }
 

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.utils.IDropLite;
 
 import com.google.gwt.json.client.JSONArray;
@@ -22,7 +24,8 @@ public class IDropLiteWindowConfig extends WindowConfig {
 
     public static String DISPLAY_MODE = "displayMode"; //$NON-NLS-1$
     public static String UPLOAD_DEST = "uploadDest"; //$NON-NLS-1$
-    public static String DOWNLOAD_PATHS = "paths"; //$NON-NLS-1$
+    public static String DOWNLOAD_PATHS_FOLDERS = "folder_paths"; //$NON-NLS-1$
+    public static String DOWNLOAD_PATHS_FILES = "file_paths"; //$NON-NLS-1$
     public static String MANAGE_DATA_CURRENT_PATH = "currentPath"; //$NON-NLS-1$
     public static String TAG_SUFFIX = "tag_suffix"; //$NON-NLS-1$
     public static String TAG_SUFFIX_UPLOAD = "_upload"; //$NON-NLS-1$
@@ -86,7 +89,50 @@ public class IDropLiteWindowConfig extends WindowConfig {
     }
 
     public JSONArray getDownloadPaths() {
-        return JsonUtil.getArray(this, DOWNLOAD_PATHS);
+        JSONArray ret = null;
+
+        List<String> paths = new ArrayList<String>();
+        List<String> folderPaths = getFolderDownloadPaths();
+        List<String> filePaths = getFileDownloadPaths();
+
+        if (folderPaths != null) {
+            paths.addAll(folderPaths);
+        }
+        if (filePaths != null) {
+            paths.addAll(filePaths);
+        }
+
+        if (!paths.isEmpty()) {
+            ret = JsonUtil.buildArrayFromStrings(paths);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Stores the list of folder paths.
+     * 
+     * @param paths
+     */
+    public void setFolderDownloadPaths(List<String> paths) {
+        put(DOWNLOAD_PATHS_FOLDERS, JsonUtil.buildArrayFromStrings(paths));
+    }
+
+    public List<String> getFolderDownloadPaths() {
+        return JsonUtil.buildStringList(JsonUtil.getArray(this, DOWNLOAD_PATHS_FOLDERS));
+    }
+
+    /**
+     * Stores the list of file paths.
+     * 
+     * @param paths
+     */
+    public void setFileDownloadPaths(List<String> paths) {
+        put(DOWNLOAD_PATHS_FILES, JsonUtil.buildArrayFromStrings(paths));
+    }
+
+    public List<String> getFileDownloadPaths() {
+        return JsonUtil.buildStringList(JsonUtil.getArray(this, DOWNLOAD_PATHS_FILES));
     }
 
     /**
@@ -95,17 +141,25 @@ public class IDropLiteWindowConfig extends WindowConfig {
      * @param resources
      */
     public void setDownloadPaths(List<DiskResource> resources) {
-        if (resources == null) {
-            put(DOWNLOAD_PATHS, null);
-        } else {
-            ArrayList<String> resourceIds = new ArrayList<String>();
+        List<String> folderPaths = null;
+        List<String> filePaths = null;
+
+        if (resources != null) {
+            folderPaths = new ArrayList<String>();
+            filePaths = new ArrayList<String>();
 
             for (DiskResource resource : resources) {
-                resourceIds.add(resource.getId());
+                if (resource instanceof Folder) {
+                    folderPaths.add(resource.getId());
+                }
+                if (resource instanceof File) {
+                    filePaths.add(resource.getId());
+                }
             }
 
-            put(DOWNLOAD_PATHS, JsonUtil.buildArrayFromStrings(resourceIds));
         }
 
+        setFolderDownloadPaths(folderPaths);
+        setFileDownloadPaths(filePaths);
     }
 }

@@ -1171,4 +1171,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String loadingSessionWaitNotice();
+
+    /**
+     * Localized display text for simple download actions.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleDownload();
 }
