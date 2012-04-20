@@ -8,7 +8,6 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.NotificationManager;
@@ -16,9 +15,7 @@ import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 
 /**
@@ -117,20 +114,15 @@ public class NotificationWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
-        JSONArray arr = new JSONArray();
-        if (panel.getSelectedItems().size() > 0) {
+        NotificationWindowConfig configData = new NotificationWindowConfig(config);
+        storeWindowViewState(configData);
 
-            int i = 0;
-            for (Notification n : panel.getSelectedItems()) {
-                arr.set(i++, new JSONString(n.getId()));
-            }
-        }
-        obj.put(NotificationWindowConfig.SELECTED_IDS, arr);
+        configData.setSelectedIds(panel.getSelectedItems());
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myNotifyTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myNotifyTag(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.myNotifyTag(), ActionType.DISPLAY_WINDOW);
 

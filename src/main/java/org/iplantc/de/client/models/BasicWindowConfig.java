@@ -1,5 +1,7 @@
 package org.iplantc.de.client.models;
 
+import org.iplantc.core.jsonutil.JsonUtil;
+
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -9,6 +11,7 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public class BasicWindowConfig extends WindowConfig {
+    public static final String ID = "id"; //$NON-NLS-1$
     /**
 	 * 
 	 */
@@ -25,6 +28,10 @@ public class BasicWindowConfig extends WindowConfig {
 
     /** Returns the unique id of the window */
     public String getId() {
-        return get("id"); //$NON-NLS-1$
+        return JsonUtil.getRawValueAsString(get(ID));
+    }
+
+    public void setId(String id) {
+        setString(ID, id);
     }
 }

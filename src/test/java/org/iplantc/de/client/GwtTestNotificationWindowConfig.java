@@ -6,29 +6,36 @@ import org.junit.Test;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.junit.client.GWTTestCase;
 
+@SuppressWarnings("nls")
 public class GwtTestNotificationWindowConfig extends GWTTestCase {
 
     @Test
     public void testNotificationWindowConfigJSONObject() {
         Category category = Category.APPS;
-        String fooParameter = "blah 12345"; // a parameter not used by NotificationWindowConfig that the //$NON-NLS-1$
+        String fooParameter = "blah 12345"; // a parameter not used by NotificationWindowConfig that the
                                             // constructor should still add as a BaseModelObject
                                             // parameter
 
-        String jsonString = "{ \"category\" : \"" + category + "\", \"fooParameter\" : \"" //$NON-NLS-1$ //$NON-NLS-2$
-                + fooParameter + "\" }"; //$NON-NLS-1$
+        String jsonString = "{ \"category\" : \"" + category + "\", \"fooParameter\" : \""
+                + fooParameter + "\" }";
         JSONObject json = JSONParser.parseStrict(jsonString).isObject();
         assertNotNull(json);
+
         NotificationWindowConfig config = new NotificationWindowConfig(json);
         assertEquals(category, config.getCategory());
-        assertEquals(fooParameter, config.get("fooParameter")); //$NON-NLS-1$
+
+        JSONValue jsonFoo = config.get("fooParameter");
+        assertNotNull(jsonFoo);
+        assertNotNull(jsonFoo.isString());
+        assertEquals(fooParameter, jsonFoo.isString().stringValue());
     }
 
     @Override
     public String getModuleName() {
-        return "org.iplantc.de.discoveryenvironment"; //$NON-NLS-1$
+        return "org.iplantc.de.discoveryenvironment";
     }
 
 }

@@ -1,17 +1,20 @@
 package org.iplantc.de.client.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 
 /**
  * WindowConfig for notification windows.
  */
 public class NotificationWindowConfig extends WindowConfig {
-    public static final String CATEGORY = "category";
-    public static final String SELECTED_IDS = "selectedIds";
+    public static final String CATEGORY = "category"; //$NON-NLS-1$
+    public static final String SELECTED_IDS = "selectedIds"; //$NON-NLS-1$
 
     private static final long serialVersionUID = 6533350718698752311L;
 
@@ -23,8 +26,6 @@ public class NotificationWindowConfig extends WindowConfig {
      */
     public NotificationWindowConfig(JSONObject json) {
         super(json);
-        String categoryString = get(CATEGORY); //$NON-NLS-1$
-        set(CATEGORY, Category.fromTypeString(categoryString));
     }
 
     /**
@@ -33,14 +34,23 @@ public class NotificationWindowConfig extends WindowConfig {
      * @return the category
      */
     public Category getCategory() {
-        return get(CATEGORY);
+        return Category.fromTypeString(JsonUtil.getRawValueAsString(get(CATEGORY)));
     }
 
     public JSONArray getSelectedIds() {
-        if (get(SELECTED_IDS) != null && !get(SELECTED_IDS).toString().isEmpty()) {
-            return JSONParser.parseStrict(get(SELECTED_IDS).toString()).isArray();
-        } else {
-            return null;
+        return JsonUtil.getArray(this, SELECTED_IDS);
+    }
+
+    public void setSelectedIds(List<Notification> notifications) {
+        List<String> selectedIds = null;
+
+        if (notifications != null) {
+            selectedIds = new ArrayList<String>();
+            for (Notification n : notifications) {
+                selectedIds.add(n.getId());
+            }
         }
+
+        put(SELECTED_IDS, JsonUtil.buildArrayFromStrings(selectedIds));
     }
 }

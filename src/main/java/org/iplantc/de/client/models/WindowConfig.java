@@ -2,7 +2,6 @@ package org.iplantc.de.client.models;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 
-import com.extjs.gxt.ui.client.data.BaseModelData;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
@@ -14,14 +13,14 @@ import com.google.gwt.json.client.JSONString;
  * @author hariolf, Paul
  * 
  */
-public abstract class WindowConfig extends BaseModelData {
+public abstract class WindowConfig extends JSONObject {
     private static final long serialVersionUID = 3602295075858973528L;
-    public static final String IS_MAXIMIZED = "isMaximized";
-    public static final String IS_MINIMIZED = "isMinimized";
-    public static final String WIN_LEFT = "win_left";
-    public static final String WIN_TOP = "win_top";
-    public static final String WIN_WIDTH = "width";
-    public static final String WIN_HEIGHT = "height";
+    public static final String IS_MAXIMIZED = "isMaximized"; //$NON-NLS-1$
+    public static final String IS_MINIMIZED = "isMinimized"; //$NON-NLS-1$
+    public static final String WIN_LEFT = "win_left"; //$NON-NLS-1$
+    public static final String WIN_TOP = "win_top"; //$NON-NLS-1$
+    public static final String WIN_WIDTH = "width"; //$NON-NLS-1$
+    public static final String WIN_HEIGHT = "height"; //$NON-NLS-1$
 
     /**
      * Constructs a WindowConfig and adds all JSON key/value pairs as BaseModelData parameters.
@@ -29,10 +28,10 @@ public abstract class WindowConfig extends BaseModelData {
      * @param json
      */
     protected WindowConfig(JSONObject json) {
-        for (String key : json.keySet()) {
-            String value = JsonUtil.getRawValueAsString(json.get(key));
-
-            set(key, value);
+        if (json != null) {
+            for (String key : json.keySet()) {
+                put(key, json.get(key));
+            }
         }
     }
 
@@ -46,32 +45,17 @@ public abstract class WindowConfig extends BaseModelData {
         return ""; //$NON-NLS-1$
     }
 
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-
-        for (String key : getPropertyNames()) {
-            String value = get(key);
-            if (value != null) {
-                json.put(key, new JSONString(value));
-            }
-        }
-
-        return json;
-    }
-
     public boolean isWindowMinimized() {
-        if (get(IS_MINIMIZED) != null) {
-            return Boolean.parseBoolean(get(IS_MINIMIZED).toString());
-        }
-
-        return false;
+        return JsonUtil.getBoolean(this, IS_MINIMIZED, false);
     }
 
     public boolean isWindowMaximized() {
-        if (get(IS_MAXIMIZED) != null) {
-            return Boolean.parseBoolean(get(IS_MAXIMIZED).toString());
-        }
+        return JsonUtil.getBoolean(this, IS_MAXIMIZED, false);
+    }
 
-        return false;
+    protected void setString(String key, String value) {
+        if (key != null) {
+            put(key, value == null ? null : new JSONString(value));
+        }
     }
 }

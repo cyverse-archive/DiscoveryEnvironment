@@ -31,7 +31,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -205,13 +204,15 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         public void onSelection(AnalysisSelectEvent event) {
             if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())
                     || Constants.CLIENT.titoTag().equals(event.getSourceTag())) {
-                JSONObject obj = new JSONObject();
+                CatalogWindowConfig config = new CatalogWindowConfig(new JSONObject());
+
                 String cat = (event.getCategoryId() != null && !event.getCategoryId().isEmpty()) ? event
                         .getCategoryId() : WORKSPACE;
-                obj.put(CatalogWindowConfig.APP_ID, new JSONString(event.getAppId()));
-                obj.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(cat));
-                CatalogWindowConfig config = new CatalogWindowConfig(obj);
+                config.setAppId(event.getAppId());
+                config.setCategoryId(cat);
+
                 setWindowConfig(config);
+
                 // deselect the current category before applying new config
                 catPanel.deSelectCurrentCategory();
                 selectConfigData();
@@ -269,18 +270,20 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
+        CatalogWindowConfig configData = new CatalogWindowConfig(config);
+        storeWindowViewState(configData);
+
         if (mainPanel.getSelectedApp() != null) {
-            obj.put(CatalogWindowConfig.APP_ID, new JSONString(mainPanel.getSelectedApp().getId()));
+            configData.setAppId(mainPanel.getSelectedApp().getId());
         }
 
         if (mainPanel.getCurrentCategoryId() != null) {
-            obj.put(CatalogWindowConfig.CATEGORY_ID, new JSONString(mainPanel.getCurrentCategoryId()));
+            configData.setCategoryId(mainPanel.getCurrentCategoryId());
         }
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.deCatalog(), ActionType.DISPLAY_WINDOW);
     }

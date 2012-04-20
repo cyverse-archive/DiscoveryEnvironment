@@ -1,5 +1,6 @@
 package org.iplantc.de.client.models;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 import com.google.gwt.json.client.JSONObject;
@@ -31,7 +32,7 @@ public class CatalogWindowConfig extends BasicWindowConfig {
      * @return
      */
     public String getCategoryId() {
-        return get(CATEGORY_ID);
+        return JsonUtil.getRawValueAsString(get(CATEGORY_ID));
     }
 
     /**
@@ -40,7 +41,7 @@ public class CatalogWindowConfig extends BasicWindowConfig {
      * @param categoryId
      */
     public void setCategoryId(String categoryId) {
-        set(CATEGORY_ID, categoryId);
+        setString(CATEGORY_ID, categoryId);
     }
 
     /**
@@ -49,7 +50,7 @@ public class CatalogWindowConfig extends BasicWindowConfig {
      * @return
      */
     public String getAppId() {
-        return get(APP_ID);
+        return JsonUtil.getRawValueAsString(get(APP_ID));
     }
 
     /**
@@ -58,6 +59,6 @@ public class CatalogWindowConfig extends BasicWindowConfig {
      * @param appId
      */
     public void setAppId(String appId) {
-        set(APP_ID, appId);
+        setString(APP_ID, appId);
     }
 }

@@ -384,10 +384,12 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     @Override
     public JSONObject getWindowState() {
         // Build window config
-        JSONObject obj = super.getWindowViewState();
+        IDropLiteWindowConfig configData = new IDropLiteWindowConfig(config);
+        storeWindowViewState(configData);
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.iDropLiteTag(), ActionType.DISPLAY_WINDOW);
     }

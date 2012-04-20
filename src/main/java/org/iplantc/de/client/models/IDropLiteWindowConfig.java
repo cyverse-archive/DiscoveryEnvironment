@@ -10,7 +10,6 @@ import org.iplantc.de.client.utils.IDropLite;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 
 /**
  * A Window config for the idrop-lite applet window.
@@ -35,8 +34,6 @@ public class IDropLiteWindowConfig extends WindowConfig {
 
     public IDropLiteWindowConfig(JSONObject json) {
         super(json);
-
-        setDownloadPaths(JsonUtil.getArray(json, DOWNLOAD_PATHS));
     }
 
     /**
@@ -44,18 +41,17 @@ public class IDropLiteWindowConfig extends WindowConfig {
      */
     @Override
     public String getTagSuffix() {
-        String suffix = get(TAG_SUFFIX);
-        return suffix == null ? "" : suffix; //$NON-NLS-1$
+        return JsonUtil.getString(this, TAG_SUFFIX);
     }
 
     public int getDisplayMode() {
-        String mode = get(DISPLAY_MODE);
+        Number mode = JsonUtil.getNumber(this, DISPLAY_MODE);
 
-        try {
-            return new Integer(mode);
-        } catch (Exception ignore) {
-            return 0;
+        if (mode != null) {
+            return mode.intValue();
         }
+
+        return 0;
     }
 
     /**
@@ -64,48 +60,33 @@ public class IDropLiteWindowConfig extends WindowConfig {
      * @param mode
      */
     public void setDisplayMode(int mode) {
-        set(DISPLAY_MODE, String.valueOf(mode));
+        put(DISPLAY_MODE, new JSONNumber(mode));
 
         if (mode == IDropLite.DISPLAY_MODE_UPLOAD) {
-            set(TAG_SUFFIX, TAG_SUFFIX_UPLOAD);
+            setString(TAG_SUFFIX, TAG_SUFFIX_UPLOAD);
         } else if (mode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
-            set(TAG_SUFFIX, TAG_SUFFIX_DOWNLOAD);
+            setString(TAG_SUFFIX, TAG_SUFFIX_DOWNLOAD);
         }
     }
 
     public String getUploadDest() {
-        return get(UPLOAD_DEST);
+        return JsonUtil.getRawValueAsString(get(UPLOAD_DEST));
     }
 
     public void setUploadDest(String uploadDest) {
-        set(UPLOAD_DEST, uploadDest);
+        setString(UPLOAD_DEST, uploadDest);
     }
 
     public String getCurrentPath() {
-        return get(MANAGE_DATA_CURRENT_PATH);
+        return JsonUtil.getRawValueAsString(get(MANAGE_DATA_CURRENT_PATH));
     }
 
     public void setCurrentPath(String currentPath) {
-        set(MANAGE_DATA_CURRENT_PATH, currentPath);
+        setString(MANAGE_DATA_CURRENT_PATH, currentPath);
     }
 
     public JSONArray getDownloadPaths() {
-        String paths = get(DOWNLOAD_PATHS);
-
-        try {
-            return JSONParser.parseStrict(paths).isArray();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Stores the JSON array of paths.
-     * 
-     * @param paths
-     */
-    public void setDownloadPaths(JSONArray paths) {
-        set(DOWNLOAD_PATHS, paths == null ? null : paths.toString());
+        return JsonUtil.getArray(this, DOWNLOAD_PATHS);
     }
 
     /**
@@ -115,7 +96,7 @@ public class IDropLiteWindowConfig extends WindowConfig {
      */
     public void setDownloadPaths(List<DiskResource> resources) {
         if (resources == null) {
-            set(DOWNLOAD_PATHS, null);
+            put(DOWNLOAD_PATHS, null);
         } else {
             ArrayList<String> resourceIds = new ArrayList<String>();
 
@@ -123,21 +104,8 @@ public class IDropLiteWindowConfig extends WindowConfig {
                 resourceIds.add(resource.getId());
             }
 
-            setDownloadPaths(JsonUtil.buildArrayFromStrings(resourceIds));
-        }
-    }
-
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = super.toJson();
-
-        json.put(DISPLAY_MODE, new JSONNumber(getDisplayMode()));
-
-        JSONArray downloadPaths = getDownloadPaths();
-        if (downloadPaths != null) {
-            json.put(DOWNLOAD_PATHS, downloadPaths);
+            put(DOWNLOAD_PATHS, JsonUtil.buildArrayFromStrings(resourceIds));
         }
 
-        return json;
     }
 }

@@ -3,9 +3,14 @@
  */
 package org.iplantc.de.client.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uidiskresource.client.models.DiskResource;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 
 /**
  * @author sriram
@@ -22,7 +27,6 @@ public class DataWindowConfig extends BasicWindowConfig {
 
     public DataWindowConfig(JSONObject json) {
         super(json);
-
     }
 
     /**
@@ -31,7 +35,7 @@ public class DataWindowConfig extends BasicWindowConfig {
      * @return
      */
     public String getFolderId() {
-        return get(FOLDER_ID);
+        return JsonUtil.getRawValueAsString(get(FOLDER_ID));
     }
 
     /**
@@ -40,7 +44,7 @@ public class DataWindowConfig extends BasicWindowConfig {
      * @param folderId
      */
     public void setFolderId(String folderId) {
-        set(FOLDER_ID, folderId);
+        setString(FOLDER_ID, folderId);
     }
 
     /**
@@ -48,12 +52,8 @@ public class DataWindowConfig extends BasicWindowConfig {
      * 
      * @return
      */
-    public JSONArray getDiskResourceId() {
-        if (get(DISK_RESOURCE_IDS) != null && !get(DISK_RESOURCE_IDS).toString().isEmpty()) {
-            return JSONParser.parseStrict(get(DISK_RESOURCE_IDS).toString()).isArray();
-        } else {
-            return null;
-        }
+    public JSONArray getDiskResourceIds() {
+        return JsonUtil.getArray(this, DISK_RESOURCE_IDS);
     }
 
     /**
@@ -61,8 +61,17 @@ public class DataWindowConfig extends BasicWindowConfig {
      * 
      * @param appId
      */
-    public void setDiskResourceIds(String diskresourceId) {
-        set(DISK_RESOURCE_IDS, diskresourceId);
+    public void setDiskResourceIds(List<DiskResource> resources) {
+        List<String> diskresourceIds = null;
+
+        if (resources != null) {
+            diskresourceIds = new ArrayList<String>();
+            for (DiskResource resource : resources) {
+                diskresourceIds.add(resource.getId());
+            }
+        }
+
+        put(DISK_RESOURCE_IDS, JsonUtil.buildArrayFromStrings(diskresourceIds));
     }
 
 }

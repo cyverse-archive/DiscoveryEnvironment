@@ -62,7 +62,7 @@ public class PipelineEditorWindow extends IPlantWindow {
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config instanceof PipelineEditorWindowConfig) {
-            this.config = (PipelineEditorWindowConfig)config;
+            this.config = config;
         }
     }
 
@@ -82,13 +82,15 @@ public class PipelineEditorWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
-        obj.put(PipelineEditorWindowConfig.PIPELINE_CONFIG, editorPanel.toJson());
+        PipelineEditorWindowConfig configData = new PipelineEditorWindowConfig(config);
+        storeWindowViewState(configData);
+
+        configData.setPipelineConfig(editorPanel.toJson());
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.pipelineEditorTag(),
-                obj);
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.pipelineEditorTag(),
                 ActionType.DISPLAY_WINDOW);

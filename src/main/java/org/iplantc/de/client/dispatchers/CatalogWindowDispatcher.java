@@ -33,8 +33,7 @@ public class CatalogWindowDispatcher extends WindowDispatcher {
             config.setAppId(selectedAppId);
         }
 
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(),
-                config.toJson());
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.deCatalog(), config);
 
         // Dispatch window display action with this config
         setConfig(windowConfig);

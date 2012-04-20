@@ -106,10 +106,17 @@ public class AboutApplicationWindow extends IPlantWindow {
     @Override
     public JSONObject getWindowState() {
         // Build window config
-        JSONObject obj = super.getWindowViewState();
+        JSONObject configData = config;
+        if (configData == null) {
+            configData = new JSONObject();
+        }
+
+        storeWindowViewState(configData);
+
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+
         return dispatcher.getDispatchJson(Constants.CLIENT.myAboutTag(), ActionType.DISPLAY_WINDOW);
     }
 }

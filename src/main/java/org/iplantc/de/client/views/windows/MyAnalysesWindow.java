@@ -14,7 +14,6 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -119,14 +118,18 @@ public class MyAnalysesWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
+        // Build config data
+        BasicWindowConfig configData = new BasicWindowConfig(config);
+        storeWindowViewState(configData);
+
         if (pnlAnlys.getIdCurrentSelection() != null) {
-            obj.put("id", new JSONString(pnlAnlys.getIdCurrentSelection()));
+            configData.setId(pnlAnlys.getIdCurrentSelection());
         }
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAnalysisTag(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.myAnalysisTag(), ActionType.DISPLAY_WINDOW);
     }

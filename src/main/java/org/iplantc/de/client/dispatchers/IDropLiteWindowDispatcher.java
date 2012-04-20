@@ -34,7 +34,7 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
-                config.toJson());
+                config);
 
         // Dispatch window display action with this config
         setConfig(windowConfig);
@@ -54,7 +54,7 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
-                config.toJson());
+                config);
 
         // Dispatch window display action with this config
         setConfig(windowConfig);

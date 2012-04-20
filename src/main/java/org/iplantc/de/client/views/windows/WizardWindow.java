@@ -42,7 +42,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class WizardWindow extends IPlantWindow {
     private Button btnLaunchJob;
-    private ComponentValueTable tblComponentVals;
+    private final ComponentValueTable tblComponentVals;
 
     private List<HandlerRegistration> handlers;
     private WizardWindowConfig config;
@@ -127,7 +127,7 @@ public class WizardWindow extends IPlantWindow {
 
     private void build() {
         if (config != null) {
-            initWizard(((WizardWindowConfig)config).get(WizardWindowConfig.WIZARD_CONFIG).toString());
+            initWizard(config.getWizardConfig().toString());
         } else {
             TemplateServiceFacade facade = new TemplateServiceFacade();
             facade.getTemplate(tag, new AsyncCallback<String>() {
@@ -247,11 +247,11 @@ public class WizardWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
-        obj.put(WizardWindowConfig.WIZARD_CONFIG,
-                tblComponentVals.getWizardPorpertyGroupContainerAsJson());
+        WizardWindowConfig configData = new WizardWindowConfig(getWindowViewState());
+        configData.setWizardConfig(tblComponentVals.getWizardPorpertyGroupContainerAsJson());
+
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.wizardTag(), ActionType.DISPLAY_WINDOW);
     }

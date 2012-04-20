@@ -498,9 +498,16 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
+        // Build window config
+        JSONObject configData = config;
+        if (configData == null) {
+            configData = new JSONObject();
+        }
+
+        storeWindowViewState(configData);
+
         WindowConfigFactory factory = new WindowConfigFactory();
-        JSONObject config = factory.buildWindowConfig(Constants.CLIENT.dataViewerTag(), obj);
+        JSONObject config = factory.buildWindowConfig(Constants.CLIENT.dataViewerTag(), configData);
         DataContextBuilder builder = new DataContextBuilder();
 
         if (isViewTree) {

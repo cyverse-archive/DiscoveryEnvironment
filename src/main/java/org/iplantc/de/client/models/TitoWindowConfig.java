@@ -25,7 +25,11 @@ public class TitoWindowConfig extends WindowConfig {
      * @return
      */
     public String getView() {
-        return get(VIEW);
+        return JsonUtil.getRawValueAsString(get(VIEW));
+    }
+
+    public void setView(String view) {
+        setString(VIEW, view);
     }
 
     /**
@@ -34,7 +38,7 @@ public class TitoWindowConfig extends WindowConfig {
      * @return
      */
     public String getAppId() {
-        return get(APP_ID);
+        return JsonUtil.getRawValueAsString(get(APP_ID));
     }
 
     /**
@@ -43,7 +47,10 @@ public class TitoWindowConfig extends WindowConfig {
      * @return
      */
     public JSONObject getAppJson() {
-        String json = get(APP_JSON);
-        return JsonUtil.getObject(json);
+        return JsonUtil.getObject(this, APP_JSON);
+    }
+
+    public void setAppJson(JSONObject appJson) {
+        put(APP_JSON, appJson);
     }
 }

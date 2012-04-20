@@ -1,5 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.BasicWindowConfig;
@@ -20,8 +21,8 @@ import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -120,26 +121,34 @@ public abstract class IPlantWindow extends Window {
     }
 
     /**
-     * Returns the windows state information.
+     * Returns the window state information.
      * 
      * @return
      */
     public abstract JSONObject getWindowState();
 
     /**
-     * Returns the windows view state information
+     * Returns the window's view state and config data.
      * 
      * @return
      */
     protected JSONObject getWindowViewState() {
         JSONObject obj = new JSONObject();
+        storeWindowViewState(obj);
+        return obj;
+    }
+
+    protected void storeWindowViewState(JSONObject obj) {
+        if (obj == null) {
+            return;
+        }
+
         obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(maximized));
         obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
-        obj.put(WindowConfig.WIN_LEFT, new JSONString(getAbsoluteLeft() + ""));
-        obj.put(WindowConfig.WIN_TOP, new JSONString(getAbsoluteTop() + ""));
-        obj.put(WindowConfig.WIN_WIDTH, new JSONString(getWidth() + ""));
-        obj.put(WindowConfig.WIN_HEIGHT, new JSONString(getHeight() + ""));
-        return obj;
+        obj.put(WindowConfig.WIN_LEFT, new JSONNumber(getAbsoluteLeft()));
+        obj.put(WindowConfig.WIN_TOP, new JSONNumber(getAbsoluteTop()));
+        obj.put(WindowConfig.WIN_WIDTH, new JSONNumber(getWidth()));
+        obj.put(WindowConfig.WIN_HEIGHT, new JSONNumber(getHeight()));
     }
 
     /**
@@ -163,24 +172,20 @@ public abstract class IPlantWindow extends Window {
     }
 
     private void setWinSize() {
-        if (config != null && config.get(WindowConfig.WIN_WIDTH) != null
-                && !config.get(WindowConfig.WIN_WIDTH).toString().isEmpty()
-                && config.get(WindowConfig.WIN_HEIGHT) != null
-                && !config.get(WindowConfig.WIN_HEIGHT).toString().isEmpty()) {
-            int width = Integer.parseInt(config.get(WindowConfig.WIN_WIDTH).toString());
-            int height = Integer.parseInt(config.get(WindowConfig.WIN_HEIGHT).toString());
-            setSize(width, height);
+        Number width = JsonUtil.getNumber(config, WindowConfig.WIN_WIDTH);
+        Number height = JsonUtil.getNumber(config, WindowConfig.WIN_HEIGHT);
+
+        if (width != null && height != null) {
+            setSize(width.intValue(), height.intValue());
         }
     }
 
     private void setWindowPosition() {
-        if (config != null && config.get(WindowConfig.WIN_LEFT) != null
-                && !config.get(WindowConfig.WIN_LEFT).toString().isEmpty()
-                && config.get(WindowConfig.WIN_TOP) != null
-                && !config.get(WindowConfig.WIN_TOP).toString().isEmpty()) {
-            int left = Integer.parseInt(config.get(WindowConfig.WIN_LEFT).toString());
-            int top = Integer.parseInt(config.get(WindowConfig.WIN_TOP).toString());
-            setPosition(left, top);
+        Number left = JsonUtil.getNumber(config, WindowConfig.WIN_LEFT);
+        Number top = JsonUtil.getNumber(config, WindowConfig.WIN_TOP);
+
+        if (left != null && top != null) {
+            setPosition(left.intValue(), top.intValue());
         }
     }
 
@@ -226,14 +231,14 @@ public abstract class IPlantWindow extends Window {
         btnClose.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnClose.removeStyleName("x-tool-closewindow-hover");
+                btnClose.removeStyleName("x-tool-closewindow-hover"); //$NON-NLS-1$
             }
         });
 
         btnClose.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnClose.addStyleName("x-tool-closewindow-hover");
+                btnClose.addStyleName("x-tool-closewindow-hover"); //$NON-NLS-1$
             }
         });
     }
@@ -257,14 +262,14 @@ public abstract class IPlantWindow extends Window {
         btnMaximize.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnMaximize.addStyleName("x-tool-maximizewindow-hover");
+                btnMaximize.addStyleName("x-tool-maximizewindow-hover"); //$NON-NLS-1$
             }
         });
 
         btnMaximize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnMaximize.removeStyleName("x-tool-maximizewindow-hover");
+                btnMaximize.removeStyleName("x-tool-maximizewindow-hover"); //$NON-NLS-1$
             }
         });
     }
@@ -279,21 +284,21 @@ public abstract class IPlantWindow extends Window {
             @Override
             public void componentSelected(IconButtonEvent ce) {
                 minimize();
-                btnMinimize.removeStyleName("x-tool-minimizewindow-hover");
+                btnMinimize.removeStyleName("x-tool-minimizewindow-hover"); //$NON-NLS-1$
             }
         });
 
         btnMinimize.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnMinimize.addStyleName("x-tool-minimizewindow-hover");
+                btnMinimize.addStyleName("x-tool-minimizewindow-hover"); //$NON-NLS-1$
             }
         });
 
         btnMinimize.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnMinimize.removeStyleName("x-tool-minimizewindow-hover");
+                btnMinimize.removeStyleName("x-tool-minimizewindow-hover"); //$NON-NLS-1$
             }
         });
     }
@@ -314,14 +319,14 @@ public abstract class IPlantWindow extends Window {
         btnRestore.addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnRestore.addStyleName("x-tool-restorewindow-hover");
+                btnRestore.addStyleName("x-tool-restorewindow-hover"); //$NON-NLS-1$
             }
         });
 
         btnRestore.addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                btnRestore.removeStyleName("x-tool-restorewindow-hover");
+                btnRestore.removeStyleName("x-tool-restorewindow-hover"); //$NON-NLS-1$
             }
         });
 
@@ -331,6 +336,7 @@ public abstract class IPlantWindow extends Window {
     private void addDoubleClickMaximize() {
         getHeader().sinkEvents(Events.OnDoubleClick.getEventCode());
         getHeader().addListener(Events.OnDoubleClick, new Listener<ComponentEvent>() {
+            @Override
             public void handleEvent(ComponentEvent be) {
                 if (!maximized) {
                     maximizeWindow();

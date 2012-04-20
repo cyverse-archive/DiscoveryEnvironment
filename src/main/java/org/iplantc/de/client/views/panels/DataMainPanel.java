@@ -397,8 +397,8 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
     /**
      * @param selectedResource the selectedResource to set
      */
-    public void setSelectedResource(List<String> selectedResourceId) {
-        this.selectedResourceIds = selectedResourceId;
+    public void setSelectedResource(List<String> selectedResourceIds) {
+        this.selectedResourceIds = selectedResourceIds;
     }
 
     private class DiskResourceSelectedEventHandlerImpl implements DiskResourceSelectedEventHandler {

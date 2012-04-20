@@ -8,7 +8,6 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
@@ -34,7 +33,6 @@ import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -186,7 +184,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         }
 
         List<String> selectedIds = JsonUtil.buildStringList(((DataWindowConfig)config)
-                .getDiskResourceId());
+                .getDiskResourceIds());
         pnlMain.setSelectedResource(selectedIds);
 
         String path = ((DataWindowConfig)config).getFolderId();
@@ -413,28 +411,20 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
-        if (pnlNavigation.getSelectedItem() != null) {
-            if (pnlNavigation.getSelectedItem().getId() != null) {
-                obj.put(DataWindowConfig.FOLDER_ID, new JSONString(pnlNavigation.getSelectedItem()
-                        .getId()));
-            }
+        // Build config data
+        DataWindowConfig configData = new DataWindowConfig(config);
+        storeWindowViewState(configData);
+
+        if (pnlNavigation.getSelectedItem() != null && pnlNavigation.getSelectedItem().getId() != null) {
+            configData.setFolderId(pnlNavigation.getSelectedItem().getId());
         }
 
-        JSONArray arr = new JSONArray();
-        if (pnlMain.getSelectedItems().size() > 0) {
-
-            int i = 0;
-            for (DiskResource dr : pnlMain.getSelectedItems()) {
-                arr.set(i++, new JSONString(dr.getId()));
-            }
-        }
-
-        obj.put(DataWindowConfig.DISK_RESOURCE_IDS, arr);
+        configData.setDiskResourceIds(pnlMain.getSelectedItems());
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myDataTag(), obj);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myDataTag(),
+                configData);
 
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.myDataTag(), ActionType.DISPLAY_WINDOW);

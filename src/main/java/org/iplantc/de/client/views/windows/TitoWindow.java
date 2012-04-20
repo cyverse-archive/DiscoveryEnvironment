@@ -22,7 +22,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -189,11 +188,14 @@ public class TitoWindow extends IPlantWindow {
 
     @Override
     public JSONObject getWindowState() {
-        JSONObject obj = super.getWindowViewState();
-        obj.put(TitoWindowConfig.VIEW, new JSONString(TitoWindowConfig.VIEW_APP_EDIT_FROM_JSON));
-        obj.put(TitoWindowConfig.APP_JSON, tito.getTitoConfig());
+        TitoWindowConfig configData = new TitoWindowConfig(getWindowViewState());
+
+        configData.setView(TitoWindowConfig.VIEW_APP_EDIT_FROM_JSON);
+        configData.setAppJson(tito.getTitoConfig());
+
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.titoTag(), obj);
+        JSONObject windowConfig = configFactory
+                .buildWindowConfig(Constants.CLIENT.titoTag(), configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.titoTag(), ActionType.DISPLAY_WINDOW);
     }

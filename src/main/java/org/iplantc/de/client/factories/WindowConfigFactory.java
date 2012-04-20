@@ -7,8 +7,8 @@ import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
-import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.PipelineEditorWindowConfig;
+import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
 
@@ -36,11 +36,11 @@ public class WindowConfigFactory {
             String type = JsonUtil.getString(objConfig, "type"); //$NON-NLS-1$
 
             // notification window config
-            if (type.equals(Constants.CLIENT.myNotifyTag())) { //$NON-NLS-1$
+            if (type.equals(Constants.CLIENT.myNotifyTag())) {
                 ret = new NotificationWindowConfig(objData);
-            } else if (type.equals(Constants.CLIENT.myAnalysisTag())) { //$NON-NLS-1$
+            } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
                 ret = new BasicWindowConfig(objData);
-            } else if (type.equals(Constants.CLIENT.myDataTag())) { //$NON-NLS-1$
+            } else if (type.equals(Constants.CLIENT.myDataTag())) {
                 ret = new DataWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new CatalogWindowConfig(objData);
