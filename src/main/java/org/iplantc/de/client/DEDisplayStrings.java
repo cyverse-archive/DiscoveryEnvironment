@@ -416,20 +416,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String launchingJob();
 
     /**
-     * Localized display text for button text.
-     * 
-     * @return a string representing the localized text.
-     */
-    String updateFundingAgencies();
-
-    /**
-     * Localized display text for when there are no funding agencies to display.
-     * 
-     * @return a string representing the localized text.
-     */
-    String noFundingAgencies();
-
-    /**
      * The title of the logout message window.
      * 
      * @return a string representing the localized text.
@@ -527,13 +513,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String selectFileType();
-
-    /**
-     * Localized display text for button text.
-     * 
-     * @return a string representing the localized text.
-     */
-    String deleteFundingAgencies();
 
     /**
      * Display text for select items menu item.
