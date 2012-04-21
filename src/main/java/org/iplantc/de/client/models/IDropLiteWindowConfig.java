@@ -32,7 +32,7 @@ public class IDropLiteWindowConfig extends WindowConfig {
     public static String TAG_SUFFIX_DOWNLOAD = "_download"; //$NON-NLS-1$
 
     public IDropLiteWindowConfig() {
-        super(new JSONObject());
+        super();
     }
 
     public IDropLiteWindowConfig(JSONObject json) {

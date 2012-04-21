@@ -16,7 +16,7 @@ public class SimpleDownloadWindowConfig extends WindowConfig {
     public static String DOWNLOAD_PATHS = "paths"; //$NON-NLS-1$
 
     public SimpleDownloadWindowConfig() {
-        super(null);
+        super();
     }
 
     public SimpleDownloadWindowConfig(JSONObject json) {
