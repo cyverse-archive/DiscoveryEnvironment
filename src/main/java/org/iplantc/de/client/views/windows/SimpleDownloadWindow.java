@@ -16,6 +16,7 @@ import org.iplantc.de.client.services.FolderServiceFacade;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -49,8 +50,11 @@ public class SimpleDownloadWindow extends IPlantWindow {
 
         // Add window contents container for the simple download links
         contents = new LayoutContainer();
+
+        // TODO use a CSS class instead of hard-coding?
         contents.setStyleAttribute("padding", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
 
+        add(new Label(I18N.DISPLAY.simpleDownloadNotice()));
         add(contents);
     }
 

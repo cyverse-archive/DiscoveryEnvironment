@@ -104,7 +104,7 @@ public class DataActionsPanel extends ContentPanel {
                 ret = new SimpleDownloadListenerImpl();
                 break;
 
-            case Download:
+            case BulkDownload:
                 ret = new DownloadListenerImpl();
                 break;
 

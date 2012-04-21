@@ -171,34 +171,36 @@ public class GwtTestDataUtils extends GWTTestCase {
     public void testSupportedActions() {
         List<Action> actions = DataUtils.getSupportedActions(buildSingleFileList());
         assertTrue(actions.contains(Action.Delete));
-        assertTrue(actions.contains(Action.Download));
+        assertTrue(actions.contains(Action.SimpleDownload));
+        assertTrue(actions.contains(Action.BulkDownload));
         assertTrue(actions.contains(Action.RenameFile));
         assertTrue(actions.contains(Action.View));
         assertTrue(actions.contains(Action.ViewTree));
         assertTrue(actions.contains(Action.Metadata));
-        assertEquals(6, actions.size());
+        assertEquals(7, actions.size());
 
         actions = DataUtils.getSupportedActions(buildSingleFolderList());
         assertTrue(actions.contains(Action.Delete));
-        assertTrue(actions.contains(Action.Download));
+        assertTrue(actions.contains(Action.BulkDownload));
         assertTrue(actions.contains(Action.RenameFolder));
         assertTrue(actions.contains(Action.Metadata));
         assertEquals(4, actions.size());
 
         actions = DataUtils.getSupportedActions(buildFileFolderList());
         assertTrue(actions.contains(Action.Delete));
-        assertTrue(actions.contains(Action.Download));
+        assertTrue(actions.contains(Action.BulkDownload));
         assertEquals(2, actions.size());
 
         actions = DataUtils.getSupportedActions(buildMixedPermissionsFilesList());
         assertTrue(actions.contains(Action.Delete));
-        assertTrue(actions.contains(Action.Download));
+        assertTrue(actions.contains(Action.SimpleDownload));
+        assertTrue(actions.contains(Action.BulkDownload));
         assertTrue(actions.contains(Action.View));
-        assertEquals(3, actions.size());
+        assertEquals(4, actions.size());
 
         actions = DataUtils.getSupportedActions(buildReadOnlyFolderList());
         assertTrue(actions.contains(Action.Delete));
-        assertTrue(actions.contains(Action.Download));
+        assertTrue(actions.contains(Action.BulkDownload));
         assertEquals(2, actions.size());
     }
 

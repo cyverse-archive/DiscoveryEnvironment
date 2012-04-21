@@ -19,7 +19,7 @@ public class DataUtils {
         View(I18N.DISPLAY.view()),
         ViewTree(I18N.DISPLAY.viewTreeViewer()),
         SimpleDownload(I18N.DISPLAY.simpleDownload()),
-        Download(I18N.DISPLAY.download()),
+        BulkDownload(I18N.DISPLAY.bulkDownload()),
         Metadata(I18N.DISPLAY.metadata());
 
         private final String displayText;
@@ -75,7 +75,7 @@ public class DataUtils {
                     }
                 }
 
-                ret.add(Action.Download);
+                ret.add(Action.BulkDownload);
                 ret.add(Action.Delete);
             }
         }

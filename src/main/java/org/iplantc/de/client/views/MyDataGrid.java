@@ -16,6 +16,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
+import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.images.Resources;
@@ -93,7 +94,8 @@ public class MyDataGrid extends Grid<DiskResource> {
     private MenuItem itemRenameResource;
     private MenuItem itemViewResource;
     private MenuItem itemViewTree;
-    private MenuItem itemDownloadResource;
+    private MenuItem itemSimpleDownloadResource;
+    private MenuItem itemBulkDownloadResource;
     private MenuItem itemDeleteResource;
     private MenuItem itemMetaData;
 
@@ -177,10 +179,15 @@ public class MyDataGrid extends Grid<DiskResource> {
         itemViewTree.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
         itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
 
-        itemDownloadResource = new MenuItem();
-        itemDownloadResource.setText(I18N.DISPLAY.download());
-        itemDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemDownloadResource.addSelectionListener(new DownloadListenerImpl());
+        itemSimpleDownloadResource = new MenuItem();
+        itemSimpleDownloadResource.setText(I18N.DISPLAY.simpleDownload());
+        itemSimpleDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
+        itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
+
+        itemBulkDownloadResource = new MenuItem();
+        itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
+        itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
+        itemBulkDownloadResource.addSelectionListener(new BulkDownloadListenerImpl());
 
         itemDeleteResource = new MenuItem();
         itemDeleteResource.setText(I18N.DISPLAY.delete());
@@ -196,9 +203,11 @@ public class MyDataGrid extends Grid<DiskResource> {
         actionMenu.add(itemRenameResource);
         actionMenu.add(itemViewResource);
         actionMenu.add(itemViewTree);
-        actionMenu.add(itemDownloadResource);
+        actionMenu.add(itemSimpleDownloadResource);
+        actionMenu.add(itemBulkDownloadResource);
         actionMenu.add(itemDeleteResource);
         actionMenu.add(itemMetaData);
+
         return actionMenu;
     }
 
@@ -255,9 +264,14 @@ public class MyDataGrid extends Grid<DiskResource> {
                         itemViewTree.show();
                         break;
 
-                    case Download:
-                        itemDownloadResource.enable();
-                        itemDownloadResource.show();
+                    case SimpleDownload:
+                        itemSimpleDownloadResource.enable();
+                        itemSimpleDownloadResource.show();
+                        break;
+
+                    case BulkDownload:
+                        itemBulkDownloadResource.enable();
+                        itemBulkDownloadResource.show();
                         break;
 
                     case Delete:
@@ -550,7 +564,7 @@ public class MyDataGrid extends Grid<DiskResource> {
             final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
 
             MetadataEditorDialog d = new MetadataEditorDialog(
-                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep);
+                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep); //$NON-NLS-1$
 
             d.setSize(500, 300);
             d.setResizable(false);
@@ -558,7 +572,43 @@ public class MyDataGrid extends Grid<DiskResource> {
         }
     }
 
-    private class DownloadListenerImpl extends SelectionListener<MenuEvent> {
+    private class SimpleDownloadListenerImpl extends SelectionListener<MenuEvent> {
+        @Override
+        public void componentSelected(MenuEvent ce) {
+
+            List<DiskResource> resources = getSelectionModel().getSelectedItems();
+
+            if (DataUtils.isDownloadable(resources)) {
+                if (resources.size() == 1) {
+                    downloadNow(resources.get(0).getId());
+                } else {
+                    launchDownloadWindow(resources);
+                }
+            } else {
+                showErrorMsg();
+            }
+        }
+
+        private void downloadNow(String path) {
+            FolderServiceFacade service = new FolderServiceFacade();
+            service.simpleDownload(path);
+        }
+
+        private void launchDownloadWindow(List<DiskResource> resources) {
+            List<String> paths = new ArrayList<String>();
+
+            for (DiskResource resource : resources) {
+                if (resource instanceof File) {
+                    paths.add(resource.getId());
+                }
+            }
+
+            SimpleDownloadWindowDispatcher dispatcher = new SimpleDownloadWindowDispatcher();
+            dispatcher.launchDownloadWindow(paths);
+        }
+    }
+
+    private class BulkDownloadListenerImpl extends SelectionListener<MenuEvent> {
         @Override
         public void componentSelected(MenuEvent ce) {
 

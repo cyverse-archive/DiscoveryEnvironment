@@ -1173,9 +1173,23 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String loadingSessionWaitNotice();
 
     /**
+     * Localized display text for bulk download actions.
+     * 
+     * @return a string representing the localized text.
+     */
+    String bulkDownload();
+
+    /**
      * Localized display text for simple download actions.
      * 
      * @return a string representing the localized text.
      */
     String simpleDownload();
+
+    /**
+     * Localized display text for simple download window instructions.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleDownloadNotice();
 }
