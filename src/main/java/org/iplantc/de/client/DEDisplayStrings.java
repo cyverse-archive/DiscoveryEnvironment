@@ -31,13 +31,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadMaxSizeWarning();
 
     /**
-     * Localized display text for an upload label.
-     * 
-     * @return a string representing the localized text.
-     */
-    String uploadFromDesktop();
-
-    /**
      * Localized display text for download buttons.
      * 
      * @return a string representing the localized text.
@@ -1042,4 +1035,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String simpleDownloadNotice();
+
+    /**
+     * Localized display text for a bulk upload label.
+     * 
+     * @return a string representing the localized text.
+     */
+    String bulkUploadFromDesktop();
+
+    /**
+     * Localized display text for a simple upload label.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleUploadFromDesktop();
 }
