@@ -366,83 +366,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String logoutMessageText(String logoutUrl);
 
     /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String authorAttributed();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String acceptedFamily();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String genusMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String epithetMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String authorMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String annotation();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String scientificName();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String unmatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String overallMatch();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String more();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String select();
-
-    /**
      * The file type selection field in File Upload dialog
      * 
      * @return a string representing the localized text.
@@ -513,14 +436,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a String representing the text.
      */
     String endDate();
-
-    /**
-     * Header text for TNRS details dialog.
-     * 
-     * @param name name to be displayed.
-     * @return a String representing the text.
-     */
-    String tnrsDetailsDlgCaption(String name);
 
     /**
      * The text to display when we're unable to retrieve the list of results for the user.
