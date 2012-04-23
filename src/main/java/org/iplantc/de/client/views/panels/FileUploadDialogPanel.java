@@ -54,11 +54,11 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class FileUploadDialogPanel extends IPlantDialogPanel {
-    private static final String ID_WRAP = "idWrap";
+    private static final String ID_WRAP = "idWrap"; //$NON-NLS-1$
 
-    private static final String ID_FILE_UPLD = "idFileUpld";
+    private static final String ID_FILE_UPLD = "idFileUpld"; //$NON-NLS-1$
 
-    private static final String ID_BTN_RESET = "idBtnReset";
+    private static final String ID_BTN_RESET = "idBtnReset"; //$NON-NLS-1$
 
     private static final int FIELD_WIDTH = 475;
 
@@ -81,7 +81,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     private final MODE mode;
 
     public static enum MODE {
-        URL_ONLY, FILE_AND_URL
+        URL_ONLY, FILE_ONLY, FILE_AND_URL
     };
 
     /**
@@ -138,7 +138,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             form.add(hdn);
         }
 
-        if (mode.equals(MODE.FILE_AND_URL)) {
+        if (mode != MODE.URL_ONLY) {
             // then add the visual widgets
             form.add(new HTML(I18N.DISPLAY.fileUploadMaxSizeWarning()));
             for (int i = 0; i < MAX_UPLOADS; i++) {
@@ -148,13 +148,18 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             }
         }
 
-        form.add(new HTML("<br/>"));
-        form.add(new HTML(I18N.DISPLAY.urlPrompt()));
+        if (mode == MODE.FILE_AND_URL) {
+            form.add(new HTML("<br/>")); //$NON-NLS-1$
+        }
 
-        for (int i = 0; i < MAX_UPLOADS; i++) {
-            TextArea url = buildUrlField();
-            urls.add(url);
-            form.add(url);
+        if (mode != MODE.FILE_ONLY) {
+            form.add(new HTML(I18N.DISPLAY.urlPrompt()));
+
+            for (int i = 0; i < MAX_UPLOADS; i++) {
+                TextArea url = buildUrlField();
+                urls.add(url);
+                form.add(url);
+            }
         }
     }
 
@@ -215,7 +220,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         wrapper.setId(ID_WRAP + index);
         FileUploadField ret = new FileUploadField();
         ret.setId(ID_FILE_UPLD + index);
-        ret.setName("file");
+        ret.setName("file"); //$NON-NLS-1$
         ret.addListener(Events.Valid, new Listener<FieldEvent>() {
 
             @Override
@@ -237,7 +242,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         ret.setWidth(275);
 
         wrapper.add(ret);
-        wrapper.add(new Html("&nbsp;&nbsp;&nbsp;"));
+        wrapper.add(new Html("&nbsp;&nbsp;&nbsp;")); //$NON-NLS-1$
         wrapper.add(buildResetButton(ret));
 
         return wrapper;
@@ -280,7 +285,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
             // check for duplicate files already on the server, excluding any invalid upload fields
             final FastMap<TextField<String>> destResourceMap = new FastMap<TextField<String>>();
-            if (mode.equals(MODE.FILE_AND_URL)) {
+            if (mode != MODE.URL_ONLY) {
                 for (FileUploadField uploadField : fupload) {
                     // Remove any path from the filename.
                     if (uploadField.getValue() != null) {
@@ -294,16 +299,18 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                 }
             }
 
-            for (TextArea urlField : urls) {
-                String url = urlField.getValue();
-                boolean validUrl = isValidFilename(url);
+            if (mode != MODE.FILE_ONLY) {
+                for (TextArea urlField : urls) {
+                    String url = urlField.getValue();
+                    boolean validUrl = isValidFilename(url);
 
-                urlField.setEnabled(validUrl);
+                    urlField.setEnabled(validUrl);
 
-                if (validUrl) {
-                    urlField.setValue(url.trim());
-                    destResourceMap.put(buildResourceId(DiskResourceUtil.parseNameFromPath(url)),
-                            urlField);
+                    if (validUrl) {
+                        urlField.setValue(url.trim());
+                        destResourceMap.put(buildResourceId(DiskResourceUtil.parseNameFromPath(url)),
+                                urlField);
+                    }
                 }
             }
 
@@ -323,7 +330,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
     }
 
     private boolean isValidUploadForm() {
-        if (mode.equals(MODE.FILE_AND_URL)) {
+        if (mode != MODE.URL_ONLY) {
             for (FileUploadField uploadField : fupload) {
                 String filename = uploadField.getValue();
                 if (isValidFilename(filename)) {
@@ -332,9 +339,11 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             }
         }
 
-        for (TextArea urlField : urls) {
-            if (isValidFilename(urlField.getValue())) {
-                return true;
+        if (mode != MODE.FILE_ONLY) {
+            for (TextArea urlField : urls) {
+                if (isValidFilename(urlField.getValue())) {
+                    return true;
+                }
             }
         }
 
@@ -377,7 +386,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
     private final class CheckDuplicatesCallback extends DiskResouceDuplicatesCheckCallback {
 
-        private FastMap<TextField<String>> destResourceMap;
+        private final FastMap<TextField<String>> destResourceMap;
 
         public CheckDuplicatesCallback(List<String> diskResourceIds,
                 FastMap<TextField<String>> destResourceMap) {
@@ -393,10 +402,10 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                     Field f = destResourceMap.get(buildResourceId(id));
                     f.markInvalid(I18N.ERROR.fileExist());
                 }
-                fileStatus.clearStatus("");
+                fileStatus.clearStatus(""); //$NON-NLS-1$
                 return;
             } else {
-                if (mode.equals(MODE.FILE_AND_URL)) {
+                if (mode != MODE.URL_ONLY) {
                     for (int i = 0; i < MAX_UPLOADS; i++) {
                         if (!isValidFilename(fupload.get(i).getValue())) {
                             form.remove(form.getItemByItemId(ID_WRAP + i));

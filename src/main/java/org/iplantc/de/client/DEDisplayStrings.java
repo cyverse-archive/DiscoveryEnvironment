@@ -31,20 +31,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadMaxSizeWarning();
 
     /**
-     * Localized display text.
-     * 
-     * @return a string representing the localized text for upload date/time column headers.
-     */
-    String uploadedDateTime();
-
-    /**
-     * Localized display text for prompting the user to upload.
-     * 
-     * @return a string representing the localized text.
-     */
-    String uploadYourData();
-
-    /**
      * Localized display text for download buttons.
      * 
      * @return a string representing the localized text.
@@ -94,13 +80,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String jobname();
 
     /**
-     * Localized display text used as a caption in Tree Reconciliation.
-     * 
-     * @return a string representing the localized text.
-     */
-    String filterSearchString();
-
-    /**
      * Localized display text used for both the My Data window caption and shortcut.
      * 
      * @return a string representing the localized text.
@@ -143,62 +122,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String folderDeleteWarning();
 
     /**
-     * Localized display text used as a tab header in the viewer.
-     * 
-     * @return a string representing the localized text.
-     */
-    String trait();
-
-    /**
-     * Localized display text used as a tab caption in the viewer.
-     * 
-     * @return a string representing the localized text.
-     */
-    String tree();
-
-    /**
-     * Localized display text used in the import menu.
-     * 
-     * @return a string representing the localized text.
-     */
-    String phylota();
-
-    /**
-     * Localized display text used as a heading in the Import from Phylota dialog.
-     * 
-     * @return a string representing the localized text.
-     */
-    String importPhylota();
-
-    /**
      * Localized text for display when asking for search information from the user.
      * 
      * @return a string representing the localized text.
      */
     String search();
-
-    /**
-     * Localized text for display as a field label for taxon names.
-     * 
-     * @return a string representing the localized text.
-     */
-    String taxonName();
-
-    /**
-     * Localized text for display as a column header for clusters.
-     * 
-     * A cluster is a phylogenetic concept to communicate relatedness.
-     * 
-     * @return a string representing the localized text.
-     */
-    String cluster();
-
-    /**
-     * Localized text for display as a column header for taxonomic identifiers.
-     * 
-     * @return a string representing the localized text.
-     */
-    String taxonId();
 
     /**
      * Localized text for display as the title of the web application.
@@ -431,83 +359,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String logoutMessageText(String logoutUrl);
 
     /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String authorAttributed();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String acceptedFamily();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String genusMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String epithetMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String authorMatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String annotation();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String scientificName();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String unmatched();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String overallMatch();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String more();
-
-    /**
-     * The TNRS editor column header.
-     * 
-     * @return a string representing the localized text.
-     */
-    String select();
-
-    /**
      * The file type selection field in File Upload dialog
      * 
      * @return a string representing the localized text.
@@ -578,14 +429,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a String representing the text.
      */
     String endDate();
-
-    /**
-     * Header text for TNRS details dialog.
-     * 
-     * @param name name to be displayed.
-     * @return a String representing the text.
-     */
-    String tnrsDetailsDlgCaption(String name);
 
     /**
      * The text to display when we're unable to retrieve the list of results for the user.
@@ -1199,4 +1042,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String rememberFileSectorPath();
+
+    /**
+     * Localized display text for a bulk upload label.
+     * 
+     * @return a string representing the localized text.
+     */
+    String bulkUploadFromDesktop();
+
+    /**
+     * Localized display text for a simple upload label.
+     * 
+     * @return a string representing the localized text.
+     */
+    String simpleUploadFromDesktop();
 }
