@@ -166,7 +166,7 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptSimpleUpload() {
-        promptUploadImportForm(FileUploadDialogPanel.MODE.FILE_AND_URL);
+        promptUploadImportForm(FileUploadDialogPanel.MODE.FILE_ONLY);
     }
 
     private void promptUrlImport() {
