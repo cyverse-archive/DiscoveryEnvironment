@@ -8,6 +8,7 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
@@ -61,7 +62,6 @@ public class JobLaunchDialog extends Dialog {
     private TextField<String> fieldName;
     private TextArea areaDescription;
     private CheckBox chkDebug;
-    private CheckBox chkNotify;
     private final String COLON = ":"; //$NON-NLS-1$
     private FolderSelector folderSelector;
     private static UserInfo uinfo = UserInfo.getInstance();
@@ -133,12 +133,6 @@ public class JobLaunchDialog extends Dialog {
         chkDebug = new CheckBox();
         chkDebug.setId("idChkDebug");
         chkDebug.setValue(false);
-    }
-
-    private void initNotifyField() {
-        chkNotify = new CheckBox();
-        chkNotify.setId("idChkNotify");
-        chkNotify.setValue(true);
     }
 
     private VerticalPanel buildNameEntry() {
@@ -374,7 +368,7 @@ public class JobLaunchDialog extends Dialog {
         tblComponentVals.setName(fieldName.getValue());
         tblComponentVals.setDescription(JsonUtil.escapeNewLine(areaDescription.getValue()));
         tblComponentVals.setDebugEnabled(chkDebug.getValue());
-        tblComponentVals.setNotifyEnabled(chkNotify.getValue());
+        tblComponentVals.setNotifyEnabled(UserSettings.getInstance().isEnableEmailNotification());
 
         String selectedFolderId = (folderSelector.getSelectedFolderId() != null && !folderSelector
                 .getSelectedFolderId().isEmpty()) ? folderSelector.getSelectedFolderId()
@@ -411,25 +405,9 @@ public class JobLaunchDialog extends Dialog {
         panelOuter.add(buildNameEntry());
         panelOuter.add(buildDescriptionEntry());
         panelOuter.add(buildDestinationFolderEntry());
-        panelOuter.add(buildNotifyEntry());
         panelOuter.add(buildDebugEntry());
 
         add(panelOuter);
-    }
-
-    private HorizontalPanel buildNotifyEntry() {
-        HorizontalPanel ret = new HorizontalPanel();
-        ret.setSpacing(5);
-
-        TableData td = new TableData();
-        td.setHorizontalAlign(HorizontalAlignment.LEFT);
-
-        initNotifyField();
-
-        ret.add(chkNotify, td);
-        ret.add(new Html(I18N.DISPLAY.notifyemail()), td);
-
-        return ret;
     }
 
     private HorizontalPanel buildDebugEntry() {

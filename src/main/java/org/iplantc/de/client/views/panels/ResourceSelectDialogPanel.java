@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
@@ -118,7 +119,18 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
             txtResourceName.setValue(selectedResource.getName());
             select(selectedResource);
         } else {
-            selectFolder(folderId);
+            if (folderId != null) {
+                selectFolder(folderId);
+            } else {
+                // if not refresh and currently nothing was selected and remember path is enabled, the go
+                // back to last back
+                UserSettings instance = UserSettings.getInstance();
+                String id = instance.getDefaultFileSelectorPath();
+                boolean remember = instance.isRememberLastPath();
+                if (remember && id != null && !id.isEmpty()) {
+                    selectFolder(id);
+                }
+            }
         }
 
     }
@@ -274,6 +286,19 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
      */
     public void setCurrentFolderId(String currentFolderId) {
         this.currentFolderId = currentFolderId;
+    }
+
+    /**
+     * Get the current path to which user has naivated in the nav panel
+     * 
+     * @return String id of the path to which user has navigated
+     */
+    public String getCurrentNavPath() {
+        if (pnlNavigation != null && pnlNavigation.getSelectedItem() != null) {
+            return pnlNavigation.getSelectedItem().getId();
+        } else {
+            return null;
+        }
     }
 
     /**

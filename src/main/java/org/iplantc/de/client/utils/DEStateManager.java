@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
@@ -36,6 +37,7 @@ public class DEStateManager {
 
     public static final String ACTIVE_WINDOWS = "active_windows";
     public static final String NOTIFI_COUNT = "notification_count";
+    public static final String PREFERENCES = "preferences";
 
     private DEStateManager() {
         start();
@@ -90,35 +92,34 @@ public class DEStateManager {
         JSONObject obj = new JSONObject();
         obj.put(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
         obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
+        obj.put(PREFERENCES, UserSettings.getInstance().toJson());
 
-        if (obj != null) {
-            final byte[] tempHash = JsonUtil.generateHash(obj.toString());
-            if (ByteArrayComparer.arraysEqual(hash, tempHash)) {
-                return;
-            } else {
-                UserSessionServiceFacade session = new UserSessionServiceFacade();
-                session.saveUserSession(obj, new AsyncCallback<String>() {
+        final byte[] tempHash = JsonUtil.generateHash(obj.toString());
+        if (ByteArrayComparer.arraysEqual(hash, tempHash)) {
+            return;
+        } else {
+            UserSessionServiceFacade session = new UserSessionServiceFacade();
+            session.saveUserSession(obj, new AsyncCallback<String>() {
 
-                    @Override
-                    public void onSuccess(String result) {
-                        if (callback != null) {
-                            callback.execute();
-                        }
-                        savingMask.close();
-                        // update hash
-                        hash = tempHash;
+                @Override
+                public void onSuccess(String result) {
+                    if (callback != null) {
+                        callback.execute();
                     }
+                    savingMask.close();
+                    // update hash
+                    hash = tempHash;
+                }
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        GWT.log(I18N.ERROR.saveSessionFailed(), caught);
-                        if (callback != null) {
-                            callback.execute();
-                        }
-                        savingMask.close();
+                @Override
+                public void onFailure(Throwable caught) {
+                    GWT.log(I18N.ERROR.saveSessionFailed(), caught);
+                    if (callback != null) {
+                        callback.execute();
                     }
-                });
-            }
+                    savingMask.close();
+                }
+            });
         }
     }
 
@@ -147,9 +148,15 @@ public class DEStateManager {
                 JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
                 restoreWindows(win_states);
                 restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
+                loadPrerences(obj);
                 loadingMask.close();
             }
+
         });
+    }
+
+    private void loadPrerences(JSONObject obj) {
+        UserSettings.getInstance().setValues(JsonUtil.getObject(obj, PREFERENCES));
     }
 
     private void restoreNotificationCountStatus(JSONObject obj) {

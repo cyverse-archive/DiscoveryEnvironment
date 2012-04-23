@@ -322,7 +322,7 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String newsLetterSubscribe();
 
     /**
-     * Localized text for display as a label for a checkbox group asking about a user's subscriptions.
+     * Localized text for display as a hyperlink for user's preferences.
      * 
      * @return a string representing the localized text.
      */
@@ -1192,4 +1192,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String simpleDownloadNotice();
+
+    /**
+     * Localized display text for prompting user for remember file selector path
+     * 
+     * @return a string representing the localized text.
+     */
+    String rememberFileSectorPath();
 }

@@ -32,7 +32,7 @@ public class FileSelector extends DiskResourceSelector implements IFileSelector 
      * @param cmdChange command to fire.
      * @param tag tag to this widget
      */
-    public FileSelector(Command cmdChange, String tag) {
+    public FileSelector(final Command cmdChange, String tag) {
         super(cmdChange, tag);
     }
 
@@ -46,13 +46,7 @@ public class FileSelector extends DiskResourceSelector implements IFileSelector 
         dlgFileSelect.addOkClickHandler(new DialogOkClickHandler() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-                setSelectedFile(dlgFileSelect.getSelectedFile());
-                setCurrentFolderId(dlgFileSelect.getCurrentFolder());
-                txtResourceName.setValue(getSelectedResourceName());
-
-                if (cmdChange != null) {
-                    cmdChange.execute();
-                }
+                doSelection(dlgFileSelect.getSelectedFile(), dlgFileSelect.getCurrentFolder());
             }
         });
 
@@ -101,6 +95,16 @@ public class FileSelector extends DiskResourceSelector implements IFileSelector 
     @Override
     public void displayFilename(String name) {
         super.displayResourceName(name);
+    }
+
+    private void doSelection(File f, String currentFolderId) {
+        setSelectedFile(f);
+        setCurrentFolderId(currentFolderId);
+        txtResourceName.setValue(getSelectedResourceName());
+
+        if (cmdChange != null) {
+            cmdChange.execute();
+        }
     }
 
 }

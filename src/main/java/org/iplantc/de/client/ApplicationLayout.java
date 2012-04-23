@@ -14,6 +14,7 @@ import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.views.dialogs.UserSettingsDialog;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -28,6 +29,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
@@ -63,6 +65,9 @@ public class ApplicationLayout extends Viewport {
     private NotificationLabel lblNotificationsData;
 
     private NotificationManager notifyMgr;
+
+    private String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
+    private String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
 
     /**
      * Default constructor.
@@ -322,12 +327,19 @@ public class ApplicationLayout extends Viewport {
     private Menu buildUserMenu() {
         final Menu userMenu = buildMenu();
 
-        userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(),
-                "de_header_menu_hyperlink_hover", "de_header_menu_hyperlink", //$NON-NLS-1$ //$NON-NLS-2$
+        userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(), linkStyle, hoverStyle, //$NON-NLS-1$ //$NON-NLS-2$
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         doLogout();
+                        userMenu.hide();
+                    }
+                }, null));
+        userMenu.add(new MenuHyperlink(I18N.DISPLAY.preferences(), linkStyle, hoverStyle, //$NON-NLS-1$ //$NON-NLS-2$
+                new Listener<BaseEvent>() {
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        buildAndShowPreferencesDialog();
                         userMenu.hide();
                     }
                 }, null));
@@ -337,9 +349,6 @@ public class ApplicationLayout extends Viewport {
 
     private Menu buildHelpMenu() {
         final Menu helpMenu = buildMenu();
-        String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
-        String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
-
         helpMenu.add(new MenuHyperlink(I18N.DISPLAY.documentation(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
                     @Override
@@ -381,7 +390,6 @@ public class ApplicationLayout extends Viewport {
 
     private Menu buildNotificationsMenu() {
         Menu notificationMenu = buildMenu();
-        String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
 
         lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle, 0,
                 new NotificationAllListener(notificationMenu));
@@ -395,6 +403,12 @@ public class ApplicationLayout extends Viewport {
         notificationMenu.add(lblNotificationsAnalyses);
 
         return notificationMenu;
+    }
+
+    private void buildAndShowPreferencesDialog() {
+        UserSettingsDialog usd = new UserSettingsDialog();
+        usd.setSize(400, 300);
+        usd.show();
     }
 
     private HorizontalPanel buildActionsMenu(String menuHeaderText, final Menu menu) {
@@ -501,7 +515,7 @@ public class ApplicationLayout extends Viewport {
 
         public NotificationLabel(String text, String baseStyle, int initialCount,
                 Listener<BaseEvent> clickListener) {
-            super(text, baseStyle, "de_header_menu_hyperlink_hover", clickListener); //$NON-NLS-1$
+            super(text, baseStyle, hoverStyle, clickListener); //$NON-NLS-1$
 
             this.text = text;
             setCount(initialCount);

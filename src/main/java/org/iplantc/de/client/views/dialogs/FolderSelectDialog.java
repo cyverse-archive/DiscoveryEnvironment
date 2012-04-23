@@ -6,6 +6,7 @@ import org.iplantc.core.client.widgets.dialogs.IFolderSelectDialog;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
@@ -63,6 +64,9 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
         addListener(Events.BeforeHide, new Listener<WindowEvent>() {
             @Override
             public void handleEvent(WindowEvent be) {
+                // persist last path
+                UserSettings.getInstance().setDefaultFileSelectorPath(
+                        ((FolderSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
                 ((FolderSelectDialogPanel)getUnderlyingPanel()).cleanup();
                 cleanup();
             }
