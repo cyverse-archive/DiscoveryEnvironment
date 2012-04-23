@@ -87,13 +87,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String jobname();
 
     /**
-     * Localized display text used as a caption in Tree Reconciliation.
-     * 
-     * @return a string representing the localized text.
-     */
-    String filterSearchString();
-
-    /**
      * Localized display text used for both the My Data window caption and shortcut.
      * 
      * @return a string representing the localized text.
@@ -136,62 +129,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String folderDeleteWarning();
 
     /**
-     * Localized display text used as a tab header in the viewer.
-     * 
-     * @return a string representing the localized text.
-     */
-    String trait();
-
-    /**
-     * Localized display text used as a tab caption in the viewer.
-     * 
-     * @return a string representing the localized text.
-     */
-    String tree();
-
-    /**
-     * Localized display text used in the import menu.
-     * 
-     * @return a string representing the localized text.
-     */
-    String phylota();
-
-    /**
-     * Localized display text used as a heading in the Import from Phylota dialog.
-     * 
-     * @return a string representing the localized text.
-     */
-    String importPhylota();
-
-    /**
      * Localized text for display when asking for search information from the user.
      * 
      * @return a string representing the localized text.
      */
     String search();
-
-    /**
-     * Localized text for display as a field label for taxon names.
-     * 
-     * @return a string representing the localized text.
-     */
-    String taxonName();
-
-    /**
-     * Localized text for display as a column header for clusters.
-     * 
-     * A cluster is a phylogenetic concept to communicate relatedness.
-     * 
-     * @return a string representing the localized text.
-     */
-    String cluster();
-
-    /**
-     * Localized text for display as a column header for taxonomic identifiers.
-     * 
-     * @return a string representing the localized text.
-     */
-    String taxonId();
 
     /**
      * Localized text for display as the title of the web application.
