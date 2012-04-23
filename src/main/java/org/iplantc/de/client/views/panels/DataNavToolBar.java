@@ -44,9 +44,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public class DataNavToolBar extends ToolBar {
 
-    private static final String ID_NEW_FOLDER_BTN = "idNewFolderBtn";
-    private static final String ID_RENAME_FOLDER_BTN = "idRenameFolderBtn";
-    private static final String ID_DELETE_FOLDER_BTN = "idDeleteFolderBtn";
+    private static final String ID_NEW_FOLDER_BTN = "idNewFolderBtn"; //$NON-NLS-1$
+    private static final String ID_RENAME_FOLDER_BTN = "idRenameFolderBtn"; //$NON-NLS-1$
+    private static final String ID_DELETE_FOLDER_BTN = "idDeleteFolderBtn"; //$NON-NLS-1$
     @SuppressWarnings("unused")
     private final String tag;
     private String parentFolderId;
@@ -107,7 +107,7 @@ public class DataNavToolBar extends ToolBar {
                     }
                 });
 
-        ret.setToolTip("Upload from desktop");
+        ret.setToolTip(I18N.DISPLAY.uploadFromDesktop());
         ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
                 .desktopUpload()));
 
@@ -123,7 +123,7 @@ public class DataNavToolBar extends ToolBar {
                     }
                 });
 
-        ret.setToolTip("Import from URL");
+        ret.setToolTip(I18N.DISPLAY.urlImport());
         ret.setIcon(AbstractImagePrototype.create(org.iplantc.de.client.images.Resources.ICONS
                 .urlImport()));
 

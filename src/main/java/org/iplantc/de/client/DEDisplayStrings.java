@@ -31,18 +31,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUploadMaxSizeWarning();
 
     /**
-     * Localized display text.
-     * 
-     * @return a string representing the localized text for upload date/time column headers.
-     */
-    String uploadedDateTime();
-
-    /**
-     * Localized display text for prompting the user to upload.
+     * Localized display text for an upload label.
      * 
      * @return a string representing the localized text.
      */
-    String uploadYourData();
+    String uploadFromDesktop();
 
     /**
      * Localized display text for download buttons.
