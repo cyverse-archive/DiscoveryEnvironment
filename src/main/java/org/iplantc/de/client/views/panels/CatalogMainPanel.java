@@ -55,6 +55,7 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -820,6 +821,16 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             dlg.show();
         }
 
+        private String parsePageName(String url) {
+            String name = null;
+            if (url != null && !url.isEmpty()) {
+                String[] tokens = url.split("/");
+                name = URL.decode(tokens[tokens.length - 1]);
+            }
+
+            return name;
+        }
+
         /** saves a rating to the database and the wiki page */
         private void persistRating(final Analysis model, final int score, String comment,
                 final LayoutContainer parent) {
@@ -849,17 +860,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught.getMessage(), caught);
+                    ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
                 }
             };
 
             Long commentId = model.getFeedback().getComment_id();
             if (commentId == null) {
-                getTemplateService().rateAnalysis(model.getId(), score, model.getName(), comment,
-                        model.getIntegratorsEmail(), callback);
+                getTemplateService().rateAnalysis(model.getId(), score,
+                        parsePageName(model.getWikiUrl()), comment, model.getIntegratorsEmail(),
+                        callback);
             } else {
-                getTemplateService().updateRating(model.getId(), score, model.getName(), commentId,
-                        comment, model.getIntegratorsEmail(), callback);
+                getTemplateService().updateRating(model.getId(), score,
+                        parsePageName(model.getWikiUrl()), commentId, comment,
+                        model.getIntegratorsEmail(), callback);
             }
         }
     }

@@ -465,4 +465,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String loadSessionFailureNotice();
+
+    /**
+     * Localized error message to show when something goes wrong with confluence
+     * 
+     * @return
+     */
+    String confluenceError();
 }
