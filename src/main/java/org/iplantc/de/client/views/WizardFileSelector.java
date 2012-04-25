@@ -7,15 +7,22 @@ import org.iplantc.core.client.widgets.utils.GeneralTextFormatter;
 import org.iplantc.core.client.widgets.validator.IPlantValidator;
 import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
+import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
+import com.extjs.gxt.ui.client.core.El;
+import com.extjs.gxt.ui.client.core.XDOM;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.dnd.DropTarget;
+import com.extjs.gxt.ui.client.dnd.StatusProxy;
 import com.extjs.gxt.ui.client.event.BaseEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.ComponentPlugin;
 
 /**
  * Custom file selection widget for wizards.
@@ -41,7 +48,33 @@ public class WizardFileSelector extends FileSelector {
         setId(property.getId());
         initValidator();
         tblComponentVals.setFormatter(getId(), new GeneralTextFormatter());
+        addDragDop();
+        addTextFieldPlugIn();
+    }
+
+    private void addTextFieldPlugIn() {
+        txtResourceName.setData("text", I18N.DISPLAY.dragAndDropPrompt());
+        txtResourceName.addPlugin(getFileSelectorPlugin());
+    }
+
+    private void addDragDop() {
         new DropTarget(getWidget()) {
+
+            @Override
+            protected void onDragMove(DNDEvent event) {
+                super.onDragMove(event);
+                List<ModelData> files = event.getData();
+
+                // do not allow drop anything other than file and not more than 1 file
+                if (files == null || files.size() > 1 || !(files.get(0) instanceof File)) {
+                    event.setCancelled(true);
+                    StatusProxy eventStatus = event.getStatus();
+                    eventStatus.setStatus(false);
+                    return;
+                }
+
+            }
+
             @Override
             protected void onDragDrop(DNDEvent event) {
                 super.onDragDrop(event);
@@ -53,6 +86,23 @@ public class WizardFileSelector extends FileSelector {
             }
 
         };
+    }
+
+    private ComponentPlugin getFileSelectorPlugin() {
+        ComponentPlugin plugin = new ComponentPlugin() {
+            public void init(Component component) {
+                component.addListener(Events.Render, new Listener<ComponentEvent>() {
+                    public void handleEvent(ComponentEvent be) {
+                        El elem = be.getComponent().el().findParent(".x-component", 3);
+                        // should style in external CSS rather than directly
+                        elem.appendChild(XDOM
+                                .create("<div style='color: #615f5f;padding: 1 0 2 0px; font-style:italic;' >"
+                                        + be.getComponent().getData("text") + "</div>"));
+                    }
+                });
+            }
+        };
+        return plugin;
     }
 
     private void initValidator() {
