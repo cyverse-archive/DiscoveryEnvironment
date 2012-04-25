@@ -75,8 +75,9 @@ public class DataNavToolBar extends ToolBar {
         }
 
         add(buildAddFolderButton());
-        add(buildDeleteFolderButton());
         add(buildRenameFolderButton());
+        add(buildDeleteFolderButton());
+
     }
 
     /**
