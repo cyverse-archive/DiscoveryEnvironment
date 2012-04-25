@@ -33,10 +33,15 @@ public class UserSettingsDialog extends Dialog {
     private void init() {
         setHeading(I18N.DISPLAY.preferences());
         setButtons(Dialog.OKCANCEL);
+        setResizable(false);
         setHideOnButtonClick(true);
         add(buildNotifyField());
         add(buildRememberField());
         setValues();
+        addOkButtonListener();
+    }
+
+    private void addOkButtonListener() {
         getButtonById(Dialog.OK).addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
