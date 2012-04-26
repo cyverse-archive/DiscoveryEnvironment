@@ -332,7 +332,7 @@ public class MyDataGrid extends Grid<DiskResource> {
                         break;
                     case Share:
                         itemShareResource.enable();
-                        itemRenameResource.show();
+                        itemShareResource.show();
                         break;
                 }
             }
