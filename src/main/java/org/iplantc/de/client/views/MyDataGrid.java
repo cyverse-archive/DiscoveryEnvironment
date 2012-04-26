@@ -29,6 +29,7 @@ import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
+import org.iplantc.de.client.views.dialogs.SharingDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
 import org.iplantc.de.client.views.panels.DataPreviewPanel;
 import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
@@ -98,6 +99,7 @@ public class MyDataGrid extends Grid<DiskResource> {
     private MenuItem itemBulkDownloadResource;
     private MenuItem itemDeleteResource;
     private MenuItem itemMetaData;
+    private MenuItem itemShareResource;
 
     private final DataViewContextExecutor executor;
     private final Component maskingParent;
@@ -159,45 +161,23 @@ public class MyDataGrid extends Grid<DiskResource> {
     private Menu buildActionsMenu() {
         Menu actionMenu = new Menu();
 
-        itemAddFolder = new MenuItem();
-        itemAddFolder.setText(I18N.DISPLAY.newFolder());
-        itemAddFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
-        itemAddFolder.addSelectionListener(new NewFolderListenerImpl());
+        buildAddfolderMenuItem();
 
-        itemRenameResource = new MenuItem();
-        itemRenameResource.setText(I18N.DISPLAY.rename());
-        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
-        itemRenameResource.addSelectionListener(new RenameListenerImpl());
+        buildRenameResourceMenuItem();
 
-        itemViewResource = new MenuItem();
-        itemViewResource.setText(I18N.DISPLAY.view());
-        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewResource.addSelectionListener(new ViewListenerImpl());
+        buildViewResourceMenuItem();
 
-        itemViewTree = new MenuItem();
-        itemViewTree.setText(I18N.DISPLAY.viewTreeViewer());
-        itemViewTree.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
+        buildViewTreeMenuItem();
 
-        itemSimpleDownloadResource = new MenuItem();
-        itemSimpleDownloadResource.setText(I18N.DISPLAY.simpleDownload());
-        itemSimpleDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
+        buildSimpleDownloadMenuItem();
 
-        itemBulkDownloadResource = new MenuItem();
-        itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
-        itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemBulkDownloadResource.addSelectionListener(new BulkDownloadListenerImpl());
+        buildBulDownloadMenuItem();
 
-        itemDeleteResource = new MenuItem();
-        itemDeleteResource.setText(I18N.DISPLAY.delete());
-        itemDeleteResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
-        itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
+        buildDeleteResourceMenuItem();
 
-        itemMetaData = new MenuItem();
-        itemMetaData.setText(I18N.DISPLAY.metadata());
-        itemMetaData.setIcon(AbstractImagePrototype.create(Resources.ICONS.metadata()));
-        itemMetaData.addSelectionListener(new MetadataListenerImpl());
+        buildMetaDataMenuItem();
+
+        buildShareResourceMenuItem();
 
         actionMenu.add(itemAddFolder);
         actionMenu.add(itemRenameResource);
@@ -207,8 +187,72 @@ public class MyDataGrid extends Grid<DiskResource> {
         actionMenu.add(itemBulkDownloadResource);
         actionMenu.add(itemDeleteResource);
         actionMenu.add(itemMetaData);
+        actionMenu.add(itemShareResource);
 
         return actionMenu;
+    }
+
+    private void buildShareResourceMenuItem() {
+        itemShareResource = new MenuItem();
+        itemShareResource.setText(I18N.DISPLAY.share());
+        itemShareResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.share()));
+        itemShareResource.addSelectionListener(new ShareListenerImpl());
+    }
+
+    private void buildMetaDataMenuItem() {
+        itemMetaData = new MenuItem();
+        itemMetaData.setText(I18N.DISPLAY.metadata());
+        itemMetaData.setIcon(AbstractImagePrototype.create(Resources.ICONS.metadata()));
+        itemMetaData.addSelectionListener(new MetadataListenerImpl());
+    }
+
+    private void buildDeleteResourceMenuItem() {
+        itemDeleteResource = new MenuItem();
+        itemDeleteResource.setText(I18N.DISPLAY.delete());
+        itemDeleteResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
+        itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
+    }
+
+    private void buildBulDownloadMenuItem() {
+        itemBulkDownloadResource = new MenuItem();
+        itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
+        itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
+        itemBulkDownloadResource.addSelectionListener(new BulkDownloadListenerImpl());
+    }
+
+    private void buildSimpleDownloadMenuItem() {
+        itemSimpleDownloadResource = new MenuItem();
+        itemSimpleDownloadResource.setText(I18N.DISPLAY.simpleDownload());
+        itemSimpleDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
+        itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
+    }
+
+    private void buildViewTreeMenuItem() {
+        itemViewTree = new MenuItem();
+        itemViewTree.setText(I18N.DISPLAY.viewTreeViewer());
+        itemViewTree.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
+        itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
+    }
+
+    private void buildViewResourceMenuItem() {
+        itemViewResource = new MenuItem();
+        itemViewResource.setText(I18N.DISPLAY.view());
+        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
+        itemViewResource.addSelectionListener(new ViewListenerImpl());
+    }
+
+    private void buildRenameResourceMenuItem() {
+        itemRenameResource = new MenuItem();
+        itemRenameResource.setText(I18N.DISPLAY.rename());
+        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
+        itemRenameResource.addSelectionListener(new RenameListenerImpl());
+    }
+
+    private void buildAddfolderMenuItem() {
+        itemAddFolder = new MenuItem();
+        itemAddFolder.setText(I18N.DISPLAY.newFolder());
+        itemAddFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
+        itemAddFolder.addSelectionListener(new NewFolderListenerImpl());
     }
 
     /**
@@ -285,6 +329,10 @@ public class MyDataGrid extends Grid<DiskResource> {
                     case Metadata:
                         itemMetaData.enable();
                         itemMetaData.show();
+                        break;
+                    case Share:
+                        itemShareResource.enable();
+                        itemRenameResource.show();
                         break;
                 }
             }
@@ -538,6 +586,26 @@ public class MyDataGrid extends Grid<DiskResource> {
                 showErrorMsg();
             }
         }
+    }
+
+    private class ShareListenerImpl extends SelectionListener<MenuEvent> {
+
+        @Override
+        public void componentSelected(MenuEvent ce) {
+            List<DiskResource> resources = getSelectionModel().getSelectedItems();
+            if (DataUtils.isSharable(resources)) {
+                showSharingDialog(resources);
+            } else {
+                showErrorMsg();
+            }
+
+        }
+
+    }
+
+    private void showSharingDialog(List<DiskResource> resources) {
+        SharingDialog sd = new SharingDialog(resources);
+        sd.show();
     }
 
     private class ViewTreeListenerImpl extends SelectionListener<MenuEvent> {

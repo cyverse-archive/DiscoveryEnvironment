@@ -472,4 +472,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return
      */
     String confluenceError();
+
+    /**
+     * Localized error message to show when something goes wrong with sharing
+     * 
+     * @return
+     */
+    String shareFailed();
 }

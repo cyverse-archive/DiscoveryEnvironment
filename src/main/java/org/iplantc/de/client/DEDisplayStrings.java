@@ -1056,4 +1056,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String simpleUploadFromDesktop();
+
+    /**
+     * Localized display text for share
+     * 
+     * @return a string representing the localized text.
+     */
+    String share();
 }

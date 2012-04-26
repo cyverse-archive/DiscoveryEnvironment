@@ -20,6 +20,7 @@ import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
+import org.iplantc.de.client.views.dialogs.SharingDialog;
 
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -112,6 +113,9 @@ public class DataActionsPanel extends ContentPanel {
                 ret = new MetadataListenerImpl();
                 break;
 
+            case Share:
+                ret = new ShareResourceListenerImpl();
+                break;
             default:
                 break;
         }
@@ -144,6 +148,19 @@ public class DataActionsPanel extends ContentPanel {
                 showErrorMsg();
             }
         }
+    }
+
+    private class ShareResourceListenerImpl implements Listener<ComponentEvent> {
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            if (DataUtils.isSharable(resources)) {
+                SharingDialog sd = new SharingDialog(resources);
+                sd.show();
+            } else {
+                showErrorMsg();
+            }
+        }
+
     }
 
     private class FileRenameListenerImpl implements Listener<ComponentEvent> {

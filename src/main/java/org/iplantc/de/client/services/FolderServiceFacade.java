@@ -421,6 +421,35 @@ public class FolderServiceFacade {
     }
 
     /**
+     * 
+     * Share a resource with give user with permission
+     * 
+     * 
+     * @param body - Post body in JSONObject format
+     * @param callback callback object
+     */
+    public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
+
+        String fullAddress = serviceNamePrefix + ".share"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
+    }
+
+    /**
+     * UnShare a resource with give user with permission
+     * 
+     * @param body - Post body in JSONObject format
+     * @param callback callback object
+     */
+    public void unshareDiskResource(JSONObject body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix + ".unshare"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
+    }
+
+    /**
      * Performs the actual service call.
      * 
      * @param callback executed when RPC call completes.

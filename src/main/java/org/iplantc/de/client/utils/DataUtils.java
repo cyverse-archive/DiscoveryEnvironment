@@ -13,14 +13,10 @@ import com.google.gwt.i18n.client.NumberFormat;
 
 public class DataUtils {
     public enum Action {
-        RenameFolder(I18N.DISPLAY.rename()),
-        RenameFile(I18N.DISPLAY.rename()),
-        Delete(I18N.DISPLAY.delete()),
-        View(I18N.DISPLAY.view()),
-        ViewTree(I18N.DISPLAY.viewTreeViewer()),
-        SimpleDownload(I18N.DISPLAY.simpleDownload()),
-        BulkDownload(I18N.DISPLAY.bulkDownload()),
-        Metadata(I18N.DISPLAY.metadata());
+        RenameFolder(I18N.DISPLAY.rename()), RenameFile(I18N.DISPLAY.rename()), Delete(I18N.DISPLAY
+                .delete()), View(I18N.DISPLAY.view()), ViewTree(I18N.DISPLAY.viewTreeViewer()), SimpleDownload(
+                I18N.DISPLAY.simpleDownload()), BulkDownload(I18N.DISPLAY.bulkDownload()), Metadata(
+                I18N.DISPLAY.metadata()), Share(I18N.DISPLAY.share());
 
         private final String displayText;
 
@@ -68,6 +64,7 @@ public class DataUtils {
                         ret.add(Action.ViewTree);
                         ret.add(Action.SimpleDownload);
                     }
+                    ret.add(Action.Share);
                 } else {
                     if (!hasFolders) {
                         ret.add(Action.View);
@@ -113,6 +110,20 @@ public class DataUtils {
                 DiskResource dr = resources.get(i);
                 if (!dr.getPermissions().isReadable()) {
 
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isSharable(List<DiskResource> resources) {
+        // fail even if one of items fails
+        if (resources != null && resources.size() > 0) {
+            for (int i = 0; i < resources.size(); i++) {
+                DiskResource dr = resources.get(i);
+                if (!dr.getPermissions().isOwner()) {
                     return false;
                 }
             }

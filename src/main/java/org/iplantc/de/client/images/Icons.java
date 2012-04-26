@@ -286,4 +286,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("arrow_undo.png")
     ImageResource arrow_undo();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("group_key.png")
+    ImageResource share();
+
 }
