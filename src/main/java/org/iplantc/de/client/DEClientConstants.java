@@ -154,54 +154,7 @@ public interface DEClientConstants extends CommonUiConstants {
      */
     String supportPage();
 
-    /**
-     * The path to the discovery environment contrast tool information page.
-     * 
-     * @return the relative path to the page.
-     */
-    String contrastToolAboutPage();
-
-    /**
-     * The path to the discovery environment release notes page.
-     * 
-     * @return the relative path to the page.
-     */
     String releaseNotesPage();
-
-    /**
-     * The tag used by the window manager to identify the account management window.
-     * 
-     * @return a string representing the handle for the wizard window
-     */
-    String accountManagementTag();
-
-    /**
-     * URL to fetch geographic states.
-     * 
-     * @return a string representing the URL.
-     */
-    String usStates();
-
-    /**
-     * URL to fetch job positions.
-     * 
-     * @return a string representing the URL.
-     */
-    String jobPosition();
-
-    /**
-     * URL to fetch research areas.
-     * 
-     * @return a string representing the URL.
-     */
-    String researchAreas();
-
-    /**
-     * URL to fetch funding agencies.
-     * 
-     * @return a string representing the URL.
-     */
-    String fundingAgencies();
 
     /**
      * The path to the discovery environment landing page.
@@ -209,34 +162,6 @@ public interface DEClientConstants extends CommonUiConstants {
      * @return the path to the landing page.
      */
     String landingPage();
-
-    /**
-     * URL to fetch account details.
-     * 
-     * @return a string representing the URL.
-     */
-    String getUserPreference();
-
-    /**
-     * URL to set account details.
-     * 
-     * @return a string representing the URL.
-     */
-    String setUserPreference();
-
-    /**
-     * URL for updating password.
-     * 
-     * @return a string representing the URL.
-     */
-    String resetPassword();
-
-    /**
-     * URL to fetch user preference details.
-     * 
-     * @return a string representing the URL.
-     */
-    String fetchUserPreferenceDetails();
 
     /**
      * Width of edit box fields which contain string values.
@@ -260,55 +185,6 @@ public interface DEClientConstants extends CommonUiConstants {
     String logoutUrl();
 
     /**
-     * The unique tag used to identify the contrast wizard.
-     * 
-     * @return the tag.
-     */
-    String contrastWizardTag();
-
-    /**
-     * The unique tag used to identify the variant detection wizard.
-     * 
-     * @return the tag.
-     */
-    String variantDetectionWizardTag();
-
-    /**
-     * The unique tag used to identify the preprocessing wizard.
-     * 
-     * @return the tag.
-     */
-    String preprocessingWizardTag();
-
-    /**
-     * The unique tag used to identify the BWA alignment wizard.
-     * 
-     * @return the tag.
-     */
-    String alignmentWizardTag();
-
-    /**
-     * The unique tag used to identify the Tophat alignment wizard.
-     * 
-     * @return the tag.
-     */
-    String tophatAlignmentWizardTag();
-
-    /**
-     * The unique tag used to identify the transcript abundance quantification wizard.
-     * 
-     * @return the tag.
-     */
-    String transcriptQuantificationWizardTag();
-
-    /**
-     * The unique tag used to identify the taxonomic name resolution service wizard.
-     * 
-     * @return the tag.
-     */
-    String tnrsWizardTag();
-
-    /**
      * The unique tag used to identify the job execution wizard.
      * 
      * @return the tag.
@@ -321,13 +197,6 @@ public interface DEClientConstants extends CommonUiConstants {
      * @return the tag.
      */
     String dataViewerTag();
-
-    /**
-     * The unique tag used to display the discrete ancestral character estimation wizard
-     * 
-     * @return the tag.
-     */
-    String charEstTag();
 
     /**
      * The path to the NSF logo used in footer of web application.
