@@ -326,7 +326,7 @@ public class NotificationPanel extends ContentPanel {
                     if (category == NotificationManager.Category.DATA) {
                         // execute data context
                         itemsData.add(context);
-                    } else if (category == NotificationManager.Category.APPS) {
+                    } else if (category == NotificationManager.Category.ANALYSIS) {
                         // we only add the first analysis context
                         if (contextAnalysis == null) {
                             contextAnalysis = context;
@@ -361,7 +361,7 @@ public class NotificationPanel extends ContentPanel {
                     if (category == NotificationManager.Category.DATA) {
                         // execute data context
                         dataContextExecutor.execute(context);
-                    } else if (category == NotificationManager.Category.APPS) {
+                    } else if (category == NotificationManager.Category.ANALYSIS) {
                         analysisContextExecutor.execute(context);
                     }
                 }
@@ -432,7 +432,7 @@ public class NotificationPanel extends ContentPanel {
         dropdown = new SimpleComboBox<Category>();
         dropdown.add(Category.ALL);
         dropdown.add(Category.DATA);
-        dropdown.add(Category.APPS);
+        dropdown.add(Category.ANALYSIS);
         dropdown.setValue(dropdown.getStore().getModels().get(0)); // select first item
         dropdown.setTriggerAction(TriggerAction.ALL); // Always show all categories in the
         // drop-down

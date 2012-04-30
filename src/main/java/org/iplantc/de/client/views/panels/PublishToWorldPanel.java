@@ -210,7 +210,8 @@ public class PublishToWorldPanel extends LayoutContainer {
         emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, getEmail(), EMAIL,
                 new BasicEmailValidator(), 256);
 
-        descField = buildTextArea(I18N.DISPLAY.appDesc(), true, analysis.getDescription(), DESC, 255);
+        descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
+                255);
 
         categoryField = buildCategoryField();
 
@@ -334,7 +335,7 @@ public class PublishToWorldPanel extends LayoutContainer {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.appGroupsLoadFailure(), caught);
+                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
                     }
                 });
     }

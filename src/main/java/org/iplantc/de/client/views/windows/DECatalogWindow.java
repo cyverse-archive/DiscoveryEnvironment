@@ -101,7 +101,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config instanceof CatalogWindowConfig) {
-            this.config = (CatalogWindowConfig)config;
+            this.config = config;
         }
     }
 
@@ -135,7 +135,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.appGroupsLoadFailure(), caught);
+                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
                     }
                 });
     }

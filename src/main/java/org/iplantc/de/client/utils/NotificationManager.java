@@ -48,7 +48,7 @@ public class NotificationManager {
         /** Data notifications */
         DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
-        APPS(I18N.CONSTANT.notificationCategoryApps());
+        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis());
 
         private String displayText;
 
@@ -172,7 +172,7 @@ public class NotificationManager {
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
-                addFromEventHandler(Category.APPS, I18N.CONSTANT.app(), event.getMessage(),
+                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
                         analysisContextBuilder.build(event.getPayload()));
                 setAnalysesNotificationCount(getAnalysesNotificationCount() + 1);
                 NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
@@ -244,7 +244,7 @@ public class NotificationManager {
             if (type.equals("data")) { //$NON-NLS-1$
                 addItemToStore(Category.DATA, objMessage, dataContextBuilder.build(objPayload));
             } else if (type.equals("analysis")) { //$NON-NLS-1$
-                addItemToStore(Category.APPS, objMessage, analysisContextBuilder.build(objPayload));
+                addItemToStore(Category.ANALYSIS, objMessage, analysisContextBuilder.build(objPayload));
             }
         }
     }
