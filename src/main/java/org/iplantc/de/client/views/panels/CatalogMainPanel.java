@@ -687,8 +687,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                         // comment id empty or not a number, leave it null and proceed
                     }
 
-                    getTemplateService().deleteRating(model.getId(), model.getName(), commentId,
-                            new AsyncCallback<String>() {
+                    getTemplateService().deleteRating(model.getId(), parsePageName(model.getWikiUrl()),
+                            commentId, new AsyncCallback<String>() {
                                 @Override
                                 public void onSuccess(String result) {
                                     updateFeedback(model, result);
