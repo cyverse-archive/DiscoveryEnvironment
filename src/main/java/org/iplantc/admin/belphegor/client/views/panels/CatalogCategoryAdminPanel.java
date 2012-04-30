@@ -65,7 +65,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.appGroupsLoadFailure(), caught);
+                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
                     }
                 });
     }
