@@ -65,8 +65,8 @@ public class ApplicationLayout extends Viewport {
 
     private NotificationManager notifyMgr;
 
-    private String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
-    private String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
+    private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
+    private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
 
     /**
      * Default constructor.
@@ -314,7 +314,7 @@ public class ApplicationLayout extends Viewport {
             lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
             lblNotificationsAnalyses.setCount(notifyMgr.getAnalysesNotificationCount());
 
-            showNotificationWindow(Category.APPS);
+            showNotificationWindow(Category.ANALYSIS);
         }
     }
 
@@ -394,7 +394,7 @@ public class ApplicationLayout extends Viewport {
                 new NotificationAllListener(notificationMenu));
         lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle, 0,
                 new NotificationDataListener(notificationMenu));
-        lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.apps(), linkStyle, 0,
+        lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle, 0,
                 new NotificationAnalysisListener(notificationMenu));
 
         notificationMenu.add(lblNotificationsAll);

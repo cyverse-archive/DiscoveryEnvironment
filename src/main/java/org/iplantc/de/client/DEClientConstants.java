@@ -49,9 +49,9 @@ public interface DEClientConstants extends CommonUiConstants {
     String myDataTag();
 
     /**
-     * The tag used by the window manager to identify the Results window.
+     * The tag used by the window manager to identify the My Analysis window.
      * 
-     * @return a string representing the handle for the Results window
+     * @return a string representing the handle for the My Analyis window
      */
     String myAnalysisTag();
 

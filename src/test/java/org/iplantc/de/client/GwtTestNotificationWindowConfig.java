@@ -14,7 +14,7 @@ public class GwtTestNotificationWindowConfig extends GWTTestCase {
 
     @Test
     public void testNotificationWindowConfigJSONObject() {
-        Category category = Category.APPS;
+        Category category = Category.ANALYSIS;
         String fooParameter = "blah 12345"; // a parameter not used by NotificationWindowConfig that the
                                             // constructor should still add as a BaseModelObject
                                             // parameter

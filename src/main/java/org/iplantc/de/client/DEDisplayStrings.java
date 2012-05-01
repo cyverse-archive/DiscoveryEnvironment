@@ -373,11 +373,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String selectItems();
 
     /**
-     * Display text for results panel
+     * Display text for my analysis panel
      * 
      * @return a string representing the text.
      */
-    String resultsOverview();
+    String analysisOverview();
 
     /**
      * Display text for create the "create" button
@@ -401,13 +401,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String viewOutput();
 
     /**
-     * Display text for warning message when a user tries to delete a Result.
+     * Display text for warning message when a user tries to delete Analyses.
      * 
      * 
      * 
      * @return a String representing the text.
      */
-    String resultDeleteWarning();
+    String analysesExecDeleteWarning();
 
     /**
      * Display text for remove.
@@ -431,11 +431,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String endDate();
 
     /**
-     * The text to display when we're unable to retrieve the list of results for the user.
+     * The text to display when we're unable to retrieve the list of analyses for the user.
      * 
      * @return a string containing the localized text.
      */
-    String resultsRetrievalFailure();
+    String analysesRetrievalFailure();
 
     /**
      * Localized display text used as a tab caption in the viewer.
@@ -553,18 +553,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String deCatalog();
 
     /**
-     * Localized display text for the title of the Results window
+     * Localized display text for the DE analysis
      * 
      * @return a string representing the localized text.
      */
-    String results();
+    String analyses();
 
     /**
-     * Localized display text for create new App
+     * Localized display text for create new Analysis
      * 
      * @return a string representing the localized text.
      */
-    String createNewApp();
+    String createNewAnalysis();
 
     /**
      * Localized display text for create new Workflow
@@ -588,11 +588,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String data();
 
     /**
-     * Localized text for the "Apps" notification category
+     * Localized text for analysis
      * 
      * @return string representing the text
      */
-    String apps();
+    String analysis();
 
     /**
      * Localized text for applications
@@ -749,25 +749,25 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String appName();
 
     /**
-     * Localized text for results filter prompt.
+     * Localized text for analyses filter prompt.
      * 
      * @return a string representing the localized text.
      */
-    String filterResultsList();
+    String filterAnalysesList();
 
     /**
-     * Localized text for results grid tool tip
+     * Localized text for analyses grid tool tip
      * 
      * @return a string representing the localized text.
      */
-    String resultsGridToolTip();
+    String analysesGridToolTip();
 
     /**
-     * Localized text for results delete message
+     * Localized text for analyses delete message
      * 
      * @return a string representing the localized text.
      */
-    String resultsNotDeleted();
+    String analysesNotDeleted();
 
     /**
      * Localized text for app delete warning
@@ -850,35 +850,35 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     /**
      * Localized text for job output destination folder selection
      * 
-     * @param defaultPath default output folder for apps
+     * @param defaultPath default output folder for analyses
      * 
      * @return a string representing the localized text.
      */
     String selectJobOutputDir(String defaultPath);
 
     /**
-     * Localized text for app submit confirmation dialog
+     * Localized text for analysis submit confirmation dialog
      * 
      * @return a string representing the localized text.
      */
-    String appSubmitted();
+    String analysisSubmitted();
 
     /**
-     * Localized text for app submitted message
+     * Localized text for analysis submitted message
      * 
      * 
      * @return a string representing the localized text.
      */
-    String appSubmittedMsg();
+    String analysisSubmittedMsg();
 
     /**
      * Localized text for view parameters panel
      * 
-     * @param appName name of the app
+     * @param analysisName name of the analysis
      * 
      * @return a string representing the localized text.
      */
-    String viewParameters(String appName);
+    String viewParameters(String analysisName);
 
     /**
      * Localized text for param name
