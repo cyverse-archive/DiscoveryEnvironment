@@ -16,6 +16,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.iplantc.core.uicommons.client.DEServiceFacade;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 
 /**
  * Provides access to remote services for operations related to job submission templates.
@@ -131,7 +132,8 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
             @Override
             public void onSuccess(String result) {
                 sendRatingEmail(appName, authorEmail);
-                updateDocumentationPage(appName, result, callback);
+                updateDocumentationPage(appName, result);
+                callback.onSuccess(result);
             }
 
             @Override
@@ -156,12 +158,26 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
                 });
     }
 
-    private void updateDocumentationPage(String appName, String avgJson, AsyncCallback<String> callback) {
+    private void updateDocumentationPage(String appName, String avgJson) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
             Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
-            ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded, callback);
+            ConfluenceServiceFacade.getInstance().updateDocumentationPage(appName, avgRounded,
+                    new AsyncCallback<String>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
+
+                        }
+
+                        @Override
+                        public void onSuccess(String result) {
+                            // Do nothing intentionally
+
+                        }
+                    });
         }
     }
 
@@ -200,16 +216,17 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                updateDocumentationPage(toolName, result, callback);
+                updateDocumentationPage(toolName, result);
                 if (commentId != null) {
                     try {
-                        removeComment(toolName, commentId, callback);
+                        removeComment(toolName, commentId);
                     } catch (Exception e) {
                         onFailure(e);
                     }
-                } else {
-                    callback.onSuccess(result);
                 }
+
+                callback.onSuccess(result);
+
             }
 
             @Override
@@ -219,8 +236,22 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
         });
     }
 
-    private void removeComment(String toolName, long commentId, final AsyncCallback<String> callback) {
-        ConfluenceServiceFacade.getInstance().removeComment(toolName, commentId, callback);
+    private void removeComment(String toolName, long commentId) {
+        ConfluenceServiceFacade.getInstance().removeComment(toolName, commentId,
+                new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        // Do nothing intentionally
+
+                    }
+                });
     }
 
     @Override
