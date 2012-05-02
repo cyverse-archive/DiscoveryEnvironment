@@ -371,7 +371,6 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
      */
     @Override
     public void handleOkClick() {
-        fileStatus.show();
         doUpload();
     }
 
