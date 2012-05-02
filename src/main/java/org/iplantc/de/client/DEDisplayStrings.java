@@ -1063,4 +1063,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String share();
+
+    /**
+     * Localized display text for file owner
+     * 
+     * @return a string representing the localized text.
+     */
+    String owner();
 }

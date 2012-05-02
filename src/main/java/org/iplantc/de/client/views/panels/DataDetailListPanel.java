@@ -73,7 +73,7 @@ public class DataDetailListPanel extends ContentPanel {
         addDateLabel(I18N.DISPLAY.lastModified(), resource.getLastModified());
         addDateLabel(I18N.DISPLAY.createdDate(), resource.getDateCreated()); //$NON-NLS-1$
         addPermissionsLabel(I18N.DISPLAY.permissions(), resource.getPermissions().isReadable(), resource
-                .getPermissions().isWritable());
+                .getPermissions().isWritable(), resource.getPermissions().isOwner());
 
         if (resource instanceof File) {
             File file = (File)resource;
@@ -139,7 +139,11 @@ public class DataDetailListPanel extends ContentPanel {
      * @param readable boolean true if the resource is readable else false
      * @param writable boolean true if the resource is writable else false
      */
-    private void addPermissionsLabel(String label, boolean readable, boolean writable) {
+    private void addPermissionsLabel(String label, boolean readable, boolean writable, boolean owner) {
+        if (owner) {
+            addLabel(label, I18N.DISPLAY.owner());
+            return;
+        }
         if (!writable) {
             addLabel(label, I18N.DISPLAY.readOnly());
         } else {
@@ -174,7 +178,7 @@ public class DataDetailListPanel extends ContentPanel {
 
             @Override
             public void onFailure(Throwable caught) {
-               // ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
+                // ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
                 GWT.log(caught.getMessage(), caught);
             }
         });

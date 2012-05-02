@@ -5,7 +5,6 @@ package org.iplantc.de.client.views.dialogs;
 
 import java.util.List;
 
-import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.services.DiskResourceShareCallback;
 import org.iplantc.de.client.services.FolderServiceFacade;
@@ -24,6 +23,7 @@ import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -58,21 +58,40 @@ public class SharingDialog extends Dialog {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 JSONObject body = new JSONObject();
-                body.put("path", new JSONString(resources.get(0).getId()));
-                body.put("user", new JSONString(email.getValue()));
-
-                JSONObject permission = new JSONObject();
-                permission.put("read", JSONBoolean.getInstance(chkRead.getValue()));
-                permission.put("write", JSONBoolean.getInstance(chkWrite.getValue()));
-                permission.put("own", JSONBoolean.getInstance(chkOwn.getValue()));
-
-                body.put("permissions", permission);
+                body.put("paths", getResourceIdsAsArray());
+                body.put("users", getEmailsAsArray(email.getValue()));
+                body.put("permissions", getPermissionObject());
                 FolderServiceFacade service = new FolderServiceFacade();
 
                 service.shareDiskResource(body, new DiskResourceShareCallback());
             }
         });
 
+    }
+
+    private JSONArray getResourceIdsAsArray() {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+        if (resources != null) {
+            for (DiskResource dr : resources) {
+                arr.set(i++, new JSONString(dr.getId()));
+            }
+        }
+
+        return arr;
+    }
+
+    private JSONArray getEmailsAsArray(String emailIds) {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+
+        if (emailIds != null && !emailIds.isEmpty()) {
+            String[] tokens = emailIds.split(",");
+            for (String id : tokens) {
+                arr.set(i++, new JSONString(id));
+            }
+        }
+        return arr;
     }
 
     private void buildPermissionsRadioGroup() {
@@ -100,7 +119,6 @@ public class SharingDialog extends Dialog {
     private void buildEmailField() {
         email = new TextField<String>();
         email.setFieldLabel("Email");
-        email.setValidator(new BasicEmailValidator());
         email.addListener(Events.Valid, new Listener<BaseEvent>() {
 
             @Override
@@ -134,8 +152,8 @@ public class SharingDialog extends Dialog {
     }
 
     private void addPromptText() {
-        panel.add(new Label("Enter email address of the person with whom this"
-                + " file will be shared.<br/> <b>Note:</b> The email address"
+        panel.add(new Label("Enter email address (comma seperated) of the person(s) with whom this"
+                + " file(s) / folder(s) will be shared.<br/> <b>Note:</b> The email address"
                 + " should be registered with iplant."), formData);
     }
 
@@ -151,5 +169,21 @@ public class SharingDialog extends Dialog {
 
     private Button getOkButton() {
         return getButtonById(Dialog.OK);
+    }
+
+    private JSONObject getPermissionObject() {
+        JSONObject permission = new JSONObject();
+        permission.put("read", JSONBoolean.getInstance(true));
+        if (chkOwn.getValue()) {
+            permission.put("write", JSONBoolean.getInstance(true));
+            permission.put("own", JSONBoolean.getInstance(true));
+        } else if (chkWrite.getValue()) {
+            permission.put("write", JSONBoolean.getInstance(true));
+            permission.put("own", JSONBoolean.getInstance(false));
+        } else {
+            permission.put("write", JSONBoolean.getInstance(false));
+            permission.put("own", JSONBoolean.getInstance(false));
+        }
+        return permission;
     }
 }
