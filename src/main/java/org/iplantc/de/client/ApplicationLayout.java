@@ -14,7 +14,7 @@ import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
-import org.iplantc.de.client.views.dialogs.UserSettingsDialog;
+import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -405,8 +405,8 @@ public class ApplicationLayout extends Viewport {
     }
 
     private void buildAndShowPreferencesDialog() {
-        UserSettingsDialog usd = new UserSettingsDialog();
-        usd.setSize(400, 300);
+        UserPreferencesDialog usd = new UserPreferencesDialog();
+        usd.setSize(450, 400);
         usd.show();
     }
 

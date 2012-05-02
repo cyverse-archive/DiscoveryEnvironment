@@ -1070,4 +1070,40 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String owner();
+
+    /**
+     * Localized display text for settings
+     * 
+     * @return a string representing the localized text.
+     */
+    String settings();
+
+    /**
+     * Localized display text for collaborators
+     * 
+     * @return a string representing the localized text.
+     */
+    String collaborators();
+
+    /**
+     * Localized display text for search collaborators
+     * 
+     * @return a string representing the localized text.
+     */
+    String collabSearchPrompt();
+
+    /**
+     * Localized display text for searching status
+     * 
+     * @return a string representing the localized text.
+     */
+    String searching();
+
+    /**
+     * Localized display text for no collaborators
+     * 
+     * @return a string representing the localized text.
+     */
+
+    String noCollaborators();
 }

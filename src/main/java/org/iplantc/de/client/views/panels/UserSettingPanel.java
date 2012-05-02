@@ -1,55 +1,33 @@
-package org.iplantc.de.client.views.dialogs;
+/**
+ * 
+ */
+package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.de.client.I18N;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
 
 /**
- * A dialog to collect user general settings for the DE
- * 
- * 
  * @author sriram
  * 
  */
-public class UserSettingsDialog extends Dialog {
+public class UserSettingPanel extends LayoutContainer {
 
     private static final String ID_REM_LAST_PATH = "idRemLastPath";
     private static final String ID_CHK_NOTIFY = "idChkNotify";
     private CheckBox chkEnableEmailNotifications;
     private CheckBox chkRememberLastFileSelectorPath;
 
-    public UserSettingsDialog() {
-        init();
-    }
-
-    private void init() {
-        setHeading(I18N.DISPLAY.preferences());
-        setButtons(Dialog.OKCANCEL);
-        setResizable(false);
-        setHideOnButtonClick(true);
+    public UserSettingPanel() {
         add(buildNotifyField());
         add(buildRememberField());
         setValues();
-        addOkButtonListener();
-    }
-
-    private void addOkButtonListener() {
-        getButtonById(Dialog.OK).addSelectionListener(new SelectionListener<ButtonEvent>() {
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                UserSettings us = UserSettings.getInstance();
-                us.setEnableEmailNotification(chkEnableEmailNotifications.getValue());
-                us.setRememberLastPath(chkRememberLastFileSelectorPath.getValue());
-            }
-        });
     }
 
     private HorizontalPanel buildNotifyField() {
@@ -98,4 +76,5 @@ public class UserSettingsDialog extends Dialog {
         chkEnableEmailNotifications.setValue(us.isEnableEmailNotification());
         chkRememberLastFileSelectorPath.setValue(us.isRememberLastPath());
     }
+
 }

@@ -30,4 +30,13 @@ public class UserSessionServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
+    public void searchCollaborators(String term, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
+                + "search-collaborators ?search-collaborators=" + term; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
 }
