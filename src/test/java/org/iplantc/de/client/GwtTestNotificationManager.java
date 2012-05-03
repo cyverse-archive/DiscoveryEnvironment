@@ -44,39 +44,4 @@ public class GwtTestNotificationManager extends GWTTestCase {
         notList = getAllNotifications(notMgr);
         assertTrue(notList.size() == 1);
     }
-
-    public void testEnforcingMaxNotificationsLimit() {
-        final NotificationManager notMgr = NotificationManager.getInstance();
-
-        NotificationManager.MAX_NOTIFICATIONS = 5;
-
-        for (int i = 0; i < NotificationManager.MAX_NOTIFICATIONS; i++) {
-            Notification n = new Notification("Job" + i + " failed to be created."); //$NON-NLS-1$ //$NON-NLS-2$
-
-            notMgr.add(NotificationManager.Category.SYSTEM, n);
-
-            long startTime = System.currentTimeMillis() / 1000;
-
-            while (System.currentTimeMillis() / 1000 == startTime) {
-                // we are just using this as a low-fi alternative to sleep()
-            }
-        }
-
-        List<Notification> notList = getAllNotifications(notMgr);
-        assertNotNull(notList);
-        // only want to enforce the limit of notifications.
-        assertTrue(notList.size() >= NotificationManager.MAX_NOTIFICATIONS);
-
-        notMgr.add(NotificationManager.Category.SYSTEM, new Notification("Job" //$NON-NLS-1$
-                + NotificationManager.MAX_NOTIFICATIONS + " failed to be created.")); //$NON-NLS-1$
-
-        notList = getAllNotifications(notMgr);
-
-        assertTrue(notList.size() == NotificationManager.MAX_NOTIFICATIONS);
-
-        for (int i = 0; i < NotificationManager.MAX_NOTIFICATIONS; i++) {
-            assertEquals("Job" + (NotificationManager.MAX_NOTIFICATIONS - i) + " failed to be created.", //$NON-NLS-1$ //$NON-NLS-2$
-                    notList.get(i).getMessage());
-        }
-    }
 }

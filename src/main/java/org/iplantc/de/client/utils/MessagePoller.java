@@ -15,9 +15,12 @@ public class MessagePoller {
     private final int interval;
     private static MessagePoller instance;
 
+    private final int DEFAULT_INTERVAL = 60;
+
     private MessagePoller() {
         // get interval in seconds and convert to milliseconds
-        interval = DEProperties.getInstance().getNotificationPollInterval() * 1000;
+        int millsec = DEProperties.getInstance().getNotificationPollInterval() * 1000;
+        interval = (millsec == 0) ? (DEFAULT_INTERVAL * 1000) : millsec;
     }
 
     /**

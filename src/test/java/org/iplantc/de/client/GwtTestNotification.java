@@ -30,7 +30,7 @@ public class GwtTestNotification extends GWTTestCase {
 
         String test = notification.getId();
         assertNotNull(test);
-        assertTrue(test.equals("")); //$NON-NLS-1$
+        assertFalse(test.equals("")); //$NON-NLS-1$
 
         Category cat = notification.getCategory();
         assertNull(cat);

@@ -24,10 +24,7 @@ public class GwtTestEventJSONFactory extends GWTTestCase {
 
         if (hasPayload) {
             JSONValue valPayload = objEvent.get("payload"); //$NON-NLS-1$
-            assertEquals(valPayload.isNull(), null);
-
-            JSONObject objPayload = valPayload.isObject();
-            assertEquals(objPayload.isNull(), null);
+            assertNull(null);
         }
     }
 

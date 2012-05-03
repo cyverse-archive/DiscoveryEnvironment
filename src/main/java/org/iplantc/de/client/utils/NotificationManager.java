@@ -229,6 +229,16 @@ public class NotificationManager {
 
             // sort doesn't happen automatically on add()
             storeAll.sort(PROP_TIMESTAMP, SortDir.DESC);
+            // trim store max notifications
+            trimStore();
+        }
+    }
+
+    private void trimStore() {
+        if (storeAll.getCount() > MAX_NOTIFICATIONS) {
+            for (int i = MAX_NOTIFICATIONS; i < storeAll.getCount(); i++) {
+                storeAll.remove(i);
+            }
         }
     }
 
