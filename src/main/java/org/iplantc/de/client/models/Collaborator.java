@@ -25,8 +25,11 @@ public class Collaborator extends BaseModelData {
     public static final String USERNAME = "userName";
     public static final String NAME = "name";
 
-    public Collaborator() {
-
+    public Collaborator(JsCollaborators jsCollaborators) {
+        set(ID, jsCollaborators.getId());
+        set(NAME, jsCollaborators.getFirstName() + " " + jsCollaborators.getLastName());
+        set(EMAIL, jsCollaborators.getEmail());
+        set(USERNAME, jsCollaborators.getUserName());
     }
 
     public String getId() {

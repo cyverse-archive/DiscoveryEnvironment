@@ -1,10 +1,15 @@
 package org.iplantc.de.client.views.panels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.iplantc.de.client.I18N;
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.images.Resources;
 import org.iplantc.de.client.models.Collaborator;
+import org.iplantc.de.client.models.JsCollaborators;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -18,6 +23,9 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -85,14 +93,14 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
 
                     @Override
                     public void onFailure(Throwable caught) {
+                        ErrorHandler.post(caught);
                         status.clearStatus("");
 
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        status.clearStatus("");
-
+                        addSearchResultsToGrid(result);
                     }
                 });
 
@@ -118,6 +126,19 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
 
         return new ColumnModel(Arrays.asList(name, email));
 
+    }
+
+    private void addSearchResultsToGrid(String result) {
+        status.clearStatus("");
+        JSONObject obj = JSONParser.parseStrict(result).isObject();
+        String json = obj.get("users").toString();
+        JsArray<JsCollaborators> collabs = JsonUtil.asArrayOf(json);
+        List<Collaborator> collaborators = new ArrayList<Collaborator>();
+        for (int i = 0; i < collabs.length(); i++) {
+            Collaborator c = new Collaborator(collabs.get(i));
+            collaborators.add(c);
+        }
+        grid.getStore().add(collaborators);
     }
 
 }

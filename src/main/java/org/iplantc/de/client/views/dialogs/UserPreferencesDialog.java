@@ -47,8 +47,6 @@ public class UserPreferencesDialog extends Dialog {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 UserSettings us = UserSettings.getInstance();
-                // us.setEnableEmailNotification(chkEnableEmailNotifications.getValue());
-                // us.setRememberLastPath(chkRememberLastFileSelectorPath.getValue());
             }
         });
     }
