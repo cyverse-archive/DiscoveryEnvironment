@@ -223,4 +223,22 @@ public class DataUtils {
         return builder.toString();
     }
 
+    /**
+     * 
+     * Get list of ids from list of DiskResources
+     * 
+     * @param reources resources list from which id list is created
+     * @return
+     */
+    public static List<String> getDiskResourceIdList(List<DiskResource> reources) {
+        List<String> ids = new ArrayList<String>();
+
+        if (reources != null) {
+            for (DiskResource dr : reources) {
+                ids.add(dr.getId());
+            }
+        }
+        return ids;
+    }
+
 }

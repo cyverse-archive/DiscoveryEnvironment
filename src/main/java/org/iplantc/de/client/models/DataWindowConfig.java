@@ -3,11 +3,11 @@
  */
 package org.iplantc.de.client.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.de.client.utils.DataUtils;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -62,16 +62,8 @@ public class DataWindowConfig extends WindowConfig {
      * @param appId
      */
     public void setDiskResourceIds(List<DiskResource> resources) {
-        List<String> diskresourceIds = null;
-
-        if (resources != null) {
-            diskresourceIds = new ArrayList<String>();
-            for (DiskResource resource : resources) {
-                diskresourceIds.add(resource.getId());
-            }
-        }
-
-        put(DISK_RESOURCE_IDS, JsonUtil.buildArrayFromStrings(diskresourceIds));
+        put(DISK_RESOURCE_IDS,
+                JsonUtil.buildArrayFromStrings(DataUtils.getDiskResourceIdList(resources)));
     }
 
 }

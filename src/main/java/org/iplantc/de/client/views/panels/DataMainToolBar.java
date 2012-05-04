@@ -224,7 +224,8 @@ public class DataMainToolBar extends ToolBar {
 
         @Override
         public void componentSelected(ButtonEvent ce) {
-            ManageDataRefreshEvent event = new ManageDataRefreshEvent(tag, container.getCurrentPath());
+            ManageDataRefreshEvent event = new ManageDataRefreshEvent(tag, container.getCurrentPath(),
+                    container.getSelectedItems());
             EventBus.getInstance().fireEvent(event);
         }
 

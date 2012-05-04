@@ -33,7 +33,6 @@ import org.iplantc.de.client.views.panels.DataNavigationPanel;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -396,16 +395,16 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
 
                 String currentFolderId = mdre.getCurrentFolderId();
                 if (currentFolderId != null && !currentFolderId.isEmpty()) {
-                    JSONObject jsonConfig = new JSONObject();
-                    jsonConfig.put(DataWindowConfig.FOLDER_ID, new JSONString(currentFolderId));
-
-                    setWindowConfig(new DataWindowConfig(jsonConfig));
+                    DataWindowConfig configData = new DataWindowConfig(config);
+                    storeWindowViewState(configData);
+                    configData.setFolderId(currentFolderId);
+                    configData.setDiskResourceIds(mdre.getResources());
+                    setWindowConfig(configData);
                 }
 
                 retrieveData(new RetrieveDataCallback());
             }
         }
-
     }
 
     @Override

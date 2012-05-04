@@ -231,7 +231,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         String refreshPath = config.getCurrentPath();
         if (refreshPath != null && !refreshPath.isEmpty()) {
             ManageDataRefreshEvent event = new ManageDataRefreshEvent(Constants.CLIENT.myDataTag(),
-                    refreshPath);
+                    refreshPath, null);
             EventBus.getInstance().fireEvent(event);
         }
     }

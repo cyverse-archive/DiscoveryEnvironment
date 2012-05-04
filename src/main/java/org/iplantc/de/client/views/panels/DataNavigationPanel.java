@@ -596,7 +596,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
                                 // a refresh of the whole data window.
                                 model.setTreeLoaderCallback(null);
 
-                                ManageDataRefreshEvent event = new ManageDataRefreshEvent(tag, path);
+                                ManageDataRefreshEvent event = new ManageDataRefreshEvent(tag, path,
+                                        null);
                                 EventBus.getInstance().fireEvent(event);
                             } else {
                                 // Remove and re-add the target folder with the latest info.
