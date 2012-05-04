@@ -658,3 +658,15 @@ img.analysis_remove {
 	padding-bottom: 2px;
 	color: #0098AA;
 }
+
+.add_button{
+    background-image: url('./images/add.png');
+    height: 16px;
+    width: 16px;
+}
+
+.remove_button{
+    background-image: url('./images/delete.gif');
+    height: 16px;
+    width: 16px;
+}

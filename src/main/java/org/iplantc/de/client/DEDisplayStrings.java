@@ -1106,4 +1106,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
 
     String noCollaborators();
+
+    /**
+     * Localized display text for showing current collaborators list
+     * 
+     * @return a string representing the localized text.
+     */
+    String currentCollabList();
 }

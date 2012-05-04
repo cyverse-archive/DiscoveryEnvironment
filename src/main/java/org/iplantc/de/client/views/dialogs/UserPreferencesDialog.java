@@ -1,6 +1,5 @@
 package org.iplantc.de.client.views.dialogs;
 
-import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
@@ -21,6 +20,8 @@ import com.extjs.gxt.ui.client.widget.TabPanel;
 public class UserPreferencesDialog extends Dialog {
 
     private TabPanel tabPanel;
+    private ManageCollaboratorsPanel collabPanel;
+    private UserSettingPanel settingPanel;
 
     public UserPreferencesDialog() {
         init();
@@ -46,26 +47,29 @@ public class UserPreferencesDialog extends Dialog {
         getButtonById(Dialog.OK).addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-                UserSettings us = UserSettings.getInstance();
+                settingPanel.saveData();
+                collabPanel.saveData();
             }
         });
     }
 
     private void buildTabPanel() {
         tabPanel = new TabPanel();
-        tabPanel.setSize(450, 350);
+        tabPanel.setSize(450, 380);
         add(tabPanel);
     }
 
     private void buildSettingPanel() {
         TabItem ti = new TabItem(I18N.DISPLAY.settings());
-        ti.add(new UserSettingPanel());
+        settingPanel = new UserSettingPanel();
+        ti.add(settingPanel);
         tabPanel.add(ti);
     }
 
     private void buildCollaboratorsPanel() {
         TabItem ti = new TabItem(I18N.DISPLAY.collaborators());
-        ti.add(new ManageCollaboratorsPanel());
+        collabPanel = new ManageCollaboratorsPanel();
+        ti.add(collabPanel);
         tabPanel.add(ti);
     }
 

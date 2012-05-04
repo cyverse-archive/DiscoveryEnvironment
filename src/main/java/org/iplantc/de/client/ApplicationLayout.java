@@ -406,7 +406,7 @@ public class ApplicationLayout extends Viewport {
 
     private void buildAndShowPreferencesDialog() {
         UserPreferencesDialog usd = new UserPreferencesDialog();
-        usd.setSize(450, 400);
+        usd.setSize(450, 430);
         usd.show();
     }
 

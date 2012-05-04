@@ -77,4 +77,10 @@ public class UserSettingPanel extends LayoutContainer {
         chkRememberLastFileSelectorPath.setValue(us.isRememberLastPath());
     }
 
+    public void saveData() {
+        UserSettings us = UserSettings.getInstance();
+        us.setEnableEmailNotification(chkEnableEmailNotifications.getValue());
+        us.setRememberLastPath(chkRememberLastFileSelectorPath.getValue());
+    }
+
 }

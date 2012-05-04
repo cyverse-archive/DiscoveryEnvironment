@@ -1,11 +1,12 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
+import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.iplantc.core.uicommons.client.DEServiceFacade;
 
 /**
  * A service facade to save and retrieve user session
@@ -36,6 +37,12 @@ public class UserSessionServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    public void getCollaborators(AsyncCallback<String> callback) {
+        String address = "http://montosa.iplantcollaborative.org/~dennis/" + "collabs.json";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        SharedUnsecuredServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
 }
