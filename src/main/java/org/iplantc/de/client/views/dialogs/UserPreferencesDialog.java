@@ -2,6 +2,7 @@ package org.iplantc.de.client.views.dialogs;
 
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
+import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -9,6 +10,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
+import com.extjs.gxt.ui.client.widget.button.Button;
 
 /**
  * A dialog to collect user general settings for the DE
@@ -38,13 +40,15 @@ public class UserPreferencesDialog extends Dialog {
 
     private void initDialog() {
         setHeading(I18N.DISPLAY.preferences());
-        setButtons(Dialog.OKCANCEL);
+        setButtons(Dialog.OK);
         setResizable(false);
         setHideOnButtonClick(true);
     }
 
     private void addOkButtonListener() {
-        getButtonById(Dialog.OK).addSelectionListener(new SelectionListener<ButtonEvent>() {
+        Button ok = getButtonById(Dialog.OK);
+        ok.setText(I18N.DISPLAY.done());
+        ok.addSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 settingPanel.saveData();
@@ -68,7 +72,7 @@ public class UserPreferencesDialog extends Dialog {
 
     private void buildCollaboratorsPanel() {
         TabItem ti = new TabItem(I18N.DISPLAY.collaborators());
-        collabPanel = new ManageCollaboratorsPanel();
+        collabPanel = new ManageCollaboratorsPanel(MODE.MANAGE, 435);
         ti.add(collabPanel);
         tabPanel.add(ti);
     }

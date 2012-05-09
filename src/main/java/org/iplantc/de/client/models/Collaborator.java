@@ -52,4 +52,26 @@ public class Collaborator extends BaseModelData {
     public String getUserName() {
         return get(USERNAME);
     }
+
+    @Override
+    public boolean equals(Object c) {
+        if (c == null) {
+            return false;
+        }
+        if (!(c instanceof Collaborator)) {
+            return false;
+        } else {
+            Collaborator collab = (Collaborator)c;
+            if (getId().equals(collab.getId())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(getId());
+    }
 }

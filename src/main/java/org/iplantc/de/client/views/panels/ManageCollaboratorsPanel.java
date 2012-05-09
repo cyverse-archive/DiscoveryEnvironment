@@ -1,40 +1,23 @@
 package org.iplantc.de.client.views.panels;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Collaborator;
-import org.iplantc.de.client.models.JsCollaborators;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.FieldEvent;
-import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-import com.extjs.gxt.ui.client.widget.grid.ColumnData;
-import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
-import com.extjs.gxt.ui.client.widget.grid.Grid;
-import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.Label;
 
 /**
  * 
@@ -53,28 +36,24 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
     private Button showList;
 
     private MODE mode;
-    // list that holds user's collaborators
-    private List<Collaborator> my_collaborators;
+
+    private CollaboratorsPanel panel;
 
     public static enum MODE {
-        MANAGE, SELECT, SEARCH
+        MANAGE, SEARCH
     };
 
-    private Grid<Collaborator> grid;
+    public ManageCollaboratorsPanel(MODE mode, int width) {
+        setWidth(width);
+        this.mode = mode;
+        init(width);
 
-    public ManageCollaboratorsPanel() {
-        my_collaborators = new ArrayList<Collaborator>();
-        init();
     }
 
-    private void init() {
+    private void init(int width) {
         initSearch();
-        grid = new Grid<Collaborator>(new ListStore<Collaborator>(), buildColumnModel());
-        grid.setAutoExpandColumn(Collaborator.NAME);
-        grid.setBorders(true);
-        grid.getView().setEmptyText(I18N.DISPLAY.noCollaborators());
-        grid.setSize(435, 270);
-        add(grid);
+        panel = new CollaboratorsPanel(I18N.DISPLAY.collaborators(), MODE.MANAGE, width, 260);
+        add(panel);
         getCurrentCollaborators();
     }
 
@@ -82,7 +61,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         buildSearchField();
 
         buildSearchButton();
-        buildShowListButton();
+
         buildSearchStatus();
 
         HorizontalPanel hp = new HorizontalPanel();
@@ -91,6 +70,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         hp.setSpacing(18);
         hp.add(searchTerm);
         hp.add(search);
+        buildShowListButton();
         hp.add(showList);
         hp.add(status);
         add(hp);
@@ -105,12 +85,15 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 showList.setVisible(false);
-                grid.getStore().removeAll();
-                grid.getStore().add(my_collaborators);
+                mode = MODE.MANAGE;
+                panel.setMode(mode);
+                panel.showCurrentCollborators();
+                panel.setHeading(I18N.DISPLAY.collaborators());
+                searchTerm.clear();
             }
         });
         showList.setVisible(false);
-        showList.setToolTip(I18N.DISPLAY.currentCollabList());
+        showList.setTitle(I18N.DISPLAY.currentCollabList());
     }
 
     private void buildSearchButton() {
@@ -124,7 +107,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
 
             }
         });
-        search.setToolTip(I18N.DISPLAY.search());
+        search.setTitle(I18N.DISPLAY.search());
     }
 
     private void buildSearchField() {
@@ -145,36 +128,6 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         status = new Status();
     }
 
-    private ColumnModel buildColumnModel() {
-        ColumnConfig name = new ColumnConfig(Collaborator.NAME, I18N.DISPLAY.name(), 150);
-        name.setRenderer(new NameCellRenderer());
-
-        ColumnConfig email = new ColumnConfig(Collaborator.EMAIL, I18N.DISPLAY.email(), 200);
-
-        return new ColumnModel(Arrays.asList(name, email));
-
-    }
-
-    private void loadResults(List<Collaborator> collaborators) {
-        // clear results before adding. Sort alphabetically
-        ListStore<Collaborator> store = grid.getStore();
-        store.removeAll();
-        store.add(collaborators);
-        store.sort(Collaborator.NAME, SortDir.ASC);
-    }
-
-    private List<Collaborator> parseResults(String result) {
-        JSONObject obj = JSONParser.parseStrict(result).isObject();
-        String json = obj.get("users").toString();
-        JsArray<JsCollaborators> collabs = JsonUtil.asArrayOf(json);
-        List<Collaborator> collaborators = new ArrayList<Collaborator>();
-        for (int i = 0; i < collabs.length(); i++) {
-            Collaborator c = new Collaborator(collabs.get(i));
-            collaborators.add(c);
-        }
-        return collaborators;
-    }
-
     public void saveData() {
         // TODO Auto-generated method stub
 
@@ -187,6 +140,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
             searchTerm.markInvalid(I18N.DISPLAY.collabSearchPrompt());
             return;
         }
+        panel.setHeading(I18N.DISPLAY.search() + ": " + search);
         status.setBusy("");
         UserSessionServiceFacade facade = new UserSessionServiceFacade();
         facade.searchCollaborators(search, new AsyncCallback<String>() {
@@ -200,8 +154,8 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
             @Override
             public void onSuccess(String result) {
                 mode = MODE.SEARCH;
-                List<Collaborator> collaborators = parseResults(result);
-                loadResults(collaborators);
+                panel.setMode(mode);
+                panel.parseAndLoad(result);
                 status.clearStatus("");
                 showList.setVisible(true);
             }
@@ -222,50 +176,13 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
             @Override
             public void onSuccess(String result) {
                 mode = MODE.MANAGE;
-                my_collaborators = parseResults(result);
-                loadResults(my_collaborators);
+                panel.setMode(mode);
+                List<Collaborator> list = panel.parseResults(result);
+                panel.loadResults(list);
+                panel.setCurrentCollaborators(list);
                 status.clearStatus("");
             }
 
         });
-    }
-
-    /**
-     * A custom renderer that renders with add / delete icon
-     * 
-     * @author sriram
-     * 
-     */
-    private class NameCellRenderer implements GridCellRenderer<Collaborator> {
-
-        @Override
-        public Object render(Collaborator model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<Collaborator> store, Grid<Collaborator> grid) {
-
-            final HorizontalPanel hp = new HorizontalPanel();
-            final IconButton addBtn = new IconButton("add_button",
-                    new SelectionListener<IconButtonEvent>() {
-
-                        @Override
-                        public void componentSelected(IconButtonEvent ce) {
-                        }
-                    });
-            final IconButton removeBtn = new IconButton("remove_button",
-                    new SelectionListener<IconButtonEvent>() {
-
-                        @Override
-                        public void componentSelected(IconButtonEvent ce) {
-                        }
-                    });
-            if (mode.equals(MODE.SEARCH)) {
-                hp.add(addBtn);
-            } else {
-                hp.add(removeBtn);
-            }
-            hp.add(new Label(model.getName()));
-            hp.setSpacing(3);
-            return hp;
-        }
-
     }
 }

@@ -1113,4 +1113,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String currentCollabList();
+
+    /**
+     * Localized display text for 'done'
+     * 
+     * @return a string representing the localized text.
+     */
+    String done();
 }

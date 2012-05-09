@@ -1,9 +1,6 @@
 package org.iplantc.de.client.views.panels;
 
-import java.util.List;
-
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
-import org.iplantc.core.uidiskresource.client.models.File;
 
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
@@ -59,21 +56,6 @@ public abstract class DataTextAreaPanel extends LayoutContainer {
     protected abstract int getInitialHeight();
 
     protected abstract void updateDisplay();
-
-    private DiskResource getSelectedFile(final List<DiskResource> resources) {
-        DiskResource ret = null; // assume failure
-
-        // do we have only one item?
-        if (resources != null && resources.size() == 1) {
-            DiskResource test = resources.get(0);
-
-            if (test instanceof File) {
-                ret = test;
-            }
-        }
-
-        return ret;
-    }
 
     protected void displayValue(String value) {
         if (value == null) {
