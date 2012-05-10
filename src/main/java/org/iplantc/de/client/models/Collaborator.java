@@ -32,6 +32,31 @@ public class Collaborator extends BaseModelData {
         set(USERNAME, jsCollaborators.getUserName());
     }
 
+    public Collaborator(String id, String username, String firstName, String lastName, String email) {
+        if (id == null) {
+            set(ID, "");
+        } else {
+            set(ID, id);
+        }
+        set(ID, id);
+        if (firstName == null) {
+            set(NAME, "");
+        } else {
+            set(NAME, firstName + ((lastName != null) ? (" " + lastName) : ""));
+        }
+        if (email == null) {
+            set(EMAIL, "");
+        } else {
+            set(EMAIL, email);
+        }
+        if (username == null) {
+            set(USERNAME, "");
+        } else {
+            set(USERNAME, username);
+        }
+
+    }
+
     public String getId() {
         return get(ID);
     }
@@ -60,14 +85,14 @@ public class Collaborator extends BaseModelData {
         }
         if (!(c instanceof Collaborator)) {
             return false;
-        } else {
-            Collaborator collab = (Collaborator)c;
-            if (getId().equals(collab.getId())) {
-                return true;
-            } else {
-                return false;
-            }
         }
+
+        Collaborator collab = (Collaborator)c;
+        if (getId().equals(collab.getId())) {
+            return true;
+        }
+        return false;
+
     }
 
     @Override

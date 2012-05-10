@@ -3,7 +3,9 @@ package org.iplantc.de.client.views.panels;
 import java.util.List;
 
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
@@ -54,7 +56,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         initSearch();
         panel = new CollaboratorsPanel(I18N.DISPLAY.collaborators(), MODE.MANAGE, width, 260);
         add(panel);
-        getCurrentCollaborators();
+        loadCollaborators();
     }
 
     private void initSearch() {
@@ -162,7 +164,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         });
     }
 
-    private void getCurrentCollaborators() {
+    private void loadCollaborators() {
         UserSessionServiceFacade facade = new UserSessionServiceFacade();
         status.setBusy("");
         facade.getCollaborators(new AsyncCallback<String>() {
@@ -181,8 +183,14 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
                 panel.loadResults(list);
                 panel.setCurrentCollaborators(list);
                 status.clearStatus("");
+                CollaboratorsLoadedEvent event = new CollaboratorsLoadedEvent();
+                EventBus.getInstance().fireEvent(event);
             }
 
         });
+    }
+
+    public List<Collaborator> getCurrentCollaborators() {
+        return panel.getCurrentCollaborators();
     }
 }

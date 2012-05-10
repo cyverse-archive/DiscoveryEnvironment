@@ -56,9 +56,20 @@ public class SharePanel extends ContentPanel {
         cm.addHeaderGroup(0, 1, new HeaderGroupConfig(org.iplantc.de.client.I18N.DISPLAY.permissions(),
                 1, 3));
         grid = new Grid<Sharing>(new ListStore<Sharing>(), cm);
+        grid.getView().setEmptyText("Drag n Drop collaborators to begin sharing");
         add(grid);
         new SharingGridDropTarget(grid);
+    }
 
+    public void setSharingInfo(List<Sharing> sharingInfoList) {
+        grid.getStore().add(sharingInfoList);
+    }
+
+    /**
+     * @return the unshareList
+     */
+    public List<Sharing> getUnshareList() {
+        return unshareList;
     }
 
     private ColumnModel buildColumnModel() {
@@ -221,6 +232,7 @@ public class SharePanel extends ContentPanel {
                     }
 
                     if (existing_style.contains(DELETE_BUTTON_STYLE)) {
+                        grid.getStore().remove(model);
                         unshareList.add(model);
                         return;
                     }
