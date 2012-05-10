@@ -26,7 +26,7 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.DataDetailsPanel;
 import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;
@@ -144,7 +144,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      * 
      */
     protected void retrieveData(AsyncCallback<String> callback) {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
 
         mask(I18N.DISPLAY.loadingMask());
 

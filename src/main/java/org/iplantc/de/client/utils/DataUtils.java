@@ -7,7 +7,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.DiskResouceDuplicatesCheckCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -190,7 +190,7 @@ public class DataUtils {
 
     public static void checkListForDuplicateFilenames(final List<String> diskResourceIds,
             final DiskResouceDuplicatesCheckCallback callback) {
-        final FolderServiceFacade facade = new FolderServiceFacade();
+        final DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.diskResourcesExist(diskResourceIds, callback);
     }
 

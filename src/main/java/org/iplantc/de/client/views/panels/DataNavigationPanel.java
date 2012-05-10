@@ -16,7 +16,7 @@ import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -382,7 +382,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
                 String idDestFolder = res.getId();
 
                 // call service to move files and folders
-                FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
                 facade.moveDiskResources((List<DiskResource>)event.getData(), idDestFolder);
             }
         }
@@ -580,7 +580,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
      */
     private void reloadFolderThenExpand(final Folder target, final String path,
             final AsyncTreeLoaderCallBack callback) {
-        new FolderServiceFacade().getFolderContents(target.getId(), false,
+        new DiskResourceServiceFacade().getFolderContents(target.getId(), false,
                 new DiskResourceServiceCallback() {
                     @Override
                     public void onSuccess(String result) {

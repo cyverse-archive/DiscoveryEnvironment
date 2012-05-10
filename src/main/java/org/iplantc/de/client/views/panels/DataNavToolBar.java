@@ -15,7 +15,7 @@ import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.FolderDeleteCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 
@@ -262,7 +262,7 @@ public class DataNavToolBar extends ToolBar {
                             }
 
                             if (idFolders.size() > 0) {
-                                FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+                                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
                                 facade.deleteFolders(JsonUtil.buildJsonArrayString(idFolders),
                                         new FolderDeleteCallback(idFolders));
                             }

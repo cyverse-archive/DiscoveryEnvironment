@@ -14,7 +14,7 @@ import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
@@ -219,7 +219,7 @@ public class DataActionsPanel extends ContentPanel {
                             }
                         }
 
-                        FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+                        DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
 
                         if (idFiles.size() > 0) {
                             facade.deleteFiles(JsonUtil.buildJsonArrayString(idFiles),
@@ -322,7 +322,7 @@ public class DataActionsPanel extends ContentPanel {
         }
 
         private void downloadNow(String path) {
-            FolderServiceFacade service = new FolderServiceFacade();
+            DiskResourceServiceFacade service = new DiskResourceServiceFacade();
             service.simpleDownload(path);
         }
 

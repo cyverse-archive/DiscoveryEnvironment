@@ -12,7 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.FolderSelectDialogPanel;
 import org.iplantc.de.client.views.panels.ResourceSelectDialogPanel;
 
@@ -93,7 +93,7 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
     protected void retrieveData(final AsyncCallback<String> callback) {
         mask(I18N.DISPLAY.loadingMask());
 
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.getHomeFolder(callback);
     }
 

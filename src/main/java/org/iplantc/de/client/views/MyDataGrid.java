@@ -23,7 +23,7 @@ import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
@@ -658,7 +658,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         }
 
         private void downloadNow(String path) {
-            FolderServiceFacade service = new FolderServiceFacade();
+            DiskResourceServiceFacade service = new DiskResourceServiceFacade();
             service.simpleDownload(path);
         }
 
@@ -746,7 +746,7 @@ public class MyDataGrid extends Grid<DiskResource> {
                 }
 
                 // call the appropriate delete services
-                FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
 
                 if (idFiles.size() > 0) {
                     facade.deleteFiles(JsonUtil.buildJsonArrayString(idFiles), new FileDeleteCallback(

@@ -4,7 +4,7 @@ import org.iplantc.core.client.widgets.validator.JobNameValidator;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.FolderCreateCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.widget.Component;
 
@@ -37,7 +37,7 @@ public class AddFolderDialogPanel extends IPlantPromptPanel {
             name = name.trim();
 
             if (name.length() > 0) {
-                FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
                 facade.createFolder(idParent + "/" + name, new FolderCreateCallback(idParent, name)); //$NON-NLS-1$
             }
         }

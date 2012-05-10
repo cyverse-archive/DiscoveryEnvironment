@@ -194,4 +194,8 @@ public class CollaboratorsPanel extends ContentPanel {
         loadResults(my_collaborators);
     }
 
+    public List<Collaborator> getCurrentCollaborators() {
+        return my_collaborators;
+    }
+
 }

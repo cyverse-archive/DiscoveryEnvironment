@@ -8,7 +8,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -157,7 +157,7 @@ public class DataDetailListPanel extends ContentPanel {
      * @param path
      */
     private void getFolderDetails(final String path) {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.getFolderContents(path, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {

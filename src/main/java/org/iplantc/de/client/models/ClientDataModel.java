@@ -12,7 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.FolderData;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -37,7 +37,7 @@ public class ClientDataModel {
 
     private void initHeirarchy() {
         // create a custom RPC Folder loader for the TreeStore heirarchy
-        final FolderServiceFacade service = new FolderServiceFacade();
+        final DiskResourceServiceFacade service = new DiskResourceServiceFacade();
         RpcProxy<List<Folder>> proxy = new RpcProxy<List<Folder>>() {
             @Override
             protected void load(Object loadConfig, final AsyncCallback<List<Folder>> callback) {

@@ -17,7 +17,7 @@ import org.iplantc.core.uidiskresource.client.models.JsDiskResourceMetaData;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -76,7 +76,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     protected void retrieveMetaData() {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.getMetaData(resource, new RetrieveMetadataCallback());
     }
 
@@ -234,7 +234,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     public void UpdateMetadata() {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         JSONObject obj = new JSONObject();
         obj.put("add", buildToAddArray());
         obj.put("delete", buildToDeleteArray());

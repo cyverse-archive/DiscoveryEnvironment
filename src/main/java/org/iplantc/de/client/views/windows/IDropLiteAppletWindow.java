@@ -14,7 +14,7 @@ import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.IDropLite;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
@@ -254,7 +254,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void buildUploadApplet() {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.upload(new IDropLiteServiceCallback() {
             @Override
             protected Html buildAppletHtml(JSONObject appletData) {
@@ -269,7 +269,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void buildDownloadApplet() {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.download(config.getDownloadPaths(), new IDropLiteServiceCallback() {
             @Override
             protected Html buildAppletHtml(JSONObject appletData) {

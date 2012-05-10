@@ -2,7 +2,7 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.FolderRenameCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.widget.Component;
 
@@ -24,7 +24,7 @@ public class RenameFolderDialogPanel extends RenameDiskResourceDialogPanel {
 
     @Override
     protected void callRenameService(String srcName, String destName) {
-        FolderServiceFacade facade = new FolderServiceFacade(maskingParent);
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
         facade.renameFolder(srcName, destName, new FolderRenameCallback(srcName, destName));
     }
 }

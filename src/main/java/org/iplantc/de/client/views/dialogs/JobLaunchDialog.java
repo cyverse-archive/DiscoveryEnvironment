@@ -14,7 +14,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.FolderCreateCallback;
-import org.iplantc.de.client.services.FolderServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.WizardExportHelper;
 import org.iplantc.de.client.views.FolderSelector;
@@ -226,7 +226,7 @@ public class JobLaunchDialog extends Dialog {
         if (folder == null || defaultFolderId.equals(folder.getId())) {
             onConfirm.execute();
         } else {
-            new FolderServiceFacade().getFolderContents(folder.getId(), new AsyncCallback<String>() {
+            new DiskResourceServiceFacade().getFolderContents(folder.getId(), new AsyncCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     // if the folder is empty, don't ask for confirmation
@@ -449,7 +449,7 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private void setDefaultOutputFolder() {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.getHomeFolder(new AsyncCallback<String>() {
 
             @Override
@@ -481,7 +481,7 @@ public class JobLaunchDialog extends Dialog {
     }
 
     protected void createOutputFolderByDefault(String idParentFolder, String name) {
-        FolderServiceFacade facade = new FolderServiceFacade();
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         facade.createFolder(idParentFolder + "/" + name, new OutputFolderCreateCallback(idParentFolder,
                 name));
     }
