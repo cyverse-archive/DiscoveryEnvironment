@@ -29,15 +29,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author amuir
  * 
  */
-public class FolderServiceFacade {
+public class DiskResourceServiceFacade {
     private final String serviceNamePrefix = "org.iplantc.services.de-data-mgmt"; //$NON-NLS-1$
     private final Component maskingCaller;
 
-    public FolderServiceFacade() {
+    public DiskResourceServiceFacade() {
         this(null);
     }
 
-    public FolderServiceFacade(Component maskingCaller) {
+    public DiskResourceServiceFacade(Component maskingCaller) {
         this.maskingCaller = maskingCaller;
     }
 
@@ -444,6 +444,19 @@ public class FolderServiceFacade {
      */
     public void unshareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".unshare"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
+    }
+
+    /**
+     * get user permission info on selected disk resources
+     * 
+     * @param body - Post body in JSONObject format
+     * @param callback callback object
+     */
+    public void getPermissions(JSONObject body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix + ".permissions"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 body.toString());
         callService(callback, wrapper);
