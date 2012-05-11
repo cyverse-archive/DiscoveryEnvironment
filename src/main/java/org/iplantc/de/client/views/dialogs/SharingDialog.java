@@ -56,7 +56,7 @@ public class SharingDialog extends Dialog {
     }
 
     private void init() {
-        setSize(800, 410);
+        setSize(800, 440);
         setHeading("Share");
         initLayout();
         setButtons(Dialog.OK);
@@ -109,10 +109,10 @@ public class SharingDialog extends Dialog {
 
     private void buildWest() {
         ContentPanel east = new ContentPanel();
-        collaboratorSearchPanel = new ManageCollaboratorsPanel(MODE.SEARCH, 390);
+        collaboratorSearchPanel = new ManageCollaboratorsPanel(MODE.SEARCH, 370);
         east.setHeading("Search Collaborators");
         east.add(collaboratorSearchPanel);
-        BorderLayoutData data = new BorderLayoutData(LayoutRegion.WEST, 390, 200, 450);
+        BorderLayoutData data = new BorderLayoutData(LayoutRegion.WEST, 380, 200, 450);
         data.setSplit(true);
         data.setCollapsible(true);
         add(east, data);

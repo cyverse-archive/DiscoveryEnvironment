@@ -58,8 +58,8 @@ public class CollaboratorsPanel extends ContentPanel {
     private void init() {
 
         my_collaborators = new ArrayList<Collaborator>();
-
-        grid = new Grid<Collaborator>(new ListStore<Collaborator>(), buildColumnModel());
+        ListStore<Collaborator> store = new ListStore<Collaborator>();
+        grid = new Grid<Collaborator>(store, buildColumnModel());
         grid.setAutoExpandColumn(Collaborator.NAME);
         grid.setBorders(false);
         grid.getView().setEmptyText(I18N.DISPLAY.noCollaborators());
@@ -157,6 +157,7 @@ public class CollaboratorsPanel extends ContentPanel {
                     IconButton src = (IconButton)ce.getSource();
                     String existing_style = src.getStyleName();
                     if (existing_style.contains(ADD_BUTTON_STYLE)) {
+                        // TODO: check duplicates
                         my_collaborators.add(model);
                         // TODO: call service to update
                         if (mode.equals(MODE.SEARCH)) {

@@ -11,10 +11,11 @@ import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.Sharing;
 
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.dnd.GridDropTarget;
-import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -23,12 +24,13 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.extjs.gxt.ui.client.widget.form.RadioGroup;
+import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
-import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.user.client.ui.Label;
 
@@ -42,6 +44,7 @@ public class SharePanel extends ContentPanel {
     private DiskResource resource;
     private Grid<Sharing> grid;
     private List<Sharing> unshareList;
+    private CheckBoxSelectionModel<Sharing> sm;
 
     public SharePanel(DiskResource dr) {
         unshareList = new ArrayList<Sharing>();
@@ -53,11 +56,20 @@ public class SharePanel extends ContentPanel {
         setSize(378, 225);
         setLayout(new FitLayout());
         ColumnModel cm = buildColumnModel();
-        cm.addHeaderGroup(0, 1, new HeaderGroupConfig(org.iplantc.de.client.I18N.DISPLAY.permissions(),
-                1, 3));
-        grid = new Grid<Sharing>(new ListStore<Sharing>(), cm);
+        ListStore<Sharing> store = new ListStore<Sharing>();
+        grid = new Grid<Sharing>(store, cm);
+        store.setKeyProvider(new ModelKeyProvider<Sharing>() {
+
+            @Override
+            public String getKey(Sharing model) {
+                return model.getUserName();
+            }
+        });
         grid.getView().setEmptyText("Drag n Drop collaborators to begin sharing");
+        grid.setSelectionModel(sm);
+        grid.addPlugin(sm);
         add(grid);
+
         new SharingGridDropTarget(grid);
     }
 
@@ -73,28 +85,16 @@ public class SharePanel extends ContentPanel {
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig sharee = new ColumnConfig(Sharing.NAME, I18N.DISPLAY.name(), 200);
-        ColumnConfig read = new ColumnConfig(Sharing.READ, Sharing.READ, 50);
-        ColumnConfig write = new ColumnConfig(Sharing.WRITE, Sharing.WRITE, 50);
-        ColumnConfig own = new ColumnConfig(Sharing.OWN, Sharing.OWN, 50);
-
+        sm = new CheckBoxSelectionModel<Sharing>();
+        ColumnConfig sharee = new ColumnConfig(Sharing.NAME, I18N.DISPLAY.name(), 170);
+        ColumnConfig premissions = new ColumnConfig("",
+                org.iplantc.de.client.I18N.DISPLAY.permissions(), 170);
+        premissions.setRenderer(new PermissionsReadCellRender());
         sharee.setMenuDisabled(true);
         sharee.setSortable(true);
         sharee.setRenderer(new NameCellRenderer());
 
-        read.setRenderer(new PermissionsReadCellRender());
-        read.setMenuDisabled(true);
-        read.setSortable(false);
-
-        write.setRenderer(new PermissionsWriteCellRender());
-        write.setMenuDisabled(true);
-        write.setSortable(false);
-
-        own.setRenderer(new PermissionsOwnCellRender());
-        own.setMenuDisabled(true);
-        own.setSortable(false);
-
-        return new ColumnModel(Arrays.asList(sharee, read, write, own));
+        return new ColumnModel(Arrays.asList(sm.getColumn(), sharee, premissions));
     }
 
     /**
@@ -116,7 +116,7 @@ public class SharePanel extends ContentPanel {
     }
 
     /**
-     * render radio for read permission
+     * render radio for permissions
      * 
      * @author sriram
      * 
@@ -126,71 +126,60 @@ public class SharePanel extends ContentPanel {
         @Override
         public Object render(final Sharing model, String property, ColumnData config, int rowIndex,
                 int colIndex, ListStore<Sharing> store, final Grid<Sharing> grid) {
-            final Radio r = new Radio();
+            HorizontalPanel panel = new HorizontalPanel();
+
+            final Radio read = buildRadio("read");
+            read.addListener(Events.OnChange, new PermissionsFieldListener(model));
+
+            final Radio write = buildRadio("write");
+            write.addListener(Events.OnChange, new PermissionsFieldListener(model));
+
+            final Radio own = buildRadio("own");
+            own.addListener(Events.OnChange, new PermissionsFieldListener(model));
+
             if (!model.isOwner() && !model.isWritable() && model.isReadable()) {
-                r.setValue(model.isReadable());
+                read.setValue(model.isReadable());
+            } else if (!model.isOwner() && model.isWritable()) {
+                write.setValue(model.isWritable());
+            } else {
+                own.setValue(model.isOwner());
             }
-            r.addListener(Events.OnChange, new Listener<BaseEvent>() {
 
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    model.setReadable(r.getValue());
-                    grid.getStore().update(model);
-                }
-            });
+            RadioGroup group = new RadioGroup();
+            group.add(read);
+            group.add(write);
+            group.add(own);
+
+            panel.add(group);
+            return panel;
+        }
+
+        private Radio buildRadio(String label) {
+            final Radio r = new Radio();
+            r.setBoxLabel(label);
             return r;
         }
     }
 
-    /**
-     * render radio for write permission
-     * 
-     * @author sriram
-     * 
-     */
-    private class PermissionsWriteCellRender implements GridCellRenderer<Sharing> {
+    private class PermissionsFieldListener implements Listener<FieldEvent> {
 
-        @Override
-        public Object render(final Sharing model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<Sharing> store, final Grid<Sharing> grid) {
-            final Radio r = new Radio();
-            if (!model.isOwner() && model.isWritable()) {
-                r.setValue(model.isWritable());
-            }
-            r.addListener(Events.OnChange, new Listener<BaseEvent>() {
+        private Sharing model;
 
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    model.setWritable(r.getValue());
-                    grid.getStore().update(model);
-                }
-            });
-            return r;
+        public PermissionsFieldListener(Sharing model) {
+            this.model = model;
         }
-    }
-
-    /**
-     * render radio for owner permission
-     * 
-     * @author sriram
-     * 
-     */
-    private class PermissionsOwnCellRender implements GridCellRenderer<Sharing> {
 
         @Override
-        public Object render(final Sharing model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<Sharing> store, final Grid<Sharing> grid) {
-            final Radio r = new Radio();
-            r.setValue(model.isOwner());
-            r.addListener(Events.OnChange, new Listener<BaseEvent>() {
-
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    model.setOwner(r.getValue());
-                    grid.getStore().update(model);
-                }
-            });
-            return r;
+        public void handleEvent(FieldEvent be) {
+            Radio r = (Radio)be.getField();
+            if (r.getBoxLabel().equals("read")) {
+                model.setReadable(r.getValue());
+            } else if (r.getBoxLabel().equals("write")) {
+                model.setWritable(r.getValue());
+            } else {
+                model.setOwner(r.getValue());
+            }
+            grid.getStore().update(model);
         }
 
     }
@@ -260,10 +249,14 @@ public class SharePanel extends ContentPanel {
         @Override
         protected void onDragDrop(DNDEvent e) {
             List<ModelData> list = e.getData();
+            ListStore<ModelData> store = grid.getStore();
             for (ModelData md : list) {
+
                 Collaborator c = (Collaborator)md;
                 Sharing s = new Sharing(c, new Permissions(true, false, false));
-                grid.getStore().add(s);
+                if (!store.contains(s)) {
+                    store.add(s);
+                }
             }
         }
 

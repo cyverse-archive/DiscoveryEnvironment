@@ -77,4 +77,13 @@ public class Sharing extends BaseModelData {
         return collaborator.getName();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof Sharing)) {
+            return false;
+        }
+        Sharing s = (Sharing)o;
+        return getUserName().equals(s.getUserName());
+    }
+
 }
