@@ -7,21 +7,27 @@ import java.util.List;
 import org.iplantc.core.uiapplications.client.I18N;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Permissions;
+import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.Sharing;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
 import com.extjs.gxt.ui.client.dnd.GridDropTarget;
+import com.extjs.gxt.ui.client.event.BaseEvent;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
@@ -32,6 +38,9 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -45,6 +54,9 @@ public class SharePanel extends ContentPanel {
     private Grid<Sharing> grid;
     private List<Sharing> unshareList;
     private CheckBoxSelectionModel<Sharing> sm;
+    private ToolBar toolbar;
+    private static final String ID_PERM_PANEL = "idPermPanel";
+    private static final String ID_BTN_REMOVE = "idBtnRemove";
 
     public SharePanel(DiskResource dr) {
         unshareList = new ArrayList<Sharing>();
@@ -59,18 +71,57 @@ public class SharePanel extends ContentPanel {
         ListStore<Sharing> store = new ListStore<Sharing>();
         grid = new Grid<Sharing>(store, cm);
         store.setKeyProvider(new ModelKeyProvider<Sharing>() {
-
             @Override
             public String getKey(Sharing model) {
                 return model.getUserName();
             }
         });
-        grid.getView().setEmptyText("Drag n Drop collaborators to begin sharing");
+        grid.getView().setEmptyText(org.iplantc.de.client.I18N.DISPLAY.sharePanelEmptyText());
         grid.setSelectionModel(sm);
         grid.addPlugin(sm);
+        grid.getSelectionModel().addListener(Events.SelectionChange, new GridSelectionChangeListener());
         add(grid);
-
+        addToolBar();
         new SharingGridDropTarget(grid);
+    }
+
+    private void addToolBar() {
+        toolbar = new ToolBar();
+        Button removeBtn = buildUnshareButton();
+        toolbar.add(removeBtn);
+        toolbar.add(new FillToolItem());
+
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setId(ID_PERM_PANEL);
+
+        final Radio read = buildRadio(org.iplantc.de.client.I18N.DISPLAY.read());
+        read.addListener(Events.OnChange, new BulkPermissionsFieldListener());
+
+        final Radio write = buildRadio(org.iplantc.de.client.I18N.DISPLAY.write());
+        write.addListener(Events.OnChange, new BulkPermissionsFieldListener());
+
+        final Radio own = buildRadio(org.iplantc.de.client.I18N.DISPLAY.own());
+        own.addListener(Events.OnChange, new BulkPermissionsFieldListener());
+
+        RadioGroup group = new RadioGroup();
+        group.add(read);
+        group.add(write);
+        group.add(own);
+
+        panel.add(group);
+        panel.disable();
+        toolbar.add(panel);
+        setTopComponent(toolbar);
+    }
+
+    private Button buildUnshareButton() {
+        Button removeBtn = new Button(org.iplantc.de.client.I18N.DISPLAY.unshare(),
+                AbstractImagePrototype.create(Resources.ICONS.deleteIcon()));
+        removeBtn.setId(ID_BTN_REMOVE);
+        removeBtn.addSelectionListener(new RemoveButtonSelectionListener());
+        removeBtn.disable();
+        return removeBtn;
+
     }
 
     public void setSharingInfo(List<Sharing> sharingInfoList) {
@@ -115,6 +166,19 @@ public class SharePanel extends ContentPanel {
         return grid.getStore().getModels();
     }
 
+    private final class GridSelectionChangeListener implements Listener<BaseEvent> {
+        @Override
+        public void handleEvent(BaseEvent be) {
+            if (grid.getSelectionModel().getSelectedItems().size() > 0) {
+                toolbar.getItemByItemId(ID_BTN_REMOVE).enable();
+                toolbar.getItemByItemId(ID_PERM_PANEL).enable();
+            } else {
+                toolbar.getItemByItemId(ID_BTN_REMOVE).disable();
+                toolbar.getItemByItemId(ID_PERM_PANEL).disable();
+            }
+        }
+    }
+
     /**
      * render radio for permissions
      * 
@@ -128,13 +192,13 @@ public class SharePanel extends ContentPanel {
                 int colIndex, ListStore<Sharing> store, final Grid<Sharing> grid) {
             HorizontalPanel panel = new HorizontalPanel();
 
-            final Radio read = buildRadio("read");
+            final Radio read = buildRadio(org.iplantc.de.client.I18N.DISPLAY.read());
             read.addListener(Events.OnChange, new PermissionsFieldListener(model));
 
-            final Radio write = buildRadio("write");
+            final Radio write = buildRadio(org.iplantc.de.client.I18N.DISPLAY.write());
             write.addListener(Events.OnChange, new PermissionsFieldListener(model));
 
-            final Radio own = buildRadio("own");
+            final Radio own = buildRadio(org.iplantc.de.client.I18N.DISPLAY.own());
             own.addListener(Events.OnChange, new PermissionsFieldListener(model));
 
             if (!model.isOwner() && !model.isWritable() && model.isReadable()) {
@@ -153,11 +217,53 @@ public class SharePanel extends ContentPanel {
             panel.add(group);
             return panel;
         }
+    }
 
-        private Radio buildRadio(String label) {
-            final Radio r = new Radio();
-            r.setBoxLabel(label);
-            return r;
+    private Radio buildRadio(String label) {
+        final Radio r = new Radio();
+        r.setBoxLabel(label);
+        return r;
+    }
+
+    private void updatePermissions(Radio r, Sharing model) {
+        if (r.getBoxLabel().equals("read")) {
+            model.setReadable(r.getValue());
+        } else if (r.getBoxLabel().equals("write")) {
+            model.setWritable(r.getValue());
+        } else {
+            model.setOwner(r.getValue());
+        }
+        grid.getStore().update(model);
+    }
+
+    private class BulkPermissionsFieldListener implements Listener<FieldEvent> {
+        public void handleEvent(FieldEvent be) {
+            Radio r = (Radio)be.getField();
+            List<Sharing> models = grid.getSelectionModel().getSelectedItems();
+            for (Sharing model : models) {
+                updatePermissions(r, model);
+            }
+        }
+    }
+
+    private class RemoveButtonSelectionListener extends SelectionListener<ButtonEvent> {
+
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            MessageBox.confirm(org.iplantc.de.client.I18N.DISPLAY.unshare(),
+                    org.iplantc.de.client.I18N.DISPLAY.unsharePrompt(resource.getName()),
+                    new Listener<MessageBoxEvent>() {
+
+                        @Override
+                        public void handleEvent(MessageBoxEvent be) {
+                            Button btn = be.getButtonClicked();
+                            if (btn.getText().equals("Yes")) {
+                                unshareList.addAll(grid.getSelectionModel().getSelectedItems());
+                            }
+
+                        }
+                    });
+
         }
     }
 
@@ -172,14 +278,7 @@ public class SharePanel extends ContentPanel {
         @Override
         public void handleEvent(FieldEvent be) {
             Radio r = (Radio)be.getField();
-            if (r.getBoxLabel().equals("read")) {
-                model.setReadable(r.getValue());
-            } else if (r.getBoxLabel().equals("write")) {
-                model.setWritable(r.getValue());
-            } else {
-                model.setOwner(r.getValue());
-            }
-            grid.getStore().update(model);
+            updatePermissions(r, model);
         }
 
     }
@@ -193,7 +292,7 @@ public class SharePanel extends ContentPanel {
     private class NameCellRenderer implements GridCellRenderer<Sharing> {
 
         private static final String REMOVE_BUTTON_STYLE = "remove_button";
-        private static final String DELETE_BUTTON_STYLE = "delete_button";
+        private static final String DELETE_BUTTON_STYLE = "unshare_button";
 
         @Override
         public Object render(Sharing model, String property, ColumnData config, int rowIndex,

@@ -666,7 +666,7 @@ img.analysis_remove {
 }
 
 .remove_button {
-	background-image: url('./images/delete.png');
+	background-image: url('./images/delete_icon.png');
 	height: 16px;
 	width: 16px;
 }
@@ -675,6 +675,12 @@ img.analysis_remove {
 	background-image: url('./images/delete_text.png');
 	height: 16px;
 	width: 40px;
+}
+
+.unshare_button {
+	background-image: url('./images/unshare.png');
+	height: 16px;
+	width: 43px;
 }
 
 .done_button {

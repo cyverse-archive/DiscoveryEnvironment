@@ -1120,4 +1120,46 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String done();
+
+    /**
+     * Localized display text for sharing grid
+     * 
+     * @return a string representing the localized text.
+     */
+    String sharePanelEmptyText();
+
+    /**
+     * Localized display text for unshare
+     * 
+     * @return a string representing the localized text.
+     */
+    String unshare();
+
+    /**
+     * Localized display text for read
+     * 
+     * @return a string representing the localized text.
+     */
+    String read();
+
+    /**
+     * Localized display text for write
+     * 
+     * @return a string representing the localized text.
+     */
+    String write();
+
+    /**
+     * Localized display text for own
+     * 
+     * @return a string representing the localized text.
+     */
+    String own();
+
+    /**
+     * Localized display text for unshare prompt
+     * 
+     * @return a string representing the localized text.
+     */
+    String unsharePrompt(String name);
 }
