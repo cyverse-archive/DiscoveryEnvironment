@@ -182,7 +182,6 @@ public class CollaboratorsPanel extends ContentPanel {
 
                 }
             });
-
             return btn;
         }
     }
