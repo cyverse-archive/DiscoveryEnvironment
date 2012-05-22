@@ -146,8 +146,6 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
                 initDragAndDrop();
             }
 
-            toolbar.addColumnViewToggle(grid.getColumnModel(), grid.getView());
-
             layout();
         }
     }

@@ -21,9 +21,9 @@ import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.ClientDataModel;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileDeleteCallback;
 import org.iplantc.de.client.services.FolderDeleteCallback;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
@@ -395,12 +395,10 @@ public class MyDataGrid extends Grid<DiskResource> {
 
         ColumnConfig name = new ColumnConfig(COLUMN_ID_NAME, I18N.DISPLAY.name(), 235);
         name.setRenderer(new NameCellRenderer(tag));
-        name.setMenuDisabled(true);
 
         ColumnConfig date = new ColumnConfig(COLUMN_ID_DATE_MODIFIED, I18N.DISPLAY.lastModified(), 150);
         date.setDateTimeFormat(DateTimeFormat
                 .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM));
-        date.setMenuDisabled(true);
 
         if (tag.equals(Constants.CLIENT.myDataTag())) {
             // add the checkbox as the first column of the row
@@ -412,12 +410,9 @@ public class MyDataGrid extends Grid<DiskResource> {
         created.setDateTimeFormat(DateTimeFormat
                 .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM));
         created.setHidden(true);
-        created.setMenuDisabled(true);
 
         ColumnConfig size = new ColumnConfig(COLUMN_ID_SIZE, I18N.DISPLAY.size(), 100);
         size.setRenderer(new SizeCellRenderer());
-        size.setHidden(true);
-        size.setMenuDisabled(true);
 
         ColumnConfig menu = new ColumnConfig(COLUMN_ID_MENU, "", 25); //$NON-NLS-1$
         menu.setSortable(false);
