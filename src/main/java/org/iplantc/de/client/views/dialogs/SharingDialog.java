@@ -11,6 +11,7 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Permissions;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.client.events.CollaboratorsLoadedEventHandler;
 import org.iplantc.de.client.models.Collaborator;
@@ -22,8 +23,6 @@ import org.iplantc.de.client.views.panels.SharePanel;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Scroll;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -57,11 +56,10 @@ public class SharingDialog extends Dialog {
 
     private void init() {
         setSize(800, 440);
-        setHeading("Share");
+        setHeading(I18N.DISPLAY.share());
         initLayout();
         setButtons(Dialog.OK);
         getOkButton().setText(org.iplantc.de.client.I18N.DISPLAY.done());
-        getOkButton().addSelectionListener(new SharingDoneListener());
         setHideOnButtonClick(true);
         setModal(true);
         setResizable(false);
@@ -82,6 +80,12 @@ public class SharingDialog extends Dialog {
     @Override
     protected void onHide() {
         super.onHide();
+        SharePanel view = null;
+        for (DiskResource dr : resources) {
+            view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
+            doSharing(view);
+            doUnsharing(view);
+        }
         EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
     }
 
@@ -98,7 +102,7 @@ public class SharingDialog extends Dialog {
 
     private void buildCenter() {
         sharingPanel = new ContentPanel();
-        sharingPanel.setHeading("Share");
+        sharingPanel.setHeading(I18N.DISPLAY.share());
         sharingPanel.setLayout(new FlowLayout());
         sharingPanel.setScrollMode(Scroll.AUTOY);
         BorderLayoutData data = new BorderLayoutData(LayoutRegion.CENTER);
@@ -109,8 +113,8 @@ public class SharingDialog extends Dialog {
 
     private void buildWest() {
         ContentPanel east = new ContentPanel();
-        collaboratorSearchPanel = new ManageCollaboratorsPanel(MODE.SEARCH, 370);
-        east.setHeading("Search Collaborators");
+        collaboratorSearchPanel = new ManageCollaboratorsPanel(MODE.SEARCH, 378);
+        east.setHeading(I18N.DISPLAY.searchCollab());
         east.add(collaboratorSearchPanel);
         BorderLayoutData data = new BorderLayoutData(LayoutRegion.WEST, 380, 200, 450);
         data.setSplit(true);
@@ -221,19 +225,6 @@ public class SharingDialog extends Dialog {
 
             }
         });
-    }
-
-    private class SharingDoneListener extends SelectionListener<ButtonEvent> {
-        @Override
-        public void componentSelected(ButtonEvent ce) {
-            SharePanel view = null;
-            for (DiskResource dr : resources) {
-                view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
-                doSharing(view);
-                doUnsharing(view);
-            }
-        }
-
     }
 
     private void doSharing(SharePanel view) {

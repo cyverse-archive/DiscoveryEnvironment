@@ -50,6 +50,7 @@ import com.google.gwt.user.client.ui.Label;
  * 
  */
 public class SharePanel extends ContentPanel {
+    private static final String ID_PERM_GROUP = "idPermGroup";
     private DiskResource resource;
     private Grid<Sharing> grid;
     private List<Sharing> unshareList;
@@ -104,6 +105,7 @@ public class SharePanel extends ContentPanel {
         own.addListener(Events.OnChange, new BulkPermissionsFieldListener());
 
         RadioGroup group = new RadioGroup();
+        group.setId(ID_PERM_GROUP);
         group.add(read);
         group.add(write);
         group.add(own);
@@ -171,7 +173,10 @@ public class SharePanel extends ContentPanel {
         public void handleEvent(BaseEvent be) {
             if (grid.getSelectionModel().getSelectedItems().size() > 0) {
                 toolbar.getItemByItemId(ID_BTN_REMOVE).enable();
-                toolbar.getItemByItemId(ID_PERM_PANEL).enable();
+                HorizontalPanel hp = (HorizontalPanel)toolbar.getItemByItemId(ID_PERM_PANEL);
+                RadioGroup rg = (RadioGroup)hp.getItemByItemId(ID_PERM_GROUP);
+                rg.clear();
+                hp.enable();
             } else {
                 toolbar.getItemByItemId(ID_BTN_REMOVE).disable();
                 toolbar.getItemByItemId(ID_PERM_PANEL).disable();
@@ -222,13 +227,14 @@ public class SharePanel extends ContentPanel {
     private Radio buildRadio(String label) {
         final Radio r = new Radio();
         r.setBoxLabel(label);
+        r.setId("id" + label);
         return r;
     }
 
     private void updatePermissions(Radio r, Sharing model) {
-        if (r.getBoxLabel().equals("read")) {
+        if (r.getBoxLabel().equals(org.iplantc.de.client.I18N.DISPLAY.read())) {
             model.setReadable(r.getValue());
-        } else if (r.getBoxLabel().equals("write")) {
+        } else if (r.getBoxLabel().equals(org.iplantc.de.client.I18N.DISPLAY.write())) {
             model.setWritable(r.getValue());
         } else {
             model.setOwner(r.getValue());
@@ -258,12 +264,20 @@ public class SharePanel extends ContentPanel {
                         public void handleEvent(MessageBoxEvent be) {
                             Button btn = be.getButtonClicked();
                             if (btn.getText().equals("Yes")) {
-                                unshareList.addAll(grid.getSelectionModel().getSelectedItems());
+                                List<Sharing> models = grid.getSelectionModel().getSelectedItems();
+                                unshareList.addAll(models);
+                                removeModels(models);
                             }
 
                         }
                     });
 
+        }
+    }
+
+    private void removeModels(List<Sharing> models) {
+        for (Sharing model : models) {
+            grid.getStore().remove(model);
         }
     }
 
@@ -327,7 +341,7 @@ public class SharePanel extends ContentPanel {
 
                 }
             });
-
+            btn.setToolTip(org.iplantc.de.client.I18N.DISPLAY.unshare());
             return btn;
         }
     }
@@ -350,7 +364,6 @@ public class SharePanel extends ContentPanel {
             List<ModelData> list = e.getData();
             ListStore<ModelData> store = grid.getStore();
             for (ModelData md : list) {
-
                 Collaborator c = (Collaborator)md;
                 Sharing s = new Sharing(c, new Permissions(true, false, false));
                 if (!store.contains(s)) {

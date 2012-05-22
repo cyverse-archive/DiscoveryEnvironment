@@ -5,8 +5,6 @@ import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
@@ -35,7 +33,7 @@ public class UserPreferencesDialog extends Dialog {
         buildSettingPanel();
         buildCollaboratorsPanel();
 
-        addOkButtonListener();
+        setOkButtonText();
     }
 
     private void initDialog() {
@@ -45,16 +43,16 @@ public class UserPreferencesDialog extends Dialog {
         setHideOnButtonClick(true);
     }
 
-    private void addOkButtonListener() {
+    private void setOkButtonText() {
         Button ok = getButtonById(Dialog.OK);
         ok.setText(I18N.DISPLAY.done());
-        ok.addSelectionListener(new SelectionListener<ButtonEvent>() {
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                settingPanel.saveData();
-                collabPanel.saveData();
-            }
-        });
+    }
+
+    @Override
+    public void onHide() {
+        super.onHide();
+        settingPanel.saveData();
+        collabPanel.saveData();
     }
 
     private void buildTabPanel() {

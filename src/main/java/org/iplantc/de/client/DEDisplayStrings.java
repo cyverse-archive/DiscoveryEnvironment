@@ -1162,4 +1162,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String unsharePrompt(String name);
+
+    /**
+     * Localized display text search collaborators
+     * 
+     * @return a string representing the localized text.
+     */
+    String searchCollab();
 }
