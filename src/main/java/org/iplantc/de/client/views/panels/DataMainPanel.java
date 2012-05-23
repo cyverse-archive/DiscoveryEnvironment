@@ -120,7 +120,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
 
         if (model != null) {
             this.model = model;
-            grid = MyDataGrid.createInstance(model.getRootFolderId(), tag, model, maskingParent);
+            grid = MyDataGrid.createInstance(model.getRootFolderId(), tag, model);
 
             if (grid.isRendered()) {
                 grid.setSize(getWidth(), getHeight());
@@ -153,7 +153,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
     @Override
     public void cleanup() {
         gridCleanUp();
-
+        toolbar.cleanup();
         super.cleanup();
     }
 
@@ -196,6 +196,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
      */
     public void setMaskingParent(Component parent) {
         maskingParent = parent;
+        toolbar.setMakingParent(parent);
     }
 
     private void updateGrid() {

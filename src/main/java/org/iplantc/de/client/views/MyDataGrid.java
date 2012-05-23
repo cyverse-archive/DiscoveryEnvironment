@@ -5,37 +5,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
-import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
-import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
-import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
-import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.ClientDataModel;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileDeleteCallback;
-import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
-import org.iplantc.de.client.utils.TreeViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
-import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
-import org.iplantc.de.client.views.dialogs.SharingDialog;
-import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
 import org.iplantc.de.client.views.panels.DataPreviewPanel;
-import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
-import org.iplantc.de.client.views.panels.MetadataEditorPanel;
-import org.iplantc.de.client.views.panels.RenameFileDialogPanel;
-import org.iplantc.de.client.views.panels.RenameFolderDialogPanel;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -43,15 +26,9 @@ import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.MenuEvent;
-import com.extjs.gxt.ui.client.event.MessageBoxEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -60,15 +37,11 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.filters.GridFilters;
 import com.extjs.gxt.ui.client.widget.grid.filters.StringFilter;
-import com.extjs.gxt.ui.client.widget.menu.Menu;
-import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.tips.ToolTip;
 import com.extjs.gxt.ui.client.widget.tips.ToolTipConfig;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
  * A grid that displays users files and folders. Provides floating menus with support for delete, rename,
@@ -90,19 +63,9 @@ public class MyDataGrid extends Grid<DiskResource> {
     protected String callertag;
     protected String currentFolderId;
 
-    private Menu menuActions;
-    private MenuItem itemAddFolder;
-    private MenuItem itemRenameResource;
-    private MenuItem itemViewResource;
-    private MenuItem itemViewTree;
-    private MenuItem itemSimpleDownloadResource;
-    private MenuItem itemBulkDownloadResource;
-    private MenuItem itemDeleteResource;
-    private MenuItem itemMetaData;
-    private MenuItem itemShareResource;
+    private final DataActionsMenu menuActions;
 
     private final DataViewContextExecutor executor;
-    private final Component maskingParent;
 
     /**
      * Create a new MyDataGrid
@@ -112,14 +75,16 @@ public class MyDataGrid extends Grid<DiskResource> {
      * @param colModel column model describing the columns in the grid
      * @param currentFolderId id of the current folder to be displayed
      * @param executor data view context executor called when appropriate grid row is clicked
+     * @param callertag the caller tag
      */
     private MyDataGrid(ListStore<DiskResource> store, ColumnModel colModel, String currentFolderId,
-            DataViewContextExecutor executor, Component maskingParent) {
+            DataViewContextExecutor executor, final String callertag) {
         super(store, colModel);
 
+        menuActions = new DataActionsMenu(callertag);
+        this.callertag = callertag;
         this.currentFolderId = currentFolderId;
         this.executor = executor;
-        this.maskingParent = maskingParent;
 
         init();
         registerHandlers();
@@ -134,8 +99,6 @@ public class MyDataGrid extends Grid<DiskResource> {
 
         getView().setEmptyText(I18N.DISPLAY.selectFolderToViewContents());
         getView().setShowDirtyCells(false);
-
-        menuActions = buildActionsMenu();
     }
 
     /**
@@ -151,110 +114,6 @@ public class MyDataGrid extends Grid<DiskResource> {
             executor.execute(builder.build(dr.getId()));
         }
     }
-
-    /**
-     * Builds an action menu with items for adding, renaming, viewing, downloading, and deleting disk
-     * resources.
-     * 
-     * @return The grid rows' actions menu
-     */
-    private Menu buildActionsMenu() {
-        Menu actionMenu = new Menu();
-
-        buildAddfolderMenuItem();
-
-        buildRenameResourceMenuItem();
-
-        buildViewResourceMenuItem();
-
-        buildViewTreeMenuItem();
-
-        buildSimpleDownloadMenuItem();
-
-        buildBulDownloadMenuItem();
-
-        buildDeleteResourceMenuItem();
-
-        buildMetaDataMenuItem();
-
-        buildShareResourceMenuItem();
-
-        actionMenu.add(itemAddFolder);
-        actionMenu.add(itemRenameResource);
-        actionMenu.add(itemViewResource);
-        actionMenu.add(itemViewTree);
-        actionMenu.add(itemSimpleDownloadResource);
-        actionMenu.add(itemBulkDownloadResource);
-        actionMenu.add(itemDeleteResource);
-        actionMenu.add(itemMetaData);
-        actionMenu.add(itemShareResource);
-
-        return actionMenu;
-    }
-
-    private void buildShareResourceMenuItem() {
-        itemShareResource = new MenuItem();
-        itemShareResource.setText(I18N.DISPLAY.share());
-        itemShareResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.share()));
-        itemShareResource.addSelectionListener(new ShareListenerImpl());
-    }
-
-    private void buildMetaDataMenuItem() {
-        itemMetaData = new MenuItem();
-        itemMetaData.setText(I18N.DISPLAY.metadata());
-        itemMetaData.setIcon(AbstractImagePrototype.create(Resources.ICONS.metadata()));
-        itemMetaData.addSelectionListener(new MetadataListenerImpl());
-    }
-
-    private void buildDeleteResourceMenuItem() {
-        itemDeleteResource = new MenuItem();
-        itemDeleteResource.setText(I18N.DISPLAY.delete());
-        itemDeleteResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
-        itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
-    }
-
-    private void buildBulDownloadMenuItem() {
-        itemBulkDownloadResource = new MenuItem();
-        itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
-        itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemBulkDownloadResource.addSelectionListener(new BulkDownloadListenerImpl());
-    }
-
-    private void buildSimpleDownloadMenuItem() {
-        itemSimpleDownloadResource = new MenuItem();
-        itemSimpleDownloadResource.setText(I18N.DISPLAY.simpleDownload());
-        itemSimpleDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
-    }
-
-    private void buildViewTreeMenuItem() {
-        itemViewTree = new MenuItem();
-        itemViewTree.setText(I18N.DISPLAY.viewTreeViewer());
-        itemViewTree.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
-    }
-
-    private void buildViewResourceMenuItem() {
-        itemViewResource = new MenuItem();
-        itemViewResource.setText(I18N.DISPLAY.view());
-        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewResource.addSelectionListener(new ViewListenerImpl());
-    }
-
-    private void buildRenameResourceMenuItem() {
-        itemRenameResource = new MenuItem();
-        itemRenameResource.setText(I18N.DISPLAY.rename());
-        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
-        itemRenameResource.addSelectionListener(new RenameListenerImpl());
-    }
-
-    private void buildAddfolderMenuItem() {
-        itemAddFolder = new MenuItem();
-        itemAddFolder.setText(I18N.DISPLAY.newFolder());
-        itemAddFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
-        itemAddFolder.addSelectionListener(new NewFolderListenerImpl());
-    }
-
     /**
      * Show the Actions menu at the given absolute x, y position. The items displayed in the menu will
      * depend on the resources selected in the grid, according to DataUtils.getSupportedActions.
@@ -265,80 +124,7 @@ public class MyDataGrid extends Grid<DiskResource> {
      * @see org.iplantc.de.client.utils.DataUtils
      */
     public void showMenu(int x, int y) {
-        List<DiskResource> selected = getSelectionModel().getSelectedItems();
-        List<DataUtils.Action> actions = DataUtils.getSupportedActions(selected);
-
-        if (menuActions != null && actions.size() > 0) {
-            for (Component item : menuActions.getItems()) {
-                item.disable();
-                item.hide();
-            }
-
-            boolean folderActionsEnabled = DataUtils.hasFolders(selected);
-
-            if (folderActionsEnabled && selected.size() == 1) {
-                // Enable the "Add Folder" item as well.
-                itemAddFolder.enable();
-                itemAddFolder.show();
-            }
-
-            for (DataUtils.Action action : actions) {
-                switch (action) {
-                    case RenameFolder:
-                        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS
-                                .folderRename()));
-                        itemRenameResource.enable();
-                        itemRenameResource.show();
-                        break;
-
-                    case RenameFile:
-                        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS
-                                .fileRename()));
-                        itemRenameResource.enable();
-                        itemRenameResource.show();
-                        break;
-
-                    case View:
-                        itemViewResource.enable();
-                        itemViewResource.show();
-                        break;
-
-                    case ViewTree:
-                        itemViewTree.enable();
-                        itemViewTree.show();
-                        break;
-
-                    case SimpleDownload:
-                        itemSimpleDownloadResource.enable();
-                        itemSimpleDownloadResource.show();
-                        break;
-
-                    case BulkDownload:
-                        itemBulkDownloadResource.enable();
-                        itemBulkDownloadResource.show();
-                        break;
-
-                    case Delete:
-                        ImageResource delIcon = folderActionsEnabled ? Resources.ICONS.folderDelete()
-                                : Resources.ICONS.fileDelete();
-
-                        itemDeleteResource.setIcon(AbstractImagePrototype.create(delIcon));
-                        itemDeleteResource.enable();
-                        itemDeleteResource.show();
-                        break;
-                    case Metadata:
-                        itemMetaData.enable();
-                        itemMetaData.show();
-                        break;
-                    case Share:
-                        itemShareResource.enable();
-                        itemShareResource.show();
-                        break;
-                }
-            }
-
-            menuActions.showAt(x, y);
-        }
+        menuActions.showAt(x, y);
     }
 
     /**
@@ -425,7 +211,7 @@ public class MyDataGrid extends Grid<DiskResource> {
 
     @SuppressWarnings("unchecked")
     private static MyDataGrid createInstanceImpl(String currentFolderId, String tag,
-            ClientDataModel controller, Component maskingParent) {
+            ClientDataModel controller) {
         final ListStore<DiskResource> store = new ListStore<DiskResource>();
         final ColumnModel colModel = buildColumnModel(tag);
 
@@ -439,7 +225,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         }
 
         store.setStoreSorter(new CommonStoreSorter());
-        ret = new MyDataGrid(store, colModel, currentFolderId, executor, maskingParent);
+        ret = new MyDataGrid(store, colModel, currentFolderId, executor, tag);
 
         if (isMyDataWindow) {
             ret.setSelectionModel(sm);
@@ -451,7 +237,6 @@ public class MyDataGrid extends Grid<DiskResource> {
         ret.getView().setForceFit(false);
         ret.setAutoExpandMax(2048);
 
-        ret.callertag = tag;
         ret.controller = controller;
 
         GridFilters filters = new GridFilters();
@@ -469,8 +254,8 @@ public class MyDataGrid extends Grid<DiskResource> {
      * @return newly allocated my data grid.
      */
     public static MyDataGrid createInstance(String currentFolderId, String tag,
-            ClientDataModel controller, Component maskingParent) {
-        return createInstanceImpl(currentFolderId, tag, controller, maskingParent);
+            ClientDataModel controller) {
+        return createInstanceImpl(currentFolderId, tag, controller);
     }
 
     /**
@@ -486,6 +271,7 @@ public class MyDataGrid extends Grid<DiskResource> {
      * Free any unneeded resources.
      */
     public void cleanup() {
+        menuActions.cleanup();
         removeEventHandlers();
         removeAllListeners();
     }
@@ -519,243 +305,6 @@ public class MyDataGrid extends Grid<DiskResource> {
                     }
                 }));
 
-    }
-
-    private void showErrorMsg() {
-        MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(), I18N.DISPLAY.permissionErrorMessage(),
-                null);
-    }
-
-    private class NewFolderListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            for (DiskResource resource : getSelectionModel().getSelectedItems()) {
-                if (resource instanceof Folder) {
-                    if (resource != null && resource.getId() != null) {
-                        IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.newFolder(), 340,
-                                new AddFolderDialogPanel(resource.getId(), maskingParent));
-                        dlg.disableOkButton();
-                        dlg.show();
-                    }
-                }
-            }
-        }
-    }
-
-    private class RenameListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            for (DiskResource resource : getSelectionModel().getSelectedItems()) {
-                IPlantDialogPanel panel = null;
-                if (resource instanceof Folder) {
-                    panel = new RenameFolderDialogPanel(resource.getId(), resource.getName(),
-                            maskingParent);
-                } else if (resource instanceof File) {
-                    panel = new RenameFileDialogPanel(resource.getId(), resource.getName(),
-                            maskingParent);
-                }
-
-                IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.rename(), 340, panel);
-
-                dlg.show();
-            }
-        }
-    }
-
-    private class ViewListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-            if (DataUtils.isViewable(resources)) {
-                List<String> contexts = new ArrayList<String>();
-
-                DataContextBuilder builder = new DataContextBuilder();
-
-                for (DiskResource resource : resources) {
-                    contexts.add(builder.build(resource.getId()));
-                }
-
-                DataViewContextExecutor executor = new DataViewContextExecutor();
-                executor.execute(contexts);
-            } else {
-                showErrorMsg();
-            }
-        }
-    }
-
-    private class ShareListenerImpl extends SelectionListener<MenuEvent> {
-
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-            if (DataUtils.isSharable(resources)) {
-                showSharingDialog(resources);
-            } else {
-                showErrorMsg();
-            }
-
-        }
-
-    }
-
-    private void showSharingDialog(List<DiskResource> resources) {
-        SharingDialog sd = new SharingDialog(resources);
-        sd.show();
-    }
-
-    private class ViewTreeListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-            if (DataUtils.isViewable(resources)) {
-                DataContextBuilder builder = new DataContextBuilder();
-                TreeViewContextExecutor executor = new TreeViewContextExecutor();
-
-                for (DiskResource resource : resources) {
-                    executor.execute(builder.build(resource.getId()));
-                }
-            } else {
-                showErrorMsg();
-            }
-        }
-    }
-
-    private class MetadataListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            DiskResource dr = getSelectionModel().getSelectedItems().get(0);
-            final MetadataEditorPanel mep = new DiskresourceMetadataEditorPanel(dr);
-
-            MetadataEditorDialog d = new MetadataEditorDialog(
-                    I18N.DISPLAY.metadata() + ":" + dr.getId(), mep); //$NON-NLS-1$
-
-            d.setSize(500, 300);
-            d.setResizable(false);
-            d.show();
-        }
-    }
-
-    private class SimpleDownloadListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-
-            if (DataUtils.isDownloadable(resources)) {
-                if (resources.size() == 1) {
-                    downloadNow(resources.get(0).getId());
-                } else {
-                    launchDownloadWindow(resources);
-                }
-            } else {
-                showErrorMsg();
-            }
-        }
-
-        private void downloadNow(String path) {
-            DiskResourceServiceFacade service = new DiskResourceServiceFacade();
-            service.simpleDownload(path);
-        }
-
-        private void launchDownloadWindow(List<DiskResource> resources) {
-            List<String> paths = new ArrayList<String>();
-
-            for (DiskResource resource : resources) {
-                if (resource instanceof File) {
-                    paths.add(resource.getId());
-                }
-            }
-
-            SimpleDownloadWindowDispatcher dispatcher = new SimpleDownloadWindowDispatcher();
-            dispatcher.launchDownloadWindow(paths);
-        }
-    }
-
-    private class BulkDownloadListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-
-            if (DataUtils.isDownloadable(resources)) {
-                IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
-                dispatcher.launchDownloadWindow(resources);
-            } else {
-                showErrorMsg();
-            }
-        }
-    }
-
-    private class DeleteListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            final Listener<MessageBoxEvent> callback = new Listener<MessageBoxEvent>() {
-                @Override
-                public void handleEvent(MessageBoxEvent ce) {
-                    Button btn = ce.getButtonClicked();
-
-                    // did the user click yes?
-                    if (btn.getItemId().equals(Dialog.YES)) {
-                        confirmDelete();
-                    }
-                }
-            };
-
-            // if folders are selected, display a "folder delete" confirmation
-            if (DataUtils.hasFolders(getSelectionModel().getSelectedItems())) {
-                MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.folderDeleteWarning(), callback);
-            } else {
-                confirmDelete();
-            }
-        }
-
-        private void confirmDelete() {
-            final Listener<MessageBoxEvent> callback = new Listener<MessageBoxEvent>() {
-                @Override
-                public void handleEvent(MessageBoxEvent ce) {
-                    Button btn = ce.getButtonClicked();
-                    if (btn.getItemId().equals(Dialog.YES)) {
-                        doDelete();
-                    }
-                }
-            };
-
-            MessageBox.confirm(I18N.DISPLAY.deleteFilesTitle(), I18N.DISPLAY.deleteFilesMsg(), callback);
-        }
-
-        private void doDelete() {
-            // first we need to fill our id lists
-            List<String> idFolders = new ArrayList<String>();
-            List<String> idFiles = new ArrayList<String>();
-
-            List<DiskResource> resources = getSelectionModel().getSelectedItems();
-
-            if (DataUtils.isDeletable(resources)) {
-
-                for (DiskResource resource : getSelectionModel().getSelectedItems()) {
-                    if (resource instanceof Folder) {
-                        idFolders.add(resource.getId());
-                    } else if (resource instanceof File) {
-                        idFiles.add(resource.getId());
-                    }
-                }
-
-                // call the appropriate delete services
-                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
-
-                if (idFiles.size() > 0) {
-                    facade.deleteFiles(JsonUtil.buildJsonArrayString(idFiles), new FileDeleteCallback(
-                            idFiles));
-                }
-
-                if (idFolders.size() > 0) {
-                    facade.deleteFolders(JsonUtil.buildJsonArrayString(idFolders),
-                            new FolderDeleteCallback(idFolders));
-                }
-            } else {
-                showErrorMsg();
-            }
-        }
     }
 }
 

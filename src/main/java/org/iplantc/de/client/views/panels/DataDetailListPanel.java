@@ -38,7 +38,7 @@ public class DataDetailListPanel extends ContentPanel {
      * Initializes this content panel.
      */
     private void init() {
-        setHeading(I18N.DISPLAY.details());
+        setHeaderVisible(false);
         setVisible(false);
         setBodyStyle("background-color: #EDEDED"); //$NON-NLS-1$
 

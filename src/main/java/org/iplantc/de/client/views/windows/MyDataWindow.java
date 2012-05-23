@@ -79,7 +79,6 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         pnlMain.setMaskingParent(pnlContents);
 
         pnlDetails = new DataDetailsPanel(tag);
-        pnlDetails.setMaskingParent(pnlContents);
     }
 
     private void seed(final String username, final String json) {
@@ -134,7 +133,7 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config instanceof DataWindowConfig) {
-            this.config = (DataWindowConfig)config;
+            this.config = config;
         }
     }
 

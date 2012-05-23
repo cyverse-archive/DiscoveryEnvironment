@@ -11,12 +11,10 @@ import org.iplantc.de.client.events.DiskResourceSelectionChangedEventHandler;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 
 public class DataDetailsPanel extends AbstractDataPanel {
     private DataDetailListPanel pnlDetails;
 //    private DataProvenancePanel pnlProvenance;
-    private DataActionsPanel pnlActions;
 
     public DataDetailsPanel(final String tag) {
         super(tag);
@@ -24,12 +22,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
         initListeners();
 
         initPanels();
-    }
-
-    public void setMaskingParent(ContentPanel maskingParent) {
-        if (pnlActions != null) {
-            pnlActions.setMaskingParent(maskingParent);
-        }
     }
 
     /**
@@ -58,7 +50,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
     private void initPanels() {
         pnlDetails = new DataDetailListPanel();
         // pnlProvenance = new DataProvenancePanel();
-        pnlActions = new DataActionsPanel();
     }
 
     @Override
@@ -76,7 +67,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
 
                             pnlDetails.update(resources);
                             // pnlProvenance.update(resources);
-                            pnlActions.update(resources);
                         }
                     }
                 }));
@@ -87,7 +77,6 @@ public class DataDetailsPanel extends AbstractDataPanel {
      */
     @Override
     protected void compose() {
-        add(pnlActions);
         add(pnlDetails);
         // add(pnlProvenance);
     }
@@ -97,7 +86,7 @@ public class DataDetailsPanel extends AbstractDataPanel {
      */
     @Override
     protected void setHeading() {
-        setHeading(I18N.CONSTANT.actions());
+        setHeading(I18N.DISPLAY.details());
     }
 
 }

@@ -206,13 +206,6 @@ public interface DEDisplayStaticText extends Constants {
     String selectAFolder();
 
     /**
-     * Display text for the actions panel.
-     * 
-     * @return a String representing the text.
-     */
-    String actions();
-
-    /**
      * Display text for trees tab caption in file viewer.
      * 
      * @return a String representing the text.

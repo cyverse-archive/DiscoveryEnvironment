@@ -1169,4 +1169,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String searchCollab();
+
+    /**
+     * Display text for the actions panel.
+     * 
+     * @return a String representing the text.
+     */
+    String actions();
 }
+
