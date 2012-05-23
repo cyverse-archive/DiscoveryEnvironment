@@ -1,6 +1,10 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.client.pipelines.views.panels.PipelineEditorPanel;
+import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
+import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
+import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -14,9 +18,11 @@ import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class PipelineEditorWindow extends IPlantWindow {
     private PipelineEditorPanel editorPanel;
+    private AbstractCatalogCategoryPanel categoryPanel;
     private WindowConfig config;
 
     public PipelineEditorWindow(String tag) {
@@ -33,10 +39,38 @@ public class PipelineEditorWindow extends IPlantWindow {
     }
 
     private void compose() {
-        editorPanel = new PipelineEditorPanel(new CatalogCategoryPanel(), new TemplateServiceFacade(),
+        categoryPanel = new CatalogCategoryPanel();
+        editorPanel = new PipelineEditorPanel(categoryPanel, new TemplateServiceFacade(),
                 new PublishCallbackCommand());
         add(editorPanel);
+    }
 
+    private void getData() {
+        TemplateServiceFacade facade = new TemplateServiceFacade();
+
+        facade.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        AnalysisToolGroupStoreWrapper wrapper = new AnalysisToolGroupStoreWrapper();
+                        wrapper.updateWrapper(result);
+                        categoryPanel.seed(wrapper.getStore());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.analysisGroupsLoadFailure(), caught);
+                    }
+                });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void afterRender() {
+        super.afterRender();
+        getData();
     }
 
     /**
