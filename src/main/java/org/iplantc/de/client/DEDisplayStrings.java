@@ -1176,5 +1176,12 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a String representing the text.
      */
     String actions();
+
+    /**
+     * The display test for the view raw menu item.
+     * 
+     * @return the localized display text
+     */
+    String viewRaw();
 }
 

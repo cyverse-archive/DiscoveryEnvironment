@@ -59,7 +59,9 @@ public final class DataActionsMenu extends Menu {
     private MenuItem itemAddFolder;
     private MenuItem itemRenameResource;
     private MenuItem itemViewResource;
+    private MenuItem itemViewRawResource;
     private MenuItem itemViewTree;
+    private MenuItem itemDownloadResource;
     private MenuItem itemSimpleDownloadResource;
     private MenuItem itemBulkDownloadResource;
     private MenuItem itemDeleteResource;
@@ -79,29 +81,17 @@ public final class DataActionsMenu extends Menu {
      */
     private void buildActions() {
         buildAddfolderMenuItem();
-
         buildRenameResourceMenuItem();
-
-        buildViewResourceMenuItem();
-
-        buildViewTreeMenuItem();
-
-        buildSimpleDownloadMenuItem();
-
-        buildBulDownloadMenuItem();
-
+        buildViewMenuItem();
+        buildDownloadMenuItem();
         buildDeleteResourceMenuItem();
-
         buildMetaDataMenuItem();
-
         buildShareResourceMenuItem();
 
         add(itemAddFolder);
         add(itemRenameResource);
         add(itemViewResource);
-        add(itemViewTree);
-        add(itemSimpleDownloadResource);
-        add(itemBulkDownloadResource);
+        add(itemDownloadResource);
         add(itemDeleteResource);
         add(itemMetaData);
         add(itemShareResource);
@@ -128,7 +118,19 @@ public final class DataActionsMenu extends Menu {
         itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
     }
 
-    private void buildBulDownloadMenuItem() {
+    private void buildDownloadMenuItem() {
+        buildSimpleDownloadMenuItem();
+        buildBulkDownloadMenuItem();
+
+        itemDownloadResource = new MenuItem(I18N.DISPLAY.download());
+        itemDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
+        final Menu downloadMenu = new Menu();
+        downloadMenu.add(itemSimpleDownloadResource);
+        downloadMenu.add(itemBulkDownloadResource);
+        itemDownloadResource.setSubMenu(downloadMenu);
+    }
+
+    private void buildBulkDownloadMenuItem() {
         itemBulkDownloadResource = new MenuItem();
         itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
         itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
@@ -142,6 +144,18 @@ public final class DataActionsMenu extends Menu {
         itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
     }
 
+    private void buildViewMenuItem() {
+        buildViewRawMenuItem();
+        buildViewTreeMenuItem();
+
+        itemViewResource = new MenuItem(I18N.DISPLAY.view());
+        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
+        final Menu viewMenu = new Menu();
+        viewMenu.add(itemViewRawResource);
+        viewMenu.add(itemViewTree);
+        itemViewResource.setSubMenu(viewMenu);
+    }
+
     private void buildViewTreeMenuItem() {
         itemViewTree = new MenuItem();
         itemViewTree.setText(I18N.DISPLAY.viewTreeViewer());
@@ -149,11 +163,11 @@ public final class DataActionsMenu extends Menu {
         itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
     }
 
-    private void buildViewResourceMenuItem() {
-        itemViewResource = new MenuItem();
-        itemViewResource.setText(I18N.DISPLAY.view());
-        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewResource.addSelectionListener(new ViewListenerImpl());
+    private void buildViewRawMenuItem() {
+        itemViewRawResource = new MenuItem();
+        itemViewRawResource.setText(I18N.DISPLAY.viewRaw());
+        itemViewRawResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
+        itemViewRawResource.addSelectionListener(new ViewListenerImpl());
     }
 
     private void buildRenameResourceMenuItem() {
@@ -200,17 +214,15 @@ public final class DataActionsMenu extends Menu {
     }
 
     private void prepareMenuItems(final Iterable<Action> actions) {
-        for (Component item : getItems()) {
-            item.disable();
-            item.hide();
-        }
+        hideMenuItems(this);
+        hideMenuItems(itemViewResource.getSubMenu());
+        hideMenuItems(itemDownloadResource.getSubMenu());
 
         boolean folderActionsEnabled = DataUtils.hasFolders(resources);
 
         if (folderActionsEnabled && resources.size() == 1) {
             // Enable the "Add Folder" item as well.
-            itemAddFolder.enable();
-            itemAddFolder.show();
+            showMenuItem(itemAddFolder);
         }
 
         for (DataUtils.Action action : actions) {
@@ -218,35 +230,33 @@ public final class DataActionsMenu extends Menu {
                 case RenameFolder:
                     itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS
                             .folderRename()));
-                    itemRenameResource.enable();
-                    itemRenameResource.show();
+                    showMenuItem(itemRenameResource);
                     break;
 
                 case RenameFile:
                     itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS
                             .fileRename()));
-                    itemRenameResource.enable();
-                    itemRenameResource.show();
+                    showMenuItem(itemRenameResource);
                     break;
 
                 case View:
-                    itemViewResource.enable();
-                    itemViewResource.show();
+                    showMenuItem(itemViewResource);
+                    showMenuItem(itemViewRawResource);
                     break;
 
                 case ViewTree:
-                    itemViewTree.enable();
-                    itemViewTree.show();
+                    showMenuItem(itemViewResource);
+                    showMenuItem(itemViewTree);
                     break;
 
                 case SimpleDownload:
-                    itemSimpleDownloadResource.enable();
-                    itemSimpleDownloadResource.show();
+                    showMenuItem(itemDownloadResource);
+                    showMenuItem(itemSimpleDownloadResource);
                     break;
 
                 case BulkDownload:
-                    itemBulkDownloadResource.enable();
-                    itemBulkDownloadResource.show();
+                    showMenuItem(itemDownloadResource);
+                    showMenuItem(itemBulkDownloadResource);
                     break;
 
                 case Delete:
@@ -254,19 +264,28 @@ public final class DataActionsMenu extends Menu {
                             : Resources.ICONS.fileDelete();
 
                     itemDeleteResource.setIcon(AbstractImagePrototype.create(delIcon));
-                    itemDeleteResource.enable();
-                    itemDeleteResource.show();
+                    showMenuItem(itemDeleteResource);
                     break;
                 case Metadata:
-                    itemMetaData.enable();
-                    itemMetaData.show();
+                    showMenuItem(itemMetaData);
                     break;
                 case Share:
-                    itemShareResource.enable();
-                    itemShareResource.show();
+                    showMenuItem(itemShareResource);
                     break;
             }
         }
+    }
+
+    private void hideMenuItems(final Menu menu) {
+        for (Component item : menu.getItems()) {
+            item.disable();
+            item.hide();
+        }
+    }
+
+    private void showMenuItem(final MenuItem item) {
+        item.enable();
+        item.show();
     }
 
     public void setMaskingParent(ContentPanel maskingParent) {
