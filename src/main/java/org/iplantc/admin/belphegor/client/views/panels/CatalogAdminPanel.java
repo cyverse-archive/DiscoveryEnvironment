@@ -8,8 +8,8 @@ import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
-import org.iplantc.core.uiapplications.client.events.AnalysisSelectEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisSelectEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
+import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -65,15 +65,16 @@ public class CatalogAdminPanel extends ContentPanel {
         handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
 
-        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE, new AnalysisSelectEventHandler() {
-            @Override
-            public void onSelection(AnalysisSelectEvent event) {
-                if (Constants.CLIENT.tagBelphegorCatalog().equals(event.getSourceTag())) {
-                    catPanel.selectCategory(event.getCategoryId());
-                    mainPanel.selectTool(event.getAppId());
-                }
-            }
-        }));
+        handlers.add(eventbus.addHandler(AppSearchResultSelectedEvent.TYPE,
+                new AppSearchResultSelectedEventHandler() {
+                    @Override
+                    public void onSelection(AppSearchResultSelectedEvent event) {
+                        if (Constants.CLIENT.tagBelphegorCatalog().equals(event.getSourceTag())) {
+                            catPanel.selectCategory(event.getCategoryId());
+                            mainPanel.selectTool(event.getAppId());
+                        }
+                    }
+                }));
     }
 
     private void setCaption() {
