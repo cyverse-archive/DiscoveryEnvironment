@@ -26,6 +26,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class DataMainToolBar extends ToolBar {
+    private static final String BTN_ACTIONS_ID = "idDataMainToolBarActions"; //$NON-NLS-1$
+
     private final ArrayList<HandlerRegistration> handlers = new ArrayList<HandlerRegistration>();
 
     private final String tag;
@@ -57,6 +59,7 @@ public class DataMainToolBar extends ToolBar {
 
     private Button buildActionsButton() {
         final Button btn = new Button(I18N.DISPLAY.moreActions());
+        btn.setId(BTN_ACTIONS_ID);
         btn.setMenu(menuActions);
         btn.disable();
         return btn;

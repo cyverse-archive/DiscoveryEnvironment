@@ -48,6 +48,18 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public final class DataActionsMenu extends Menu {
+    private static final String MI_ADD_FOLDER_ID = "idDataActionsMenuAddFolder"; //$NON-NLS-1$
+    private static final String MI_RENAME_RESOURCE_ID = "idDataActionsMenuRename"; //$NON-NLS-1$
+    private static final String MI_VIEW_RESOURCE_ID = "idDataActionsMenuView"; //$NON-NLS-1$
+    private static final String MI_VIEW_RAW_ID = "idDataActionsMenuViewRaw"; //$NON-NLS-1$
+    private static final String MI_VIEW_TREE_ID = "idDataActionsMenuViewTree"; //$NON-NLS-1$
+    private static final String MI_DOWNLOAD_RESOURCE_ID = "idDataActionsMenuDownload"; //$NON-NLS-1$
+    private static final String MI_SIMPLE_DOWNLOAD_ID = "idDataActionsMenuSimpleDownload"; //$NON-NLS-1$
+    private static final String MI_BULK_DOWNLOAD_ID = "idDataActionsMenuBulkDownload"; //$NON-NLS-1$
+    private static final String MI_DELETE_RESOURCE_ID = "idDataActionsMenuDelete"; //$NON-NLS-1$
+    private static final String MI_METADATA_ID = "idDataActionsMenuMetadata"; //$NON-NLS-1$
+    private static final String MI_SHARE_RESOURCE_ID = "idDataActionsMenuShare"; //$NON-NLS-1$
+
     private final ArrayList<HandlerRegistration> handlers = new ArrayList<HandlerRegistration>();
 
     private final String tag;
@@ -70,22 +82,40 @@ public final class DataActionsMenu extends Menu {
     public DataActionsMenu(final String tag) {
         this.tag = tag;
         resources = Collections.<DiskResource> emptyList();
-        buildActions();
+        initMenuItems();
         registerHandlers();
     }
 
     /**
-     * Builds an action menu with items for adding, renaming, viewing, downloading, and deleting disk
-     * resources.
+     * Builds the menu items for adding, renaming, viewing, downloading, and deleting disk resources.
      */
-    private void buildActions() {
-        buildAddfolderMenuItem();
-        buildRenameResourceMenuItem();
-        buildViewMenuItem();
-        buildDownloadMenuItem();
-        buildDeleteResourceMenuItem();
-        buildMetaDataMenuItem();
-        buildShareResourceMenuItem();
+    private void initMenuItems() {
+        itemAddFolder = buildLeafMenuItem(MI_ADD_FOLDER_ID, I18N.DISPLAY.newFolder(),
+                Resources.ICONS.folderAdd(), new NewFolderListenerImpl());
+        itemRenameResource = buildLeafMenuItem(MI_RENAME_RESOURCE_ID, I18N.DISPLAY.rename(),
+                Resources.ICONS.folderRename(), new RenameListenerImpl());
+
+        itemViewRawResource = buildLeafMenuItem(MI_VIEW_RAW_ID, I18N.DISPLAY.viewRaw(),
+                Resources.ICONS.fileView(), new ViewListenerImpl());
+        itemViewTree = buildLeafMenuItem(MI_VIEW_TREE_ID, I18N.DISPLAY.viewTreeViewer(),
+                Resources.ICONS.fileView(), new ViewTreeListenerImpl());
+        itemViewResource = buildMenuMenuItem(MI_VIEW_RESOURCE_ID, I18N.DISPLAY.view(),
+                Resources.ICONS.fileView(), itemViewRawResource, itemViewTree);
+
+        itemSimpleDownloadResource = buildLeafMenuItem(MI_SIMPLE_DOWNLOAD_ID,
+                I18N.DISPLAY.simpleDownload(),
+                Resources.ICONS.download(), new SimpleDownloadListenerImpl());
+        itemBulkDownloadResource = buildLeafMenuItem(MI_BULK_DOWNLOAD_ID, I18N.DISPLAY.bulkDownload(),
+                Resources.ICONS.download(), new BulkDownloadListenerImpl());
+        itemDownloadResource = buildMenuMenuItem(MI_DOWNLOAD_RESOURCE_ID, I18N.DISPLAY.download(),
+                Resources.ICONS.download(), itemSimpleDownloadResource, itemBulkDownloadResource);
+
+        itemDeleteResource = buildLeafMenuItem(MI_DELETE_RESOURCE_ID, I18N.DISPLAY.delete(),
+                Resources.ICONS.folderDelete(), new DeleteListenerImpl());
+        itemMetaData = buildLeafMenuItem(MI_METADATA_ID, I18N.DISPLAY.metadata(),
+                Resources.ICONS.metadata(), new MetadataListenerImpl());
+        itemShareResource = buildLeafMenuItem(MI_SHARE_RESOURCE_ID, I18N.DISPLAY.share(),
+                Resources.ICONS.share(), new ShareResourceListenerImpl());
 
         add(itemAddFolder);
         add(itemRenameResource);
@@ -96,91 +126,27 @@ public final class DataActionsMenu extends Menu {
         add(itemShareResource);
     }
 
-    private void buildShareResourceMenuItem() {
-        itemShareResource = new MenuItem();
-        itemShareResource.setText(I18N.DISPLAY.share());
-        itemShareResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.share()));
-        itemShareResource.addSelectionListener(new ShareResourceListenerImpl());
+    private MenuItem buildLeafMenuItem(final String id, final String text,
+            final ImageResource iconResource, final SelectionListener<? extends MenuEvent> listener) {
+        final MenuItem res = new MenuItem(text, listener);
+        res.setId(id);
+        res.setIcon(AbstractImagePrototype.create(iconResource));
+        return res;
     }
 
-    private void buildMetaDataMenuItem() {
-        itemMetaData = new MenuItem();
-        itemMetaData.setText(I18N.DISPLAY.metadata());
-        itemMetaData.setIcon(AbstractImagePrototype.create(Resources.ICONS.metadata()));
-        itemMetaData.addSelectionListener(new MetadataListenerImpl());
-    }
+    private MenuItem buildMenuMenuItem(final String id, final String text,
+            final ImageResource iconResource, final MenuItem... items) {
+        final Menu submenu = new Menu();
 
-    private void buildDeleteResourceMenuItem() {
-        itemDeleteResource = new MenuItem();
-        itemDeleteResource.setText(I18N.DISPLAY.delete());
-        itemDeleteResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderDelete()));
-        itemDeleteResource.addSelectionListener(new DeleteListenerImpl());
-    }
+        for (MenuItem item : items) {
+            submenu.add(item);
+        }
 
-    private void buildDownloadMenuItem() {
-        buildSimpleDownloadMenuItem();
-        buildBulkDownloadMenuItem();
-
-        itemDownloadResource = new MenuItem(I18N.DISPLAY.download());
-        itemDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        final Menu downloadMenu = new Menu();
-        downloadMenu.add(itemSimpleDownloadResource);
-        downloadMenu.add(itemBulkDownloadResource);
-        itemDownloadResource.setSubMenu(downloadMenu);
-    }
-
-    private void buildBulkDownloadMenuItem() {
-        itemBulkDownloadResource = new MenuItem();
-        itemBulkDownloadResource.setText(I18N.DISPLAY.bulkDownload());
-        itemBulkDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemBulkDownloadResource.addSelectionListener(new BulkDownloadListenerImpl());
-    }
-
-    private void buildSimpleDownloadMenuItem() {
-        itemSimpleDownloadResource = new MenuItem();
-        itemSimpleDownloadResource.setText(I18N.DISPLAY.simpleDownload());
-        itemSimpleDownloadResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.download()));
-        itemSimpleDownloadResource.addSelectionListener(new SimpleDownloadListenerImpl());
-    }
-
-    private void buildViewMenuItem() {
-        buildViewRawMenuItem();
-        buildViewTreeMenuItem();
-
-        itemViewResource = new MenuItem(I18N.DISPLAY.view());
-        itemViewResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        final Menu viewMenu = new Menu();
-        viewMenu.add(itemViewRawResource);
-        viewMenu.add(itemViewTree);
-        itemViewResource.setSubMenu(viewMenu);
-    }
-
-    private void buildViewTreeMenuItem() {
-        itemViewTree = new MenuItem();
-        itemViewTree.setText(I18N.DISPLAY.viewTreeViewer());
-        itemViewTree.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewTree.addSelectionListener(new ViewTreeListenerImpl());
-    }
-
-    private void buildViewRawMenuItem() {
-        itemViewRawResource = new MenuItem();
-        itemViewRawResource.setText(I18N.DISPLAY.viewRaw());
-        itemViewRawResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        itemViewRawResource.addSelectionListener(new ViewListenerImpl());
-    }
-
-    private void buildRenameResourceMenuItem() {
-        itemRenameResource = new MenuItem();
-        itemRenameResource.setText(I18N.DISPLAY.rename());
-        itemRenameResource.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderRename()));
-        itemRenameResource.addSelectionListener(new RenameListenerImpl());
-    }
-
-    private void buildAddfolderMenuItem() {
-        itemAddFolder = new MenuItem();
-        itemAddFolder.setText(I18N.DISPLAY.newFolder());
-        itemAddFolder.setIcon(AbstractImagePrototype.create(Resources.ICONS.folderAdd()));
-        itemAddFolder.addSelectionListener(new NewFolderListenerImpl());
+        final MenuItem res = new MenuItem(text);
+        res.setId(id);
+        res.setIcon(AbstractImagePrototype.create(iconResource));
+        res.setSubMenu(submenu);
+        return res;
     }
 
     private void registerHandlers() {
