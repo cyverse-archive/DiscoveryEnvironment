@@ -146,8 +146,7 @@ public class DataMainToolBar extends ToolBar {
 
     }
 
-    public final void setMakingParent(final Component parent) {
-        // TODO Auto-generated method stub
-
+    public final void setMaskingParent(final Component maskingParent) {
+        menuActions.setMaskingParent(maskingParent);
     }
 }

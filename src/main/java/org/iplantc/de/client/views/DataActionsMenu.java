@@ -38,7 +38,6 @@ import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -288,7 +287,7 @@ public final class DataActionsMenu extends Menu {
         item.show();
     }
 
-    public void setMaskingParent(ContentPanel maskingParent) {
+    public void setMaskingParent(final Component maskingParent) {
         this.maskingParent = maskingParent;
     }
 

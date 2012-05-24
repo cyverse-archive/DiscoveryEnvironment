@@ -196,7 +196,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
      */
     public void setMaskingParent(Component parent) {
         maskingParent = parent;
-        toolbar.setMakingParent(parent);
+        toolbar.setMaskingParent(parent);
     }
 
     private void updateGrid() {
