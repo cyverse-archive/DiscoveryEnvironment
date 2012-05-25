@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
-import org.iplantc.core.uiapplications.client.events.AnalysisSelectEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisSelectEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
+import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
@@ -22,10 +22,12 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
+import org.iplantc.de.client.views.panels.AppDCDetailsPanel;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -85,8 +87,8 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
 
-        handlers.add(eventbus.addHandler(AnalysisSelectEvent.TYPE,
-                new AnalysisSelectedEventHandlerImpl()));
+        handlers.add(eventbus.addHandler(AppSearchResultSelectedEvent.TYPE,
+                new AppSearchResultSelectedEventHandlerImpl()));
     }
 
     @Override
@@ -169,6 +171,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     protected void compose() {
         pnlContents.add(catPanel, dataWest);
         pnlContents.add(mainPanel, dataCenter);
+        pnlContents.add(new AppDCDetailsPanel(), dataEast);
     }
 
     @Override
@@ -190,17 +193,18 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     protected int getWestWidth() {
-        return 220;
+        return 200;
     }
 
     @Override
     protected int getEastWidth() {
-        return 200;
+        return 160;
     }
 
-    private final class AnalysisSelectedEventHandlerImpl implements AnalysisSelectEventHandler {
+    private final class AppSearchResultSelectedEventHandlerImpl implements
+            AppSearchResultSelectedEventHandler {
         @Override
-        public void onSelection(AnalysisSelectEvent event) {
+        public void onSelection(AppSearchResultSelectedEvent event) {
             if (Constants.CLIENT.deCatalog().equals(event.getSourceTag())
                     || Constants.CLIENT.titoTag().equals(event.getSourceTag())) {
                 CatalogWindowConfig config = new CatalogWindowConfig(new JSONObject());

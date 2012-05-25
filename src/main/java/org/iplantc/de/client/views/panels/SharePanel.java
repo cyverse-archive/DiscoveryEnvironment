@@ -66,7 +66,7 @@ public class SharePanel extends ContentPanel {
     }
 
     private void init() {
-        setSize(378, 225);
+        setSize(385, 225);
         setLayout(new FitLayout());
         ColumnModel cm = buildColumnModel();
         ListStore<Sharing> store = new ListStore<Sharing>();

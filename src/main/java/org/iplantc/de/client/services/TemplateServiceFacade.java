@@ -45,7 +45,6 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
                 + "get-only-analysis-groups/" + workspaceId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-
     }
 
     /**
@@ -55,6 +54,17 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
                 + analysisGroupId;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * 
+     * @param appId
+     * @param callback
+     */
+    public void getDCDetails(String appId, AsyncCallback<String> callback) {
+        String address = "http://montosa.iplantcollaborative.org/~dennis/comps.json"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
