@@ -18,7 +18,6 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.IDropLite;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
-import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.HideMode;
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -48,7 +47,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class IDropLiteAppletWindow extends IPlantWindow {
-    private final boolean appletFocusWorkaround = GXT.isChrome || GXT.isIE;
     private final int CONTENT_PADDING = 5;
     private final IDropLiteWindowConfig config;
 
@@ -109,10 +107,9 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         addWindowListener(new WindowListener() {
             @Override
             public void windowDeactivate(WindowEvent we) {
-                // In Chrome and IE, the applet always stays on top, blocking access to everything else.
-                if (appletFocusWorkaround) {
-                    minimize();
-                }
+                // In Chrome, IE, or in Windows 7, the applet always stays on top, blocking access to
+                // everything else.
+                minimize();
             }
         });
     }
@@ -199,19 +196,15 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     }
 
     private void promptRemoveApplet(final Command cmdRemoveAppletConfirmed) {
-        // In Chrome and IE, the applet always stays on top, blocking access to the confirmation dialog,
-        // which is modal and blocks access to everything else.
-        if (appletFocusWorkaround) {
-            minimize();
-        }
+        // In Chrome, IE, or in Windows 7, the applet always stays on top, blocking access to the
+        // confirmation dialog, which is modal and blocks access to everything else.
+        minimize();
 
         MessageBox.confirm(I18N.DISPLAY.idropLiteCloseConfirmTitle(),
                 I18N.DISPLAY.idropLiteCloseConfirmMessage(), new Listener<MessageBoxEvent>() {
                     @Override
                     public void handleEvent(MessageBoxEvent be) {
-                        if (appletFocusWorkaround) {
-                            show();
-                        }
+                        show();
 
                         if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
                             // The user confirmed closing the applet.
