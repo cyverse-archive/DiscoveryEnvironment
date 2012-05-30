@@ -333,6 +333,7 @@ class NameCellRenderer implements GridCellRenderer<DiskResource> {
         if (model instanceof Folder) {
             link = new Hyperlink("<img src='./gxt/images/default/tree/folder.gif'/>&nbsp;" //$NON-NLS-1$
                     + model.getName(), "mydata_name"); //$NON-NLS-1$
+            link.setToolTip(model.getName());
         } else {
             link = new Hyperlink("<img src='./images/file.gif'/>&nbsp;" + model.getName(), "mydata_name"); //$NON-NLS-1$ //$NON-NLS-2$
             addPreviewToolTip(link, model);
