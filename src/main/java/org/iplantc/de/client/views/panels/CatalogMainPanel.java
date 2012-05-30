@@ -9,6 +9,7 @@ import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
+import org.iplantc.core.uiapplications.client.events.AppSelectedEvent;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisFeedback;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
@@ -53,7 +54,6 @@ import com.extjs.gxt.ui.client.widget.grid.GridViewConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
-import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
@@ -142,14 +142,14 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private void addToolBarActions() {
         addToToolBar(new SeparatorToolItem());
         addToToolBar(buildNewButton());
-        addToToolBar(new FillToolItem());
         addToToolBar(buildRunButton());
         addToToolBar(buildCopyButton());
         addToToolBar(buildMoreActionsButton());
     }
 
     private Button buildRunButton() {
-        Button run = new Button(I18N.DISPLAY.run());
+        Button run = new Button();
+        run.setToolTip(I18N.DISPLAY.run());
         run.setId(ACTION_ID_RUN);
         run.setEnabled(false);
         run.setIcon(AbstractImagePrototype.create(Resources.ICONS.run()));
@@ -404,9 +404,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private Button buildCopyButton() {
-        Button copy = new Button(I18N.DISPLAY.copy());
-
+        Button copy = new Button();
         copy.setId(ACTION_ID_COPY);
+        copy.setToolTip(I18N.DISPLAY.copy());
         copy.setIcon(AbstractImagePrototype.create(Resources.ICONS.copy()));
         copy.setEnabled(false);
 
@@ -591,7 +591,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                     }
                 }
                 checkAndBuildFavMenu(selectedItem.isUser_favourite());
-
+                // Fire the item selection event.
+                EventBus.getInstance().fireEvent(
+                        new AppSelectedEvent(tag, selectedItem.getGroupId(), selectedItem.getId()));
             } else {
                 for (Button b : items) {
                     b.disable();
