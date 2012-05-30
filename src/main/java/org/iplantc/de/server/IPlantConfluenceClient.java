@@ -50,9 +50,19 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         callService(new ServiceCall<Void>() {
             @Override
             public Void doit() throws RemoteException, ClientException {
+                try {
                 RemotePage page = new RemotePage();
-                storePage(page, title, space, parent, content, false, true);
+                if(getPage(title, space) == null) {
+                        storePage(page, title, space, parent, content, false, true);
+                }
                 return null;
+                } catch (RemoteException rx) {
+                    System.out.println(rx.getMessage());
+                    throw rx;
+                } catch (ClientException cx) {
+                    System.out.println(cx.getMessage());
+                    throw cx;
+                }
             }
         });
 
