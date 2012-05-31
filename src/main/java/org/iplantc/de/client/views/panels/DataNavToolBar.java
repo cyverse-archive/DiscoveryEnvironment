@@ -14,8 +14,8 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 
@@ -54,7 +54,7 @@ public class DataNavToolBar extends ToolBar {
     private static final String ID_DELETE_FOLDER_BTN = "idDeleteFolderBtn"; //$NON-NLS-1$
     @SuppressWarnings("unused")
     private final String tag;
-    private String parentFolderId;
+    private Folder rootFolder;
     private TreePanelSelectionModel<Folder> selectionModel;
     private Component maskingParent;
     private Button addFolder;
@@ -81,12 +81,12 @@ public class DataNavToolBar extends ToolBar {
     }
 
     /**
-     * set parent folder id
+     * set the root folder
      * 
-     * @param id
+     * @param rootFolder the root folder
      */
-    public void setParentFolderId(String id) {
-        this.parentFolderId = id;
+    public final void setRootFolder(final Folder rootFolder) {
+        this.rootFolder = rootFolder;
     }
 
     /**
@@ -175,8 +175,14 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptUploadImportForm(FileUploadDialogPanel.MODE mode) {
-        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
-            String uploadDestId = selectionModel.getSelectedItem().getId();
+        if (selectionModel == null) {
+            return;
+        }
+
+        final Folder uploadDest = getUploadDestination();
+
+        if (canUpload(uploadDest)) {
+            String uploadDestId = uploadDest.getId();
             String username = UserInfo.getInstance().getUsername();
 
             // provide key/value pairs for hidden fields
@@ -206,11 +212,34 @@ public class DataNavToolBar extends ToolBar {
     }
 
     private void promptBulkUpload() {
-        if (selectionModel != null && canUpload(selectionModel.getSelectedItem())) {
-            String currentPath = getCurrentPath();
+        if (selectionModel == null) {
+            return;
+        }
+
+        final Folder uploadDest = getUploadDestination();
+
+        if (canUpload(uploadDest)) {
+            String currentPath = uploadDest.getId();
 
             IDropLiteWindowDispatcher dispatcher = new IDropLiteWindowDispatcher();
             dispatcher.launchUploadWindow(currentPath, currentPath);
+        }
+    }
+
+    /**
+     * This method determines the destination folder of an upload.
+     * 
+     * This method requires that the selectionModel and rootFolder have been assigned.
+     * 
+     * @return The destination folder of an upload.
+     */
+    private Folder getUploadDestination() {
+        assert rootFolder != null : "The root folder has not been assigned."; //$NON-NLS-1$
+
+        if (selectionModel.getSelectedItem() == null) {
+            return rootFolder;
+        } else {
+            return selectionModel.getSelectedItem();
         }
     }
 
@@ -220,14 +249,6 @@ public class DataNavToolBar extends ToolBar {
         } else {
             showErrorMsg();
             return false;
-        }
-    }
-
-    private String getCurrentPath() {
-        if (selectionModel == null) {
-            return null;
-        } else {
-            return selectionModel.getSelectedItem().getId();
         }
     }
 
@@ -345,18 +366,16 @@ public class DataNavToolBar extends ToolBar {
             boolean addMenuItemsEnabled = false;
             boolean editMenuItemsEnabled = false;
 
-            if (selectionModel != null) {
-                if (parentFolderId != null && !parentFolderId.isEmpty()) {
-                    // check the selected folder
-                    Folder selectedFolder = selectionModel.getSelectedItem();
+            if (selectionModel != null && rootFolder != null) {
+                // check the selected folder
+                Folder selectedFolder = selectionModel.getSelectedItem();
 
-                    if (selectedFolder != null) {
-                        // we can at least add folders to a selected path under the home folder.
-                        addMenuItemsEnabled = true;
+                if (selectedFolder != null) {
+                    // we can at least add folders to a selected path under the home folder.
+                    addMenuItemsEnabled = true;
 
-                        // disable editing items for the home folder
-                        editMenuItemsEnabled = !parentFolderId.equals(selectedFolder.getId());
-                    }
+                    // disable editing items for the home folder
+                    editMenuItemsEnabled = !rootFolder.getId().equals(selectedFolder.getId());
                 }
             }
 
