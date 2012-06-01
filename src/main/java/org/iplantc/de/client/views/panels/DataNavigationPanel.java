@@ -189,7 +189,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
 
     private void setModePrefernces() {
         toolBar.setSelectionModel(pnlTree.getSelectionModel());
-        toolBar.setParentFolderId(getRootFolderId());
+        toolBar.setRootFolder(model.getRootFolder());
     }
 
     @Override

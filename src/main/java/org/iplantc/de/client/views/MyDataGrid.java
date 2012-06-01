@@ -96,9 +96,12 @@ public class MyDataGrid extends Grid<DiskResource> {
     protected void init() {
         setBorders(true);
         setHeight(260);
+        setAutoExpandColumn(COLUMN_ID_NAME);
+        setAutoExpandMin(100);
 
         getView().setEmptyText(I18N.DISPLAY.selectFolderToViewContents());
         getView().setShowDirtyCells(false);
+        getView().setForceFit(true);
     }
 
     /**
@@ -168,6 +171,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         };
 
         sm.getColumn().setAlignment(HorizontalAlignment.CENTER);
+        sm.getColumn().setFixed(true);
     }
 
     /**
@@ -203,6 +207,7 @@ public class MyDataGrid extends Grid<DiskResource> {
         ColumnConfig menu = new ColumnConfig(COLUMN_ID_MENU, "", 25); //$NON-NLS-1$
         menu.setSortable(false);
         menu.setMenuDisabled(true);
+        menu.setFixed(true);
 
         columns.addAll(Arrays.asList(name, date, created, size, menu));
 
@@ -304,7 +309,6 @@ public class MyDataGrid extends Grid<DiskResource> {
                         handleRowClick(event.getResource(), event.getTag());
                     }
                 }));
-
     }
 }
 
@@ -329,6 +333,7 @@ class NameCellRenderer implements GridCellRenderer<DiskResource> {
         if (model instanceof Folder) {
             link = new Hyperlink("<img src='./gxt/images/default/tree/folder.gif'/>&nbsp;" //$NON-NLS-1$
                     + model.getName(), "mydata_name"); //$NON-NLS-1$
+            link.setToolTip(model.getName());
         } else {
             link = new Hyperlink("<img src='./images/file.gif'/>&nbsp;" + model.getName(), "mydata_name"); //$NON-NLS-1$ //$NON-NLS-2$
             addPreviewToolTip(link, model);
