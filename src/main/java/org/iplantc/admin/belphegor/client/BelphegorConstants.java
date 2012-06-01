@@ -5,18 +5,11 @@ import org.iplantc.core.uicommons.client.CommonUiConstants;
 public interface BelphegorConstants extends CommonUiConstants {
 
     /**
-     * The path to DE help file
-     * 
-     * @return path to help file
-     */
-    String validAppWikiUrlPath();
-
-    /**
      * A valid URL sample for DE help files.
      * 
      * @return A sample help file URL
      */
-    String validAppWikiUrlExample();
+    String appWikiUrl();
 
     /**
      * The path to the wiki page "Creating Documentation for Tools"

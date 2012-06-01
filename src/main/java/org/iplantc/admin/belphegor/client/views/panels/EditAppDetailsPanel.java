@@ -2,15 +2,20 @@ package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.BoundedTextArea;
 import org.iplantc.core.client.widgets.BoundedTextField;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.FieldEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -34,6 +39,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 public class EditAppDetailsPanel extends LayoutContainer {
     private static final String INTEGRATOR_NAME = "integName"; //$NON-NLS-1$
@@ -56,6 +62,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private FormPanel form;
     private final Analysis analysis;
     private final AsyncCallback<String> closeCallback;
+    private String oldAppName;
 
     /**
      * Creates a new instance of EditAppDetailsPanel
@@ -109,6 +116,11 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
         emailField.setValue(analysis.getIntegratorsEmail());
         isDisabledField.setValue(analysis.isDisabled());
+
+        urlField.setEmptyText(Constants.CLIENT.appWikiUrl()
+                + ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath()
+                + analysis.getName());
+        addNameFieldListener();
 
     }
 
@@ -205,6 +217,15 @@ public class EditAppDetailsPanel extends LayoutContainer {
         chkGroup.add(isDisabledField);
     }
 
+    private void addNameFieldListener() {
+        appNameField.addListener(Events.Change, new Listener<FieldEvent>() {
+            @Override
+            public void handleEvent(FieldEvent be) {
+                oldAppName = be.getOldValue().toString();
+            }
+        });
+    }
+
     private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,
             String name, Validator validator, int maxLength) {
         BoundedTextField<String> field = new BoundedTextField<String>();
@@ -251,13 +272,14 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private VerticalPanel buildUrlField() {
+        final String validUrl = ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath();
         urlField = buildTextField(null, false, null, WIKI_URL, new Validator() {
             @Override
             public String validate(Field<?> field, String value) {
                 // make sure the URL protocol is http or https, has a valid iPlant host name, and has at
                 // least one character under the validAppWikiUrlPath.
                 if (!value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
-                        + Constants.CLIENT.validAppWikiUrlPath() + ".+")) { //$NON-NLS-1$
+                        + validUrl + ".+")) { //$NON-NLS-1$
                     return I18N.DISPLAY.notValidAppWikiUrl();
                 }
 
@@ -266,7 +288,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
         }, 1024);
 
         urlField.setWidth(520);
-        urlField.setEmptyText(Constants.CLIENT.validAppWikiUrlExample());
 
         VerticalPanel panel = new VerticalPanel();
         panel.setBorders(true);
@@ -291,8 +312,29 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private void submit() {
-        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
-        facade.updateApplication(toJson(), closeCallback);
+        if (oldAppName != null) {
+            ConfluenceServiceFacade.getInstance().movePage(oldAppName, appNameField.getValue(),
+                    new AsyncCallback<String>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught.getMessage());
+                            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
+                            facade.updateApplication(toJson(), closeCallback);
+                        }
+
+                        @Override
+                        public void onSuccess(String result) {
+                            urlField.setValue(result);
+                            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
+                            facade.updateApplication(toJson(), closeCallback);
+                        }
+                    });
+        } else {
+            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
+            facade.updateApplication(toJson(), closeCallback);
+        }
+
     }
 
     private void buildCancelButton() {

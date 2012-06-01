@@ -102,6 +102,8 @@ public class ToolIntegrationAdminProperties {
      */
     private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval"; //$NON-NLS-1$
 
+    private static final String APP_DOC_URL = PROPERTY_NAME_PREFIX + "validAppWikiUrlPath"; //$NON-NLS-1$
+
     /**
      * Properties key of the context click enabled option
      */
@@ -116,6 +118,8 @@ public class ToolIntegrationAdminProperties {
     private String keepaliveTarget;
 
     private int keepaliveInterval;
+
+    private String validAppWikiUrlPath;
 
     public static ToolIntegrationAdminProperties getInstance() {
 
@@ -146,6 +150,7 @@ public class ToolIntegrationAdminProperties {
         contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
         keepaliveTarget = properties.get(KEEPALIVE_TARGET);
         keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
+        validAppWikiUrlPath = properties.get(APP_DOC_URL);
     }
 
     /**
@@ -331,5 +336,14 @@ public class ToolIntegrationAdminProperties {
      */
     public int getKeepaliveInterval() {
         return keepaliveInterval;
+    }
+
+    /**
+     * The path to DE help file
+     * 
+     * @return path to help file
+     */
+    public String getValidAppWikiUrlPath() {
+        return validAppWikiUrlPath;
     }
 }
