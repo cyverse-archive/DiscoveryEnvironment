@@ -17,6 +17,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 /**
  * Provides access to remote services for operations related to job submission templates.

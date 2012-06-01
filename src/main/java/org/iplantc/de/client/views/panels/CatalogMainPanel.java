@@ -23,7 +23,7 @@ import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.TitoWindowConfig;
-import org.iplantc.de.client.services.ConfluenceServiceFacade;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
