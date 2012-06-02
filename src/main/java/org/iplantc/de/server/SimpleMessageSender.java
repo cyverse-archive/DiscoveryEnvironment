@@ -7,11 +7,8 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Message.RecipientType;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -23,32 +20,35 @@ import org.apache.log4j.Logger;
 /**
  * Sends email messages based on configuration settings.
  * 
- * mail.smtp.host -> SMTP_HOST_KEY mail.from.address -> FROM_ADDRESS_KEY mail.to.address ->
- * TO_ADDRESS_KEY new.tool.message.template -> NEW_TOOL_MSG_KEY new.tool.message.subject ->
- * NEW_TOOL_SUBJECT_KEY
+ * mail.smtp.host -> SMTP_HOST_KEY
+ * mail.from.address -> FROM_ADDRESS_KEY
+ * mail.to.address -> TO_ADDRESS_KEY
+ * new.tool.message.template -> NEW_TOOL_MSG_KEY
+ * new.tool.message.subject -> NEW_TOOL_SUBJECT_KEY
  * 
  * @author lenards
  * 
  */
 public class SimpleMessageSender {
+    private static final String PROPERTIES_FILE = "discoveryenvironment.properties"; //$NON-NLS-1$
     private static final String SMTP_HOST_KEY = "mail.smtp.host"; //$NON-NLS-1$
     private static final String FROM_ADDRESS_KEY = "mail.from.address"; //$NON-NLS-1$
     private static final String TO_ADDRESS_KEY = "mail.to.address"; //$NON-NLS-1$
-    private static final String NEW_TOOL_MSG_KEY = "new.tool.email.template"; //$NON-NLS-1$
+    private static final String NEW_TOOL_MSG_KEY = "new.tool.message.template"; //$NON-NLS-1$
     private static final String NEW_TOOL_SUBJECT_KEY = "new.tool.message.subject"; //$NON-NLS-1$
 
     private static final Logger LOG = Logger.getLogger(SimpleMessageSender.class);
 
     private PropertiesConfiguration appProperties;
     private String messageTmpl;
-    private String subject;
+    private final String subject;
 
-    private String fromAddress;
-    private String toAddress;
-    private String smtpHost;
+    private final String fromAddress;
+    private final String toAddress;
+    private final String smtpHost;
 
     public SimpleMessageSender() {
-        loadProperties("tito.properties"); //$NON-NLS-1$
+        loadProperties(PROPERTIES_FILE);
         loadMessageTemplate(appProperties.getString(NEW_TOOL_MSG_KEY, "new_tool_email.tmpl")); //$NON-NLS-1$
         subject = appProperties.getString(NEW_TOOL_SUBJECT_KEY);
         fromAddress = appProperties.getString(FROM_ADDRESS_KEY);
