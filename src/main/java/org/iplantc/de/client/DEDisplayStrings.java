@@ -1178,10 +1178,37 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String actions();
 
     /**
-     * The display test for the view raw menu item.
+     * The display text for the view raw menu item.
      * 
      * @return the localized display text
      */
     String viewRaw();
-}
 
+    /**
+     * The display text for current collaborators
+     * 
+     * @return the localized display text
+     */
+    String currentCollaborators();
+
+    /**
+     * save session prompt
+     * 
+     * @return the localized display text
+     */
+    String saveSession();
+
+    /**
+     * enabled prompt
+     * 
+     * @return the localized display text
+     */
+    String enabled();
+
+    /**
+     * disabled prompt
+     * 
+     * @return the localized display text
+     */
+    String disabled();
+}
