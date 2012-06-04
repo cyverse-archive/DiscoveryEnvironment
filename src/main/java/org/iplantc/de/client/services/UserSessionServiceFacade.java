@@ -2,7 +2,6 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
-import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.json.client.JSONObject;
@@ -40,9 +39,27 @@ public class UserSessionServiceFacade {
     }
 
     public void getCollaborators(AsyncCallback<String> callback) {
-        String address = "http://montosa.iplantcollaborative.org/~dennis/" + "collabs.json";
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "collaborators";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
-        SharedUnsecuredServiceFacade.getInstance().getServiceData(wrapper, callback);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    public void addCollaborators(JSONObject users, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "collaborators"; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                users.toString());
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    public void removeCollaborators(JSONObject users, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "remove-collaborators"; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                users.toString());
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
 }

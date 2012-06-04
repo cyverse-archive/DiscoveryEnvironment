@@ -8,9 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.JsCollaborators;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -29,8 +32,11 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -158,8 +164,8 @@ public class CollaboratorsPanel extends ContentPanel {
                     String existing_style = src.getStyleName();
                     if (existing_style.contains(ADD_BUTTON_STYLE)) {
                         // TODO: check duplicates
-                        my_collaborators.add(model);
-                        // TODO: call service to update
+
+                        addCollaborators(model);
                         if (mode.equals(MODE.SEARCH)) {
                             src.changeStyle(DONE_BUTTON_STYLE);
                         } else {
@@ -174,9 +180,7 @@ public class CollaboratorsPanel extends ContentPanel {
                     }
 
                     if (existing_style.contains(DELETE_BUTTON_STYLE)) {
-                        // TODO: call service to update
-                        my_collaborators.remove(model);
-                        grid.getStore().remove(model);
+                        removeCollaborators(model);
                         return;
                     }
 
@@ -184,6 +188,59 @@ public class CollaboratorsPanel extends ContentPanel {
             });
             return btn;
         }
+    }
+
+    private void addCollaborators(final Collaborator model) {
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        JSONObject obj = buildJSONModel(model);
+        facade.addCollaborators(obj, new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                my_collaborators.add(model);
+                NotifyInfo.display("Collaborator Added", model.getName()
+                        + " is now collaborator with you.");
+
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
+
+    }
+
+    private void removeCollaborators(final Collaborator model) {
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        JSONObject obj = buildJSONModel(model);
+        facade.removeCollaborators(obj, new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                // TODO: call service to update
+                my_collaborators.remove(model);
+                grid.getStore().remove(model);
+                NotifyInfo.display("Collaborator Removed", model.getName()
+                        + " removed from your collaborators list.");
+
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
+
+    }
+
+    private JSONObject buildJSONModel(final Collaborator model) {
+        JSONArray arr = new JSONArray();
+        arr.set(0, new JSONString(model.getId()));
+
+        JSONObject obj = new JSONObject();
+        obj.put("users", arr);
+        return obj;
     }
 
     public void setCurrentCollaborators(List<Collaborator> collaborators) {

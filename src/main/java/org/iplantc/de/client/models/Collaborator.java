@@ -99,4 +99,9 @@ public class Collaborator extends BaseModelData {
     public int hashCode() {
         return Integer.parseInt(getId());
     }
+
+    @Override
+    public String toString() {
+        return "{\"username\":\"" + getUserName() + "\"}";
+    }
 }

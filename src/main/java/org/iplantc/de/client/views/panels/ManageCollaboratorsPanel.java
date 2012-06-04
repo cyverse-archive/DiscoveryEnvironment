@@ -54,7 +54,7 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
 
     private void init(int width) {
         initSearch();
-        panel = new CollaboratorsPanel(I18N.DISPLAY.collaborators(), MODE.MANAGE, width, 270);
+        panel = new CollaboratorsPanel(I18N.DISPLAY.currentCollaborators(), MODE.MANAGE, width, 270);
         add(panel);
         loadCollaborators();
     }
