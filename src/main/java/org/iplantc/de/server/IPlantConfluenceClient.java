@@ -1,5 +1,7 @@
 package org.iplantc.de.server;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 
 import org.swift.common.soap.confluence.InvalidSessionException;
@@ -54,7 +56,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
                 RemotePage page = new RemotePage();
                 if(getPage(title, space) == null) {
                         storePage(page, title, space, parent, content, false, true);
-                }
+                    }
                 return null;
                 } catch (RemoteException rx) {
                     System.out.println(rx.getMessage());
@@ -66,7 +68,43 @@ public class IPlantConfluenceClient extends ConfluenceClient {
             }
         });
 
-        return properties.getConfluenceSpaceUrl() + title;
+        try {
+            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(title, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            throw new ClientException("Unable to encode the documentaiton URL");
+        }
+    }
+
+    public String movePage(final String oldTitle, final String newTitle) throws RemoteException,
+            ClientException {
+        final String parent = properties.getConfluenceParentPage();
+        final String space = properties.getConfluenceSpaceName();
+        callService(new ServiceCall<Void>() {
+            @Override
+            public Void doit() throws RemoteException, ClientException {
+                try {
+                    if (getPage(oldTitle, space) != null) {
+                        renamePage(space, oldTitle, parent, space, newTitle);
+                    }
+                    return null;
+                } catch (RemoteException rx) {
+                    System.out.println(rx.getMessage());
+                    throw rx;
+                } catch (ClientException cx) {
+                    System.out.println(cx.getMessage());
+                    throw cx;
+                }
+            }
+        });
+
+        try {
+            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(newTitle, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            throw new ClientException("Unable to encode the documentaiton URL");
+        }
+
     }
 
     /**

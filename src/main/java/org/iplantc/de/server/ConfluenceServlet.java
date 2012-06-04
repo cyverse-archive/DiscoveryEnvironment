@@ -234,6 +234,15 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         }
     }
 
+    @Override
+    public String movePage(String oldAppName, String newAppName) throws ConfluenceException {
+        try {
+            return getConfluenceClient().movePage(oldAppName, newAppName);
+        } catch (Exception e) {
+            throw new ConfluenceException(e);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
