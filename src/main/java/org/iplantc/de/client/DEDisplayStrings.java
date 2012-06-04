@@ -24,6 +24,15 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String fileUpload();
 
     /**
+     * Formats a message indicating the path of the folder receiving the files on upload.
+     * 
+     * @param folderPath the path to the folder
+     * 
+     * @return the formatted message
+     */
+    String fileUploadFolder(String folderPath);
+
+    /**
      * File upload maximum size message.
      * 
      * @return a string representing the localized text.
