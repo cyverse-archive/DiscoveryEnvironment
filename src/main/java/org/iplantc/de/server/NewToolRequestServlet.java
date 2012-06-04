@@ -40,8 +40,8 @@ public class NewToolRequestServlet extends UploadServlet {
         super.executeAction(request, fileItems);
 
         if (!jsonErrors.containsKey("error")) {
-            SimpleMessageSender msgSender = new SimpleMessageSender();
             try {
+                SimpleMessageSender msgSender = new SimpleMessageSender();
                 LOG.debug("executeAction - Attempting to send email.");
                 msgSender.send(user, email, jsonInfo.toString(2));
 
@@ -51,7 +51,7 @@ public class NewToolRequestServlet extends UploadServlet {
                         "executeAction - Exception while sending email to support about tool request.",
                         e);
                 e.printStackTrace();
-                jsonErrors.put("error", e.getMessage());
+                jsonErrors.put("error", e.getMessage() == null ? e.toString() : e.getMessage());
             }
         }
 
