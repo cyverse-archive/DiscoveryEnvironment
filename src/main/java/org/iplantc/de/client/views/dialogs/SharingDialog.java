@@ -80,12 +80,25 @@ public class SharingDialog extends Dialog {
     @Override
     protected void onHide() {
         super.onHide();
+
         SharePanel view = null;
+        JSONObject sharingObj = new JSONObject();
+        JSONArray sharingArr = new JSONArray();
+        JSONObject unsharingObj = new JSONObject();
+        JSONArray unsharingArr = new JSONArray();
+        int i = 0, j = 0;
+
         for (DiskResource dr : resources) {
             view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
-            doSharing(view);
-            doUnsharing(view);
+            sharingArr.set(i++, buildSharingJson(view));
+            unsharingArr.set(j++, buildUnSharingJson(view));
         }
+        sharingObj.put("sharing", sharingArr);
+        unsharingObj.put("unshare", unsharingArr);
+
+        callSharingService(sharingObj);
+        callUnshareService(unsharingObj);
+
         EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
     }
 
@@ -227,53 +240,47 @@ public class SharingDialog extends Dialog {
         });
     }
 
-    private void doSharing(SharePanel view) {
-        // TODO: permissions needs to be implemented at user level
-        // for now take permissions of first user and apply to every one
+    private JSONObject buildSharingJson(SharePanel view) {
         List<Sharing> sharingList = view.getSharingList();
+        JSONObject obj = new JSONObject();
+        JSONArray users = new JSONArray();
+        obj.put("path", new JSONString(view.getId()));
+
         if (sharingList.size() > 0) {
-            Sharing s = sharingList.get(0);
-
-            JSONObject obj = new JSONObject();
-
-            JSONArray users = new JSONArray();
             for (int i = 0; i < sharingList.size(); i++) {
                 Sharing sh = sharingList.get(i);
-                users.set(i, new JSONString(sh.getUserName()));
+
+                JSONObject user_permission = new JSONObject();
+                user_permission.put("user", new JSONString(sh.getUserName()));
+
+                JSONObject permission = new JSONObject();
+                permission.put("read", JSONBoolean.getInstance(sh.isReadable()));
+                permission.put("write", JSONBoolean.getInstance(sh.isWritable()));
+                permission.put("own", JSONBoolean.getInstance(sh.isOwner()));
+
+                user_permission.put("permissions", permission);
+                users.set(i, user_permission);
             }
 
-            JSONArray paths = new JSONArray();
-            paths.set(0, new JSONString(view.getId()));
-
-            JSONObject permission = new JSONObject();
-            permission.put("read", JSONBoolean.getInstance(s.isReadable()));
-            permission.put("write", JSONBoolean.getInstance(s.isWritable()));
-            permission.put("own", JSONBoolean.getInstance(s.isOwner()));
-
-            obj.put("paths", paths);
+            obj.put("path", new JSONString(view.getId()));
             obj.put("users", users);
-            obj.put("permissions", permission);
-            callSharingService(obj);
         }
-
+        return obj;
     }
 
-    private void doUnsharing(SharePanel view) {
+    private JSONObject buildUnSharingJson(SharePanel view) {
         List<Sharing> unshareList = view.getUnshareList();
+        JSONObject obj = new JSONObject();
         if (unshareList.size() > 0) {
-            JSONArray paths = new JSONArray();
-            paths.set(0, new JSONString(view.getId()));
-
             JSONArray users = new JSONArray();
             for (int i = 0; i < unshareList.size(); i++) {
                 users.set(i, new JSONString(unshareList.get(i).getUserName()));
             }
 
-            JSONObject obj = new JSONObject();
-            obj.put("paths", paths);
+            obj.put("path", new JSONString(view.getId()));
             obj.put("users", users);
 
-            callUnshareService(obj);
         }
+        return obj;
     }
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
+import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
@@ -429,11 +431,12 @@ public class DiskResourceServiceFacade {
      * @param callback callback object
      */
     public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "share"; //$NON-NLS-1$
 
-        String fullAddress = serviceNamePrefix + ".share"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        callService(callback, wrapper);
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     /**
@@ -443,10 +446,12 @@ public class DiskResourceServiceFacade {
      * @param callback callback object
      */
     public void unshareDiskResource(JSONObject body, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix + ".unshare"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "unshare"; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 body.toString());
-        callService(callback, wrapper);
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     /**
