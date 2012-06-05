@@ -210,7 +210,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         Status ret = new Status();
 
         ret.setStyleName("iplantc-file-status"); //$NON-NLS-1$
-
+        ret.setText(I18N.DISPLAY.fileUploadFolder(destFolder));
         return ret;
     }
 
@@ -278,7 +278,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
     private void doUpload() {
         if (isValidUploadForm()) {
-            fileStatus.setBusy(""); //$NON-NLS-1$
+            fileStatus.setBusy(fileStatus.getText());
             fileStatus.show();
 
             getOkButton().disable();
@@ -401,7 +401,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
                     Field f = destResourceMap.get(buildResourceId(id));
                     f.markInvalid(I18N.ERROR.fileExist());
                 }
-                fileStatus.clearStatus(""); //$NON-NLS-1$
+                fileStatus.clearStatus(fileStatus.getText());
                 return;
             } else {
                 if (mode != MODE.URL_ONLY) {
@@ -461,7 +461,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
             }
 
             // we're done, so clear the busy notification
-            fileStatus.clearStatus(""); //$NON-NLS-1$
+            fileStatus.clearStatus(fileStatus.getText());
         }
     }
 }
