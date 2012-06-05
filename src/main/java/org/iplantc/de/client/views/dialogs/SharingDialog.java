@@ -23,6 +23,9 @@ import org.iplantc.de.client.views.panels.SharePanel;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Scroll;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -75,31 +78,14 @@ public class SharingDialog extends Dialog {
                         getUserPermissionsInfo();
                     }
                 });
-    }
 
-    @Override
-    protected void onHide() {
-        super.onHide();
+        addListener(Events.Hide, new Listener<ComponentEvent>() {
 
-        SharePanel view = null;
-        JSONObject sharingObj = new JSONObject();
-        JSONArray sharingArr = new JSONArray();
-        JSONObject unsharingObj = new JSONObject();
-        JSONArray unsharingArr = new JSONArray();
-        int i = 0, j = 0;
-
-        for (DiskResource dr : resources) {
-            view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
-            sharingArr.set(i++, buildSharingJson(view));
-            unsharingArr.set(j++, buildUnSharingJson(view));
-        }
-        sharingObj.put("sharing", sharingArr);
-        unsharingObj.put("unshare", unsharingArr);
-
-        callSharingService(sharingObj);
-        callUnshareService(unsharingObj);
-
-        EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
+            @Override
+            public void handleEvent(ComponentEvent be) {
+                shareUnShare();
+            }
+        });
     }
 
     private void initLayout() {
@@ -282,5 +268,27 @@ public class SharingDialog extends Dialog {
 
         }
         return obj;
+    }
+
+    private void shareUnShare() {
+        SharePanel view = null;
+        JSONObject sharingObj = new JSONObject();
+        JSONArray sharingArr = new JSONArray();
+        JSONObject unsharingObj = new JSONObject();
+        JSONArray unsharingArr = new JSONArray();
+        int i = 0, j = 0;
+
+        for (DiskResource dr : resources) {
+            view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
+            sharingArr.set(i++, buildSharingJson(view));
+            unsharingArr.set(j++, buildUnSharingJson(view));
+        }
+        sharingObj.put("sharing", sharingArr);
+        unsharingObj.put("unshare", unsharingArr);
+
+        callSharingService(sharingObj);
+        callUnshareService(unsharingObj);
+
+        EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
     }
 }
