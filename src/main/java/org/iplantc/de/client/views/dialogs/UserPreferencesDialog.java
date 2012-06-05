@@ -1,10 +1,15 @@
 package org.iplantc.de.client.views.dialogs;
 
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.SettingsUpdatedEvent;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
 
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
@@ -32,8 +37,16 @@ public class UserPreferencesDialog extends Dialog {
         buildTabPanel();
         buildSettingPanel();
         buildCollaboratorsPanel();
+        layout();
+        addListener(Events.Hide, new Listener<ComponentEvent>() {
 
-        setOkButtonText();
+            @Override
+            public void handleEvent(ComponentEvent be) {
+                settingPanel.saveData();
+                collabPanel.saveData();
+                EventBus.getInstance().fireEvent(new SettingsUpdatedEvent());
+            }
+        });
     }
 
     private void initDialog() {
@@ -41,18 +54,12 @@ public class UserPreferencesDialog extends Dialog {
         setButtons(Dialog.OK);
         setResizable(false);
         setHideOnButtonClick(true);
+        setOkButtonText();
     }
 
     private void setOkButtonText() {
         Button ok = getButtonById(Dialog.OK);
         ok.setText(I18N.DISPLAY.done());
-    }
-
-    @Override
-    public void onHide() {
-        super.onHide();
-        settingPanel.saveData();
-        collabPanel.saveData();
     }
 
     private void buildTabPanel() {

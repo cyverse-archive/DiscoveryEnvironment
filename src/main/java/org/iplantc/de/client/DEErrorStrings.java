@@ -479,4 +479,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return
      */
     String shareFailed();
+
+    /**
+     * 
+     * 
+     * @return
+     */
+    String settingsLoadError();
 }

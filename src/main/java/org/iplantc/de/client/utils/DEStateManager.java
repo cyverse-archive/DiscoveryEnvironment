@@ -6,14 +6,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.SettingsUpdatedEvent;
+import org.iplantc.de.client.events.SettingsUpdatedEventHandler;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,10 +42,36 @@ public class DEStateManager {
 
     public static final String ACTIVE_WINDOWS = "active_windows";
     public static final String NOTIFI_COUNT = "notification_count";
+
     public static final String PREFERENCES = "preferences";
 
+    private boolean saveSession;
+
     private DEStateManager() {
-        start();
+
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        facade.getUserPreferences(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // by default enable save session
+                start();
+                saveSession = true;
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                loadPrerences(JSONParser.parseStrict(result).isObject());
+                checkSettings();
+
+            }
+        });
+
+        initListeners();
+    }
+
+    private void loadPrerences(JSONObject obj) {
+        UserSettings.getInstance().setValues(obj);
     }
 
     /**
@@ -49,7 +80,9 @@ public class DEStateManager {
      */
     public void stop() {
         instance = null;
-        t.cancel();
+        if (t != null) {
+            t.cancel();
+        }
     }
 
     /**
@@ -74,52 +107,65 @@ public class DEStateManager {
         if (instance == null) {
             instance = new DEStateManager();
             instance.mgrWindow = mgrWindow;
+
         }
 
         return instance;
     }
 
+    private void initListeners() {
+        EventBus.getInstance().addHandler(SettingsUpdatedEvent.TYPE, new SettingsUpdatedEventHandler() {
+
+            @Override
+            public void onUpdate(SettingsUpdatedEvent event) {
+                checkSettings();
+            }
+        });
+    }
+
+    private void clearSession() {
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        facade.clearUserSession(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // do nothing
+
+            }
+        });
+
+    }
+
     public void persistUserSession(final boolean runInBackground, final Command callback) {
-        final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
-                I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
 
-        if (runInBackground) {
-            savingMask.close();
+        if (saveSession) {
+            final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
+                    I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
+
+            if (runInBackground) {
+                savingMask.close();
+            } else {
+                savingMask.show();
+            }
+
+            JSONObject obj = new JSONObject();
+            obj.put(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
+            obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
+
+            final byte[] tempHash = JsonUtil.generateHash(obj.toString());
+            if (!ByteArrayComparer.arraysEqual(hash, tempHash)) {
+                UserSessionServiceFacade session = new UserSessionServiceFacade();
+                session.saveUserSession(obj, new SaveSessionCallback(savingMask, tempHash, callback));
+            }
         } else {
-            savingMask.show();
-        }
-
-        JSONObject obj = new JSONObject();
-        obj.put(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
-        obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
-        obj.put(PREFERENCES, UserSettings.getInstance().toJson());
-
-        final byte[] tempHash = JsonUtil.generateHash(obj.toString());
-        if (ByteArrayComparer.arraysEqual(hash, tempHash)) {
-            return;
-        } else {
-            UserSessionServiceFacade session = new UserSessionServiceFacade();
-            session.saveUserSession(obj, new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    if (callback != null) {
-                        callback.execute();
-                    }
-                    savingMask.close();
-                    // update hash
-                    hash = tempHash;
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    GWT.log(I18N.ERROR.saveSessionFailed(), caught);
-                    if (callback != null) {
-                        callback.execute();
-                    }
-                    savingMask.close();
-                }
-            });
+            if (callback != null) {
+                callback.execute();
+            }
         }
     }
 
@@ -132,31 +178,7 @@ public class DEStateManager {
                 I18N.DISPLAY.loadingSessionWaitNotice(), I18N.DISPLAY.loadingMask());
 
         UserSessionServiceFacade session = new UserSessionServiceFacade();
-        session.getUserSession(new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                GWT.log(I18N.ERROR.loadSessionFailed(), caught);
-                loadingMask.close();
-                MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(),
-                        null);
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                JSONObject obj = JsonUtil.getObject(result);
-                JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
-                restoreWindows(win_states);
-                restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
-                loadPrerences(obj);
-                loadingMask.close();
-            }
-
-        });
-    }
-
-    private void loadPrerences(JSONObject obj) {
-        UserSettings.getInstance().setValues(JsonUtil.getObject(obj, PREFERENCES));
+        session.getUserSession(new LoadSessionCallback(loadingMask));
     }
 
     private void restoreNotificationCountStatus(JSONObject obj) {
@@ -193,6 +215,75 @@ public class DEStateManager {
         java.util.Collections.sort(temp, new WindowOrderComparator());
         return temp;
 
+    }
+
+    private void checkSettings() {
+        UserSettings us = UserSettings.getInstance();
+        if (us.isSaveSession()) {
+            start();
+            saveSession = true;
+        } else {
+            stop();
+            saveSession = false;
+            clearSession();
+        }
+    }
+
+    private final class LoadSessionCallback implements AsyncCallback<String> {
+        private final MessageBox loadingMask;
+
+        private LoadSessionCallback(MessageBox loadingMask) {
+            this.loadingMask = loadingMask;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            GWT.log(I18N.ERROR.loadSessionFailed(), caught);
+            loadingMask.close();
+            MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(), null);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            if (result != null && !result.isEmpty()) {
+                JSONObject obj = JsonUtil.getObject(result);
+                JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
+                restoreWindows(win_states);
+                restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
+            }
+            loadingMask.close();
+        }
+    }
+
+    private final class SaveSessionCallback implements AsyncCallback<String> {
+        private final MessageBox savingMask;
+        private final byte[] tempHash;
+        private final Command callback;
+
+        private SaveSessionCallback(MessageBox savingMask, byte[] tempHash, Command callback) {
+            this.savingMask = savingMask;
+            this.tempHash = tempHash;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            if (callback != null) {
+                callback.execute();
+            }
+            savingMask.close();
+            // update hash
+            hash = tempHash;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            GWT.log(I18N.ERROR.saveSessionFailed(), caught);
+            if (callback != null) {
+                callback.execute();
+            }
+            savingMask.close();
+        }
     }
 
     private class WindowOrderComparator implements Comparator<JSONObject> {

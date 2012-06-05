@@ -23,10 +23,27 @@ public class UserSessionServiceFacade {
 
     public void saveUserSession(JSONObject json, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
-
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
                 json.toString());
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
 
+    public void clearUserSession(AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    public void getUserPreferences(AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    public void saveUserPreferences(JSONObject json, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                json.toString());
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 

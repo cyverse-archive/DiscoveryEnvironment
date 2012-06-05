@@ -3,8 +3,10 @@
  */
 package org.iplantc.de.client.views.panels;
 
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
@@ -14,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author sriram
@@ -124,5 +127,19 @@ public class UserSettingPanel extends LayoutContainer {
         us.setRememberLastPath(chkRememberLastFileSelectorPath.getValue());
         us.setSaveSession(radioGrp.getValue().getId().equals("id" + I18N.DISPLAY.enabled()) ? true
                 : false);
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        facade.saveUserPreferences(us.toJson(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
     }
 }
