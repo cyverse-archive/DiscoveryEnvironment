@@ -161,6 +161,10 @@ public class NotificationManager {
             public void onFire(DataPayloadEvent event) {
                 addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
                         dataContextBuilder.build(event.getPayload()));
+                setDataNotificationCount(getDataNotificationCount() + 1);
+                NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
+                        getDataNotificationCount(), getAnalysesNotificationCount());
+                eventbus.fireEvent(ncue);
             }
         });
 
