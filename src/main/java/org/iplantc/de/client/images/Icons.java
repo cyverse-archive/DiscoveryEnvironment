@@ -310,4 +310,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("delete_icon.png")
     ImageResource deleteIcon();
 
+    /**
+     * Image resource.
+     * 
+     * @return image.
+     */
+    @Source("control_arrow_down.png")
+    ImageResource dataActionMenuIcon();
+
 }

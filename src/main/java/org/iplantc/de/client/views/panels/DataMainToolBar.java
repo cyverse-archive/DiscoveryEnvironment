@@ -61,6 +61,7 @@ public class DataMainToolBar extends ToolBar {
         final Button btn = new Button(I18N.DISPLAY.moreActions());
         btn.setId(BTN_ACTIONS_ID);
         btn.setMenu(menuActions);
+        btn.setIcon(AbstractImagePrototype.create(Resources.ICONS.dataActionMenuIcon()));
         btn.disable();
         return btn;
     }
