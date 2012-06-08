@@ -49,7 +49,7 @@ public class CatalogAdminPanel extends ContentPanel {
         initPanels();
         initToolBar();
         initLayout();
-
+        setSize(1024, 768);
     }
 
     private void initToolBar() {

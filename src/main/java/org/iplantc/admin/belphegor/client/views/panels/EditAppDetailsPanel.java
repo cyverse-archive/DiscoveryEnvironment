@@ -4,8 +4,7 @@ import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
-import org.iplantc.core.client.widgets.BoundedTextArea;
-import org.iplantc.core.client.widgets.BoundedTextField;
+import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -46,7 +45,6 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private static final String EMAIL = "email"; //$NON-NLS-1$
     private static final String WIKI_URL = "wiki_url"; //$NON-NLS-1$
     private static final String DESC = "desc"; //$NON-NLS-1$
-    private static final String ID = "id_"; //$NON-NLS-1$
 
     private TextField<String> integratorNameField;
     private TextField<String> emailField;
@@ -200,16 +198,17 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private void buildFields() {
-        appNameField = buildTextField(I18N.DISPLAY.name(), false, null, Analysis.NAME, null, 255);
+        appNameField = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.name(), false, null,
+                Analysis.NAME, null, 255);
 
-        integratorNameField = buildTextField(I18N.DISPLAY.integratorName(), false, null,
-                INTEGRATOR_NAME, null, 32);
+        integratorNameField = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.integratorName(), false,
+                null, INTEGRATOR_NAME, null, 32);
 
-        emailField = buildTextField(I18N.DISPLAY.integratorEmail(), false, null, EMAIL,
-                new BasicEmailValidator(), 256);
+        emailField = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.integratorEmail(), false, null,
+                EMAIL, new BasicEmailValidator(), 256);
 
-        descField = buildTextArea(I18N.DISPLAY.analysisDesc(), true, analysis.getDescription(), DESC,
-                255);
+        descField = FormFieldBuilderUtil.buildTextArea(I18N.DISPLAY.analysisDesc(), true,
+                analysis.getDescription(), DESC, 255);
         isDisabledField = new CheckBox();
         isDisabledField.setBoxLabel(I18N.DISPLAY.appDisabled());
         chkGroup = new CheckBoxGroup();
@@ -226,54 +225,9 @@ public class EditAppDetailsPanel extends LayoutContainer {
         });
     }
 
-    private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,
-            String name, Validator validator, int maxLength) {
-        BoundedTextField<String> field = new BoundedTextField<String>();
-        field.setMaxLength(maxLength);
-        field.setName(name);
-        field.setId(ID + name);
-        field.setFieldLabel(allowBlank ? label : buildRequiredFieldLabel(label));
-        field.setAllowBlank(allowBlank);
-        field.setAutoValidate(true);
-        field.setStyleAttribute("padding-bottom", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        if (defaultVal != null) {
-            field.setValue(defaultVal);
-        }
-        if (validator != null) {
-            field.setValidator(validator);
-        }
-
-        return field;
-    }
-
-    private TextArea buildTextArea(String label, boolean allowBlank, String defaultVal, String name,
-            int maxLength) {
-        TextArea field = new BoundedTextArea();
-        field.setMaxLength(maxLength);
-        field.setName(name);
-        field.setId(ID + name);
-        field.setFieldLabel(label);
-        field.setAllowBlank(allowBlank);
-        field.setValidateOnBlur(true);
-        field.setStyleAttribute("padding-bottom", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (defaultVal != null) {
-            field.setValue(defaultVal);
-        }
-        return field;
-    }
-
-    private String buildRequiredFieldLabel(String label) {
-        if (label == null) {
-            return null;
-        }
-
-        return "<span class='required_marker'>*</span> " + label; //$NON-NLS-1$
-    }
-
     private VerticalPanel buildUrlField() {
         final String validUrl = ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath();
-        urlField = buildTextField(null, false, null, WIKI_URL, new Validator() {
+        urlField = FormFieldBuilderUtil.buildTextField(null, false, null, WIKI_URL, new Validator() {
             @Override
             public String validate(Field<?> field, String value) {
                 // make sure the URL protocol is http or https, has a valid iPlant host name, and has at

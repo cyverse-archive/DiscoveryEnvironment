@@ -2,7 +2,9 @@ package org.iplantc.admin.belphegor.client;
 
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
+import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
+import org.iplantc.core.uicommons.client.I18N;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -18,11 +20,14 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
+import com.extjs.gxt.ui.client.widget.TabItem;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
@@ -145,8 +150,23 @@ public class ApplicationLayout extends Viewport {
     }
 
     private void initAdminPanel() {
+        TabPanel tabPanel = new TabPanel();
+        TabItem appItem = new TabItem("Apps");
+        appItem.setLayout(new FitLayout());
+
+        TabItem refItem = new TabItem("Reference Genome");
+        refItem.setLayout(new FitLayout());
+
+        ReferenceGenomeListingPanel refPanel = new ReferenceGenomeListingPanel();
+        refItem.add(refPanel);
+
         CatalogAdminPanel panel = new CatalogAdminPanel();
-        replaceCenterPanel(panel);
+        appItem.add(panel);
+
+        tabPanel.add(appItem);
+        tabPanel.add(refItem);
+
+        replaceCenterPanel(tabPanel);
     }
 
     private class HeaderPanel extends HorizontalPanel {
@@ -181,7 +201,8 @@ public class ApplicationLayout extends Viewport {
             String username = CASCredentials.getInstance().getUsername();
             String firstName = CASCredentials.getInstance().getFirstName();
             String lastName = CASCredentials.getInstance().getLastName();
-            String menuLabel = (firstName != null && lastName != null) ? firstName + " " + lastName : username;
+            String menuLabel = (firstName != null && lastName != null) ? firstName + " " + lastName
+                    : username;
             pnlActions.add(buildActionsMenu(menuLabel, buildUserMenu()));
             // pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
 
@@ -193,11 +214,6 @@ public class ApplicationLayout extends Viewport {
             userMenu.add(new CustomHyperlink(I18N.DISPLAY.logout(), new LogoutSelectionListener(),
                     I18N.DISPLAY.logoutToolTipText()));
             return userMenu;
-        }
-
-        private Menu buildHelpMenu() {
-            Menu helpMenu = buildMenu();
-            return helpMenu;
         }
 
         private HorizontalPanel buildActionsMenu(String menuHeaderText, final Menu menu) {
@@ -263,8 +279,7 @@ public class ApplicationLayout extends Viewport {
     private class LogoutSelectionListener implements Listener<BaseEvent> {
         @Override
         public void handleEvent(BaseEvent be) {
-            com.google.gwt.user.client.Window.Location.assign(
-                    GWT.getHostPageBaseURL()
+            com.google.gwt.user.client.Window.Location.assign(GWT.getHostPageBaseURL()
                     + Constants.CLIENT.logoutUrl());
 
         }
