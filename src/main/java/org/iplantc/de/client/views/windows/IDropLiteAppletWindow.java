@@ -54,7 +54,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
     private Html htmlApplet;
     private Dialog dlgUpload;
     private ToolBar toolbar;
-    private boolean closeit;
+    private boolean closing;
 
     public IDropLiteAppletWindow(String tag, IDropLiteWindowConfig config) {
         super(tag);
@@ -70,7 +70,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
         setResizable(false);
         setLayout(new FitLayout());
 
-        closeit = false;
+        closing = false;
 
         // Add window contents container for the applet
         contents = new LayoutContainer();
@@ -112,7 +112,7 @@ public class IDropLiteAppletWindow extends IPlantWindow {
             public void windowDeactivate(WindowEvent we) {
                 // In Chrome, IE, or in Windows 7, the applet always stays on top, blocking access to
                 // everything else.
-                if (getData("minimize") == null && !closeit) {
+                if (getData("minimize") == null && !closing) {
                     minimize();
                 }
             }
@@ -210,9 +210,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     @Override
                     public void handleEvent(MessageBoxEvent be) {
                         show();
-                        closeit = true;
+
                         if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
                             // The user confirmed closing the applet.
+                            closing = true;
                             cmdRemoveAppletConfirmed.execute();
                         }
                     }
