@@ -3,6 +3,8 @@
  */
 package org.iplantc.admin.belphegor.client.models;
 
+import org.iplantc.core.uicommons.client.util.DateParser;
+
 import com.extjs.gxt.ui.client.data.BaseModelData;
 
 /**
@@ -31,10 +33,10 @@ public class ReferenceGenome extends BaseModelData {
         set(UUID, genome.getUUID());
         set(NAME, genome.getName());
         set(CREATED_BY, genome.getUserName());
-        set(CREATED_ON, genome.getCreatedOn());
+        set(CREATED_ON, DateParser.parseDate(genome.getCreatedOn()));
         set(PATH, genome.getPath());
         set(DELETED, genome.getDeleted());
         set(LAST_MODIFIED_BY, genome.getLastModifiedBy());
-        set(LAST_MODIFIED_ON, genome.getLastModifiedOn());
+        set(LAST_MODIFIED_ON, DateParser.parseDate(genome.getLastModifiedOn()));
     }
 }

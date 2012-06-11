@@ -17,7 +17,6 @@ import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -97,10 +96,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
         initFields();
         buildButtons();
 
-        ContentPanel panel = new ContentPanel();
-        panel.setHeaderVisible(false);
-        panel.add(form);
-        add(panel);
+        add(form);
     }
 
     private void initFields() {

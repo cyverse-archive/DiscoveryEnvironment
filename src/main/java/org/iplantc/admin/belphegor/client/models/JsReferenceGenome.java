@@ -31,11 +31,11 @@ public class JsReferenceGenome extends JavaScriptObject {
 		return this.path;
     }-*/;
 
-    public final native Boolean getDeleted() /*-{
+    public final native boolean getDeleted() /*-{
 		return this.deleted;
     }-*/;
 
-    public final native Long getCreatedOn() /*-{
+    public final native String getCreatedOn() /*-{
 		return this.created_on;
     }-*/;
 

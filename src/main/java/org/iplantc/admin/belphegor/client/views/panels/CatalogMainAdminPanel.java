@@ -237,7 +237,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
                         + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
                         + "' src='./images/exclamation.png'/>&nbsp;" + name;
             }
-            Hyperlink link = new Hyperlink(name, "analysis_name"); //$NON-NLS-1$
+            Hyperlink link = new Hyperlink(name, "link_name"); //$NON-NLS-1$
             link.addListener(Events.OnClick, new AppNameClickHandler(model));
             link.setWidth(model.getName().length());
             return link;
