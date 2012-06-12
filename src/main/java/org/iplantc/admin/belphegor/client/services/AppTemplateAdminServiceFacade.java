@@ -49,7 +49,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
     @Override
     public void searchAnalysis(String search, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl() + "/" //$NON-NLS-1$
-                + URL.encode(search);
+                + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
