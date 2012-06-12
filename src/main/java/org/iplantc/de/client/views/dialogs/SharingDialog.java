@@ -28,7 +28,6 @@ import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -198,7 +197,8 @@ public class SharingDialog extends Dialog {
 
             @Override
             public void onSuccess(String result) {
-                Info.display("Sharing", "Sharing completed successfully!!!");
+                // Info.display("Sharing", "Sharing completed successfully!!!");
+                // do nothing
             }
 
             @Override
@@ -215,7 +215,8 @@ public class SharingDialog extends Dialog {
 
             @Override
             public void onSuccess(String result) {
-                Info.display("Unsharing", "Unsharing completed successfully!!!");
+                // Info.display("Unsharing", "Unsharing completed successfully!!!");
+                // do nothing
             }
 
             @Override
@@ -250,8 +251,11 @@ public class SharingDialog extends Dialog {
 
             obj.put("path", new JSONString(view.getId()));
             obj.put("users", users);
+            return obj;
+        } else {
+            return null;
         }
-        return obj;
+
     }
 
     private JSONObject buildUnSharingJson(SharePanel view) {
@@ -265,9 +269,11 @@ public class SharingDialog extends Dialog {
 
             obj.put("path", new JSONString(view.getId()));
             obj.put("users", users);
-
+            return obj;
+        } else {
+            return null;
         }
-        return obj;
+
     }
 
     private void shareUnShare() {
@@ -280,14 +286,27 @@ public class SharingDialog extends Dialog {
 
         for (DiskResource dr : resources) {
             view = (SharePanel)sharingPanel.getItemByItemId(dr.getId());
-            sharingArr.set(i++, buildSharingJson(view));
-            unsharingArr.set(j++, buildUnSharingJson(view));
-        }
-        sharingObj.put("sharing", sharingArr);
-        unsharingObj.put("unshare", unsharingArr);
 
-        callSharingService(sharingObj);
-        callUnshareService(unsharingObj);
+            JSONObject temp = buildSharingJson(view);
+            if (temp != null) {
+                sharingArr.set(i++, temp);
+            }
+
+            temp = buildUnSharingJson(view);
+            if (temp != null) {
+                unsharingArr.set(j++, temp);
+            }
+        }
+
+        if (i > 0) {
+            sharingObj.put("sharing", sharingArr);
+            callSharingService(sharingObj);
+        }
+
+        if (j > 0) {
+            unsharingObj.put("unshare", unsharingArr);
+            callUnshareService(unsharingObj);
+        }
 
         EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
     }
