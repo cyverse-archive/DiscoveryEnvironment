@@ -144,12 +144,11 @@ public class DEStateManager {
     public void persistUserSession(final boolean runInBackground, final Command callback) {
 
         if (saveSession) {
-            final MessageBox savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
-                    I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
+            MessageBox savingMask = null;
 
-            if (runInBackground) {
-                savingMask.close();
-            } else {
+            if (!runInBackground) {
+                savingMask = MessageBox.wait(I18N.DISPLAY.savingSession(),
+                        I18N.DISPLAY.savingSessionWaitNotice(), I18N.DISPLAY.savingMask());
                 savingMask.show();
             }
 
@@ -271,18 +270,26 @@ public class DEStateManager {
             if (callback != null) {
                 callback.execute();
             }
-            savingMask.close();
+
             // update hash
             hash = tempHash;
+
+            if (savingMask != null) {
+                savingMask.close();
+            }
         }
 
         @Override
         public void onFailure(Throwable caught) {
             GWT.log(I18N.ERROR.saveSessionFailed(), caught);
+
             if (callback != null) {
                 callback.execute();
             }
-            savingMask.close();
+
+            if (savingMask != null) {
+                savingMask.close();
+            }
         }
     }
 

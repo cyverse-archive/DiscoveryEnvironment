@@ -32,6 +32,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FlowLayout;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
@@ -45,11 +46,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class SharingDialog extends Dialog {
 
-    private List<DiskResource> resources;
+    private final List<DiskResource> resources;
 
     private BorderLayout layout;
     private ContentPanel sharingPanel;
     private ManageCollaboratorsPanel collaboratorSearchPanel;
+
+    private HandlerRegistration handlerRegCollaboratorsLoadedEvent;
 
     public SharingDialog(List<DiskResource> resources) {
         this.resources = resources;
@@ -69,9 +72,8 @@ public class SharingDialog extends Dialog {
     }
 
     private void initListener() {
-        EventBus.getInstance().addHandler(CollaboratorsLoadedEvent.TYPE,
-                new CollaboratorsLoadedEventHandler() {
-
+        handlerRegCollaboratorsLoadedEvent = EventBus.getInstance().addHandler(
+                CollaboratorsLoadedEvent.TYPE, new CollaboratorsLoadedEventHandler() {
                     @Override
                     public void onLoad(CollaboratorsLoadedEvent event) {
                         getUserPermissionsInfo();
@@ -308,6 +310,9 @@ public class SharingDialog extends Dialog {
             callUnshareService(unsharingObj);
         }
 
-        EventBus.getInstance().removeHandlers(CollaboratorsLoadedEvent.TYPE);
+        if (handlerRegCollaboratorsLoadedEvent != null) {
+            handlerRegCollaboratorsLoadedEvent.removeHandler();
+            handlerRegCollaboratorsLoadedEvent = null;
+        }
     }
 }
