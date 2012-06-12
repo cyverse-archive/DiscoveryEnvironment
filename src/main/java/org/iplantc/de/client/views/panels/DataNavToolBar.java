@@ -116,6 +116,7 @@ public class DataNavToolBar extends ToolBar {
 
         ret.setIcon(AbstractImagePrototype.create(Resources.ICONS.desktopUpload()));
         ret.setToolTip(I18N.DISPLAY.importLabel());
+        ret.setId("idUpldMenu");
         ret.setMenu(importMenu);
 
         return ret;
@@ -283,7 +284,8 @@ public class DataNavToolBar extends ToolBar {
                             }
 
                             if (idFolders.size() > 0) {
-                                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
+                                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(
+                                        maskingParent);
                                 facade.deleteFolders(JsonUtil.buildJsonArrayString(idFolders),
                                         new FolderDeleteCallback(idFolders));
                             }
