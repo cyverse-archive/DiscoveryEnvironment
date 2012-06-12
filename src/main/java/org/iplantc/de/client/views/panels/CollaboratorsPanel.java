@@ -236,7 +236,9 @@ public class CollaboratorsPanel extends ContentPanel {
 
     private JSONObject buildJSONModel(final Collaborator model) {
         JSONArray arr = new JSONArray();
-        arr.set(0, new JSONString(model.getId()));
+        JSONObject user = new JSONObject();
+        user.put("username", new JSONString(model.getUserName()));
+        arr.set(0, user);
 
         JSONObject obj = new JSONObject();
         obj.put("users", arr);

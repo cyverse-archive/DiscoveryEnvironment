@@ -4,6 +4,7 @@ import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -48,7 +49,8 @@ public class UserSessionServiceFacade {
     }
 
     public void searchCollaborators(String term, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "user-search/" + term; //$NON-NLS-1$
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
+                + "user-search/" + URL.encodeQueryString(term); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
@@ -57,6 +59,7 @@ public class UserSessionServiceFacade {
 
     public void getCollaborators(AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "collaborators";
+        // String address = "http://montosa.iplantcollaborative.org/~dennis/collabs.json";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
