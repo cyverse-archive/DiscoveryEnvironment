@@ -340,7 +340,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     @Override
     public void searchAnalysis(String search, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "search-analyses/" //$NON-NLS-1$
-                + URL.encode(search);
+                + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
