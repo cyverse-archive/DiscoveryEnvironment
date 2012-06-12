@@ -226,30 +226,32 @@ public class JobLaunchDialog extends Dialog {
         if (folder == null || defaultFolderId.equals(folder.getId())) {
             onConfirm.execute();
         } else {
-            new DiskResourceServiceFacade().getFolderContents(folder.getId(), new AsyncCallback<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    // if the folder is empty, don't ask for confirmation
-                    if (isFolderEmpty(result)) {
-                        onConfirm.execute();
-                    } else {
-                        MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmOutputFolder(),
-                                new Listener<MessageBoxEvent>() {
-                                    @Override
-                                    public void handleEvent(MessageBoxEvent be) {
-                                        if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
-                                            onConfirm.execute();
-                                        }
-                                    }
-                                });
-                    }
-                }
+            new DiskResourceServiceFacade().getFolderContents(folder.getId(),
+                    new AsyncCallback<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            // if the folder is empty, don't ask for confirmation
+                            if (isFolderEmpty(result)) {
+                                onConfirm.execute();
+                            } else {
+                                MessageBox.confirm(I18N.DISPLAY.warning(),
+                                        I18N.DISPLAY.confirmOutputFolder(),
+                                        new Listener<MessageBoxEvent>() {
+                                            @Override
+                                            public void handleEvent(MessageBoxEvent be) {
+                                                if (be.getButtonClicked().getItemId().equals(Dialog.YES)) {
+                                                    onConfirm.execute();
+                                                }
+                                            }
+                                        });
+                            }
+                        }
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-                }
-            });
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught);
+                        }
+                    });
         }
     }
 
