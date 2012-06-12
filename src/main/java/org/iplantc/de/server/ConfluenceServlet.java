@@ -80,12 +80,10 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
         }
 
         try {
-            getConfluenceClient().addPage(toolName, content);
+            return getConfluenceClient().addPage(toolName, content);
         } catch (Exception e) {
             throw new ConfluenceException(e);
         }
-
-        return properties.getConfluenceSpaceUrl() + toolName;
     }
 
     /**
@@ -246,6 +244,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getComment(long commentId) throws ConfluenceException {
         try {
             String comment = getConfluenceClient().getComment(commentId);

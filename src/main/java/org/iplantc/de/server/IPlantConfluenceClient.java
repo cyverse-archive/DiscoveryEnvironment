@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
 
+import org.apache.log4j.Logger;
 import org.swift.common.soap.confluence.InvalidSessionException;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
@@ -18,7 +19,9 @@ import com.martiansoftware.jsap.JSAP;
  * 
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
-    private ConfluenceProperties properties;
+    private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
+
+    private final ConfluenceProperties properties;
 
     /**
      * Creates a new instance and initializes address/user/password from a .properties file.
@@ -49,31 +52,44 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         final String parent = properties.getConfluenceParentPage();
         final String space = properties.getConfluenceSpaceName();
 
+        final String safeTitle;
+        try {
+            safeTitle = URLEncoder.encode(title, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new ClientException("Unable to encode the documentaiton URL");
+        }
+
         callService(new ServiceCall<Void>() {
             @Override
             public Void doit() throws RemoteException, ClientException {
+                RemotePage page = null;
+
                 try {
-                RemotePage page = new RemotePage();
-                if(getPage(title, space) == null) {
-                        storePage(page, title, space, parent, content, false, true);
+                    try {
+                        page = getPage(safeTitle, space);
+                    } catch (ClientException cx) {
+                        LOG.debug(cx.getMessage());
+                        // page does not exist, continue creating page.
                     }
-                return null;
+
+                    if (page == null) {
+                        // page does not exist, create it here.
+                        page = new RemotePage();
+                        storePage(page, safeTitle, space, parent, content, false, true);
+                    }
                 } catch (RemoteException rx) {
-                    System.out.println(rx.getMessage());
+                    LOG.error(rx.getMessage());
                     throw rx;
                 } catch (ClientException cx) {
-                    System.out.println(cx.getMessage());
+                    LOG.error(cx.getMessage());
                     throw cx;
                 }
+
+                return null;
             }
         });
 
-        try {
-            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(title, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            throw new ClientException("Unable to encode the documentaiton URL");
-        }
+        return properties.getConfluenceSpaceUrl() + safeTitle;
     }
 
     public String movePage(final String oldTitle, final String newTitle) throws RemoteException,
@@ -89,10 +105,10 @@ public class IPlantConfluenceClient extends ConfluenceClient {
                     }
                     return null;
                 } catch (RemoteException rx) {
-                    System.out.println(rx.getMessage());
+                    LOG.error(rx.getMessage());
                     throw rx;
                 } catch (ClientException cx) {
-                    System.out.println(cx.getMessage());
+                    LOG.error(cx.getMessage());
                     throw cx;
                 }
             }
@@ -101,7 +117,6 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         try {
             return properties.getConfluenceSpaceUrl() + URLEncoder.encode(newTitle, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             throw new ClientException("Unable to encode the documentaiton URL");
         }
 
@@ -212,6 +227,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     }
 
     /** like getContentId(String, String, false) but can be used without going through doWork() */
+    @Override
     public long getContentId(final String title, final String space)
             throws java.rmi.RemoteException, ClientException {
         return callService(new ServiceCall<Long>() {
