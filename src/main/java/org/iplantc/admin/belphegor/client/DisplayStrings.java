@@ -125,4 +125,66 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String restoreAppFailureMsg(String appName);
+
+    /**
+     * Ref. Genome Name
+     * 
+     * @return
+     */
+    String refGenName();
+
+    /**
+     * Ref. Genome Path
+     * 
+     * @return
+     */
+    String refGenPath();
+
+    /**
+     * Created by
+     * 
+     * @return
+     */
+    String createdBy();
+
+    /**
+     * Created On
+     * 
+     * @return
+     */
+    String createdOn();
+
+    /**
+     * 
+     * Last Mod By
+     * 
+     * @return
+     */
+    String lastModBy();
+
+    /**
+     * Last Mod On
+     * 
+     * @return
+     */
+    String lastModOn();
+
+    /**
+     * deleted ?
+     * 
+     * @return
+     */
+    String deleted();
+
+    /**
+     * 
+     * @return
+     */
+    String refDeletePrompt();
+
+    /**
+     * 
+     * @return
+     */
+    String referenceGenomes();
 }

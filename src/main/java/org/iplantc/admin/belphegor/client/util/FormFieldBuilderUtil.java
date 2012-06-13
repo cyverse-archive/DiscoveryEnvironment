@@ -41,9 +41,14 @@ public class FormFieldBuilderUtil {
         return "<span class='required_marker'>*</span> " + label; //$NON-NLS-1$
     }
 
-    public static DateField buildDateField(String label) {
+    public static DateField buildDateField(String label, boolean allowBlank) {
         DateField field = new DateField();
-        field.setFieldLabel(label);
+        if (!allowBlank) {
+            field.setFieldLabel(buildRequiredFieldLabel(label));
+        } else {
+            field.setFieldLabel(label);
+        }
+        field.setAllowBlank(allowBlank);
         return field;
     }
 

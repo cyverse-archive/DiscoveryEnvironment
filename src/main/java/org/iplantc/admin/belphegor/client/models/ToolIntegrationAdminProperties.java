@@ -76,6 +76,21 @@ public class ToolIntegrationAdminProperties {
     private static final String SERVICE_URL_APP_SEARCH = PROPERTY_NAME_PREFIX + "search-apps"; //$NON-NLS-1$
 
     /**
+     * The URL used to access the add ref genome service.
+     */
+    private static final String SERVICE_ADD_REF_GENOME = PROPERTY_NAME_PREFIX + "add-ref-genome"; //$NON-NLS-1$
+
+    /**
+     * The URL used to access the edit ref genome service.
+     */
+    private static final String SERVICE_EDIT_REF_GENOME = PROPERTY_NAME_PREFIX + "edit-ref-genome"; //$NON-NLS-1$
+
+    /**
+     * The URL used to access the list ref genome service
+     */
+    private static final String SERVICE_LIST_REF_GENOME = PROPERTY_NAME_PREFIX + "get-ref-genomes"; //$NON-NLS-1$
+
+    /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
@@ -141,7 +156,8 @@ public class ToolIntegrationAdminProperties {
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
                 SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE,
                 SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE, SERVICE_URL_APP_RESTORE,
-                SERVICE_URL_APP_SEARCH)) {
+                SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME, SERVICE_EDIT_REF_GENOME,
+                SERVICE_LIST_REF_GENOME)) {
             serviceUrlMap.put(key, properties.get(key));
         }
 
@@ -193,6 +209,33 @@ public class ToolIntegrationAdminProperties {
      */
     private String getServiceUrl(String serviceName) {
         return serviceUrlMap.get(SERVICE_URL_BASE) + serviceUrlMap.get(serviceName);
+    }
+
+    /**
+     * Gets the Add ref genome service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getAddRefGenomeServiceUrl() {
+        return getServiceUrl(SERVICE_ADD_REF_GENOME);
+    }
+
+    /**
+     * Gets the edit ref genome service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getEditRefGenomeServiceUrl() {
+        return getServiceUrl(SERVICE_EDIT_REF_GENOME);
+    }
+
+    /**
+     * Gets the list ref genomes service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getListRefGenomeServiceUrl() {
+        return getServiceUrl(SERVICE_LIST_REF_GENOME);
     }
 
     /**

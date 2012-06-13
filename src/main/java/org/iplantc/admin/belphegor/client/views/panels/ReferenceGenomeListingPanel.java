@@ -11,6 +11,7 @@ import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.I18N;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -88,15 +89,17 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME, ReferenceGenome.NAME, 250);
+        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME,
+                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenName(), 250);
         name.setRenderer(new RefNameCellRenderer());
-        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH, ReferenceGenome.PATH, 250);
+        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH,
+                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenPath(), 250);
         ColumnConfig createdon = new ColumnConfig(ReferenceGenome.CREATED_ON,
-                ReferenceGenome.CREATED_ON, 150);
+                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdOn(), 150);
         createdon.setDateTimeFormat(DateTimeFormat
                 .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM));
         ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY,
-                ReferenceGenome.CREATED_BY, 250);
+                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdBy(), 250);
         return new ColumnModel(Arrays.asList(name, path, createdon, createdby));
     }
 
@@ -150,7 +153,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     }
 
     private void getGenomes() {
-        ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade();
+        ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade(this);
         facade.getReferenceGenomes(new AsyncCallback<String>() {
 
             @Override
@@ -164,12 +167,13 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                 }
 
                 grid.getStore().add(genomes);
+                unmask();
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
-
+                ErrorHandler.post(caught);
+                unmask();
             }
         });
 
@@ -191,7 +195,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
             d.setHeading("New Untitled");
         }
         d.getButtonBar().removeAll();
-        d.setSize(595, 390);
+        d.setSize(595, 400);
         d.add(editPanel);
         d.show();
     }

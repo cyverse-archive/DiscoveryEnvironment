@@ -154,7 +154,7 @@ public class ApplicationLayout extends Viewport {
         TabItem appItem = new TabItem("Apps");
         appItem.setLayout(new FitLayout());
 
-        TabItem refItem = new TabItem("Reference Genome");
+        TabItem refItem = new TabItem(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes());
         refItem.setLayout(new FitLayout());
 
         ReferenceGenomeListingPanel refPanel = new ReferenceGenomeListingPanel();
