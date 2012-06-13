@@ -481,9 +481,24 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String shareFailed();
 
     /**
-     * 
+     * Localized error message to show when something goes wrong with settings
      * 
      * @return
      */
     String settingsLoadError();
+
+    /**
+     * Localized error message to show when something goes wrong with adding collaborators
+     * 
+     * @return
+     */
+    String addCollabErrorMsg();
+
+    /**
+     * 
+     * Localized error message to show when something goes wrong with removing collaborators
+     * 
+     * @return
+     */
+    String removeCollabErrorMsg();
 }

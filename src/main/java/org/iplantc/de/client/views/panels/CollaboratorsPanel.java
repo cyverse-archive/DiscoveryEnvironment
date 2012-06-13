@@ -198,14 +198,14 @@ public class CollaboratorsPanel extends ContentPanel {
             @Override
             public void onSuccess(String result) {
                 my_collaborators.add(model);
-                NotifyInfo.display("Collaborator Added", model.getName()
-                        + " is now collaborator with you.");
+                NotifyInfo.display(I18N.DISPLAY.collaboratorAdded(),
+                        I18N.DISPLAY.collaboratorAddConfirm(model.getName()));
 
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
+                ErrorHandler.post(I18N.ERROR.addCollabErrorMsg(), caught);
             }
         });
 
@@ -218,17 +218,16 @@ public class CollaboratorsPanel extends ContentPanel {
 
             @Override
             public void onSuccess(String result) {
-                // TODO: call service to update
                 my_collaborators.remove(model);
                 grid.getStore().remove(model);
-                NotifyInfo.display("Collaborator Removed", model.getName()
-                        + " removed from your collaborators list.");
+                NotifyInfo.display(I18N.DISPLAY.collaboratorRemoved(),
+                        I18N.DISPLAY.collaboratorRemoveConfirm(model.getName()));
 
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
+                ErrorHandler.post(I18N.ERROR.removeCollabErrorMsg(), caught);
             }
         });
 
