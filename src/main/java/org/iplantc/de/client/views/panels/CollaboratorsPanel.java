@@ -146,9 +146,13 @@ public class CollaboratorsPanel extends ContentPanel {
             final HorizontalPanel hp = new HorizontalPanel();
 
             if (mode.equals(MODE.SEARCH)) {
-                hp.add(buildButton(ADD_BUTTON_STYLE, model));
+                IconButton ib = buildButton(ADD_BUTTON_STYLE, model);
+                hp.add(ib);
+                ib.setToolTip("Add");
             } else {
-                hp.add(buildButton(REMOVE_BUTTON_STYLE, model));
+                IconButton ib = buildButton(REMOVE_BUTTON_STYLE, model);
+                hp.add(ib);
+                ib.setToolTip("Remove");
             }
             hp.add(new Label(model.getName()));
             hp.setSpacing(3);
@@ -163,19 +167,20 @@ public class CollaboratorsPanel extends ContentPanel {
                     IconButton src = (IconButton)ce.getSource();
                     String existing_style = src.getStyleName();
                     if (existing_style.contains(ADD_BUTTON_STYLE)) {
-                        // TODO: check duplicates
-
                         addCollaborators(model);
                         if (mode.equals(MODE.SEARCH)) {
                             src.changeStyle(DONE_BUTTON_STYLE);
+                            src.setToolTip("Added");
                         } else {
                             src.changeStyle(REMOVE_BUTTON_STYLE);
+                            src.setToolTip("Remove");
                         }
                         return;
                     }
 
                     if (existing_style.contains(REMOVE_BUTTON_STYLE)) {
                         src.changeStyle(DELETE_BUTTON_STYLE);
+                        src.setToolTip("Confirm Remove");
                         return;
                     }
 
@@ -197,10 +202,13 @@ public class CollaboratorsPanel extends ContentPanel {
 
             @Override
             public void onSuccess(String result) {
-                my_collaborators.add(model);
+                Collaborator found = grid.getStore().findModel(Collaborator.ID, model.getId());
+                if (found == null) {
+                    my_collaborators.add(model);
+                }
+
                 NotifyInfo.display(I18N.DISPLAY.collaboratorAdded(),
                         I18N.DISPLAY.collaboratorAddConfirm(model.getName()));
-
             }
 
             @Override
