@@ -199,4 +199,11 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String updateRefGenome();
+
+    /**
+     * Text for invalid Ref. genome path
+     * 
+     * @return
+     */
+    String invalidPath();
 }
