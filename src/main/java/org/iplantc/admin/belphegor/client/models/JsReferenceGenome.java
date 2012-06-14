@@ -48,7 +48,7 @@ public class JsReferenceGenome extends JavaScriptObject {
     }-*/;
 
     public final native String getLastModifiedOn() /*-{
-		return this.last_modified_On;
+		return this.last_modified_on;
     }-*/;
 
 }

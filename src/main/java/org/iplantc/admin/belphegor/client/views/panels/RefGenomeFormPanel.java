@@ -11,12 +11,10 @@ import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
-import org.iplantc.core.uicommons.client.ErrorHandler;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
@@ -32,7 +30,6 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author sriram
@@ -60,6 +57,8 @@ public class RefGenomeFormPanel extends LayoutContainer {
 
     private MODE mode;
 
+    private AdminServiceCallback callback;
+
     public static enum MODE {
         EDIT, ADD
 
@@ -76,17 +75,17 @@ public class RefGenomeFormPanel extends LayoutContainer {
         }
 
         this.mode = mode;
+        this.callback = callback;
+
+        userName.setEnabled(false);
+        lastModUserName.setEnabled(false);
+        creationDate.setEnabled(false);
+        lastModDate.setEnabled(false);
 
         if (mode.equals(MODE.ADD)) {
             setDefaults();
-            userName.setEnabled(false);
-            lastModUserName.setEnabled(false);
-            creationDate.setEnabled(false);
-            lastModDate.setEnabled(false);
             chkDeleted.setEnabled(false);
         }
-
-        toJson();
     }
 
     private JSONObject toJson() {
@@ -103,30 +102,6 @@ public class RefGenomeFormPanel extends LayoutContainer {
                     (chkDeleted.getValue() == null) ? JSONBoolean.getInstance(false) : JSONBoolean
                             .getInstance(chkDeleted.getValue()));
         }
-        // obj.put(ReferenceGenome.ID,
-        // (id.getValue() == null) ? new JSONString("") : new JSONString(id.getValue()));
-        // obj.put(ReferenceGenome.UUID, (uuid.getValue() == null) ? new JSONString("") : new JSONString(
-        // uuid.getValue()));
-        // obj.put(ReferenceGenome.NAME, (refGenName.getValue() == null) ? new JSONString("")
-        // : new JSONString(refGenName.getValue()));
-        // obj.put(ReferenceGenome.CREATED_ON, (creationDate.getValue() == null) ? new JSONString("")
-        // : new JSONString(creationDate.getValue().getTime() + ""));
-        // obj.put(ReferenceGenome.CREATED_BY, (userName.getValue() == null) ? new JSONString("")
-        // : new JSONString(userName.getValue()));
-        //
-        // obj.put(ReferenceGenome.PATH, (path.getValue() == null) ? new JSONString("") : new JSONString(
-        // path.getValue()));
-        //
-        // obj.put(ReferenceGenome.DELETED,
-        // (chkDeleted.getValue() == null) ? JSONBoolean.getInstance(false) : JSONBoolean
-        // .getInstance(chkDeleted.getValue()));
-        //
-        // obj.put(ReferenceGenome.LAST_MODIFIED_BY, (lastModUserName.getValue() == null) ? new
-        // JSONString(
-        // "") : new JSONString(lastModUserName.getValue()));
-        // obj.put(ReferenceGenome.LAST_MODIFIED_ON, (lastModDate.getValue() == null) ? new
-        // JSONString("")
-        // : new JSONString(lastModDate.getValue().getTime() + ""));
         System.out.println(obj.toString());
         return obj;
 
@@ -214,41 +189,14 @@ public class RefGenomeFormPanel extends LayoutContainer {
     private void submit() {
         ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade();
         if (mode.equals(MODE.ADD)) {
-            facade.createReferenceGenomes(toJson(), new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    Info.display("Reference Genome", "Reference Genome added!");
-
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-
-                }
-            });
+            facade.createReferenceGenomes(toJson(), callback);
         } else {
-            facade.editReferenceGenomes(toJson(), new AsyncCallback<String>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    Info.display("Reference Genome", "Reference Genome updated!");
-
-                }
-            });
+            facade.editReferenceGenomes(toJson(), callback);
         }
     }
 
     private void buildCancelButton() {
         btnCancel = new Button();
-
         btnCancel.setText(I18N.DISPLAY.cancel());
         btnCancel.setId("idBtnCancel"); //$NON-NLS-1$
     }
@@ -267,9 +215,12 @@ public class RefGenomeFormPanel extends LayoutContainer {
     private void setValues(ReferenceGenome genome) {
         refGenName.setValue((String)genome.get(ReferenceGenome.NAME));
         path.setValue((String)genome.get(ReferenceGenome.PATH));
+        lastModDate.setValue((Date)genome.get(ReferenceGenome.LAST_MODIFIED_ON));
+        lastModUserName.setValue((String)genome.get(ReferenceGenome.LAST_MODIFIED_BY));
         creationDate.setValue((Date)genome.get(ReferenceGenome.CREATED_ON));
         userName.setValue((String)genome.get(ReferenceGenome.CREATED_BY));
         id.setValue(genome.get(ReferenceGenome.ID).toString());
         uuid.setValue(genome.get(ReferenceGenome.UUID).toString());
+        chkDeleted.setValue(Boolean.parseBoolean(genome.get(ReferenceGenome.DELETED).toString()));
     }
 }

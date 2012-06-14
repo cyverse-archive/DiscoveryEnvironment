@@ -80,4 +80,19 @@ public interface ErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String deleteCategoryPermissionError();
+
+    /**
+     * Error message displayed when updating an Ref Genome fails.
+     * 
+     * @return localized error string.
+     */
+    String updateRefGenomeError();
+
+    /**
+     * Error message displayed when add Ref Genome fails.
+     * 
+     * @return localized error string.
+     */
+    String addRefGenomeError();
+
 }

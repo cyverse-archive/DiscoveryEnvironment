@@ -187,4 +187,16 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String referenceGenomes();
+
+    /**
+     * 
+     * @return
+     */
+    String addRefGenome();
+
+    /**
+     * 
+     * @return
+     */
+    String updateRefGenome();
 }

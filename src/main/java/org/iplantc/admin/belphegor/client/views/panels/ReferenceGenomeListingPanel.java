@@ -16,13 +16,18 @@ import org.iplantc.core.uicommons.client.I18N;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.FieldEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -50,6 +55,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     private static final String ID_BTN_ADD = "idBtnAdd";
     private Grid<ReferenceGenome> grid;
     private ToolBar toolBar;
+    private Dialog refGenomeDialog;
 
     public ReferenceGenomeListingPanel() {
         init();
@@ -71,6 +77,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     private void buildToolBar() {
         toolBar = new ToolBar();
         toolBar.add(buildAddButton());
+        toolBar.add(buildFilterField());
         setTopComponent(toolBar);
     }
 
@@ -82,7 +89,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
             @Override
             public void componentSelected(ButtonEvent ce) {
-                showRefEditDialog(null, RefGenomeFormPanel.MODE.ADD);
+                showRefEditDialog(null, RefGenomeFormPanel.MODE.ADD, new AddCompleteCallback());
             }
         });
         return b;
@@ -101,6 +108,23 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY,
                 org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdBy(), 250);
         return new ColumnModel(Arrays.asList(name, path, createdon, createdby));
+    }
+
+    private void updateRefGenome(List<ReferenceGenome> genomes) {
+        ReferenceGenome genome = genomes.get(0);
+        ListStore<ReferenceGenome> store = grid.getStore();
+        ReferenceGenome found_genome = store.findModel(ReferenceGenome.UUID,
+                genome.get(ReferenceGenome.UUID));
+        store.remove(found_genome);
+        store.add(genome);
+        Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
+                org.iplantc.admin.belphegor.client.I18N.DISPLAY.updateRefGenome());
+    }
+
+    private void closeDialog() {
+        if (refGenomeDialog != null) {
+            refGenomeDialog.hide();
+        }
     }
 
     /**
@@ -128,26 +152,40 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
         @Override
         public void handleEvent(BaseEvent be) {
-            showRefEditDialog(model, RefGenomeFormPanel.MODE.EDIT);
+            showRefEditDialog(model, RefGenomeFormPanel.MODE.EDIT, new EditCompleteCallback());
         }
     }
 
-    private class EditCompleteCallback extends AdminServiceCallback {
-        Dialog dialog;
-
-        public EditCompleteCallback(Dialog d) {
-            dialog = d;
-        }
+    private class AddCompleteCallback extends AdminServiceCallback {
 
         @Override
-        protected void onSuccess(JSONObject jsonResult) {
-            dialog.hide();
-            //updateApp(JsonUtil.getObject(jsonResult, "application")); //$NON-NLS-1$
+        protected void onSuccess(JSONObject result) {
+            grid.getStore().add(parseResult(result));
+            Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
+                    org.iplantc.admin.belphegor.client.I18N.DISPLAY.addRefGenome());
+            closeDialog();
         }
 
         @Override
         protected String getErrorMessage() {
-            return org.iplantc.admin.belphegor.client.I18N.ERROR.updateApplicationError();
+            closeDialog();
+            return org.iplantc.admin.belphegor.client.I18N.ERROR.addRefGenomeError();
+        }
+
+    }
+
+    private class EditCompleteCallback extends AdminServiceCallback {
+
+        @Override
+        protected void onSuccess(JSONObject jsonResult) {
+            updateRefGenome(parseResult(jsonResult)); //$NON-NLS-1$
+            closeDialog();
+        }
+
+        @Override
+        protected String getErrorMessage() {
+            closeDialog();
+            return org.iplantc.admin.belphegor.client.I18N.ERROR.updateRefGenomeError();
         }
 
     }
@@ -159,14 +197,9 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
             @Override
             public void onSuccess(String result) {
                 JSONObject obj = JSONParser.parseStrict(result).isObject();
-                JSONArray arr = JsonUtil.getArray(obj, "genomes");
-                JsArray<JsReferenceGenome> js_genomes = JsonUtil.asArrayOf(arr.toString());
-                List<ReferenceGenome> genomes = new ArrayList<ReferenceGenome>();
-                for (int i = 0; i < js_genomes.length(); i++) {
-                    genomes.add(new ReferenceGenome(js_genomes.get(i)));
-                }
-
-                grid.getStore().add(genomes);
+                ListStore<ReferenceGenome> store = grid.getStore();
+                store.removeAll();
+                store.add(parseResult(obj));
                 unmask();
             }
 
@@ -179,24 +212,73 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
     }
 
-    private void showRefEditDialog(ReferenceGenome model, RefGenomeFormPanel.MODE mode) {
-        final Dialog d = new Dialog();
-        RefGenomeFormPanel editPanel = new RefGenomeFormPanel(model, mode, new EditCompleteCallback(d));
+    private TextField<String> buildFilterField() {
+        final TextField<String> filter = new TextField<String>();
+        filter.setEmptyText("Filter by name");
+        filter.addListener(Events.Change, new Listener<FieldEvent>() {
+
+            @Override
+            public void handleEvent(FieldEvent be) {
+                filterGrid(filter.getValue());
+            }
+        });
+
+        filter.addKeyListener(new KeyListener() {
+
+            /**
+             * Fires on key press.
+             * 
+             * @param event the component event
+             */
+            public void componentKeyPress(ComponentEvent event) {
+                if (event.getKeyCode() == 13) {
+                    filterGrid(filter.getValue());
+                }
+            }
+        });
+
+        return filter;
+    }
+
+    private void filterGrid(String val) {
+        if (val == null || val.isEmpty()) {
+            grid.getStore().clearFilters();
+        } else {
+            grid.getStore().filter(ReferenceGenome.NAME, val);
+        }
+    }
+
+    private void showRefEditDialog(ReferenceGenome model, RefGenomeFormPanel.MODE mode,
+            AdminServiceCallback callaback) {
+        refGenomeDialog = new Dialog();
+        refGenomeDialog.setModal(true);
+        RefGenomeFormPanel editPanel = new RefGenomeFormPanel(model, mode, callaback);
         editPanel.addCancelButtonSelectionListener(new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-                d.hide();
+                refGenomeDialog.hide();
             }
         });
 
         if (model != null) {
-            d.setHeading((String)model.get(ReferenceGenome.NAME));
+            refGenomeDialog.setHeading((String)model.get(ReferenceGenome.NAME));
         } else {
-            d.setHeading("New Untitled");
+            refGenomeDialog.setHeading("New Untitled");
         }
-        d.getButtonBar().removeAll();
-        d.setSize(595, 400);
-        d.add(editPanel);
-        d.show();
+        refGenomeDialog.getButtonBar().removeAll();
+        refGenomeDialog.setSize(595, 400);
+        refGenomeDialog.add(editPanel);
+        refGenomeDialog.show();
+    }
+
+    private List<ReferenceGenome> parseResult(JSONObject obj) {
+        JSONArray arr = JsonUtil.getArray(obj, "genomes");
+        JsArray<JsReferenceGenome> js_genomes = JsonUtil.asArrayOf(arr.toString());
+        List<ReferenceGenome> genomes = new ArrayList<ReferenceGenome>();
+        for (int i = 0; i < js_genomes.length(); i++) {
+            genomes.add(new ReferenceGenome(js_genomes.get(i)));
+        }
+
+        return genomes;
     }
 }

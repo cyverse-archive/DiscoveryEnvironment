@@ -8,6 +8,7 @@ import java.util.Date;
 import org.iplantc.core.uicommons.client.util.DateParser;
 
 import com.extjs.gxt.ui.client.data.BaseModelData;
+import com.extjs.gxt.ui.client.util.Format;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -37,7 +38,7 @@ public class ReferenceGenome extends BaseModelData {
         set(ID, genome.getId());
         set(UUID, genome.getUUID());
         set(NAME, genome.getName());
-        set(CREATED_BY, genome.getUserName());
+        set(CREATED_BY, Format.htmlEncode(genome.getUserName()));
         set(CREATED_ON, DateParser.parseDate(genome.getCreatedOn()));
         set(PATH, genome.getPath());
         set(DELETED, genome.getDeleted());
