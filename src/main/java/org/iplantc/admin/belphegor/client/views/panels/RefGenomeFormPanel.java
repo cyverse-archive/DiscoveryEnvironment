@@ -15,6 +15,7 @@ import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
@@ -218,7 +219,7 @@ public class RefGenomeFormPanel extends LayoutContainer {
         lastModDate.setValue((Date)genome.get(ReferenceGenome.LAST_MODIFIED_ON));
         lastModUserName.setValue((String)genome.get(ReferenceGenome.LAST_MODIFIED_BY));
         creationDate.setValue((Date)genome.get(ReferenceGenome.CREATED_ON));
-        userName.setValue((String)genome.get(ReferenceGenome.CREATED_BY));
+        userName.setValue(Format.htmlDecode((String)genome.get(ReferenceGenome.CREATED_BY)));
         id.setValue(genome.get(ReferenceGenome.ID).toString());
         uuid.setValue(genome.get(ReferenceGenome.UUID).toString());
         chkDeleted.setValue(Boolean.parseBoolean(genome.get(ReferenceGenome.DELETED).toString()));
