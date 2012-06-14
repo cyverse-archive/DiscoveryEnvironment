@@ -21,13 +21,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.CheckBoxGroup;
 import com.extjs.gxt.ui.client.widget.form.DateField;
-import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.form.Validator;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONBoolean;
@@ -95,9 +93,9 @@ public class RefGenomeFormPanel extends LayoutContainer {
         JSONObject obj = new JSONObject();
 
         obj.put(ReferenceGenome.NAME, (refGenName.getValue() == null) ? new JSONString("")
-                : new JSONString(refGenName.getValue()));
+                : new JSONString(refGenName.getValue().trim()));
         obj.put(ReferenceGenome.PATH, (path.getValue() == null) ? new JSONString("") : new JSONString(
-                path.getValue()));
+                path.getValue().trim()));
         if (mode.equals(MODE.EDIT)) {
             obj.put(ReferenceGenome.UUID, (uuid.getValue() == null) ? new JSONString("")
                     : new JSONString(uuid.getValue()));
