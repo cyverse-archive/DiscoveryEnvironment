@@ -136,6 +136,11 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         public Object render(final ReferenceGenome model, String property, ColumnData config,
                 int rowIndex, int colIndex, ListStore<ReferenceGenome> store, Grid<ReferenceGenome> grid) {
             String name = model.get(ReferenceGenome.NAME);
+            if (Boolean.parseBoolean(model.get(ReferenceGenome.DELETED).toString())) {
+                name = "<img title ='" + org.iplantc.admin.belphegor.client.I18N.DISPLAY.deleted()
+                        + "' src='./images/exclamation.png'/>&nbsp;" + name;
+            }
+
             Hyperlink link = new Hyperlink(name, "link_name"); //$NON-NLS-1$
             link.addListener(Events.OnClick, new RefNameClickHandler(model));
             link.setWidth(name.length());
