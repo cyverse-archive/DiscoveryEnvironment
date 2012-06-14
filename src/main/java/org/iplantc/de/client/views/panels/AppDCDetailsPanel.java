@@ -4,10 +4,11 @@
 package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uiapplications.client.events.AppSelectedEvent;
-import org.iplantc.core.uiapplications.client.events.AppSelectedEventHandler;
-import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uiapplications.client.models.Analysis;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.JsDeployedComponent;
+import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
@@ -17,30 +18,25 @@ import com.extjs.gxt.ui.client.widget.layout.AccordionLayout;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author sriram
  * 
  */
-public class AppDCDetailsPanel extends ContentPanel {
+public class AppDCDetailsPanel extends IPlantDialogPanel {
+    private final ContentPanel contents = new ContentPanel();
 
-    public AppDCDetailsPanel() {
-        initListener();
-        setHeading("App Details");
-        setLayout(new AccordionLayout());
-    }
+    public AppDCDetailsPanel(Analysis app) {
+        contents.setLayout(new AccordionLayout());
+        contents.setHeaderVisible(false);
 
-    private void initListener() {
-        EventBus.getInstance().addHandler(AppSelectedEvent.TYPE, new AppSelectedEventHandler() {
-
-            @Override
-            public void onSelection(AppSelectedEvent event) {
-                getDCDetails(event.getAppId());
-            }
-        });
+        getDCDetails(app.getId());
     }
 
     private void getDCDetails(final String appId) {
+        contents.mask(I18N.DISPLAY.loadingMask());
+
         TemplateServiceFacade facade = new TemplateServiceFacade();
         facade.getDCDetails(appId, new AsyncCallback<String>() {
 
@@ -49,33 +45,37 @@ public class AppDCDetailsPanel extends ContentPanel {
                 JsArray<JsDeployedComponent> list = parseResults(result);
                 addToAccordion(list);
 
+                contents.unmask();
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                System.out.println(caught.toString());
+                contents.unmask();
+                ErrorHandler.post(I18N.ERROR.deployedComponentRetrievalFailure(), caught);
             }
         });
     }
 
     private void addToAccordion(JsArray<JsDeployedComponent> list) {
-        ContentPanel panel = null;
-        removeAll();
+        contents.removeAll();
+
         if (list != null) {
             for (int i = 0; i < list.length(); i++) {
-                panel = new ContentPanel();
+                JsDeployedComponent deployedComponent = list.get(i);
+
+                XTemplate tpl = XTemplate.create(getTemplate());
+                ContentPanel panel = new ContentPanel();
+
                 panel.setScrollMode(Scroll.AUTO);
                 panel.setSize(160, 180);
-                panel.setHeading("<b>" + list.get(i).getName() + "</b>");
-                XTemplate tpl = XTemplate.create(getTemplate());
-                panel.removeAll();
-                panel.addText(tpl.applyTemplate(list.get(i)));
-                panel.layout();
-                add(panel);
-            }
-            layout();
-        }
+                panel.setHeading("<b>" + deployedComponent.getName() + "</b>");
+                panel.addText(tpl.applyTemplate(deployedComponent));
 
+                contents.add(panel);
+            }
+
+            contents.layout();
+        }
     }
 
     private String getTemplate() {
@@ -90,11 +90,21 @@ public class AppDCDetailsPanel extends ContentPanel {
 
     private JsArray<JsDeployedComponent> parseResults(String result) {
         JSONArray jsonComponents = JsonUtil.getArray(JsonUtil.getObject(result), "deployed_components"); //$NON-NLS-1$
+
         if (jsonComponents != null) {
-            JsArray<JsDeployedComponent> jscomps = JsonUtil.asArrayOf(jsonComponents.toString());
-            return jscomps;
+            return JsonUtil.asArrayOf(jsonComponents.toString());
         }
 
         return null;
+    }
+
+    @Override
+    public void handleOkClick() {
+        // do nothing intentionally
+    }
+
+    @Override
+    public Widget getDisplayWidget() {
+        return contents;
     }
 }

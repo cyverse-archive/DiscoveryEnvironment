@@ -318,4 +318,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("control_arrow_down.png")
     ImageResource dataActionMenuIcon();
 
+    /**
+     * Image resource for a View Deployed Components icon.
+     * 
+     * @return image.
+     */
+    @Source("script_link.png")
+    ImageResource viewDeployedComponents();
+
 }

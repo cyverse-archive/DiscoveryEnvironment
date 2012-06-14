@@ -16,6 +16,7 @@ import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.TitoWindowDispatcher;
@@ -23,10 +24,10 @@ import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.TitoWindowConfig;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -54,6 +55,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridViewConfig;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
@@ -78,6 +80,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private static final String ACTION_ID_DELETE = "idDelete"; //$NON-NLS-1$
     private static final String ACTION_ID_EDIT = "idEdit"; //$NON-NLS-1$
     private static final String ACTION_ID_RUN = "idRun"; //$NON-NLS-1$
+    private static final String ACTION_ID_VIEW_DEPLOYED_COMPONENTS = "idViewDeployedComponents"; //$NON-NLS-1$
 
     private final FastMap<Button> buttons;
     private final FastMap<MenuItem> menuItems;
@@ -143,7 +146,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         addToToolBar(new SeparatorToolItem());
         addToToolBar(buildNewButton());
         addToToolBar(buildRunButton());
+        addToToolBar(buildViewComponentsButton());
         addToToolBar(buildCopyButton());
+        addToToolBar(new FillToolItem());
         addToToolBar(buildMoreActionsButton());
     }
 
@@ -156,6 +161,21 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         run.addSelectionListener(new RunButtonSelectionListener());
         buttons.put(ACTION_ID_RUN, run);
         return run;
+    }
+
+    private Button buildViewComponentsButton() {
+        Button viewDeployedComponents = new Button();
+
+        viewDeployedComponents.setToolTip(I18N.DISPLAY.viewDeployedComponents());
+        viewDeployedComponents.setId(ACTION_ID_VIEW_DEPLOYED_COMPONENTS);
+        viewDeployedComponents.setEnabled(false);
+        viewDeployedComponents.setIcon(AbstractImagePrototype.create(Resources.ICONS
+                .viewDeployedComponents()));
+        viewDeployedComponents.addSelectionListener(new ViewDeployedComponentsButtonSelectionListener());
+
+        buttons.put(ACTION_ID_VIEW_DEPLOYED_COMPONENTS, viewDeployedComponents);
+
+        return viewDeployedComponents;
     }
 
     private MenuItem buildEditMenuItem() {
@@ -508,6 +528,21 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         }
     }
 
+    private class ViewDeployedComponentsButtonSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            Analysis analysis = analysisGrid.getSelectionModel().getSelectedItem();
+
+            if (analysis != null) {
+                IPlantDialog dlg = new IPlantDialog(analysis.getName(), 340, new AppDCDetailsPanel(
+                        analysis));
+                dlg.setHeight(280);
+                dlg.setButtons(Dialog.CLOSE);
+                dlg.show();
+            }
+        }
+    }
+
     private class DeleteMenuItemSelectionListener extends SelectionListener<MenuEvent> {
         @Override
         public void componentSelected(MenuEvent ce) {
@@ -523,11 +558,11 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
             if (md != null) {
                 Analysis a = (Analysis)md;
                 if (a.isDisabled()) {
-                    return "disabled_app_background";
+                    return "disabled_app_background"; //$NON-NLS-1$
                 }
             }
 
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
 
@@ -634,9 +669,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 link.setWidth(model.getName().length());
                 return link;
             } else {
-                name = "<img title ='"
+                name = "<img title ='" //$NON-NLS-1$
                         + org.iplantc.core.uiapplications.client.I18N.DISPLAY.appUnavailable()
-                        + "' src='./images/exclamation.png'/>&nbsp;" + name;
+                        + "' src='./images/exclamation.png'/>&nbsp;" + name; //$NON-NLS-1$
                 return name;
             }
         }
@@ -826,7 +861,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         private String parsePageName(String url) {
             String name = null;
             if (url != null && !url.isEmpty()) {
-                String[] tokens = url.split("/");
+                String[] tokens = url.split("/"); //$NON-NLS-1$
                 name = URL.decode(tokens[tokens.length - 1]);
             }
 

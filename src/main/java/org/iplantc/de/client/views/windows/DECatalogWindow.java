@@ -22,12 +22,10 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.views.panels.AppDCDetailsPanel;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -171,7 +169,6 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     protected void compose() {
         pnlContents.add(catPanel, dataWest);
         pnlContents.add(mainPanel, dataCenter);
-        pnlContents.add(new AppDCDetailsPanel(), dataEast);
     }
 
     @Override
@@ -193,12 +190,12 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     protected int getWestWidth() {
-        return 200;
+        return 220;
     }
 
     @Override
     protected int getEastWidth() {
-        return 160;
+        return 200;
     }
 
     private final class AppSearchResultSelectedEventHandlerImpl implements

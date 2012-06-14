@@ -2,9 +2,12 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -15,9 +18,6 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.iplantc.core.uicommons.client.DEServiceFacade;
-import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 /**
  * Provides access to remote services for operations related to job submission templates.
@@ -65,7 +65,8 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
      * @param callback
      */
     public void getDCDetails(String appId, AsyncCallback<String> callback) {
-        String address = "http://montosa.iplantcollaborative.org/~dennis/comps.json"; //$NON-NLS-1$
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
+                + "get-components-in-analysis/" + appId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }

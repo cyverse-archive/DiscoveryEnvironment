@@ -1244,4 +1244,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String collaboratorRemoveConfirm(String name);
+
+    /**
+     * The display text for a View Deployed Components label.
+     * 
+     * @return the localized display text
+     */
+    String viewDeployedComponents();
 }
