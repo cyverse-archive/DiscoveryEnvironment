@@ -18,6 +18,7 @@ import org.iplantc.de.client.models.WindowConfig;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -38,7 +39,7 @@ public class TitoWindow extends IPlantWindow {
     protected List<HandlerRegistration> handlers;
 
     public TitoWindow(String tag, TitoWindowConfig config) {
-        super(tag, false, true, false, true);
+        super(tag, false, true, true, true);
 
         this.config = config;
 
@@ -65,7 +66,7 @@ public class TitoWindow extends IPlantWindow {
     private void init() {
         setHeading(I18N.DISPLAY.createApps());
         setSize(800, 600);
-        setResizable(false);
+        setLayout(new FitLayout());
     }
 
     private void compose() {
