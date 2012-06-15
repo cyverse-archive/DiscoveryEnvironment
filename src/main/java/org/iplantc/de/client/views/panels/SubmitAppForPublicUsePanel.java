@@ -45,7 +45,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class PublishToWorldPanel extends LayoutContainer {
+public class SubmitAppForPublicUsePanel extends LayoutContainer {
     private static final String INTEGRATOR_NAME = "integName"; //$NON-NLS-1$
     private static final String EMAIL = "email"; //$NON-NLS-1$
     private static final String DESC = "desc"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public class PublishToWorldPanel extends LayoutContainer {
      *            when the publish form is successfully submitted, and onFailure is called when the
      *            publish fails, or the user cancels the form.
      */
-    public PublishToWorldPanel(Analysis analysis, AsyncCallback<String> closeCallback) {
+    public SubmitAppForPublicUsePanel(Analysis analysis, AsyncCallback<String> closeCallback) {
         this.analysis = analysis;
         this.closeCallback = closeCallback;
         setLayout(new FormLayout());
@@ -215,7 +215,22 @@ public class PublishToWorldPanel extends LayoutContainer {
 
         categoryField = buildCategoryField();
 
+        setDefaultValues();
+
+        integratorNameField.setEnabled(false);
+        emailField.setEnabled(false);
+
         refPanel = new ReferenceEditorGridPanel(525, 90);
+    }
+
+    private void setDefaultValues() {
+        UserInfo info = UserInfo.getInstance();
+        if (info.getFirstName() == null || info.getLastName() == null) {
+            integratorNameField.setValue(info.getUsername());
+        } else {
+            integratorNameField.setValue(info.getFirstName() + " " + info.getLastName());
+        }
+        emailField.setValue(info.getEmail());
     }
 
     private TextField<String> buildTextField(String label, boolean allowBlank, String defaultVal,

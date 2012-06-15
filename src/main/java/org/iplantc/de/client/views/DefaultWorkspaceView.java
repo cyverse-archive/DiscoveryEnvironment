@@ -80,6 +80,8 @@ public class DefaultWorkspaceView implements View {
                         userInfo.setEmail(attributes.get(UserInfo.ATTR_EMAIL));
                         userInfo.setUsername(attributes.get(UserInfo.ATTR_UID));
                         userInfo.setFullUsername(attributes.get(UserInfo.ATTR_USERNAME));
+                        userInfo.setFirstName(attributes.get("firstName"));
+                        userInfo.setLastName(attributes.get("lastName"));
                         displayView();
                     }
                 });

@@ -265,7 +265,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         final Window makePublicWin = new Window();
         makePublicWin.setModal(true);
 
-        PublishToWorldPanel requestForm = new PublishToWorldPanel(analysis, new AsyncCallback<String>() {
+        SubmitAppForPublicUsePanel requestForm = new SubmitAppForPublicUsePanel(analysis, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String url) {
                 makePublicWin.hide();
