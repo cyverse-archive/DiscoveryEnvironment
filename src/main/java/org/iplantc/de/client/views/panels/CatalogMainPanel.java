@@ -145,6 +145,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private void addToolBarActions() {
         addToToolBar(new SeparatorToolItem());
         addToToolBar(buildNewButton());
+        addToToolBar(new SeparatorToolItem());
         addToToolBar(buildRunButton());
         addToToolBar(buildViewComponentsButton());
         addToToolBar(buildCopyButton());
