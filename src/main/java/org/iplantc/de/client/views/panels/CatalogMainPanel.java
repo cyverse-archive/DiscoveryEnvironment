@@ -265,23 +265,26 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         final Window makePublicWin = new Window();
         makePublicWin.setModal(true);
 
-        SubmitAppForPublicUsePanel requestForm = new SubmitAppForPublicUsePanel(analysis, new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String url) {
-                makePublicWin.hide();
+        SubmitAppForPublicUsePanel requestForm = new SubmitAppForPublicUsePanel(analysis,
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String url) {
+                        makePublicWin.hide();
 
-                MessageBox.info(I18N.DISPLAY.makePublicSuccessTitle(),
-                        I18N.DISPLAY.makePublicSuccessMessage(url), null);
+                        MessageBox.info(I18N.DISPLAY.makePublicSuccessTitle(),
+                                I18N.DISPLAY.makePublicSuccessMessage(url), null);
 
-                fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
-            }
+                        fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
+                    }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                makePublicWin.hide();
-                ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
-            }
-        });
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        makePublicWin.hide();
+                        if (caught != null) {
+                            ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
+                        }
+                    }
+                });
 
         makePublicWin.setHeading(analysis.getName() + " " + I18N.DISPLAY.publicSubmissionForm()); //$NON-NLS-1$
         makePublicWin.setLayout(new FitLayout());
