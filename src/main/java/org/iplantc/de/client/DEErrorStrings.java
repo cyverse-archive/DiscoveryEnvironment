@@ -169,11 +169,25 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * Error message for display in the error dialog details when a disk resource service call fails.
      * 
      * @param status
+     * @return localized error string.
+     */
+    String serviceErrorStatus(String status);
+
+    /**
+     * Error message for display in the error dialog details when a disk resource service call fails.
+     * 
      * @param code
+     * @return localized error string.
+     */
+    String serviceErrorCode(String code);
+
+    /**
+     * Error message for display in the error dialog details when a disk resource service call fails.
+     * 
      * @param reason
      * @return localized error string.
      */
-    String dataServiceErrorReport(String status, String code, String reason);
+    String serviceErrorReason(String reason);
 
     /**
      * Error message displayed when a service call fails because disk resource(s) do not exist.

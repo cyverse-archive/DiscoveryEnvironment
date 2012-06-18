@@ -79,8 +79,19 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
                     errMsg = getErrorMessageByCode(code, jsonError);
                 }
 
-                caught = new Exception(I18N.ERROR.dataServiceErrorReport(status, errCode, reason),
-                        caught);
+                // Build a new Exception message for the ErrorHandler details panel.
+                String errDetails = ""; //$NON-NLS-1$
+                if (!status.isEmpty()) {
+                    errDetails += I18N.ERROR.serviceErrorStatus(status);
+                }
+                if (!errCode.isEmpty()) {
+                    errDetails += "\n" + I18N.ERROR.serviceErrorCode(errCode); //$NON-NLS-1$
+                }
+                if (!reason.isEmpty()) {
+                    errDetails += "\n" + I18N.ERROR.serviceErrorReason(reason); //$NON-NLS-1$
+                }
+
+                caught = new Exception(errDetails, caught);
             }
         }
 
