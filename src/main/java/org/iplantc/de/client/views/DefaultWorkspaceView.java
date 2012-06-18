@@ -1,8 +1,9 @@
 package org.iplantc.de.client.views;
 
 import java.util.Map;
-import org.iplantc.core.uicommons.client.DEServiceFacade;
+
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
@@ -77,11 +78,13 @@ public class DefaultWorkspaceView implements View {
                     @Override
                     public void onSuccess(Map<String, String> attributes) {
                         UserInfo userInfo = UserInfo.getInstance();
+
                         userInfo.setEmail(attributes.get(UserInfo.ATTR_EMAIL));
                         userInfo.setUsername(attributes.get(UserInfo.ATTR_UID));
                         userInfo.setFullUsername(attributes.get(UserInfo.ATTR_USERNAME));
-                        userInfo.setFirstName(attributes.get("firstName"));
-                        userInfo.setLastName(attributes.get("lastName"));
+                        userInfo.setFirstName(attributes.get(UserInfo.ATTR_FIRSTNAME));
+                        userInfo.setLastName(attributes.get(UserInfo.ATTR_LASTNAME));
+
                         displayView();
                     }
                 });
