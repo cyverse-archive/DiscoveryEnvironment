@@ -65,7 +65,7 @@ public class DesktopView extends ContentPanel {
     // save session state rpc is completed and then redirect
     // to logout
     private boolean session_save_completed = false;
-    private final int SESSION_SAVE_TIMEOUT = 10000;
+    private final int SESSION_SAVE_TIMEOUT = 12000;
     private int expired_time = 0;
     private final int INTERVEL = 1000;
 
@@ -191,11 +191,11 @@ public class DesktopView extends ContentPanel {
             @Override
             public void onLogout(LogoutEvent event) {
                 MonitorSessionPersistance();
+                mgrState.saveUserSession();
                 mgrState.persistUserSession(false, new Command() {
                     @Override
                     public void execute() {
                         session_save_completed = true;
-
                     }
                 });
             }
@@ -326,6 +326,7 @@ public class DesktopView extends ContentPanel {
     private final class DEReloadListener implements Listener<ComponentEvent> {
         @Override
         public void handleEvent(ComponentEvent be) {
+            mgrState.saveUserSession();
             mgrState.persistUserSession(false, null);
         }
     }

@@ -169,6 +169,28 @@ public class DEStateManager {
     }
 
     /**
+     * Save user session
+     * 
+     */
+    public void saveUserSession() {
+        UserSessionServiceFacade facade = new UserSessionServiceFacade();
+        facade.saveUserPreferences(UserSettings.getInstance().toJson(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+    }
+
+    /**
      * Restore users work session
      * 
      */
