@@ -143,15 +143,6 @@ public class NotificationManager {
         return ret;
     }
 
-    private void addFromEventHandler(final Category category, final String header,
-            final JSONObject objMessage, final String context) {
-        Notification notification = addItemToStore(category, objMessage, context);
-
-        if (notification != null) {
-            NotifyInfo.display(header, notification.getMessage());
-        }
-    }
-
     private void registerEventHandlers() {
         final EventBus eventbus = EventBus.getInstance();
 
@@ -159,8 +150,6 @@ public class NotificationManager {
         eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
             @Override
             public void onFire(DataPayloadEvent event) {
-                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-                        dataContextBuilder.build(event.getPayload()));
                 setDataNotificationCount(getDataNotificationCount() + 1);
                 NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
                         getDataNotificationCount(), getAnalysesNotificationCount());
@@ -172,8 +161,6 @@ public class NotificationManager {
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
-                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        analysisContextBuilder.build(event.getPayload()));
                 setAnalysesNotificationCount(getAnalysesNotificationCount() + 1);
                 NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
                         getDataNotificationCount(), getAnalysesNotificationCount());
@@ -425,5 +412,15 @@ public class NotificationManager {
         obj.put(ANALYSES_NOTIFI_COUNT, new JSONString(analysesNotificationCount + ""));
         obj.put(DATA_NOTIFI_COUNT, new JSONString(dataNotificationCount + ""));
         return obj;
+    }
+
+    /**
+     * reset all notification count
+     * 
+     */
+    public void resetCount() {
+        totalNotificationCount = 0;
+        analysesNotificationCount = 0;
+        dataNotificationCount = 0;
     }
 }

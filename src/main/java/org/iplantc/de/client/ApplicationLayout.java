@@ -15,6 +15,7 @@ import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
+import org.iplantc.de.client.views.panels.ViewNotification;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -24,10 +25,8 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Point;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
@@ -59,14 +58,12 @@ public class ApplicationLayout extends Viewport {
     private final LayoutContainer mainPanel;
 
     private NotificationIndicator lblNotifications;
-    private NotificationLabel lblNotificationsAll;
-    private NotificationLabel lblNotificationsAnalyses;
-    private NotificationLabel lblNotificationsData;
 
     private NotificationManager notifyMgr;
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
+    private ViewNotification view;
 
     /**
      * Default constructor.
@@ -110,15 +107,10 @@ public class ApplicationLayout extends Viewport {
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
                         int analysesCount = ncue.getAnalysesCount();
                         int dataCount = ncue.getDataCount();
-
-                        lblNotificationsAnalyses.setCount(analysesCount);
-                        lblNotificationsData.setCount(dataCount);
-                        lblNotificationsAll.setCount(analysesCount + dataCount);
                         lblNotifications.setCount(analysesCount + dataCount);
 
                     }
                 });
-
     }
 
     private void assembleHeader() {
@@ -165,8 +157,7 @@ public class ApplicationLayout extends Viewport {
         pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()));
 
         // add notification actions menu
-        HorizontalPanel notificationPanel = buildActionsMenu(I18N.DISPLAY.notifications(),
-                buildNotificationsMenu());
+        HorizontalPanel notificationPanel = buildNotificationMenu(I18N.DISPLAY.notifications());
 
         lblNotifications = new NotificationIndicator(0);
         notificationPanel.add(lblNotifications);
@@ -220,6 +211,7 @@ public class ApplicationLayout extends Viewport {
         if (notifyMgr == null) {
             notifyMgr = NotificationManager.getInstance();
         }
+        initViewNotification();
     }
 
     /**
@@ -245,77 +237,6 @@ public class ApplicationLayout extends Viewport {
         }
 
         layout();
-    }
-
-    private class NotificationAllListener implements Listener<BaseEvent> {
-        Component source;
-
-        NotificationAllListener(Menu m) {
-            super();
-            source = m;
-        }
-
-        @Override
-        public void handleEvent(BaseEvent be) {
-            source.hide();
-
-            notifyMgr.setAnalysesNotificationCount(0);
-            notifyMgr.setTotalNotificationCount(0);
-            notifyMgr.setDataNotificationCount(0);
-
-            lblNotifications.setCount(0);
-            lblNotificationsAll.setCount(0);
-            lblNotificationsData.setCount(0);
-            lblNotificationsAnalyses.setCount(0);
-
-            showNotificationWindow(Category.ALL);
-        }
-    }
-
-    private class NotificationDataListener implements Listener<BaseEvent> {
-        Component source;
-
-        public NotificationDataListener(Menu m) {
-            super();
-            source = m;
-        }
-
-        @Override
-        public void handleEvent(BaseEvent be) {
-            source.hide();
-
-            notifyMgr.setDataNotificationCount(0);
-            notifyMgr.setTotalNotificationCount(notifyMgr.getAnalysesNotificationCount());
-
-            lblNotifications.setCount(notifyMgr.getTotalNotificationCount());
-            lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
-            lblNotificationsData.setCount(notifyMgr.getDataNotificationCount());
-
-            showNotificationWindow(Category.DATA);
-        }
-    }
-
-    private class NotificationAnalysisListener implements Listener<BaseEvent> {
-        Component source;
-
-        NotificationAnalysisListener(Menu m) {
-            super();
-            source = m;
-        }
-
-        @Override
-        public void handleEvent(BaseEvent be) {
-            source.hide();
-
-            notifyMgr.setAnalysesNotificationCount(0);
-            notifyMgr.setTotalNotificationCount(notifyMgr.getDataNotificationCount());
-
-            lblNotifications.setCount(notifyMgr.getTotalNotificationCount());
-            lblNotificationsAll.setCount(notifyMgr.getTotalNotificationCount());
-            lblNotificationsAnalyses.setCount(notifyMgr.getAnalysesNotificationCount());
-
-            showNotificationWindow(Category.ANALYSIS);
-        }
     }
 
     private void displayAboutDe() {
@@ -387,27 +308,37 @@ public class ApplicationLayout extends Viewport {
         return helpMenu;
     }
 
-    private Menu buildNotificationsMenu() {
-        Menu notificationMenu = buildMenu();
-
-        lblNotificationsAll = new NotificationLabel(I18N.DISPLAY.all(), linkStyle, 0,
-                new NotificationAllListener(notificationMenu));
-        lblNotificationsData = new NotificationLabel(I18N.DISPLAY.data(), linkStyle, 0,
-                new NotificationDataListener(notificationMenu));
-        lblNotificationsAnalyses = new NotificationLabel(I18N.DISPLAY.analysis(), linkStyle, 0,
-                new NotificationAnalysisListener(notificationMenu));
-
-        notificationMenu.add(lblNotificationsAll);
-        notificationMenu.add(lblNotificationsData);
-        notificationMenu.add(lblNotificationsAnalyses);
-
-        return notificationMenu;
-    }
-
     private void buildAndShowPreferencesDialog() {
         UserPreferencesDialog usd = new UserPreferencesDialog();
         usd.setSize(450, 430);
         usd.show();
+    }
+
+    private HorizontalPanel buildNotificationMenu(String menuHeaderText) {
+        final HorizontalPanel ret = new HorizontalPanel();
+        ret.setStyleName("de_header_menu_panel"); //$NON-NLS-1$
+        // build menu header text and icon
+        MenuLabel menuHeader = new MenuLabel(menuHeaderText,
+                "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
+        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                showNotificationView(ret);
+            }
+        });
+
+        IconButton icon = new IconButton("de_header_menu_button", //$NON-NLS-1$
+                new SelectionListener<IconButtonEvent>() {
+                    @Override
+                    public void componentSelected(IconButtonEvent ce) {
+                        showNotificationView(ret);
+                    }
+                });
+
+        ret.add(menuHeader);
+        ret.add(icon);
+
+        return ret;
     }
 
     private HorizontalPanel buildActionsMenu(String menuHeaderText, final Menu menu) {
@@ -483,6 +414,32 @@ public class ApplicationLayout extends Viewport {
         dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
     }
 
+    private void showNotificationView(final HorizontalPanel ret) {
+        Point point = ret.getPosition(false);
+        point.x = point.x - 150;
+        point.y = point.y + 18;
+        view.showAt(point.x, point.y);
+        lblNotifications.setCount(0);
+        notifyMgr.resetCount();
+    }
+
+    private void initViewNotification() {
+        view = new ViewNotification();
+        view.setBorders(true);
+        view.setSize(250, 310);
+
+        view.setStyleName("de_header_menu_body");
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.add(new MenuHyperlink("See all notifications >>", linkStyle, hoverStyle,
+                new Listener<BaseEvent>() {
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        showNotificationWindow(NotificationManager.Category.ALL);
+                    }
+                }));
+        view.add(hp);
+    }
+
     /**
      * A Label with a setCount method that can set the label's styled text to the count when it's greater
      * than 0, or setting empty text and removing the style for a count of 0 or less.
@@ -502,33 +459,13 @@ public class ApplicationLayout extends Viewport {
             if (count > 0) {
                 setText(String.valueOf(count));
                 addStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
+                Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
             } else {
                 setText("&nbsp;&nbsp;"); //$NON-NLS-1$
                 removeStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
-            }
-        }
-    }
-
-    private class NotificationLabel extends MenuHyperlink {
-        private final String text;
-
-        public NotificationLabel(String text, String baseStyle, int initialCount,
-                Listener<BaseEvent> clickListener) {
-            super(text, baseStyle, hoverStyle, clickListener); //$NON-NLS-1$
-
-            this.text = text;
-            setCount(initialCount);
-        }
-
-        public void setCount(int count) {
-            if (count > 0) {
-                setHtml(Format.substitute("{0} <span class='iplantc-orange'>({1})</span>", text, count)); //$NON-NLS-1$
-                Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
-            } else {
                 Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
-                setHtml(text);
             }
-
         }
     }
+
 }
