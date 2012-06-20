@@ -416,11 +416,27 @@ public class ApplicationLayout extends Viewport {
 
     private void showNotificationView(final HorizontalPanel ret) {
         Point point = ret.getPosition(false);
-        point.x = point.x - 150;
-        point.y = point.y + 18;
-        view.showAt(point.x, point.y);
+        point.x = point.x - 142;
+        point.y = point.y + 22;
+
+        view.removeAllListeners();
+        // update header style when menu is shown
+        view.addListener(Events.Show, new Listener<MenuEvent>() {
+            @Override
+            public void handleEvent(MenuEvent be) {
+                ret.addStyleName("de_header_menu_selected"); //$NON-NLS-1$
+            }
+        });
+
+        view.addListener(Events.Hide, new Listener<MenuEvent>() {
+            @Override
+            public void handleEvent(MenuEvent be) {
+                ret.removeStyleName("de_header_menu_selected"); //$NON-NLS-1$
+            }
+        });
         lblNotifications.setCount(0);
         notifyMgr.resetCount();
+        view.showAt(point.x, point.y);
     }
 
     private void initViewNotification() {
@@ -430,7 +446,7 @@ public class ApplicationLayout extends Viewport {
 
         view.setStyleName("de_header_menu_body");
         HorizontalPanel hp = new HorizontalPanel();
-        hp.add(new MenuHyperlink("See all notifications >>", linkStyle, hoverStyle,
+        hp.add(new MenuHyperlink(I18N.DISPLAY.allNotifications(), linkStyle, "",
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {

@@ -79,7 +79,7 @@ public class ViewNotification extends Menu {
                 });
         view.setItemSelector("div.search-item"); //$NON-NLS-1$
         view.setStore(store);
-        view.setEmptyText("No new notifications!");
+        view.setEmptyText(I18N.DISPLAY.noNewNotifications());
         return view;
     }
 
@@ -163,7 +163,6 @@ public class ViewNotification extends Menu {
         // did we get a valid notification?
         if (category != Category.ALL && notification != null) {
             notification.setCategory(category);
-
             store.add(notification);
         }
     }
@@ -173,7 +172,6 @@ public class ViewNotification extends Menu {
         template.append("<tpl for=\".\"><div class=\"search-item\">"); //$NON-NLS-1$
         template.append("<tpl if=\"context\"> <div class='context-notify'> </tpl>");
         template.append("{message} <tpl if=\"context\"> </div> </tpl></div></tpl>");
-        System.out.println(template.toString());
         return template.toString();
     }
 
