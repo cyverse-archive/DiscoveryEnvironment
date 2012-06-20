@@ -97,7 +97,8 @@ public abstract class IPlantWindow extends Window {
 
         header.addStyleName("windowLayoutTitle"); //$NON-NLS-1$
         header.setIcon(AbstractImagePrototype.create(Resources.ICONS.whitelogoSmall()));
-        setBodyStyleName("accordianbody"); //$NON-NLS-1$
+        setBodyStyleName("windowBody"); //$NON-NLS-1$
+        setShadow(false);
         setStyleAttribute("outline", "none"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 

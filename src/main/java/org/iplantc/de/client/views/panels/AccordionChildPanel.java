@@ -32,8 +32,6 @@ public class AccordionChildPanel extends ContentPanel {
     public AccordionChildPanel(String id) {
         setId(id);
         setAutoHeight(true);
-        setBodyStyleName("accordianbody"); //$NON-NLS-1$
-
         collapse = new ToolButton("x-tool-collapse"); //$NON-NLS-1$
         collapse.setToolTip(I18N.DISPLAY.hide());
         expand = new ToolButton("x-tool-expand"); //$NON-NLS-1$

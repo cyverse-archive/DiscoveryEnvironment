@@ -40,7 +40,6 @@ public class WizardBuilder {
         ret.setHeaderVisible(false);
         ret.setLayout(accordian);
         ret.setBodyBorder(false);
-        ret.setBodyStyleName("accordianbody"); //$NON-NLS-1$
         ret.setBorders(false);
         ret.setShadow(false);
         ret.setFrame(false);
@@ -53,7 +52,6 @@ public class WizardBuilder {
 
         if (numGroups == 1) {
             ret = new ContentPanel();
-            ret.setBodyStyleName("accordianbody"); //$NON-NLS-1$
             ret.setBorders(false);
             ret.setShadow(false);
             ret.setFrame(false);
@@ -92,7 +90,7 @@ public class WizardBuilder {
                     EventBus.getInstance().fireEvent(new WizardValidationEvent(pass));
                 }
             };
-            
+
             // try to build a widget for each property
             for (Property property : properties) {
                 WizardWidgetPanel widget = factory.build(property, tblComponentVals);
@@ -105,7 +103,7 @@ public class WizardBuilder {
 
                     // add our widget to the formatted panel
                     panelInner.add(widget);
-                    
+
                     // fire a WizardValidationEvent on field-level validation events
                     widget.addValidationListener(vListener);
                 }
