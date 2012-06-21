@@ -345,10 +345,6 @@ ul.ux-taskbuttons-strip li.ux-taskbuttons-edge {
 	border-width: 1px;
 	border-color: black;
 	outline: none;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-khtml-border-radius: 10px;
-	border-radius: 0px 0px 10px 10px;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
