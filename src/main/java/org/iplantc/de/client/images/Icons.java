@@ -326,4 +326,12 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("script_link.png")
     ImageResource viewDeployedComponents();
 
+    /**
+     * Image resource for app launch
+     * 
+     * @return image.
+     */
+    @Source("application_go.png")
+    ImageResource applicationLaunch();
+
 }

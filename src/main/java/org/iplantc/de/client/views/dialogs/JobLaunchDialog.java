@@ -13,7 +13,6 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.JobLaunchedEvent;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.FolderCreateCallback;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.WizardExportHelper;
@@ -45,7 +44,6 @@ import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -66,6 +64,7 @@ public class JobLaunchDialog extends Dialog {
     private FolderSelector folderSelector;
     private static UserInfo uinfo = UserInfo.getInstance();
     private boolean isValidFolder;
+    private String defaultOutputFolder;
 
     /**
      * Constructs an instance of the job launch dialog.
@@ -73,9 +72,11 @@ public class JobLaunchDialog extends Dialog {
      * @param tagCaller the identifier, or handle, of the calling window
      * @param tblComponentVals the table modeling component values within a widget or wizard
      */
-    public JobLaunchDialog(String tagCaller, final ComponentValueTable tblComponentVals) {
+    public JobLaunchDialog(String tagCaller, final ComponentValueTable tblComponentVals,
+            String defaultOutputFolder) {
         this.tagCaller = tagCaller;
         this.tblComponentVals = tblComponentVals;
+        this.defaultOutputFolder = defaultOutputFolder;
         init();
         compose();
     }
@@ -149,12 +150,13 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private VerticalPanel buildDestinationFolderEntry() {
-        setDefaultOutputFolder();
         VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
         folderSelector = new FolderSelector(new checkPermissions(), null);
+        folderSelector.displayFolderName(defaultOutputFolder);
+        folderSelector.setDefaultFolderId(defaultOutputFolder);
         ret.add(new Label(I18N.DISPLAY.selectJobOutputDir("/"
-                + DEProperties.getInstance().getDefaulyOutputFolderName())
+                + DEProperties.getInstance().getDefaultOutputFolderName())
                 + COLON));
         ret.add(folderSelector.getWidget());
         return ret;
@@ -447,79 +449,6 @@ public class JobLaunchDialog extends Dialog {
         protected void afterRender() {
             super.afterRender();
             areaDescription.el().setElementAttribute("spellcheck", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    private void setDefaultOutputFolder() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getHomeFolder(new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                JSONObject root = null;
-                Folder home = null;
-                JSONObject obj = JSONParser.parseStrict(result).isObject();
-                JSONArray items = JsonUtil.getArray(obj, "roots");
-                if (items != null) {
-                    for (int i = 0; i < items.size(); i++) {
-                        root = JsonUtil.getObject(items.get(i).toString());
-                        if (root != null) {
-                            home = new Folder(root);
-                            createOutputFolderByDefault(home.getId(), DEProperties.getInstance()
-                                    .getDefaulyOutputFolderName());
-                            break;
-
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    protected void createOutputFolderByDefault(String idParentFolder, String name) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.createFolder(idParentFolder + "/" + name, new OutputFolderCreateCallback(idParentFolder,
-                name));
-    }
-
-    private class OutputFolderCreateCallback extends FolderCreateCallback {
-
-        private String idParentFolder;
-        private String name;
-
-        public OutputFolderCreateCallback(String idParentFolder, String name) {
-            super(idParentFolder, name);
-            this.idParentFolder = idParentFolder;
-            this.name = name;
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            super.onSuccess(result);
-            folderSelector.displayFolderName(idParentFolder + "/" + name);
-            folderSelector.setDefaultFolderId(idParentFolder + "/" + name);
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            JSONObject jsonError = parseJsonError(caught);
-            if (jsonError != null) {
-                String errCode = JsonUtil.getString(jsonError, ERROR_CODE);
-
-                ErrorCode code = ErrorCode.valueOf(errCode);
-                if (!code.equals(ErrorCode.ERR_EXISTS)) {
-                    super.onFailure(caught);
-                } else {
-                    folderSelector.displayFolderName(idParentFolder + "/" + name);
-                    folderSelector.setDefaultFolderId(idParentFolder + "/" + name);
-                }
-            }
         }
     }
 }

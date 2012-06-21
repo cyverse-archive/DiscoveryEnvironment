@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.DEProperties;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -15,24 +18,32 @@ import org.iplantc.de.client.events.JobLaunchedEventHandler;
 import org.iplantc.de.client.events.WizardValidationEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FolderCreateCallback;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
 import org.iplantc.de.client.views.dialogs.JobLaunchDialog;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
  * Provides interface for setting parameters and launching jobs.
@@ -46,6 +57,7 @@ public class WizardWindow extends IPlantWindow {
 
     private List<HandlerRegistration> handlers;
     private WizardWindowConfig config;
+    private Status status;
 
     /**
      * Constructs an instance of the object given an identifier.
@@ -89,21 +101,22 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void doJobLaunch() {
-        JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals);
-
-        dlg.show();
+        getDefaultOutputFolder();
     }
 
     private void buildLaunchJobButton() {
         btnLaunchJob = new Button(I18N.DISPLAY.launchJob());
+        btnLaunchJob.setIcon(AbstractImagePrototype.create(Resources.ICONS.applicationLaunch()));
         btnLaunchJob.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 // validate again because the user might have clicked the button without blurring an
                 // invalid field
+                status.setBusy(I18N.DISPLAY.loadingMask());
                 List<String> errors = tblComponentVals.validate(false, true);
                 if (errors == null || errors.isEmpty()) {
                     doJobLaunch();
+                    btnLaunchJob.disable();
                 }
             }
         });
@@ -111,17 +124,19 @@ public class WizardWindow extends IPlantWindow {
 
     private ContentPanel buildButtonPanel() {
         ContentPanel ret = new ContentPanel();
-        ret.setSize(640, 40);
-        ret.setStyleName("accordianbody"); //$NON-NLS-1$
+        ret.setSize(640, 30);
         ret.setHeaderVisible(false);
-
-        ret.setButtonAlign(HorizontalAlignment.RIGHT);
         ret.setLayout(new FitLayout());
 
         buildLaunchJobButton();
+        status = new Status();
 
-        ret.addButton(btnLaunchJob);
+        ToolBar bar = new ToolBar();
 
+        bar.add(status);
+        bar.add(new FillToolItem());
+        bar.add(btnLaunchJob);
+        ret.add(bar);
         return ret;
     }
 
@@ -251,7 +266,8 @@ public class WizardWindow extends IPlantWindow {
         configData.setWizardConfig(tblComponentVals.getWizardPorpertyGroupContainerAsJson());
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(), configData);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.wizardTag(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.wizardTag(), ActionType.DISPLAY_WINDOW);
     }
@@ -280,5 +296,83 @@ public class WizardWindow extends IPlantWindow {
 
         registerEventHandlers();
         enableValidation();
+    }
+
+    private void getDefaultOutputFolder() {
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
+        facade.getHomeFolder(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject root = null;
+                Folder home = null;
+                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONArray items = JsonUtil.getArray(obj, "roots");
+                if (items != null) {
+                    for (int i = 0; i < items.size(); i++) {
+                        root = JsonUtil.getObject(items.get(i).toString());
+                        if (root != null) {
+                            home = new Folder(root);
+                            createOutputFolderByDefault(home.getId(), DEProperties.getInstance()
+                                    .getDefaultOutputFolderName());
+                            break;
+
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    protected void createOutputFolderByDefault(String idParentFolder, String name) {
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
+        facade.createFolder(idParentFolder + "/" + name, new OutputFolderCreateCallback(idParentFolder,
+                name));
+    }
+
+    private class OutputFolderCreateCallback extends FolderCreateCallback {
+
+        private String idParentFolder;
+        private String name;
+
+        public OutputFolderCreateCallback(String idParentFolder, String name) {
+            super(idParentFolder, name);
+            this.idParentFolder = idParentFolder;
+            this.name = name;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            super.onSuccess(result);
+            status.clearStatus("");
+            JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, idParentFolder + "/" + name);
+            dlg.show();
+            btnLaunchJob.enable();
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            JSONObject jsonError = parseJsonError(caught);
+            if (jsonError != null) {
+                String errCode = JsonUtil.getString(jsonError, ERROR_CODE);
+
+                ErrorCode code = ErrorCode.valueOf(errCode);
+                if (!code.equals(ErrorCode.ERR_EXISTS)) {
+                    super.onFailure(caught);
+                } else {
+                    status.clearStatus("");
+                    JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, idParentFolder
+                            + "/" + name);
+                    dlg.show();
+                    btnLaunchJob.enable();
+                }
+            }
+        }
     }
 }
