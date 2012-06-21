@@ -711,7 +711,7 @@ img.analysis_remove {
 	font-size: 12px;
 }
 
-.context-notify {
+.notification_context {
 	text-decoration: underline;
+	cursor: pointer; 
 }
-
