@@ -32,7 +32,7 @@ import com.google.gwt.json.client.JSONObject;
  * @author sriram
  * 
  */
-public class ViewNotification extends Menu {
+public class ViewNotificationMenu extends Menu {
 
     private ListStore<Notification> store;
     private DataContextBuilder dataContextBuilder;
@@ -40,7 +40,7 @@ public class ViewNotification extends Menu {
     private DataViewContextExecutor dataContextExecutor;
     private AnalysisViewContextExecutor analysisContextExecutor;
 
-    public ViewNotification() {
+    public ViewNotificationMenu() {
         setLayout(new FitLayout());
         initContextBuilders();
         initContextExecuters();
@@ -170,7 +170,7 @@ public class ViewNotification extends Menu {
     private String getTemplate() {
         StringBuilder template = new StringBuilder();
         template.append("<tpl for=\".\"><div class=\"search-item\">"); //$NON-NLS-1$
-        template.append("<tpl if=\"context\"> <div class='context-notify'> </tpl>");
+        template.append("<tpl if=\"context\"> <div class='notification_context'> </tpl>");
         template.append("{message} <tpl if=\"context\"> </div> </tpl></div></tpl>");
         return template.toString();
     }

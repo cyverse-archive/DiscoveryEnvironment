@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Notification;
@@ -52,10 +51,14 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**
  * Displays user notifications.
@@ -559,26 +562,22 @@ public class NotificationPanel extends ContentPanel {
                 return null;
             }
             String message = notification.getMessage();
-
             String context = notification.getContext();
-            Component renderer;
-            // show a hyperlink if there is a context; if no context, show a label
-            if (context == null || context.isEmpty()) {
-                renderer = new Label(message);
-            } else {
-                Hyperlink link = new Hyperlink(message, "de_notification_hyperlink"); //$NON-NLS-1$
-
-                link.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            HorizontalPanel renderer;
+            renderer = new HorizontalPanel();
+            HTML html = new HTML(message, true);
+            renderer.add(html);
+            if (context != null && !context.isEmpty()) {
+                html.setStyleName("notification_context");
+                html.addClickHandler(new ClickHandler() {
 
                     @Override
-                    public void handleEvent(BaseEvent be) {
+                    public void onClick(ClickEvent event) {
                         view(notification);
                     }
                 });
-                renderer = link;
             }
 
-            renderer.setToolTip(message);
             return renderer;
         }
     }

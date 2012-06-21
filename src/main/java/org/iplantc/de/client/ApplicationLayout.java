@@ -15,7 +15,7 @@ import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationManager;
 import org.iplantc.de.client.utils.NotificationManager.Category;
 import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
-import org.iplantc.de.client.views.panels.ViewNotification;
+import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -63,7 +63,7 @@ public class ApplicationLayout extends Viewport {
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
-    private ViewNotification view;
+    private ViewNotificationMenu view;
 
     /**
      * Default constructor.
@@ -440,7 +440,7 @@ public class ApplicationLayout extends Viewport {
     }
 
     private void initViewNotification() {
-        view = new ViewNotification();
+        view = new ViewNotificationMenu();
         view.setBorders(true);
         view.setSize(250, 310);
 
