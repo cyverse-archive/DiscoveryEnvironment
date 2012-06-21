@@ -18,6 +18,7 @@ import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
@@ -61,7 +62,6 @@ public class ViewNotificationMenu extends Menu {
 
     private CustomListView<Notification> initList() {
         store = new ListStore<Notification>();
-
         CustomListView<Notification> view = new CustomListView<Notification>();
 
         view.setTemplate(getTemplate());
@@ -165,6 +165,8 @@ public class ViewNotificationMenu extends Menu {
             notification.setCategory(category);
             store.add(notification);
         }
+
+        store.sort(Notification.PROP_TIMESTAMP, SortDir.DESC);
     }
 
     private String getTemplate() {
