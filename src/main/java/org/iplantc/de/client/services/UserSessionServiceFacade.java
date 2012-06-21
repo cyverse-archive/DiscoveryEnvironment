@@ -50,7 +50,7 @@ public class UserSessionServiceFacade {
 
     public void searchCollaborators(String term, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl()
-                + "user-search/" + URL.encodeQueryString(term); //$NON-NLS-1$
+                + "user-search/" + URL.encodeQueryString(term.trim()); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
