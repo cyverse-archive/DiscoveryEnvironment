@@ -146,9 +146,15 @@ public class CollaboratorsPanel extends ContentPanel {
             final HorizontalPanel hp = new HorizontalPanel();
 
             if (mode.equals(MODE.SEARCH)) {
-                IconButton ib = buildButton(ADD_BUTTON_STYLE, model);
-                hp.add(ib);
-                ib.setToolTip("Add");
+                if (!isCurrentCollaborator(model)) {
+                    IconButton ib = buildButton(ADD_BUTTON_STYLE, model);
+                    hp.add(ib);
+                    ib.setToolTip("Add");
+                } else {
+                    IconButton ib = buildButton(DONE_BUTTON_STYLE, model);
+                    hp.add(ib);
+                    ib.setToolTip(I18N.DISPLAY.collaborators());
+                }
             } else {
                 IconButton ib = buildButton(REMOVE_BUTTON_STYLE, model);
                 hp.add(ib);
@@ -202,8 +208,8 @@ public class CollaboratorsPanel extends ContentPanel {
 
             @Override
             public void onSuccess(String result) {
-                Collaborator found = grid.getStore().findModel(Collaborator.ID, model.getId());
-                if (found == null) {
+
+                if (!isCurrentCollaborator(model)) {
                     my_collaborators.add(model);
                 }
 
@@ -262,6 +268,16 @@ public class CollaboratorsPanel extends ContentPanel {
 
     public List<Collaborator> getCurrentCollaborators() {
         return my_collaborators;
+    }
+
+    private boolean isCurrentCollaborator(Collaborator c) {
+        for (Collaborator current : my_collaborators) {
+            if (current.getId().equals(c.getId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
