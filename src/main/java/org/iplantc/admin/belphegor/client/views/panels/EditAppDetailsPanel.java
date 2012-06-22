@@ -222,15 +222,18 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private VerticalPanel buildUrlField() {
-        final String validUrl = ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath();
+        final String[] validUrl = ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath();
         urlField = FormFieldBuilderUtil.buildTextField(null, false, null, WIKI_URL, new Validator() {
             @Override
             public String validate(Field<?> field, String value) {
                 // make sure the URL protocol is http or https, has a valid iPlant host name, and has at
                 // least one character under the validAppWikiUrlPath.
-                if (!value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
-                        + validUrl + ".+")) { //$NON-NLS-1$
-                    return I18N.DISPLAY.notValidAppWikiUrl();
+                if (validUrl.length > 1) {
+                    if (!value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
+                            + validUrl[0] + ".+") && !value.matches("https?://[^/]*iplantc(ollaborative)?\\.org" //$NON-NLS-1$
+                                            + validUrl[1] + ".+")) { //$NON-NLS-1$
+                        return I18N.DISPLAY.notValidAppWikiUrl();
+                    }
                 }
 
                 return null;
