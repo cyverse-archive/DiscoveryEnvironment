@@ -7,10 +7,6 @@ import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 
-import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.Listener;
-
 public class WizardFolderSelector extends FolderSelector {
     private ComponentValueTable tblComponentVals;
 
@@ -56,20 +52,6 @@ public class WizardFolderSelector extends FolderSelector {
 
         // after we update the table, we need to validate the entire table
         tblComponentVals.validate();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void initWidgets() {
-        super.initWidgets();
-
-        txtResourceName.addListener(Events.OnClick, new Listener<BaseEvent>() {
-            public void handleEvent(final BaseEvent be) {
-                handleBrowseEvent(be);
-            }
-        });
     }
 
     /**
