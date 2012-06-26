@@ -3,20 +3,21 @@
  */
 package org.iplantc.de.client.views.panels;
 
+import java.util.List;
+
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.utils.AnalysisViewContextExecutor;
-import org.iplantc.de.client.utils.DataViewContextExecutor;
-import org.iplantc.de.client.utils.NotificationManager;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
-import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -27,7 +28,10 @@ import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author sriram
@@ -36,15 +40,13 @@ import com.google.gwt.json.client.JSONObject;
 public class ViewNotificationMenu extends Menu {
 
     private ListStore<Notification> store;
-    private DataContextBuilder dataContextBuilder;
-    private AnalysisContextBuilder analysisContextBuilder;
-    private DataViewContextExecutor dataContextExecutor;
-    private AnalysisViewContextExecutor analysisContextExecutor;
+
+    public static final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
+
+    private int totalNotificationCount;
 
     public ViewNotificationMenu() {
         setLayout(new FitLayout());
-        initContextBuilders();
-        initContextExecuters();
         registerEventHandlers();
         CustomListView<Notification> view = initList();
         LayoutContainer lc = buildPanel();
@@ -74,7 +76,7 @@ public class ViewNotificationMenu extends Menu {
                         if (notification == null) {
                             return;
                         }
-                        view(notification);
+                        NotificationHelper.getInstance().view(notification);
                     }
                 });
         view.setItemSelector("div.search-item"); //$NON-NLS-1$
@@ -91,7 +93,7 @@ public class ViewNotificationMenu extends Menu {
             @Override
             public void onFire(DataPayloadEvent event) {
                 addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-                        dataContextBuilder.build(event.getPayload()));
+                        NotificationHelper.getInstance().buildDataContext(event.getPayload()));
             }
         });
 
@@ -100,42 +102,64 @@ public class ViewNotificationMenu extends Menu {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
                 addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        analysisContextBuilder.build(event.getPayload()));
+                        NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()));
 
             }
         });
     }
 
-    /** View a notification */
-    private void view(Notification notification) {
-        if (notification != null) {
-            NotificationManager.Category category = notification.getCategory();
+    @Override
+    public void showAt(int x, int y) {
+        super.showAt(x, y);
+        markAsSeen();
+    }
 
-            // did we get a category?
-            if (category != null) {
-                String context = notification.getContext();
-                System.out.println("context -->" + context);
-                // did we get a context to execute?
-                if (context != null) {
-                    if (category == NotificationManager.Category.DATA) {
-                        // execute data context
-                        dataContextExecutor.execute(context);
-                    } else if (category == NotificationManager.Category.ANALYSIS) {
-                        analysisContextExecutor.execute(context);
-                    }
-                }
+    private void markAsSeen() {
+        List<Notification> new_notifications = store.getModels();
+        JSONArray arr = new JSONArray();
+        int i = 0;
+        if (new_notifications.size() > 0) {
+            for (Notification n : new_notifications) {
+                arr.set(i++, new JSONString(n.get("id").toString()));
             }
+
+            JSONObject obj = new JSONObject();
+            obj.put("uuids", arr);
+
+            MessageServiceFacade facade = new MessageServiceFacade();
+            facade.markAsSeen(obj, new AsyncCallback<String>() {
+
+                @Override
+                public void onSuccess(String result) {
+                    // Do nothing intentionally
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                }
+            });
         }
+
     }
 
-    private void initContextBuilders() {
-        dataContextBuilder = new DataContextBuilder();
-        analysisContextBuilder = new AnalysisContextBuilder();
+    /**
+     * 
+     * persist total notification count
+     * 
+     * @param total
+     */
+    public void setTotalNotificationCount(int total) {
+        totalNotificationCount = total;
     }
 
-    private void initContextExecuters() {
-        dataContextExecutor = new DataViewContextExecutor();
-        analysisContextExecutor = new AnalysisViewContextExecutor();
+    /**
+     * get total notification count
+     * 
+     * @return
+     */
+    public int getTotalNotificationCount() {
+        return totalNotificationCount;
     }
 
     private Notification addItemToStore(final Category category, final JSONObject objMessage,
@@ -144,10 +168,29 @@ public class ViewNotificationMenu extends Menu {
 
         if (objMessage != null) {
             ret = new Notification(objMessage, context);
-            add(category, ret);
+
+            Notification model = store.findModel("id", ret.get("id"));
+
+            if (model == null) {
+                add(category, ret);
+                totalNotificationCount = totalNotificationCount + 1;
+                NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
+                        getTotalNotificationCount());
+                EventBus.getInstance().fireEvent(ncue);
+            } else {
+                ret = null;
+            }
         }
 
         return ret;
+    }
+
+    /**
+     * reset all notification count
+     * 
+     */
+    public void resetCount() {
+        totalNotificationCount = 0;
     }
 
     private void addFromEventHandler(final Category category, final String header,

@@ -12,8 +12,8 @@ import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
-import org.iplantc.de.client.utils.NotificationManager;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
 import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
@@ -59,7 +59,7 @@ public class ApplicationLayout extends Viewport {
 
     private NotificationIndicator lblNotifications;
 
-    private NotificationManager notifyMgr;
+    private NotificationHelper notifyMgr;
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
@@ -105,9 +105,7 @@ public class ApplicationLayout extends Viewport {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        int analysesCount = ncue.getAnalysesCount();
-                        int dataCount = ncue.getDataCount();
-                        lblNotifications.setCount(analysesCount + dataCount);
+                        lblNotifications.setCount(ncue.getTotal());
 
                     }
                 });
@@ -209,7 +207,7 @@ public class ApplicationLayout extends Viewport {
         drawNorth();
         assembleHeader();
         if (notifyMgr == null) {
-            notifyMgr = NotificationManager.getInstance();
+            notifyMgr = NotificationHelper.getInstance();
         }
         initViewNotification();
     }
@@ -435,8 +433,8 @@ public class ApplicationLayout extends Viewport {
             }
         });
         lblNotifications.setCount(0);
-        notifyMgr.resetCount();
         view.showAt(point.x, point.y);
+        view.resetCount();
     }
 
     private void initViewNotification() {
@@ -450,7 +448,8 @@ public class ApplicationLayout extends Viewport {
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {
-                        showNotificationWindow(NotificationManager.Category.ALL);
+                        showNotificationWindow(NotificationHelper.Category.ALL);
+                        view.hide();
                     }
                 }));
         view.add(hp);

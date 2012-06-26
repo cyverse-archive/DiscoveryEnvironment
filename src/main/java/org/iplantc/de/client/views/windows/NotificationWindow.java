@@ -10,13 +10,14 @@ import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.utils.NotificationManager;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.views.panels.NotificationPanel;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.Command;
+import com.google.gwt.json.client.JSONString;
 
 /**
  * Window for displaying event notifications.
@@ -37,8 +38,9 @@ public class NotificationWindow extends IPlantWindow {
     public NotificationWindow(String tag, NotificationWindowConfig config) {
         super(tag, false, true, true, true);
 
-        init();
         setWindowConfig(config);
+        init();
+
     }
 
     private void init() {
@@ -49,7 +51,18 @@ public class NotificationWindow extends IPlantWindow {
         setHeight(400);
         setLayout(new FitLayout());
 
-        panel = new NotificationPanel();
+        if (config != null) {
+            Category category = ((NotificationWindowConfig)config).getCategory();
+            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
+                    .getSelectedIds());
+            int page = ((NotificationWindowConfig)config).getCurrentPage();
+            SortDir dir = ((NotificationWindowConfig)config).getSortDir();
+
+            panel = new NotificationPanel(page, selectedIds, category, dir);
+        } else {
+            panel = new NotificationPanel();
+        }
+
         add(panel);
     }
 
@@ -69,30 +82,9 @@ public class NotificationWindow extends IPlantWindow {
 
     private void applyWindowConfig() {
         if (config != null) {
-            Category category = ((NotificationWindowConfig)config).getCategory();
-            panel.filterBy(category);
-            List<String> selectedIds = JsonUtil.buildStringList(((NotificationWindowConfig)config)
-                    .getSelectedIds());
-            panel.selectNotifications(selectedIds);
             setWindowViewState();
             config = null;
         }
-    }
-
-    private void retrieveData() {
-        mask(I18N.DISPLAY.loadingMask());
-        Command cmd = new Command() {
-            @Override
-            public void execute() {
-                unmask();
-                if (config != null) {
-                    applyWindowConfig();
-                }
-
-            }
-
-        };
-        NotificationManager.getInstance().getExistingNotifications(cmd);
     }
 
     /**
@@ -101,7 +93,7 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void cleanup() {
         super.cleanup();
-        NotificationManager.getInstance().cleanup();
+        NotificationHelper.getInstance().cleanup();
 
     }
 
@@ -111,8 +103,6 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     protected void afterRender() {
         super.afterRender();
-
-        retrieveData();
     }
 
     @Override
@@ -122,6 +112,9 @@ public class NotificationWindow extends IPlantWindow {
 
         configData.setSelectedIds(panel.getSelectedItems());
         configData.setCategory(panel.getCurrentFilter());
+        configData.setCurrentPage(panel.getCurrentOffset());
+        configData.put(NotificationWindowConfig.SORT_DIR, new JSONString(panel.getCurrentSortDir()
+                .toString()));
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();

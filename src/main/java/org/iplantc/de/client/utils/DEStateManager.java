@@ -154,7 +154,6 @@ public class DEStateManager {
 
             JSONObject obj = new JSONObject();
             obj.put(ACTIVE_WINDOWS, mgrWindow.getActiveWindowStates());
-            obj.put(NOTIFI_COUNT, NotificationManager.getInstance().getNotificationCountStatus());
 
             final byte[] tempHash = JsonUtil.generateHash(obj.toString());
             if (!ByteArrayComparer.arraysEqual(hash, tempHash)) {
@@ -200,17 +199,6 @@ public class DEStateManager {
 
         UserSessionServiceFacade session = new UserSessionServiceFacade();
         session.getUserSession(new LoadSessionCallback(loadingMask));
-    }
-
-    private void restoreNotificationCountStatus(JSONObject obj) {
-        if (obj != null) {
-            int data_count = Integer.parseInt(JsonUtil.getString(obj,
-                    NotificationManager.DATA_NOTIFI_COUNT));
-            int anal_count = Integer.parseInt(JsonUtil.getString(obj,
-                    NotificationManager.ANALYSES_NOTIFI_COUNT));
-            NotificationManager.getInstance().initNotificationCount(data_count, anal_count);
-        }
-
     }
 
     private void restoreWindows(JSONObject win_state) {
@@ -270,7 +258,6 @@ public class DEStateManager {
                 JSONObject obj = JsonUtil.getObject(result);
                 JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
                 restoreWindows(win_states);
-                restoreNotificationCountStatus(JsonUtil.getObject(obj, NOTIFI_COUNT));
             }
             loadingMask.close();
         }

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.junit.client.GWTTestCase;

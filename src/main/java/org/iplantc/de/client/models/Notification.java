@@ -3,7 +3,7 @@ package org.iplantc.de.client.models;
 import java.util.Date;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONObject;

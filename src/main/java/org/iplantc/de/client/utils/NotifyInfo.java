@@ -26,7 +26,7 @@ public class NotifyInfo {
      * @param text represents the message text to display.
      * @param parameters parameters to be merged into the text argument.
      */
-    public static void notify(NotificationManager.Category category, final String title,
+    public static void notify(NotificationHelper.Category category, final String title,
             final String text, Params parameters) {
         doDisplay(category, title, text, parameters);
     }
@@ -47,16 +47,16 @@ public class NotifyInfo {
         makeInfoCall(title, text, parameters);
     }
 
-    private static void doDisplay(NotificationManager.Category category, final String title,
+    private static void doDisplay(NotificationHelper.Category category, final String title,
             final String text, Params parameters) {
         makeInfoCall(title, text, parameters);
 
         includeAsNotification(category, text, parameters);
     }
 
-    private static void includeAsNotification(NotificationManager.Category category, final String text,
+    private static void includeAsNotification(NotificationHelper.Category category, final String text,
             Params parameters) {
-        NotificationManager mgr = NotificationManager.getInstance();
+        NotificationHelper mgr = NotificationHelper.getInstance();
 
         // only add to the notification manager when we want inclusion
         if (parameters == null) {

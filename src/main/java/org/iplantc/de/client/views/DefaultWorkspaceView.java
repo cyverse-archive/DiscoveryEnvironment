@@ -10,7 +10,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.ApplicationLayout;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.NotificationManager;
+import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
@@ -47,7 +47,7 @@ public class DefaultWorkspaceView implements View {
     }
 
     private void initNotificationManager() {
-        NotificationManager mgrNotification = NotificationManager.getInstance();
+        NotificationHelper mgrNotification = NotificationHelper.getInstance();
         mgrNotification.init();
     }
 

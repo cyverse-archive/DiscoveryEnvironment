@@ -73,7 +73,7 @@ public class MessagePoller {
         public void run() {
             MessageServiceFacade facade = new MessageServiceFacade();
 
-            facade.getMessages(username, new AsyncCallback<String>() {
+            facade.getMessages(new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     // currently we do nothing on failure

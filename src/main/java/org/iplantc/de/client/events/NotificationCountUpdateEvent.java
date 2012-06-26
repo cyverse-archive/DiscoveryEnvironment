@@ -11,8 +11,7 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public class NotificationCountUpdateEvent extends GwtEvent<NotificationCountUpdateEventHandler> {
 
-    private int dataCount;
-    private int analysesCount;
+    private int total;
 
     /**
      * Defines the GWT Event Type.
@@ -21,23 +20,15 @@ public class NotificationCountUpdateEvent extends GwtEvent<NotificationCountUpda
      */
     public static final GwtEvent.Type<NotificationCountUpdateEventHandler> TYPE = new GwtEvent.Type<NotificationCountUpdateEventHandler>();
 
-    public NotificationCountUpdateEvent(int dataCount, int analysesCount) {
-        this.dataCount = dataCount;
-        this.analysesCount = analysesCount;
+    public NotificationCountUpdateEvent(int total) {
+        this.total = total;
     }
 
     /**
      * @return the dataCount
      */
-    public int getDataCount() {
-        return dataCount;
-    }
-
-    /**
-     * @return the analysesCount
-     */
-    public int getAnalysesCount() {
-        return analysesCount;
+    public int getTotal() {
+        return total;
     }
 
     @Override

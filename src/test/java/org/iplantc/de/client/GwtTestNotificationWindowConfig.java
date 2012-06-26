@@ -1,7 +1,7 @@
 package org.iplantc.de.client;
 
 import org.iplantc.de.client.models.NotificationWindowConfig;
-import org.iplantc.de.client.utils.NotificationManager.Category;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.junit.Test;
 
 import com.google.gwt.json.client.JSONObject;
