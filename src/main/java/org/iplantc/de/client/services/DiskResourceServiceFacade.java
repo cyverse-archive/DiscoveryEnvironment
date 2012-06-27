@@ -69,6 +69,19 @@ public class DiskResourceServiceFacade {
     }
 
     /**
+     * get user's default analyses output folder
+     * 
+     * @param folderName
+     * @param callback
+     */
+    public void getDefaultOutput(final String folderName, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "default-output-dir?name="
+                + folderName;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
      * Called to retrieve the contents of a folder, with or without its file listing.
      * 
      * @param path path to requested folder.
