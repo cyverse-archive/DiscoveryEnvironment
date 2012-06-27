@@ -9,6 +9,7 @@ import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
 import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Permissions;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
 import com.extjs.gxt.ui.client.core.El;
@@ -19,9 +20,11 @@ import com.extjs.gxt.ui.client.dnd.StatusProxy;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ComponentPlugin;
+import com.google.gwt.event.dom.client.KeyCodes;
 
 /**
  * Custom file selection widget for wizards.
@@ -139,6 +142,26 @@ public class WizardFileSelector extends FileSelector {
      * {@inheritDoc}
      */
     @Override
+    protected void initWidgets() {
+        super.initWidgets();
+
+        txtResourceName.addKeyListener(new KeyListener() {
+            @Override
+            public void componentKeyPress(ComponentEvent event) {
+                if ((event.getKeyCode() == KeyCodes.KEY_BACKSPACE)
+                        || (event.getKeyCode() == KeyCodes.KEY_DELETE)) {
+
+                    setSelectedFile(new File("", "", new Permissions(true, true, true)));
+                    txtResourceName.setValue(getSelectedResourceName());
+                }
+            }
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setSelectedFile(File file) {
         super.setSelectedFile(file);
 
@@ -166,4 +189,5 @@ public class WizardFileSelector extends FileSelector {
             cmdChange.execute();
         }
     }
+
 }

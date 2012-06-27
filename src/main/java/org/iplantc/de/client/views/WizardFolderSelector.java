@@ -6,9 +6,14 @@ import org.iplantc.core.client.widgets.validator.IPlantValidator;
 import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.models.Permissions;
+
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
+import com.google.gwt.event.dom.client.KeyCodes;
 
 public class WizardFolderSelector extends FolderSelector {
-    private ComponentValueTable tblComponentVals;
+    private final ComponentValueTable tblComponentVals;
 
     /**
      * Instantiate from a property and component value table.
@@ -52,6 +57,26 @@ public class WizardFolderSelector extends FolderSelector {
 
         // after we update the table, we need to validate the entire table
         tblComponentVals.validate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initWidgets() {
+        super.initWidgets();
+
+        txtResourceName.addKeyListener(new KeyListener() {
+            @Override
+            public void componentKeyPress(ComponentEvent event) {
+                if ((event.getKeyCode() == KeyCodes.KEY_BACKSPACE)
+                        || (event.getKeyCode() == KeyCodes.KEY_DELETE)) {
+
+                    setSelectedFolder(new Folder("", "", false, new Permissions(true, true, true)));
+                    txtResourceName.setValue(getSelectedResourceName());
+                }
+            }
+        });
     }
 
     /**

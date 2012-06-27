@@ -6,14 +6,11 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.I18N;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Command;
 
 /**
@@ -63,17 +60,8 @@ public abstract class DiskResourceSelector implements IDiskResourceSelector {
         txtResourceName.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(final BaseEvent be) {
-                if (txtResourceName.getValue().isEmpty()) {
+                if ((txtResourceName.getValue() == null) || txtResourceName.getValue().isEmpty()) {
                     handleBrowseEvent(be);
-                }
-            }
-        });
-        txtResourceName.addKeyListener(new KeyListener() {
-            @Override
-            public void componentKeyPress(ComponentEvent event) {
-                if ((event.getKeyCode() == KeyCodes.KEY_BACKSPACE)
-                        || (event.getKeyCode() == KeyCodes.KEY_DELETE)) {
-                    txtResourceName.setValue("");
                 }
             }
         });
