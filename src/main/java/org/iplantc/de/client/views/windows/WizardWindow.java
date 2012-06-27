@@ -9,7 +9,6 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.DEProperties;
-import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -22,7 +21,6 @@ import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FolderCreateCallback;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
@@ -39,9 +37,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -101,7 +97,7 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void doJobLaunch() {
-        getDefaultOutputFolder();
+        createOutputFolderByDefault();
     }
 
     private void buildLaunchJobButton() {
@@ -298,81 +294,30 @@ public class WizardWindow extends IPlantWindow {
         enableValidation();
     }
 
-    private void getDefaultOutputFolder() {
+    protected void createOutputFolderByDefault() {
         DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getHomeFolder(new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                JSONObject root = null;
-                Folder home = null;
-                JSONObject obj = JSONParser.parseStrict(result).isObject();
-                JSONArray items = JsonUtil.getArray(obj, "roots");
-                if (items != null) {
-                    for (int i = 0; i < items.size(); i++) {
-                        root = JsonUtil.getObject(items.get(i).toString());
-                        if (root != null) {
-                            home = new Folder(root);
-                            createOutputFolderByDefault(home.getId(), DEProperties.getInstance()
-                                    .getDefaultOutputFolderName());
-                            break;
-
-                        }
-                    }
-                }
-            }
-        });
+        facade.getDefaultOutput(DEProperties.getInstance().getDefaultOutputFolderName(),
+                new OutputFolderCreateCallback());
     }
 
-    protected void createOutputFolderByDefault(String idParentFolder, String name) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.createFolder(idParentFolder + "/" + name, new OutputFolderCreateCallback(idParentFolder,
-                name));
-    }
+    private class OutputFolderCreateCallback implements AsyncCallback<String> {
 
-    private class OutputFolderCreateCallback extends FolderCreateCallback {
-
-        private String idParentFolder;
-        private String name;
-
-        public OutputFolderCreateCallback(String idParentFolder, String name) {
-            super(idParentFolder, name);
-            this.idParentFolder = idParentFolder;
-            this.name = name;
+        public OutputFolderCreateCallback() {
         }
 
         @Override
         public void onSuccess(String result) {
-            super.onSuccess(result);
             status.clearStatus("");
-            JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, idParentFolder + "/" + name);
+            JSONObject obj = JsonUtil.getObject(result);
+            String path = JsonUtil.getString(obj, "path");
+            JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, path);
             dlg.show();
             btnLaunchJob.enable();
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            JSONObject jsonError = parseJsonError(caught);
-            if (jsonError != null) {
-                String errCode = JsonUtil.getString(jsonError, ERROR_CODE);
-
-                ErrorCode code = ErrorCode.valueOf(errCode);
-                if (!code.equals(ErrorCode.ERR_EXISTS)) {
-                    super.onFailure(caught);
-                } else {
-                    status.clearStatus("");
-                    JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, idParentFolder
-                            + "/" + name);
-                    dlg.show();
-                    btnLaunchJob.enable();
-                }
-            }
+            ErrorHandler.post(caught);
         }
     }
 }
