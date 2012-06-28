@@ -14,8 +14,8 @@ import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
 import org.iplantc.core.uicommons.client.util.DateParser;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.AnalysisPayloadEvent;
-import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
+import org.iplantc.de.client.events.AnalysisUpdateEvent;
+import org.iplantc.de.client.events.AnalysisUpdateEventHandler;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.models.AnalysisExecution;
 import org.iplantc.de.client.models.JsAnalysisExecution;
@@ -81,13 +81,15 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     private void registerHandlers() {
         handlers = new ArrayList<HandlerRegistration>();
         EventBus eventbus = EventBus.getInstance();
-        handlers.add(eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
+        handlers.add(eventbus.addHandler(AnalysisUpdateEvent.TYPE, new AnalysisUpdateEventHandler() {
+
             @Override
-            public void onFire(AnalysisPayloadEvent event) {
+            public void onUpdate(AnalysisUpdateEvent event) {
                 if (event.getPayload() != null) {
                     handleMessage(event.getPayload());
                 }
             }
+
         }));
     }
 
@@ -106,13 +108,13 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
                 case COMPLETED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
                             JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getString(payload, "enddate"))); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getNumber(payload, "enddate").longValue())); //$NON-NLS-1$
                     break;
 
                 case FAILED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
                             JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getString(payload, "enddate"))); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getNumber(payload, "enddate").longValue())); //$NON-NLS-1$
                     break;
 
                 case RUNNING:

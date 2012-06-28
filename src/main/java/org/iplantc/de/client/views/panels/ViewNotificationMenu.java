@@ -10,6 +10,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisPayloadEvent;
 import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
+import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
@@ -93,7 +94,8 @@ public class ViewNotificationMenu extends Menu {
             @Override
             public void onFire(DataPayloadEvent event) {
                 addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-                        NotificationHelper.getInstance().buildDataContext(event.getPayload()));
+                        NotificationHelper.getInstance().buildDataContext(event.getPayload()),
+                        event.getPayload());
             }
         });
 
@@ -102,7 +104,8 @@ public class ViewNotificationMenu extends Menu {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
                 addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()));
+                        NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()),
+                        event.getPayload());
 
             }
         });
@@ -163,7 +166,7 @@ public class ViewNotificationMenu extends Menu {
     }
 
     private Notification addItemToStore(final Category category, final JSONObject objMessage,
-            final String context) {
+            final String context, JSONObject payload) {
         Notification ret = null; // assume failure
 
         if (objMessage != null) {
@@ -174,15 +177,23 @@ public class ViewNotificationMenu extends Menu {
             if (model == null) {
                 add(category, ret);
                 totalNotificationCount = totalNotificationCount + 1;
-                NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(
-                        getTotalNotificationCount());
-                EventBus.getInstance().fireEvent(ncue);
+                fireEvents(payload);
+
             } else {
                 ret = null;
             }
         }
 
         return ret;
+    }
+
+    private void fireEvents(JSONObject payload) {
+        NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getTotalNotificationCount());
+        EventBus instance = EventBus.getInstance();
+        instance.fireEvent(ncue);
+
+        AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
+        instance.fireEvent(aue);
     }
 
     /**
@@ -194,8 +205,8 @@ public class ViewNotificationMenu extends Menu {
     }
 
     private void addFromEventHandler(final Category category, final String header,
-            final JSONObject objMessage, final String context) {
-        Notification notification = addItemToStore(category, objMessage, context);
+            final JSONObject objMessage, final String context, final JSONObject payload) {
+        Notification notification = addItemToStore(category, objMessage, context, payload);
 
         if (notification != null) {
             NotifyInfo.display(header, notification.getMessage());
