@@ -13,6 +13,7 @@ import org.iplantc.de.client.models.Sharing;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.ModelKeyProvider;
+import com.extjs.gxt.ui.client.dnd.DropTarget;
 import com.extjs.gxt.ui.client.dnd.GridDropTarget;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -24,6 +25,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -84,6 +86,7 @@ public class SharePanel extends ContentPanel {
         add(grid);
         addToolBar();
         new SharingGridDropTarget(grid);
+        new SharingDropTarget(this);
     }
 
     private void addToolBar() {
@@ -281,6 +284,18 @@ public class SharePanel extends ContentPanel {
         }
     }
 
+    private void addSharee(DNDEvent e) {
+        List<ModelData> list = e.getData();
+        ListStore<Sharing> store = grid.getStore();
+        for (ModelData md : list) {
+            Collaborator c = (Collaborator)md;
+            Sharing s = new Sharing(c, new Permissions(true, false, false));
+            if (!store.contains(s)) {
+                store.add(s);
+            }
+        }
+    }
+
     private class PermissionsFieldListener implements Listener<FieldEvent> {
 
         private Sharing model;
@@ -346,6 +361,20 @@ public class SharePanel extends ContentPanel {
         }
     }
 
+    private class SharingDropTarget extends DropTarget {
+
+        public SharingDropTarget(Component target) {
+            super(target);
+
+        }
+
+        @Override
+        protected void onDragDrop(DNDEvent e) {
+            addSharee(e);
+        }
+
+    }
+
     /**
      * 
      * Enable drag n drop
@@ -361,15 +390,7 @@ public class SharePanel extends ContentPanel {
 
         @Override
         protected void onDragDrop(DNDEvent e) {
-            List<ModelData> list = e.getData();
-            ListStore<ModelData> store = grid.getStore();
-            for (ModelData md : list) {
-                Collaborator c = (Collaborator)md;
-                Sharing s = new Sharing(c, new Permissions(true, false, false));
-                if (!store.contains(s)) {
-                    store.add(s);
-                }
-            }
+            addSharee(e);
         }
 
     }
