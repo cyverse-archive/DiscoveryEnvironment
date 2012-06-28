@@ -182,6 +182,10 @@ public class IDropLiteAppletWindow extends IPlantWindow {
                     }
                 });
 
+        if (config.getFolderDownloadPaths().size() > 0 && config.getFileDownloadPaths().size() == 0) {
+            btnSimpleDownload.disable();
+        }
+
         return btnSimpleDownload;
     }
 

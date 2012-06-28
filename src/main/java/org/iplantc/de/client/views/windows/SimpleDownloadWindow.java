@@ -52,9 +52,9 @@ public class SimpleDownloadWindow extends IPlantWindow {
         contents = new LayoutContainer();
 
         // TODO use a CSS class instead of hard-coding?
-        contents.setStyleAttribute("padding", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
+        contents.setStyleAttribute("padding", "10px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        add(new Label(I18N.DISPLAY.simpleDownloadNotice()));
+        add(new Label("&nbsp;" + I18N.DISPLAY.simpleDownloadNotice()));
         add(contents);
     }
 
