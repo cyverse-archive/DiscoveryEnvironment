@@ -324,14 +324,23 @@ public class SharePanel extends ContentPanel {
         private static final String DELETE_BUTTON_STYLE = "unshare_button";
 
         @Override
-        public Object render(Sharing model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<Sharing> store, Grid<Sharing> grid) {
+        public Object render(final Sharing model, String property, ColumnData config, int rowIndex,
+                int colIndex, ListStore<Sharing> store, final Grid<Sharing> grid) {
 
             final HorizontalPanel hp = new HorizontalPanel();
             IconButton ib = buildButton(REMOVE_BUTTON_STYLE, model);
             hp.add(ib);
             hp.add(new Label(model.getName()));
             hp.setSpacing(3);
+            hp.sinkEvents(Events.OnClick.getEventCode());
+            hp.addListener(Events.OnClick, new Listener<BaseEvent>() {
+
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    grid.getSelectionModel().select(false, model);
+
+                }
+            });
             return hp;
         }
 

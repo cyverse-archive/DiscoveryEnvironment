@@ -18,8 +18,11 @@ import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.dnd.GridDragSource;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -140,8 +143,8 @@ public class CollaboratorsPanel extends ContentPanel {
         private static final String DONE_BUTTON_STYLE = "done_button";
 
         @Override
-        public Object render(Collaborator model, String property, ColumnData config, int rowIndex,
-                int colIndex, ListStore<Collaborator> store, Grid<Collaborator> grid) {
+        public Object render(final Collaborator model, String property, ColumnData config, int rowIndex,
+                int colIndex, ListStore<Collaborator> store, final Grid<Collaborator> grid) {
 
             final HorizontalPanel hp = new HorizontalPanel();
 
@@ -160,6 +163,15 @@ public class CollaboratorsPanel extends ContentPanel {
                 hp.add(ib);
                 ib.setToolTip("Remove");
             }
+            hp.sinkEvents(Events.OnClick.getEventCode());
+            hp.addListener(Events.OnClick, new Listener<BaseEvent>() {
+
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    grid.getSelectionModel().select(false, model);
+
+                }
+            });
             hp.add(new Label(model.getName()));
             hp.setSpacing(3);
             return hp;
