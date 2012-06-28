@@ -388,6 +388,7 @@ public class ApplicationLayout extends Viewport {
         d.setSize(110, 90);
         d.setBorders(true);
         d.setStyleName("de_header_menu_body"); //$NON-NLS-1$
+        d.setShadow(false);
 
         return d;
     }
@@ -443,6 +444,7 @@ public class ApplicationLayout extends Viewport {
         view.setSize(250, 310);
 
         view.setStyleName("de_header_menu_body");
+        view.setShadow(false);
         HorizontalPanel hp = new HorizontalPanel();
         hp.add(new MenuHyperlink(I18N.DISPLAY.allNotifications(), linkStyle, "",
                 new Listener<BaseEvent>() {
