@@ -9,6 +9,7 @@ import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
 import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Permissions;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
 import com.extjs.gxt.ui.client.core.El;
@@ -16,13 +17,14 @@ import com.extjs.gxt.ui.client.core.XDOM;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.dnd.DropTarget;
 import com.extjs.gxt.ui.client.dnd.StatusProxy;
-import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ComponentPlugin;
+import com.google.gwt.event.dom.client.KeyCodes;
 
 /**
  * Custom file selection widget for wizards.
@@ -31,8 +33,8 @@ import com.extjs.gxt.ui.client.widget.ComponentPlugin;
  * 
  */
 public class WizardFileSelector extends FileSelector {
-    private ComponentValueTable tblComponentVals;
-    private Property property;
+    private final ComponentValueTable tblComponentVals;
+    private final Property property;
 
     /**
      * Instantiate from a property and component value table.
@@ -90,8 +92,10 @@ public class WizardFileSelector extends FileSelector {
 
     private ComponentPlugin getFileSelectorPlugin() {
         ComponentPlugin plugin = new ComponentPlugin() {
+            @Override
             public void init(Component component) {
                 component.addListener(Events.Render, new Listener<ComponentEvent>() {
+                    @Override
                     public void handleEvent(ComponentEvent be) {
                         El elem = be.getComponent().el().findParent(".x-component", 3);
                         // should style in external CSS rather than directly
@@ -141,9 +145,15 @@ public class WizardFileSelector extends FileSelector {
     protected void initWidgets() {
         super.initWidgets();
 
-        txtResourceName.addListener(Events.OnClick, new Listener<BaseEvent>() {
-            public void handleEvent(final BaseEvent be) {
-                handleBrowseEvent(be);
+        txtResourceName.addKeyListener(new KeyListener() {
+            @Override
+            public void componentKeyPress(ComponentEvent event) {
+                if ((event.getKeyCode() == KeyCodes.KEY_BACKSPACE)
+                        || (event.getKeyCode() == KeyCodes.KEY_DELETE)) {
+
+                    setSelectedFile(new File("", "", new Permissions(true, true, true)));
+                    txtResourceName.setValue(getSelectedResourceName());
+                }
             }
         });
     }
@@ -179,4 +189,5 @@ public class WizardFileSelector extends FileSelector {
             cmdChange.execute();
         }
     }
+
 }

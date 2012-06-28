@@ -6,13 +6,14 @@ import org.iplantc.core.client.widgets.validator.IPlantValidator;
 import org.iplantc.core.metadata.client.property.Property;
 import org.iplantc.core.metadata.client.validation.MetaDataValidator;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.models.Permissions;
 
-import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
+import com.google.gwt.event.dom.client.KeyCodes;
 
 public class WizardFolderSelector extends FolderSelector {
-    private ComponentValueTable tblComponentVals;
+    private final ComponentValueTable tblComponentVals;
 
     /**
      * Instantiate from a property and component value table.
@@ -50,7 +51,7 @@ public class WizardFolderSelector extends FolderSelector {
         return ret;
     }
 
-    private void handleSelectedFileChange() {
+    private void handleSelectedFolderChange() {
         String idFile = (getSelectedFolderId() == null) ? "" : getSelectedFolderId(); //$NON-NLS-1$
         tblComponentVals.setValue(getId(), idFile);
 
@@ -65,9 +66,15 @@ public class WizardFolderSelector extends FolderSelector {
     protected void initWidgets() {
         super.initWidgets();
 
-        txtResourceName.addListener(Events.OnClick, new Listener<BaseEvent>() {
-            public void handleEvent(final BaseEvent be) {
-                handleBrowseEvent(be);
+        txtResourceName.addKeyListener(new KeyListener() {
+            @Override
+            public void componentKeyPress(ComponentEvent event) {
+                if ((event.getKeyCode() == KeyCodes.KEY_BACKSPACE)
+                        || (event.getKeyCode() == KeyCodes.KEY_DELETE)) {
+
+                    setSelectedFolder(new Folder("", "", false, new Permissions(true, true, true)));
+                    txtResourceName.setValue(getSelectedResourceName());
+                }
             }
         });
     }
@@ -79,7 +86,7 @@ public class WizardFolderSelector extends FolderSelector {
     public void setSelectedFolder(Folder folder) {
         super.setSelectedFolder(folder);
 
-        handleSelectedFileChange();
+        handleSelectedFolderChange();
     }
 
     /**

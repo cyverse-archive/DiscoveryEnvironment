@@ -27,7 +27,7 @@ public abstract class DiskResourceSelector implements IDiskResourceSelector {
     protected Command cmdChange;
 
     protected String tag;
-    private HorizontalPanel composite = new HorizontalPanel();
+    private final HorizontalPanel composite = new HorizontalPanel();
     private Button btnLaunch;
 
     /**
@@ -57,11 +57,20 @@ public abstract class DiskResourceSelector implements IDiskResourceSelector {
         txtResourceName.setId("idResourceName_" + tag); //$NON-NLS-1$
         txtResourceName.setReadOnly(true);
         txtResourceName.setWidth(254);
+        txtResourceName.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(final BaseEvent be) {
+                if ((txtResourceName.getValue() == null) || txtResourceName.getValue().isEmpty()) {
+                    handleBrowseEvent(be);
+                }
+            }
+        });
 
         btnLaunch = new Button(I18N.DISPLAY.browse());
         btnLaunch.setStyleAttribute("padding-left", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
         btnLaunch.setId("idBtnLaunch_" + tag); //$NON-NLS-1$
         btnLaunch.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            @Override
             public void handleEvent(BaseEvent be) {
                 handleBrowseEvent(be);
             }

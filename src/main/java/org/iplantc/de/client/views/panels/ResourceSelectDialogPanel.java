@@ -115,7 +115,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
             pnlMain.setMaskingParent(maskingParent);
         }
 
-        if (selectedResource != null) {
+        if ((selectedResource != null) && !selectedResource.getName().isEmpty()) {
             txtResourceName.setValue(selectedResource.getName());
             select(selectedResource);
         } else {

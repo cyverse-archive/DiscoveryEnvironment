@@ -65,10 +65,13 @@ public class FileSelectDialog extends IPlantDialog implements IFileSelectDialog 
             @Override
             public void handleEvent(WindowEvent be) {
                 // persist last path
-                UserSettings.getInstance().setDefaultFileSelectorPath(
-                        ((FileSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
-                cleanup();
-                ((FileSelectDialogPanel)getUnderlyingPanel()).cleanup();
+                if (!be.getButtonClicked().getItemId().equals("cancel")) {
+
+                    UserSettings.getInstance().setDefaultFileSelectorPath(
+                            ((FileSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
+                    cleanup();
+                    ((FileSelectDialogPanel)getUnderlyingPanel()).cleanup();
+                }
 
             }
         });

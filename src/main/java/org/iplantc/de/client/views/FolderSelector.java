@@ -52,13 +52,7 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
         dlgFolderSelect.addOkClickHandler(new DialogOkClickHandler() {
             @Override
             public void componentSelected(ButtonEvent ce) {
-                setSelectedFolder(dlgFolderSelect.getSelectedFolder());
-                setCurrentFolderId(dlgFolderSelect.getCurrentFolder());
-                txtResourceName.setValue(dlgFolderSelect.getSelectedFolder().getId());
-
-                if (cmdChange != null) {
-                    cmdChange.execute();
-                }
+                doSelection(dlgFolderSelect.getSelectedFolder(), dlgFolderSelect.getCurrentFolder());
             }
         });
 
@@ -116,6 +110,17 @@ public class FolderSelector extends DiskResourceSelector implements IFolderSelec
 
     public void setDefaultFolderId(String folderId) {
         defaultFolderId = folderId;
+    }
+
+    private void doSelection(Folder f, String currentFolderId) {
+        setSelectedFolder(f);
+        setCurrentFolderId(currentFolderId);
+        // txtResourceName.setValue(dlgFolderSelect.getSelectedFolder().getId());
+        txtResourceName.setValue(getSelectedResourceName());
+
+        if (cmdChange != null) {
+            cmdChange.execute();
+        }
     }
 
 }
