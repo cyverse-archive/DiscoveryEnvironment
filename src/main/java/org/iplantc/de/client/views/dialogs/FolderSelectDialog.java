@@ -65,10 +65,12 @@ public class FolderSelectDialog extends IPlantDialog implements IFolderSelectDia
             @Override
             public void handleEvent(WindowEvent be) {
                 // persist last path
-                UserSettings.getInstance().setDefaultFileSelectorPath(
-                        ((FolderSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
-                ((FolderSelectDialogPanel)getUnderlyingPanel()).cleanup();
-                cleanup();
+                if (!be.getButtonClicked().getItemId().equals("cancel")) {
+                    UserSettings.getInstance().setDefaultFileSelectorPath(
+                            ((FolderSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
+                    ((FolderSelectDialogPanel)getUnderlyingPanel()).cleanup();
+                    cleanup();
+                }
             }
         });
 

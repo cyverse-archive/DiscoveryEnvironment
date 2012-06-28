@@ -51,7 +51,7 @@ public class WizardFolderSelector extends FolderSelector {
         return ret;
     }
 
-    private void handleSelectedFileChange() {
+    private void handleSelectedFolderChange() {
         String idFile = (getSelectedFolderId() == null) ? "" : getSelectedFolderId(); //$NON-NLS-1$
         tblComponentVals.setValue(getId(), idFile);
 
@@ -86,7 +86,7 @@ public class WizardFolderSelector extends FolderSelector {
     public void setSelectedFolder(Folder folder) {
         super.setSelectedFolder(folder);
 
-        handleSelectedFileChange();
+        handleSelectedFolderChange();
     }
 
     /**
