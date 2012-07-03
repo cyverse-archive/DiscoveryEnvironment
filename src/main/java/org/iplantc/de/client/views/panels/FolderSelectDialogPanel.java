@@ -33,6 +33,7 @@ public class FolderSelectDialogPanel extends ResourceSelectDialogPanel {
     /**
      * Initialize all components used by this widget.
      */
+    @Override
     protected void initComponents() {
         initComponents(I18N.DISPLAY.selectedFolder());
     }
@@ -70,20 +71,8 @@ public class FolderSelectDialogPanel extends ResourceSelectDialogPanel {
         DiskResource resource = pnlNavigation.getSelectedItem();
         if (resource instanceof Folder && resource != null) {
             txtResourceName.setValue(resource.getId());
-            selectedResource = (Folder)resource;
+            selectedResource = resource;
             setCurrentFolderId(resource.getId());
-        }
-    }
-
-    /**
-     * Tells the panel which DiskResource should be shown as "selected."
-     * 
-     * @param resource the DiskResource in the data browser grid to select
-     */
-    @Override
-    public void select(DiskResource resource) {
-        if (pnlNavigation != null) {
-            pnlNavigation.selectFolder(resource.getId());
         }
     }
 

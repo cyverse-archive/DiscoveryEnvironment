@@ -225,7 +225,15 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
      */
     public void select(DiskResource resource) {
         if (pnlNavigation != null) {
-            pnlNavigation.selectFolder(DiskResourceUtil.parseParent(resource.getId()));
+            if (resource instanceof File) {
+                pnlNavigation.selectFolder(DiskResourceUtil.parseParent(resource.getId()));
+            } else {
+                Folder parentFolder = pnlNavigation.findFolder(DiskResourceUtil.parseParent(resource
+                        .getId()));
+                pnlNavigation.expandFolder(parentFolder);
+                selectFolder(resource.getId());
+
+            }
         }
         if (pnlMain != null) {
             pnlMain.select(resource.getId(), false);
@@ -273,6 +281,7 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
      * Release unneeded resources.
      */
     public void cleanup() {
+        removeEventHandlers();
         if (pnlNavigation != null) {
             pnlNavigation.cleanup();
         }
@@ -314,6 +323,11 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
         if (pnlMain != null) {
             pnlMain.addDiskResource(idParentFolder, folder);
         }
+        if (pnlNavigation != null) {
+            pnlNavigation.addDiskResource(idParentFolder, folder);
+        }
+
+        select(folder);
 
     }
 

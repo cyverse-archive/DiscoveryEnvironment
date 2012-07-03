@@ -31,6 +31,7 @@ public class FileSelectDialogPanel extends ResourceSelectDialogPanel {
     /**
      * Initialize all components used by this widget.
      */
+    @Override
     protected void initComponents() {
         initComponents(I18N.DISPLAY.selectedFile());
     }
@@ -54,7 +55,7 @@ public class FileSelectDialogPanel extends ResourceSelectDialogPanel {
                 DiskResource resource = selectedItems.get(0);
                 if (resource instanceof File && resource != null) {
                     txtResourceName.setValue(resource.getName());
-                    selectedResource = (File)resource;
+                    selectedResource = resource;
                     if (!model.getCurrentPath().equals(model.getRootFolderId())) {
                         setCurrentFolderId(model.getCurrentPath());
                     } else {

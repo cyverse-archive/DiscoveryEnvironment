@@ -7,6 +7,7 @@ import java.util.Stack;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
@@ -64,6 +65,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
     private ClientDataModel model;
 
     private TreePanelDragSource dndSource;
+    private final AsyncTreeLoaderCallBack callback;
 
     /**
      * 
@@ -74,6 +76,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
         this.mode = mode;
         toolBar = new DataNavToolBar(tag, mode);
         setTopComponent(toolBar);
+
+        callback = new AsyncTreeLoaderCallBack(new Stack<String>());
     }
 
     /**
@@ -225,6 +229,15 @@ public class DataNavigationPanel extends AbstractDataPanel {
         if (model != null) {
             this.model = model;
             initTreePanel(model.getHeirarchy(), selctionChangeListener);
+
+            Stack<String> paths = new Stack<String>();
+            if (UserSettings.getInstance().isRememberLastPath()) {
+                paths.push(UserSettings.getInstance().getDefaultFileSelectorPath());
+            } else {
+                paths.push(getRootFolderId());
+            }
+            callback.setPaths(paths);
+            model.setTreeLoaderCallback(callback);
             setModePrefernces();
 
             compose();
@@ -253,6 +266,9 @@ public class DataNavigationPanel extends AbstractDataPanel {
     }
 
     public boolean selectFolder(final String path) {
+        Stack<String> paths = new Stack<String>();
+        paths.push(path);
+        callback.setPaths(paths);
         Folder target = findFolder(path);
 
         if (target == null) {
@@ -279,6 +295,22 @@ public class DataNavigationPanel extends AbstractDataPanel {
         }
 
         return false;
+    }
+
+    public void addDiskResource(final String idParentFolder, final DiskResource resource) {
+        if (model.isCurrentPage(idParentFolder)) {
+            TreeStore<Folder> store = pnlTree.getStore();
+            for (Folder folder : store.getModels()) {
+                if (folder.getId().equals(resource.getId())) {
+                    store.remove(folder);
+                }
+            }
+
+            Folder parent = findFolder(idParentFolder);
+            if (parent != null) {
+                store.add(parent, (Folder)resource, false);
+            }
+        }
     }
 
     /**
@@ -551,8 +583,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
         // start expanding the parent folders in order.
         maskingParent.mask(I18N.DISPLAY.loadingMask());
 
-        AsyncTreeLoaderCallBack callback = new AsyncTreeLoaderCallBack(paths);
-        model.setTreeLoaderCallback(callback);
+        callback.setPaths(paths);
 
         // expand the first parent found that is already loaded in the model to load its children.
         expandFolder(parent);
@@ -636,7 +667,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
     }
 
     private void unsetCallbackAndSelectFolder(String path) {
-        model.setTreeLoaderCallback(null);
+        // model.setTreeLoaderCallback(null);
         selectFolder(path);
         maskingParent.unmask();
     }
@@ -662,9 +693,13 @@ public class DataNavigationPanel extends AbstractDataPanel {
      * 
      */
     private final class AsyncTreeLoaderCallBack implements AsyncCallback<List<Folder>> {
-        private final Stack<String> paths;
+        private Stack<String> paths;
 
         private AsyncTreeLoaderCallBack(Stack<String> paths) {
+            this.paths = paths;
+        }
+
+        public void setPaths(final Stack<String> paths) {
             this.paths = paths;
         }
 

@@ -64,13 +64,14 @@ public class FileSelectDialog extends IPlantDialog implements IFileSelectDialog 
         addListener(Events.BeforeHide, new Listener<WindowEvent>() {
             @Override
             public void handleEvent(WindowEvent be) {
+                cleanup();
+                ((FileSelectDialogPanel)getUnderlyingPanel()).cleanup();
+
                 // persist last path
-                if (!be.getButtonClicked().getItemId().equals("cancel")) {
+                if ((be.getButtonClicked() != null) && be.getButtonClicked().getItemId().equals("ok")) {
 
                     UserSettings.getInstance().setDefaultFileSelectorPath(
                             ((FileSelectDialogPanel)getUnderlyingPanel()).getCurrentNavPath());
-                    cleanup();
-                    ((FileSelectDialogPanel)getUnderlyingPanel()).cleanup();
                 }
 
             }
