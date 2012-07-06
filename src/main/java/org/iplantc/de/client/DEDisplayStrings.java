@@ -1208,6 +1208,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String saveSession();
 
     /**
+     * default job output folder
+     * 
+     * @return the localized display text
+     */
+    String defaultOutputFolder();
+
+    /**
      * enabled prompt
      * 
      * @return the localized display text
