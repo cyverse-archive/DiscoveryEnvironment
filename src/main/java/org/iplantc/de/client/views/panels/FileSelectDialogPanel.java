@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -43,6 +45,19 @@ public class FileSelectDialogPanel extends ResourceSelectDialogPanel {
      */
     public File getSelectedFile() {
         return (File)selectedResource;
+    }
+
+    @Override
+    public void select(DiskResource resource) {
+        if (pnlMain != null) {
+            pnlMain.select(resource.getId(), false);
+        }
+        String parentFolderId = DiskResourceUtil.parseParent(resource.getId());
+        Folder parentFolder = model.getFolder(parentFolderId);
+        if (parentFolder != null) {
+            pnlNavigation.expandFolder(parentFolder);
+        }
+        selectFolder(parentFolderId);
     }
 
     private class SelectionChangeListenerImpl implements Listener<BaseEvent> {

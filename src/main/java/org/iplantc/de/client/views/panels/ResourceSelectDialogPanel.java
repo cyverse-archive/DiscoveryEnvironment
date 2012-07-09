@@ -153,13 +153,14 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
         handlers.clear();
     }
 
-    private void selectFolder(String folderId) {
+    protected void selectFolder(String folderId) {
         if (pnlNavigation != null) {
             if (folderId != null) {
                 currentFolderId = folderId;
                 pnlNavigation.selectFolder(folderId);
             }
         }
+
     }
 
     /**
@@ -224,19 +225,15 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
      * @param resource the DiskResource in the data browser grid to select
      */
     public void select(DiskResource resource) {
-        if (pnlNavigation != null) {
+        if (pnlMain != null) {
+            pnlMain.select(resource.getId(), false);
+        } else if (pnlNavigation != null) {
             if (resource instanceof File) {
-                pnlNavigation.selectFolder(DiskResourceUtil.parseParent(resource.getId()));
+                selectFolder(DiskResourceUtil.parseParent(resource.getId()));
             } else {
-                Folder parentFolder = pnlNavigation.findFolder(DiskResourceUtil.parseParent(resource
-                        .getId()));
-                pnlNavigation.expandFolder(parentFolder);
                 selectFolder(resource.getId());
 
             }
-        }
-        if (pnlMain != null) {
-            pnlMain.select(resource.getId(), false);
         }
     }
 
@@ -319,16 +316,20 @@ public class ResourceSelectDialogPanel extends IPlantDialogPanel implements Data
 
     @Override
     public void folderCreated(String idParentFolder, JSONObject jsonFolder) {
-        Folder folder = model.createFolder(idParentFolder, jsonFolder);
+        Folder parentFolder = model.getFolder(idParentFolder);
+        Folder folder;
+        folder = new Folder(jsonFolder);
+        if ((pnlNavigation != null) && pnlNavigation.isFolderLoaded(idParentFolder)) {
+            folder = model.createFolder(idParentFolder, jsonFolder);            
+        } else {
+            parentFolder.setHasSubFolders(true);
+        }
+
         if (pnlMain != null) {
             pnlMain.addDiskResource(idParentFolder, folder);
         }
-        if (pnlNavigation != null) {
-            pnlNavigation.addDiskResource(idParentFolder, folder);
-        }
 
         select(folder);
-
     }
 
     @Override
