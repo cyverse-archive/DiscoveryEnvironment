@@ -70,7 +70,7 @@ public class UserPreferencesDialog extends Dialog {
 
     private void buildSettingPanel() {
         TabItem ti = new TabItem(I18N.DISPLAY.settings());
-        settingPanel = new UserSettingPanel();
+        settingPanel = new UserSettingPanel(this);
         ti.add(settingPanel);
         tabPanel.add(ti);
     }
