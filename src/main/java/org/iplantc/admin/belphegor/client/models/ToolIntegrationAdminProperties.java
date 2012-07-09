@@ -3,6 +3,8 @@ package org.iplantc.admin.belphegor.client.models;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.iplantc.core.uicommons.client.ErrorHandler;
+
 import com.extjs.gxt.ui.client.core.FastMap;
 
 public class ToolIntegrationAdminProperties {
@@ -161,14 +163,63 @@ public class ToolIntegrationAdminProperties {
             serviceUrlMap.put(key, properties.get(key));
         }
 
-        defaultBetaAnalysisGroupId = properties.get(CATEGORY_DEFAULT_BETA_GROUP_ID);
-        setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
+        setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));       
+        
         contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
-        keepaliveTarget = properties.get(KEEPALIVE_TARGET);
         keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
-        validAppWikiUrlPath = properties.get(APP_DOC_URL).split(",");
+
+        defaultBetaAnalysisGroupId = getStringProperty(properties, CATEGORY_DEFAULT_BETA_GROUP_ID, "");
+        keepaliveTarget = getStringProperty(properties, KEEPALIVE_TARGET, "");
+        validAppWikiUrlPath = getStringList(properties, APP_DOC_URL);
     }
 
+    /**
+     * Alert when accessing a property fails. 
+     * 
+     * @param e the Exception thrown.
+     * @param propName the name of the property that was being accessed.
+     */
+    private void outputAccessFailure(Exception e, String propName) {
+    	ErrorHandler.post("An attempt to get property failed: " + propName, e);
+    }
+    
+    /** 
+     * Gets a list of String values for a property.  
+     * 
+     * The property encodes a comma-separated list of String value.
+     * 
+     * @param props the properties map.
+     * @param propName the name of the property to extract.
+     * @return the list of String values as an array.
+     */
+    private String[] getStringList(Map<String, String> props, String propName) {
+    	String[] list;
+    	String value = props.get(propName);
+    	if (value == null || value.length() == 0) {
+    		ErrorHandler.post("An attempt to get property failed: " + propName);
+    		value = "";
+    	}
+    	list = value.split(",");
+    	return list;
+    }
+    
+    /**
+     * Gets a String property value. 
+     * 
+     * @param props the properties map.
+     * @param propName the name of the property to extract.
+     * @param defaultValue the default value to use.
+     * @return the property value or the default value if the property value can't be obtained.
+     */
+    private String getStringProperty(Map<String, String> props, String propName, String defaultValue) {
+    	String value = props.get(propName);
+    	if (value == null || value.length() == 0) {
+    		ErrorHandler.post("An attempt to get property failed: " + propName);
+    		value = defaultValue;
+    	}
+    	return value;
+    }
+    
     /**
      * Gets a Boolean property value.
      * 
@@ -181,6 +232,7 @@ public class ToolIntegrationAdminProperties {
         try {
             return Boolean.parseBoolean(props.get(propName));
         } catch (Exception e) {
+        	outputAccessFailure(e, propName);
             return defaultValue;
         }
     }
@@ -197,6 +249,7 @@ public class ToolIntegrationAdminProperties {
         try {
             return Integer.parseInt(props.get(propName));
         } catch (Exception e) {
+        	outputAccessFailure(e, propName);
             return defaultValue;
         }
     }
