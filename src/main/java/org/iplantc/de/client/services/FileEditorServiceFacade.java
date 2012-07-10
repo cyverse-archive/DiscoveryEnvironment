@@ -1,10 +1,13 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.core.uicommons.client.models.DEProperties;
+import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -26,6 +29,18 @@ public class FileEditorServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * Construct a servlet download URL for the given file ID.
+     * 
+     * @param idFile the desired file ID to be used in the return URL
+     * @return a URL for the given file ID.
+     */
+    public String getServletDownloadUrl(final String idFile) {
+        return GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet()
+                + "?url=display-download&user="
+                + UserInfo.getInstance().getUsername() + "&path=" + idFile;
     }
 
     /**

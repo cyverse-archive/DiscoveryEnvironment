@@ -3,10 +3,10 @@ package org.iplantc.de.client.views.windows;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
@@ -35,11 +35,8 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
-import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Element;
 
 /**
@@ -144,8 +141,11 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         commands = new HashMap<String, RPCSuccessCommand>();
 
         commands.put("rawcontents", new RawDataSuccessCommand()); //$NON-NLS-1$
-        commands.put("png", new ImageDataSuccessCommand()); //$NON-NLS-1$
-        commands.put("pdf", new PdfDataSuccessCommand()); //$NON-NLS-1$
+        commands.put("image/png", new ImageDataSuccessCommand()); //$NON-NLS-1$
+        commands.put("image/gif", new ImageDataSuccessCommand()); //$NON-NLS-1$
+        commands.put("image/jpeg", new ImageDataSuccessCommand()); //$NON-NLS-1$
+        commands.put("application/pdf", new PdfDataSuccessCommand()); //$NON-NLS-1$
+        commands.put("text/plain", new PreviewSuccessCommand()); //$NON-NLS-1$
         commands.put("preview", new PreviewSuccessCommand()); //$NON-NLS-1$
     }
 
@@ -166,74 +166,32 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         }
     }
 
-    private void getImage(String url) {
-        if (url != null && !url.isEmpty() && panel != null) {
+    private void getImage(String fileId) {
+        if (fileId != null && !fileId.isEmpty() && panel != null) {
             // we got the url of an image... lets add a tab
-            ImagePanel pnlImage = new ImagePanel(file, getServletDownloadUrl(url));
+            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
+            ImagePanel pnlImage = new ImagePanel(file, fesf.getServletDownloadUrl(fileId));
 
             panel.addTab(pnlImage);
         }
     }
 
-    private void getPdfFile(String url) {
-        if (url != null && !url.isEmpty()) {
+    private void getPdfFile(String fileId) {
+        if (fileId != null && !fileId.isEmpty()) {
             // we got the url of the PDF file, so open it in a new window
-            WindowUtil.open(getServletDownloadUrl(url));
+            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
+            WindowUtil.open(fesf.getServletDownloadUrl(fileId) + "&attachment=0");
 
             isPdfPanel = true;
         }
     }
 
-    private String getServletDownloadUrl(String downloadUrl) {
-        // we must route the request through the download servlet, in case the download URL is not
-        // publicly accessible, so pass only the url query to the download servlet URL.
-        String[] urlParts = downloadUrl.split("\\?"); //$NON-NLS-1$
-
-        String urlParams;
-        if (urlParts.length > 1) {
-            urlParams = "url=" + urlParts[0] + "&" + urlParts[1]; //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            urlParams = urlParts[0];
-        }
-
-        return GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet() + "?" + urlParams; //$NON-NLS-1$
-    }
-
     private void createViews() {
-        RPCSuccessCommand cmd;
-
-        Set<String> keys = manifest.keySet();
-
-        // parse
-        for (String key : keys) {
-            cmd = commands.get(key);
-
-            if (cmd != null) {
-                JSONValue value = getItems(key);
-
-                if (value != null) {
-                    JSONString strValue = value.isString();
-                    JSONArray items = value.isArray();
-
-                    if (strValue != null) {
-                        // the value is just a string
-                        updateStatus(1);
-
-                        cmd.execute(strValue.stringValue());
-                    } else if (items != null) {
-                        // the value is an array
-                        updateStatus(items.size());
-
-                        // loop through our previews
-                        for (int i = 0,len = items.size(); i < len; i++) {
-                            // get the service url
-                            String url = items.get(i).isString().stringValue();
-                            cmd.execute(url);
-                        }
-                    }
-                }
-            }
-
+        String mimeType = JsonUtil.getString(manifest, "content-type");
+        RPCSuccessCommand cmd = commands.get(mimeType);
+        if (cmd != null) {
+            updateStatus(1);
+            cmd.execute(file.getFileId());
         }
     }
 
@@ -351,8 +309,9 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         protected abstract void addTab(String result);
 
         @Override
-        public void execute(String url) {
+        public void execute(String fileId) {
             FileEditorServiceFacade facade = new FileEditorServiceFacade();
+            String url = "file/preview?user=" + UserInfo.getInstance().getUsername() + "&path=" + fileId;
             facade.getData(url, new DiskResourceServiceCallback() {
                 @Override
                 public void onFailure(Throwable caught) {
