@@ -38,6 +38,20 @@ public class FolderSelectDialogPanel extends ResourceSelectDialogPanel {
         initComponents(I18N.DISPLAY.selectedFolder());
     }
 
+    @Override
+    public void select(DiskResource resource) {
+        if (resource instanceof Folder) {
+            select((Folder)resource);
+        }
+
+    }
+
+    public void select(Folder folder) {
+        if (pnlNavigation != null) {
+            selectFolder(folder.getId());
+        }
+    }
+
     /**
      * Retrieve the folder which the user selected.
      * 

@@ -153,6 +153,16 @@ public class DataNavigationPanel extends AbstractDataPanel {
         return pnlTree.getStore().getRootItems().get(0).getId();
     }
 
+    public boolean isFolderLoaded(String folderId) {
+        Folder folder = findFolder(folderId);
+        if (folder != null) {
+            return folder.isRemotelyLoaded();
+        }
+        return false;
+    }
+
+
+
     private void initTreeListeners(Listener<BaseEvent> selctionChangeListener) {
         pnlTree.getSelectionModel().addListener(Events.SelectionChange, new Listener<BaseEvent>() {
             @Override
@@ -269,8 +279,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
         Stack<String> paths = new Stack<String>();
         paths.push(path);
         callback.setPaths(paths);
+        callback.enableCallback();
         Folder target = findFolder(path);
-
         if (target == null) {
             // the target is not yet loaded into the navigation tree.
             return lazyLoadPath(path);
@@ -583,12 +593,13 @@ public class DataNavigationPanel extends AbstractDataPanel {
         // start expanding the parent folders in order.
         maskingParent.mask(I18N.DISPLAY.loadingMask());
 
+        callback.enableCallback();
         callback.setPaths(paths);
 
         // expand the first parent found that is already loaded in the model to load its children.
         expandFolder(parent);
 
-        if (pnlTree.isExpanded(parent) || !parent.hasSubFolders()) {
+        if (isFolderLoaded(parentPath)) {
             // AsyncTreeLoaderCallBack will not be called if the parent is already expanded (it has
             // already loaded all of its children) or the parent does not have any subfolders. So the
             // next child to expand could not be found. We'll reload parent to be sure we have its latest
@@ -649,7 +660,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
                     public void onFailure(Throwable caught) {
                         // There was a problem reloading the target folder, so stop lazy-loading and
                         // display the error message.
-                        unsetCallbackAndSelectFolder(target.getId());
+                        selectFolderAndUnmask(target.getId());
 
                         super.onFailure(caught);
                     }
@@ -666,8 +677,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
                 });
     }
 
-    private void unsetCallbackAndSelectFolder(String path) {
-        // model.setTreeLoaderCallback(null);
+    private void selectFolderAndUnmask(String path) {
+        callback.disableCallback();
         selectFolder(path);
         maskingParent.unmask();
     }
@@ -694,24 +705,35 @@ public class DataNavigationPanel extends AbstractDataPanel {
      */
     private final class AsyncTreeLoaderCallBack implements AsyncCallback<List<Folder>> {
         private Stack<String> paths;
+        private boolean enabled;
 
         private AsyncTreeLoaderCallBack(Stack<String> paths) {
             this.paths = paths;
         }
 
+        public void enableCallback() {
+            enabled = true;
+        }
+
+        public void disableCallback() {
+            enabled = false;
+        }
         public void setPaths(final Stack<String> paths) {
             this.paths = paths;
         }
 
         @Override
         public void onSuccess(List<Folder> result) {
+            if (!enabled)
+                return;
+
             String path = paths.pop();
             Folder nextFolder = findFolder(path);
 
             if (nextFolder == null) {
                 // the next folder to expand or select was not found, even after the parent's subfolders
                 // were loaded, so stop the process here and select the deepest folder we could load.
-                unsetCallbackAndSelectFolder(DiskResourceUtil.parseParent(path));
+                selectFolderAndUnmask(DiskResourceUtil.parseParent(path));
                 displayRetrieveFolderError(path);
 
                 return;
@@ -719,7 +741,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
 
             if (paths.isEmpty()) {
                 // we've reached our destination folder, so select it and end this callback process.
-                unsetCallbackAndSelectFolder(nextFolder.getId());
+                selectFolderAndUnmask(nextFolder.getId());
             } else {
                 // nextFolder is a parent of the destination folder.
                 if (nextFolder.hasSubFolders()) {
@@ -728,7 +750,7 @@ public class DataNavigationPanel extends AbstractDataPanel {
                     // This AsyncCallback will not be called again if the next folder to expand does not
                     // have any subfolders, so stop the process here and select the deepest folder we
                     // could load.
-                    unsetCallbackAndSelectFolder(path);
+                    selectFolderAndUnmask(path);
                     displayRetrieveFolderError(paths.pop());
                 }
             }

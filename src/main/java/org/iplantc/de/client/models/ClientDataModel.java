@@ -15,8 +15,11 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.data.TreeLoadEvent;
 import com.extjs.gxt.ui.client.data.TreeModel;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -111,6 +114,20 @@ public class ClientDataModel {
             }
         };
 
+        loader.addLoadListener(new LoadListener() {
+            @Override
+            public void loaderLoad(LoadEvent le) {
+                if (!(le instanceof TreeLoadEvent)) {
+                    return;
+                }
+
+                TreeLoadEvent tle = (TreeLoadEvent)le;
+                if ((tle.parent instanceof Folder)) {
+                    // Mark the folder as having been remotely loaded.
+                    ((Folder)tle.parent).setRemotelyLoaded(true);
+                }
+            }
+        });
         // create the heirarchy with the Folder loader
         heirarchy = new TreeStore<Folder>(loader);
     }
@@ -201,6 +218,7 @@ public class ClientDataModel {
 
             heirarchy.add(folderParent, ret, true);
 
+            heirarchy.update(folderParent);
             addFolderToPage(pathParent, ret);
         }
 

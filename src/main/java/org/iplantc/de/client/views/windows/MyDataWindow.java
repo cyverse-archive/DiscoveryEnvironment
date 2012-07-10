@@ -8,6 +8,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
@@ -85,6 +86,18 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
         model.seed(json);
         pnlNavigation.seed(username, model);
         pnlMain.seed(model);
+    }
+
+    public void select(DiskResource resource) {
+        if (pnlMain != null) {
+            pnlMain.select(resource.getId(), false);
+        }
+        String parentFolderId = DiskResourceUtil.parseParent(resource.getId());
+        Folder parentFolder = model.getFolder(parentFolderId);
+        if (parentFolder != null) {
+            pnlNavigation.expandFolder(parentFolder);
+        }
+        pnlNavigation.selectFolder(parentFolderId);
     }
 
     /**
@@ -262,9 +275,20 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      */
     @Override
     public void folderCreated(String idParentFolder, JSONObject jsonFolder) {
-        Folder folder = model.createFolder(idParentFolder, jsonFolder);
+        Folder parentFolder = model.getFolder(idParentFolder);
+        Folder folder;
+        folder = new Folder(jsonFolder);
+        if ((pnlNavigation != null) && pnlNavigation.isFolderLoaded(idParentFolder)) {
+            folder = model.createFolder(idParentFolder, jsonFolder);
+        } else {
+            parentFolder.setHasSubFolders(true);
+        }
 
-        pnlMain.addDiskResource(idParentFolder, folder);
+        if (pnlMain != null) {
+            pnlMain.addDiskResource(idParentFolder, folder);
+        }
+
+        select(folder);
     }
 
     /**
