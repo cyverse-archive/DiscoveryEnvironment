@@ -53,6 +53,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class MyAnalysesPanel extends ContentPanel {
 
     private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
+    private final String CANCEL_JOB_ITEM_ID = "idCancelJobBtn"; //$NON-NLS-1$
     private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn"; //$NON-NLS-1$
     private static final String VIEW_PARAMETER_ITEM_ID = "idViewParameter";
 
@@ -170,6 +171,7 @@ public class MyAnalysesPanel extends ContentPanel {
         topComponentMenu.add(buildViewOpButton());
         topComponentMenu.add(buildViewParamsButton());
         topComponentMenu.add(buildDeleteButton());
+        topComponentMenu.add(buildCancelJobButton());
         buildFilterField();
         topComponentMenu.add(filter);
     }
@@ -208,6 +210,17 @@ public class MyAnalysesPanel extends ContentPanel {
         b.setEnabled(false);
         b.addSelectionListener(new DeleteSelectionListener());
         analyses_buttons.put(DELETE_ITEM_ID, b);
+        return b;
+    }
+
+    private Button buildCancelJobButton() {
+        Button b = new Button("Cancel Job");
+        b.setId(CANCEL_JOB_ITEM_ID);
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.stop()));
+        b.setEnabled(false);
+        b.addSelectionListener(new CancelJobSelectListener());
+        analyses_buttons.put(CANCEL_JOB_ITEM_ID, b);
+
         return b;
     }
 
@@ -323,6 +336,10 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
+    private void doCancelJob() {
+        // TODO Implement
+    }
+
     private void enableViewButtonByStatus() {
         AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
         if (ae != null) {
@@ -356,6 +373,13 @@ public class MyAnalysesPanel extends ContentPanel {
         @Override
         public void componentSelected(ButtonEvent ce) {
             doDelete();
+        }
+    }
+
+    private class CancelJobSelectListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            doCancelJob();
         }
     }
 
