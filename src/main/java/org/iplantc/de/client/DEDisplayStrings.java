@@ -419,6 +419,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String analysesExecDeleteWarning();
 
     /**
+     * Display text for the warning message when a user tries to cancel a running job.
+     * 
+     * @return a String representing the text
+     */
+    String analysesCancelJobWarning();
+
+    /**
      * Display text for remove.
      * 
      * @return a String representing the text.

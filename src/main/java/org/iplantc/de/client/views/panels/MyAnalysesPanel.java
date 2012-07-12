@@ -194,12 +194,14 @@ public class MyAnalysesPanel extends ContentPanel {
             case 1:
                 enableDeleteButtonByStatus();
                 enableViewButtonByStatus();
+                enableCancelJobButtonByStatus();
                 break;
 
             default:
                 analyses_buttons.get(DELETE_ITEM_ID).enable();
                 analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).disable();
                 analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
+                enableCancelJobButtonByStatus();
         }
     }
 
@@ -337,7 +339,13 @@ public class MyAnalysesPanel extends ContentPanel {
     }
 
     private void doCancelJob() {
-        // TODO Implement
+        // JDS - At this point,
+        if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
+            final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
+            MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesCancelJobWarning(),
+                    new CancelJobMessageBoxListener(execs));
+        }
+
     }
 
     private void enableViewButtonByStatus() {
@@ -367,6 +375,21 @@ public class MyAnalysesPanel extends ContentPanel {
             }
         }
         analyses_buttons.get(DELETE_ITEM_ID).setEnabled(enable);
+    }
+
+    private void enableCancelJobButtonByStatus() {
+        List<AnalysisExecution> aes = analysisGrid.getSelectionModel().getSelectedItems();
+        boolean enable = false;
+        for (AnalysisExecution ae : aes) {
+            if (ae != null) {
+                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
+                    enable = true;
+                    break;
+                }
+            }
+        }
+        analyses_buttons.get(CANCEL_JOB_ITEM_ID).setEnabled(enable);
+
     }
 
     private class DeleteSelectionListener extends SelectionListener<ButtonEvent> {
@@ -519,6 +542,42 @@ public class MyAnalysesPanel extends ContentPanel {
             obj.put("executions", items); //$NON-NLS-1$
             return obj.toString();
         }
+    }
+
+    private final class CancelJobMessageBoxListener implements Listener<MessageBoxEvent> {
+        private final List<AnalysisExecution> execs;
+        private final List<AnalysisExecution> jobsToCancel;
+
+        // FIXME JDS - Implement correctly when Donkey service is in place.
+        private CancelJobMessageBoxListener(List<AnalysisExecution> execs) {
+            this.execs = execs;
+            jobsToCancel = new ArrayList<AnalysisExecution>();
+        }
+
+        @Override
+        public void handleEvent(MessageBoxEvent be) {
+            Button btn = be.getButtonClicked();
+
+            // did the user click yes?
+            if (btn.getItemId().equals(Dialog.YES)) {
+                String requestBody = buildJobCancelRequestBody(execs);
+            }
+
+        }
+
+        private String buildJobCancelRequestBody(List<AnalysisExecution> execs) {
+            JSONObject obj = new JSONObject();
+            JSONArray items = new JSONArray();
+            int count = 0;
+            for (AnalysisExecution ae : execs) {
+                if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())) {
+                    items.set(count++, new JSONString(ae.getId()));
+                    jobsToCancel.add(ae);
+                }
+            }
+            return obj.toString();
+        }
+
     }
 
 }
