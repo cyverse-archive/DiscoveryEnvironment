@@ -1,10 +1,10 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.iplantc.core.uicommons.client.DEServiceFacade;
 
 /**
  * Provides access to remote services for analyses management operations.
@@ -35,6 +35,19 @@ public class AnalysisServiceFacade {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
                 + workspaceId + "/executions" + "/delete"; //$NON-NLS-1$ //$NON-NLS-2$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, json);
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * Stop a currently running analysis
+     * 
+     * @param jobId id of the job to be stopped.
+     * @param callback executed when RPC call completes.
+     */
+    public void stopJob(String jobId, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/" + jobId;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }

@@ -14,6 +14,8 @@ import org.iplantc.de.client.models.AnalysisExecution;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.MyDataViewContextExecutor;
+import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.MyAnalysesGrid;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -339,11 +341,13 @@ public class MyAnalysesPanel extends ContentPanel {
     }
 
     private void doCancelJob() {
-        // JDS - At this point,
         if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
             final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
-            MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesCancelJobWarning(),
-                    new CancelJobMessageBoxListener(execs));
+            for (AnalysisExecution ae : execs) {
+                if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())) {
+                    facadeAnalysisService.stopJob(ae.getId(), new CancelJobServiceCallback(ae));
+                }
+            }
         }
 
     }
@@ -506,6 +510,31 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
+    private final class CancelJobServiceCallback implements AsyncCallback<String> {
+
+        private final AnalysisExecution ae;
+
+        public CancelJobServiceCallback(final AnalysisExecution ae) {
+            this.ae = ae;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            NotifyInfo.notify(NotificationHelper.Category.ANALYSIS, "Success!", "Job \"" + ae.getName()
+                    + "\" stopped successfully.", null);
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            /*
+             * JDS Send generic error message. In the future, the "error_code" string should be parsed
+             * from the JSON to provide more detailed user feedback.
+             */
+            ErrorHandler.post(I18N.ERROR.stopJobError(), caught);
+        }
+
+    }
+
     private final class DeleteMessageBoxListener implements Listener<MessageBoxEvent> {
         private final List<AnalysisExecution> execs;
         private final List<AnalysisExecution> items_to_delete;
@@ -542,42 +571,6 @@ public class MyAnalysesPanel extends ContentPanel {
             obj.put("executions", items); //$NON-NLS-1$
             return obj.toString();
         }
-    }
-
-    private final class CancelJobMessageBoxListener implements Listener<MessageBoxEvent> {
-        private final List<AnalysisExecution> execs;
-        private final List<AnalysisExecution> jobsToCancel;
-
-        // FIXME JDS - Implement correctly when Donkey service is in place.
-        private CancelJobMessageBoxListener(List<AnalysisExecution> execs) {
-            this.execs = execs;
-            jobsToCancel = new ArrayList<AnalysisExecution>();
-        }
-
-        @Override
-        public void handleEvent(MessageBoxEvent be) {
-            Button btn = be.getButtonClicked();
-
-            // did the user click yes?
-            if (btn.getItemId().equals(Dialog.YES)) {
-                String requestBody = buildJobCancelRequestBody(execs);
-            }
-
-        }
-
-        private String buildJobCancelRequestBody(List<AnalysisExecution> execs) {
-            JSONObject obj = new JSONObject();
-            JSONArray items = new JSONArray();
-            int count = 0;
-            for (AnalysisExecution ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())) {
-                    items.set(count++, new JSONString(ae.getId()));
-                    jobsToCancel.add(ae);
-                }
-            }
-            return obj.toString();
-        }
-
     }
 
 }
