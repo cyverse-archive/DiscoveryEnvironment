@@ -280,6 +280,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String launchSuccess();
 
     /**
+     * Localized text for display when a job was successfully stopped.
+     * 
+     * @return a string representing the localized text.
+     */
+    String jobStopSuccess(String jobName);
+
+    /**
      * Localized display text as a busy status message when importing a file.
      * 
      * @return a string representing the localized text.

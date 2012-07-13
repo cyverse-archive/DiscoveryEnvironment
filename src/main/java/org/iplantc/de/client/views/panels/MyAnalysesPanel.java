@@ -520,8 +520,8 @@ public class MyAnalysesPanel extends ContentPanel {
 
         @Override
         public void onSuccess(String result) {
-            NotifyInfo.notify(NotificationHelper.Category.ANALYSIS, "Success!", "Job \"" + ae.getName()
-                    + "\" stopped successfully.", null);
+            NotifyInfo.notify(NotificationHelper.Category.ANALYSIS, I18N.DISPLAY.success(),
+                    I18N.DISPLAY.jobStopSuccess(ae.getName()), null);
         }
 
         @Override
