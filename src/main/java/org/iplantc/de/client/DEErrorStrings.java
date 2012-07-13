@@ -85,7 +85,7 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * 
      * @return localized error string.
      */
-    String stopJobError();
+    String stopJobError(String jobName);
 
     /**
      * Error message displayed when a job fails to launch.

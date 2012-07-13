@@ -89,6 +89,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String jobname();
 
     /**
+     * Localized display used for the Job cancel button on the analysis window.
+     * 
+     * @return a string representing the localized text.
+     */
+    String cancelJob();
+
+    /**
      * Localized display text used for both the My Data window caption and shortcut.
      * 
      * @return a string representing the localized text.

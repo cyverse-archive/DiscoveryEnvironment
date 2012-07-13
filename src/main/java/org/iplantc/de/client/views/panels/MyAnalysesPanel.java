@@ -218,7 +218,7 @@ public class MyAnalysesPanel extends ContentPanel {
     }
 
     private Button buildCancelJobButton() {
-        Button b = new Button("Cancel Job");
+        Button b = new Button(I18N.DISPLAY.cancelJob());
         b.setId(CANCEL_JOB_ITEM_ID);
         b.setIcon(AbstractImagePrototype.create(Resources.ICONS.stop()));
         b.setEnabled(false);
@@ -530,7 +530,7 @@ public class MyAnalysesPanel extends ContentPanel {
              * JDS Send generic error message. In the future, the "error_code" string should be parsed
              * from the JSON to provide more detailed user feedback.
              */
-            ErrorHandler.post(I18N.ERROR.stopJobError(), caught);
+            ErrorHandler.post(I18N.ERROR.stopJobError(ae.getName()), caught);
         }
 
     }
