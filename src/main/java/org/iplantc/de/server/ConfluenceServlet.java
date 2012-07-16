@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -137,8 +138,8 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      */
     private String replaceTemplate(String template, String toolName, String description) {
         String defaultStars = WHITE_STAR + WHITE_STAR + WHITE_STAR + WHITE_STAR + WHITE_STAR;
-        return template.replaceAll(TOOL_NAME_PLACEHOLDER, toolName)
-                .replaceAll(DESCRIPTION_PLACEHOLDER, description)
+        return template.replaceAll(TOOL_NAME_PLACEHOLDER, Matcher.quoteReplacement(toolName))
+                .replaceAll(DESCRIPTION_PLACEHOLDER, Matcher.quoteReplacement(description))
                 .replace(AVG_RATING_PLACEHOLDER, defaultStars);
     }
 

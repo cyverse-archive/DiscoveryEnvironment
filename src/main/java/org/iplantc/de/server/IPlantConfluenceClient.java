@@ -19,7 +19,7 @@ import com.martiansoftware.jsap.JSAP;
  * 
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
-    private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
+    private static final Logger LOG = Logger.getLogger(IPlantConfluenceClient.class);
 
     private final ConfluenceProperties properties;
 
@@ -52,13 +52,8 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         final String parent = properties.getConfluenceParentPage();
         final String space = properties.getConfluenceSpaceName();
 
-        final String safeTitle;
-        try {
-            safeTitle = URLEncoder.encode(title, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ClientException("Unable to encode the documentaiton URL");
-        }
-
+        final String safeTitle = title.replaceAll("[:@/\\\\|^#;\\[\\]{}<>]", "_") //$NON-NLS-1$ //$NON-NLS-2$
+                .replaceAll("^[$~]", "_").replaceAll("^[.]+", "_"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         callService(new ServiceCall<Void>() {
             @Override
             public Void doit() throws RemoteException, ClientException {
@@ -68,7 +63,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
                     try {
                         page = getPage(safeTitle, space);
                     } catch (ClientException cx) {
-                        LOG.debug(cx.getMessage());
+                        LOG.debug("Page does not exist?\n" + cx.getMessage());
                         // page does not exist, continue creating page.
                     }
 
@@ -89,7 +84,11 @@ public class IPlantConfluenceClient extends ConfluenceClient {
             }
         });
 
-        return properties.getConfluenceSpaceUrl() + safeTitle;
+        try {
+            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(safeTitle, "UTF-8"); //$NON-NLS-1$
+        } catch (UnsupportedEncodingException e) {
+            throw new ClientException("Unable to encode the documentaiton URL");
+        }
     }
 
     public String movePage(final String oldTitle, final String newTitle) throws RemoteException,
@@ -115,7 +114,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
         });
 
         try {
-            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(newTitle, "UTF-8");
+            return properties.getConfluenceSpaceUrl() + URLEncoder.encode(newTitle, "UTF-8"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             throw new ClientException("Unable to encode the documentaiton URL");
         }
