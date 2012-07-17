@@ -9,14 +9,14 @@ import com.google.gwt.json.client.JSONString;
 
 /**
  * Builder class to create JSON for an upload payload event.
- * 
+ *
  * @author amuir
- * 
+ *
  */
 public class UploadEventJSONBuilder extends AbstractEventJSONBuilder {
     /**
      * Instantiate from an action.
-     * 
+     *
      * @param action action tag to be added to our payload.
      */
     public UploadEventJSONBuilder(String action) {
@@ -43,18 +43,13 @@ public class UploadEventJSONBuilder extends AbstractEventJSONBuilder {
         JSONObject ret = null; // assume failure
 
         if (json != null) {
-            // JSONObject jsonObj = JSONParser.parseStrict(json).isObject();
-            //
-            // if (jsonObj != null) {
-            //                ret = "{\"type\": \"data\", \"message\": {\"id\": \"someId\", \"text\": \"" //$NON-NLS-1$
-            //                        + buildMessageText(jsonObj) + "\"}, \"payload\": " + buildPayload(jsonObj) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-            // }
             ret = new JSONObject();
             ret.put("type", new JSONString("data"));
             JSONObject message = new JSONObject();
             message.put("id", new JSONString("someId"));
             message.put("text", new JSONString(buildMessageText(json)));
             ret.put("message", message);
+            ret.put("payload", buildPayload(json));
         }
 
         return ret;

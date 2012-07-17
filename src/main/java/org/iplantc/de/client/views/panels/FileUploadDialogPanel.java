@@ -49,9 +49,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Panel component for uploading files.
- * 
+ *
  * @author lenards
- * 
+ *
  */
 public class FileUploadDialogPanel extends IPlantDialogPanel {
     private static final String ID_WRAP = "idWrap"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
     /**
      * Instantiate from hidden fields, URL, and handler.
-     * 
+     *
      * @param hiddenFields collection of hidden form fields.
      * @param servletActionUrl servlet URL for the upload action.
      * @param handler handler to be executed on upload completion.
@@ -221,6 +221,14 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
         FileUploadField ret = new FileUploadField();
         ret.setId(ID_FILE_UPLD + index);
         ret.setName("file"); //$NON-NLS-1$
+        ret.addListener(Events.OnChange, new Listener<FieldEvent>() {
+            @Override
+            public void handleEvent(FieldEvent be) {
+                FileUploadField fileUploadField = (FileUploadField)be.getBoxComponent();
+                fileUploadField.setValue(fileUploadField.getValue().replaceAll(".*[\\\\/]", ""));
+            }
+
+        });
         ret.addListener(Events.Valid, new Listener<FieldEvent>() {
 
             @Override
