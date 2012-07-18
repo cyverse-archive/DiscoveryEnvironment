@@ -44,10 +44,10 @@ public class ClientDataModel {
         RpcProxy<List<Folder>> proxy = new RpcProxy<List<Folder>>() {
             @Override
             protected void load(Object loadConfig, final AsyncCallback<List<Folder>> callback) {
-                Folder folder = (Folder)loadConfig;
+                final Folder parentFolder = (Folder)loadConfig;
 
                 // load the folder contents of the given folder, without the files
-                service.getFolderContents(folder.getId(), false, new AsyncCallback<String>() {
+                service.getFolderContents(parentFolder.getId(), false, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         // build a folder list to pass to the callback given to the proxy's load method.
@@ -60,6 +60,10 @@ public class ClientDataModel {
                                 folderList.add(new Folder(JsonUtil.getObjectAt(folders, i)));
                             }
                         }
+
+                        // Update the parent folder's hasSubDirs flag.
+                        parentFolder.setHasSubFolders(!folderList.isEmpty());
+                        heirarchy.update(parentFolder);
 
                         // pass the list to the proxy's callback
                         callback.onSuccess(folderList);
