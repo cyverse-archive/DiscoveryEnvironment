@@ -55,7 +55,10 @@ public class DiskResourceServiceFacade {
      * @param callback executed when RPC call completes.
      */
     public void getHomeFolder(AsyncCallback<String> callback) {
-        getFolderContents(null, false, callback);
+        String address = serviceNamePrefix + ".root-folders"; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        callService(callback, wrapper);
     }
 
     /**
