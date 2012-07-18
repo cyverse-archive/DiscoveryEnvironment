@@ -7,7 +7,9 @@ import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
+import org.iplantc.core.uiapplications.client.util.AnalysisUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Scroll;
@@ -37,7 +39,6 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 public class EditAppDetailsPanel extends LayoutContainer {
     private static final String INTEGRATOR_NAME = "integName"; //$NON-NLS-1$
@@ -194,8 +195,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private void buildFields() {
-        appNameField = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.name(), false, null,
-                Analysis.NAME, null, 255);
+        appNameField = buildAppNameField();
 
         integratorNameField = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.integratorName(), false,
                 null, INTEGRATOR_NAME, null, 32);
@@ -210,6 +210,16 @@ public class EditAppDetailsPanel extends LayoutContainer {
         chkGroup = new CheckBoxGroup();
         chkGroup.setFieldLabel(I18N.DISPLAY.tempDisable());
         chkGroup.add(isDisabledField);
+    }
+
+    private TextField<String> buildAppNameField() {
+        TextField<String> ret = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.name(), false, null,
+                Analysis.NAME, null, 255);
+
+        // Set restricted characters in this field's regex validation.
+        AnalysisUtil.setAppNameRegexValidation(ret);
+
+        return ret;
     }
 
     private void addNameFieldListener() {
