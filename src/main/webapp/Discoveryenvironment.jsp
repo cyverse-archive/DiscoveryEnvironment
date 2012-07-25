@@ -24,6 +24,8 @@ response.setDateHeader("Expires", 0);
 <link type="text/css" rel="stylesheet" href="Discoveryenvironment.css">
 <link type="image/x-icon" rel="shortcut icon" href="images/favicon.ico">
 
+<link type="text/css" rel="stylesheet" href="gxt-form-iplant.css">
+
 <!-- set by i18n code -->
 <title></title>
 
