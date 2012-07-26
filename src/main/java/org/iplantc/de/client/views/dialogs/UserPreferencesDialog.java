@@ -36,14 +36,16 @@ public class UserPreferencesDialog extends Dialog {
         initDialog();
         buildTabPanel();
         buildSettingPanel();
-        buildCollaboratorsPanel();
+        // @TODO temp remove collaborators panel
+        // buildCollaboratorsPanel();
         layout();
         addListener(Events.Hide, new Listener<ComponentEvent>() {
 
             @Override
             public void handleEvent(ComponentEvent be) {
                 settingPanel.saveData();
-                collabPanel.saveData();
+                // @TODO temp remove collaborators panel
+                // collabPanel.saveData();
                 EventBus.getInstance().fireEvent(new SettingsUpdatedEvent());
             }
         });
