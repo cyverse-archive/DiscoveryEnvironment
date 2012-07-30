@@ -64,7 +64,7 @@ public class NotificationWindowConfig extends WindowConfig {
         if (page != null && !page.isEmpty()) {
             return Integer.parseInt(page);
         } else {
-            return 1;
+            return 0;
         }
     }
 
