@@ -649,6 +649,7 @@ img.analysis_remove {
 	color: #555555;
 	padding: 3px 10px;
 	white-space: normal;
+	cursor:default;
 }
 
 .search-item h3 {
@@ -718,4 +719,8 @@ img.analysis_remove {
 .notification_context {
 	text-decoration: underline;
 	cursor: pointer; 
+}
+
+.new_notification {
+	background-color: #DFE8F6;
 }

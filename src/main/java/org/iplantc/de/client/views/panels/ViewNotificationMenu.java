@@ -20,6 +20,7 @@ import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.utils.NotifyInfo;
 
+import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
@@ -32,6 +33,7 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -46,10 +48,12 @@ public class ViewNotificationMenu extends Menu {
 
     private int totalNotificationCount;
 
+    private CustomListView<Notification> view;
+
     public ViewNotificationMenu() {
         setLayout(new FitLayout());
         registerEventHandlers();
-        CustomListView<Notification> view = initList();
+        view = initList();
         LayoutContainer lc = buildPanel();
         lc.add(view);
         add(lc);
@@ -96,6 +100,7 @@ public class ViewNotificationMenu extends Menu {
                 addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
                         NotificationHelper.getInstance().buildDataContext(event.getPayload()),
                         event.getPayload());
+                highlightNewNotifications();
             }
         });
 
@@ -106,7 +111,7 @@ public class ViewNotificationMenu extends Menu {
                 addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
                         NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()),
                         event.getPayload());
-
+                highlightNewNotifications();
             }
         });
     }
@@ -114,6 +119,7 @@ public class ViewNotificationMenu extends Menu {
     @Override
     public void showAt(int x, int y) {
         super.showAt(x, y);
+        highlightNewNotifications();
         markAsSeen();
     }
 
@@ -124,6 +130,7 @@ public class ViewNotificationMenu extends Menu {
         if (new_notifications.size() > 0) {
             for (Notification n : new_notifications) {
                 arr.set(i++, new JSONString(n.get("id").toString()));
+                n.set(Notification.SEEN, true);
             }
 
             JSONObject obj = new JSONObject();
@@ -231,6 +238,20 @@ public class ViewNotificationMenu extends Menu {
         return template.toString();
     }
 
+    private void highlightNewNotifications() {
+        List<Notification> new_notifications = store.getModels();
+        for (Notification n : new_notifications) {
+            System.out.println("seen--->" + n.get(Notification.SEEN));
+            if (n.get(Notification.SEEN) == null
+                    || Boolean.parseBoolean(n.get(Notification.SEEN).toString()) == false) {
+                view.highlight(view.getStore().indexOf(n), true);
+            } else {
+                view.highlight(view.getStore().indexOf(n), false);
+            }
+
+        }
+    }
+
     private class CustomListView<M extends ModelData> extends ListView<M> {
         private String emptyText;
 
@@ -264,6 +285,16 @@ public class ViewNotificationMenu extends Menu {
         @SuppressWarnings("unused")
         public String getEmptyText() {
             return emptyText;
+        }
+
+        public void highlight(int index, boolean highLight) {
+            Element e = getElement(index);
+            if (e != null) {
+                fly(e).setStyleName("new_notification", highLight);
+                if (highLight && GXT.isAriaEnabled()) {
+                    setAriaState("aria-activedescendant", e.getId());
+                }
+            }
         }
     }
 

@@ -14,6 +14,9 @@ import com.google.gwt.json.client.JSONValue;
  * Models a notification presented by the system to the user.
  */
 public class Notification extends DEBaseModelData {
+    public static final String SEEN = "seen";
+    public static final String ID = "id";
+    public static final String CONTEXT = "context";
     /** The format used internally, not to be confused with the display format. */
     public static final DateTimeFormat TIMESTAMP_FORMAT = DateTimeFormat
             .getFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z"); //$NON-NLS-1$
@@ -36,11 +39,12 @@ public class Notification extends DEBaseModelData {
         if (message == null) {
             clear();
         } else {
-            set("id", new Date().getTime()); //$NON-NLS-1$ //$NON-NLS-2$
+            set(ID, new Date().getTime()); //$NON-NLS-1$ //$NON-NLS-2$
             set(PROP_CATEGORY, ""); //$NON-NLS-1$
             set(PROP_MESSAGE, message);
-            set("context", null); //$NON-NLS-1$
+            set(CONTEXT, null); //$NON-NLS-1$
             set(PROP_TIMESTAMP, new Date());
+            set(SEEN, false);
         }
     }
 
@@ -54,7 +58,7 @@ public class Notification extends DEBaseModelData {
         if (message == null) {
             clear();
         } else {
-            set("id", getField(message, "id")); //$NON-NLS-1$ //$NON-NLS-2$
+            set(ID, getField(message, ID)); //$NON-NLS-1$ //$NON-NLS-2$
             set(PROP_CATEGORY, getField(message, PROP_CATEGORY));
             set(PROP_MESSAGE, getField(message, "text")); //$NON-NLS-1$
             if (message.get(PROP_TIMESTAMP) != null) {
@@ -64,7 +68,7 @@ public class Notification extends DEBaseModelData {
             }
         }
 
-        set("context", context); //$NON-NLS-1$
+        set(CONTEXT, context); //$NON-NLS-1$
     }
 
     private void setTimeStamp(String timestamp) {
@@ -95,7 +99,7 @@ public class Notification extends DEBaseModelData {
     }
 
     private void clear() {
-        set("id", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        set(ID, ""); //$NON-NLS-1$ //$NON-NLS-2$
         set(PROP_CATEGORY, ""); //$NON-NLS-1$
         set(PROP_MESSAGE, ""); //$NON-NLS-1$
         set(PROP_TIMESTAMP, ""); //$NON-NLS-1$
@@ -125,7 +129,7 @@ public class Notification extends DEBaseModelData {
      * @return a string representing the notification id.
      */
     public String getId() {
-        return get("id").toString(); //$NON-NLS-1$
+        return get(ID).toString(); //$NON-NLS-1$
     }
 
     /**
@@ -166,7 +170,7 @@ public class Notification extends DEBaseModelData {
      * @return the client command
      */
     public String getContext() {
-        return get("context"); //$NON-NLS-1$
+        return get(CONTEXT); //$NON-NLS-1$
     }
 
     /**
