@@ -241,7 +241,6 @@ public class ViewNotificationMenu extends Menu {
     private void highlightNewNotifications() {
         List<Notification> new_notifications = store.getModels();
         for (Notification n : new_notifications) {
-            System.out.println("seen--->" + n.get(Notification.SEEN));
             if (n.get(Notification.SEEN) == null
                     || Boolean.parseBoolean(n.get(Notification.SEEN).toString()) == false) {
                 view.highlight(view.getStore().indexOf(n), true);
@@ -290,9 +289,13 @@ public class ViewNotificationMenu extends Menu {
         public void highlight(int index, boolean highLight) {
             Element e = getElement(index);
             if (e != null) {
-                fly(e).setStyleName("new_notification", highLight);
-                if (highLight && GXT.isAriaEnabled()) {
-                    setAriaState("aria-activedescendant", e.getId());
+                if (highLight) {
+                    fly(e).setStyleName("new_notification", highLight);
+                    if (highLight && GXT.isAriaEnabled()) {
+                        setAriaState("aria-activedescendant", e.getId());
+                    }
+                } else {
+                    fly(e).removeStyleName("new_notification");
                 }
             }
         }
