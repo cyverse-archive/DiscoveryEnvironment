@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -109,8 +110,8 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
     private class SaveasServiceCallbackHandler extends DiskResourceServiceCallback {
 
-        private String parentFolder;
-        private String fileName;
+        private final String parentFolder;
+        private final String fileName;
 
         public SaveasServiceCallbackHandler(String path) {
             this.fileName = DiskResourceUtil.parseNameFromPath(path);
@@ -244,7 +245,12 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
                 link.setToolTip(full_text);
                 return link;
             } else {
-                return "<span qtip='" + full_text + "'>" + full_text + "</span>";
+                Text text = new Text(full_text);
+                text.setToolTip(full_text);
+                text.setTagName("span");
+                text.getToolTip().setMaxWidth(Integer.MAX_VALUE);
+
+                return text;
             }
         }
     }
