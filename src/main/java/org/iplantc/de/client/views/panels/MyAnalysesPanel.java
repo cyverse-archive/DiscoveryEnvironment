@@ -422,6 +422,7 @@ public class MyAnalysesPanel extends ContentPanel {
         public void componentSelected(ButtonEvent ce) {
             AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
             Dialog d = new Dialog();
+            d.setLayout(new FitLayout());
             d.setResizable(false);
             d.setHeading(I18N.DISPLAY.viewParameters(ae.getName()));
             d.add(new AnalysisParameterViewerPanel(ae.getId()));
