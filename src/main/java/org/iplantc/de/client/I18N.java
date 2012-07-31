@@ -16,7 +16,4 @@ public class I18N {
             .create(DEDisplayStaticText.class);
     /** Error messages */
     public static final DEErrorStrings ERROR = (DEErrorStrings)GWT.create(DEErrorStrings.class);
-    /** Validation messages */
-    public static final IPlantValidationMessages RULES = (IPlantValidationMessages)GWT
-            .create(IPlantValidationMessages.class);
 }

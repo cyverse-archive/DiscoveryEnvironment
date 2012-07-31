@@ -74,26 +74,26 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String importFailed(String source);
 
     /**
-     * Error message displayed when a job fails to delete.
+     * Error message displayed when an analysis fails to delete.
      * 
      * @return localized error string.
      */
-    String deleteJobError();
+    String deleteAnalysisError();
 
     /**
-     * Error message displayed when a request to stop a running job fails.
+     * Error message displayed when a request to stop a running analysis fails.
      * 
      * @return localized error string.
      */
-    String stopJobError(String jobName);
+    String stopAnalysisError(String analysisName);
 
     /**
-     * Error message displayed when a job fails to launch.
+     * Error message displayed when an analysis fails to launch.
      * 
-     * @param jobName the name of the failed job.
+     * @param analysisName the name of the failed analysis.
      * @return localized error string.
      */
-    String jobFailedToLaunch(String jobName);
+    String analysisFailedToLaunch(String analysisName);
 
     /**
      * Error message displayed when the discovery environment properties fail to load.
@@ -129,13 +129,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String invalidFilenameEntered();
-
-    /**
-     * Error displayed when the UI is unable to retrieve notifications from the server.
-     * 
-     * @return localized error string.
-     */
-    String notificationRetrievalFail();
 
     /**
      * Error displayed when the service to delete notifications has failed.
@@ -500,13 +493,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return
      */
     String shareFailed();
-
-    /**
-     * Localized error message to show when something goes wrong with settings
-     * 
-     * @return
-     */
-    String settingsLoadError();
 
     /**
      * Localized error message to show when something goes wrong with adding collaborators

@@ -218,7 +218,7 @@ public class MyAnalysesPanel extends ContentPanel {
     }
 
     private Button buildCancelJobButton() {
-        Button b = new Button(I18N.DISPLAY.cancelJob());
+        Button b = new Button(I18N.DISPLAY.cancelAnalysis());
         b.setId(CANCEL_JOB_ITEM_ID);
         b.setIcon(AbstractImagePrototype.create(Resources.ICONS.stop()));
         b.setEnabled(false);
@@ -497,7 +497,7 @@ public class MyAnalysesPanel extends ContentPanel {
 
         @Override
         public void onFailure(Throwable caught) {
-            ErrorHandler.post(I18N.ERROR.deleteJobError(), caught);
+            ErrorHandler.post(I18N.ERROR.deleteAnalysisError(), caught);
         }
 
         private void updateGrid(List<AnalysisExecution> execs) {
@@ -522,7 +522,7 @@ public class MyAnalysesPanel extends ContentPanel {
         @Override
         public void onSuccess(String result) {
             NotifyInfo.notify(NotificationHelper.Category.ANALYSIS, I18N.DISPLAY.success(),
-                    I18N.DISPLAY.jobStopSuccess(ae.getName()), null);
+                    I18N.DISPLAY.analysisStopSuccess(ae.getName()), null);
         }
 
         @Override
@@ -531,7 +531,7 @@ public class MyAnalysesPanel extends ContentPanel {
              * JDS Send generic error message. In the future, the "error_code" string should be parsed
              * from the JSON to provide more detailed user feedback.
              */
-            ErrorHandler.post(I18N.ERROR.stopJobError(ae.getName()), caught);
+            ErrorHandler.post(I18N.ERROR.stopAnalysisError(ae.getName()), caught);
         }
 
     }

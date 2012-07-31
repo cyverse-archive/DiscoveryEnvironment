@@ -101,7 +101,7 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void buildLaunchJobButton() {
-        btnLaunchJob = new Button(I18N.DISPLAY.launchJob());
+        btnLaunchJob = new Button(I18N.DISPLAY.launchAnalysis());
         btnLaunchJob.setIcon(AbstractImagePrototype.create(Resources.ICONS.applicationLaunch()));
         btnLaunchJob.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override

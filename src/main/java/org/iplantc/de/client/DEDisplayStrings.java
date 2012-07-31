@@ -75,46 +75,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String folderName();
 
     /**
-     * Localized display text used for the 'Uploaded' column in the data browser grid.
+     * Localized display text used as a caption in the Analysis Launch dialog.
      * 
      * @return a string representing the localized text.
      */
-    String uploaded();
+    String analysisName();
 
     /**
-     * Localized display text used as a caption in the Job Launch dialog.
+     * Localized display used for the Analysis cancel button on the analysis window.
      * 
      * @return a string representing the localized text.
      */
-    String jobname();
-
-    /**
-     * Localized display used for the Job cancel button on the analysis window.
-     * 
-     * @return a string representing the localized text.
-     */
-    String cancelJob();
-
-    /**
-     * Localized display text used for both the My Data window caption and shortcut.
-     * 
-     * @return a string representing the localized text.
-     */
-    String myData();
-
-    /**
-     * Localized display text used anywhere 'Import' is needed.
-     * 
-     * @return a string representing the localized text.
-     */
-    String tagImport();
-
-    /**
-     * Localized display text used for displaying 'Save Description'.
-     * 
-     * @return a string representing the localized text.
-     */
-    String saveDescription();
+    String cancelAnalysis();
 
     /**
      * Localized display text used as a tab caption in the viewer.
@@ -122,13 +94,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String raw();
-
-    /**
-     * Localized display text used as an error in Independent Contrast.
-     * 
-     * @return a string representing the localized text.
-     */
-    String getListOfTreesError();
 
     /**
      * Localized display text used as a warning in data management.
@@ -169,11 +134,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String deleteFilesMsg();
 
     /**
-     * Localized text for display as button text for the execution of a job.
+     * Localized text for display as button text for the execution of an analysis.
      * 
      * @return a string representing the localized text.
      */
-    String launchJob();
+    String launchAnalysis();
 
     /**
      * Localized text for display as button text for viewing data or results.
@@ -197,11 +162,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String selectedFolder();
 
     /**
-     * Localized text displayed as the default name in the job name textfield.
+     * Localized text displayed as the default name in the analysis name textfield.
      * 
      * @return a string representing the localized text.
      */
-    String defaultJobName();
+    String defaultAnalysisName();
 
     /**
      * Localized text for display when a user is about to close a window that contained changes that have
@@ -235,37 +200,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String urlPrompt();
 
     /**
-     * Localized text for display as a label in a URL import form.
-     * 
-     * This text is also used as an identifier for that form field.
-     * 
-     * @return a string representing the localized text.
-     */
-    String url();
-
-    /**
-     * Localized text for display as a tab heading for a user-provided file description.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileDescription();
-
-    /**
-     * Localized text that provides a description on how account activation and password reset operations
-     * will be handled..
-     * 
-     * @return a string representing the localized text.
-     */
-    String emailInfo();
-
-    /**
-     * Localized text for display as a label for the newsletter checkbox.
-     * 
-     * @return a string representing the localized text.
-     */
-    String newsLetterSubscribe();
-
-    /**
      * Localized text for display as a hyperlink for user's preferences.
      * 
      * @return a string representing the localized text.
@@ -273,41 +207,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String preferences();
 
     /**
-     * Localized text for display when launch of a job is successful.
+     * Localized text for display when launch of a analysis is successful.
      * 
      * @return a string representing the localized text.
      */
     String launchSuccess();
 
     /**
-     * Localized text for display when a job was successfully stopped.
+     * Localized text for display when an analysis was successfully stopped.
      * 
      * @return a string representing the localized text.
      */
-    String jobStopSuccess(String jobName);
-
-    /**
-     * Localized display text as a busy status message when importing a file.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fileImportStatus();
-
-    /**
-     * Localized display text for a stop button that allows a user to stop a job.
-     * 
-     * This text appears in the toolbar of the job status grid.
-     * 
-     * @return a string representing the localized text.
-     */
-    String stop();
-
-    /**
-     * Localized display text for a message shown when a user preference is successfully saved.
-     * 
-     * @return a string representing the localized text.
-     */
-    String userPrefSaveSuccess();
+    String analysisStopSuccess(String analysisName);
 
     /**
      * Localized display text for a message shown with a user makes a request import file data from a
@@ -353,25 +264,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String createdDateGridHeader();
 
     /**
-     * Text used as the title bar heading for the User Manual documentation window.
+     * Localized text to display when an analysis is launching but RPC has not returned.
      * 
      * @return a string representing the localized text.
      */
-    String userManualHeader();
-
-    /**
-     * Localized text to display when a job is launching but RPC has not returned.
-     * 
-     * @return a string representing the localized text.
-     */
-    String launchingJob();
-
-    /**
-     * The title of the logout message window.
-     * 
-     * @return a string representing the localized text.
-     */
-    String logoutMessageTitle();
+    String launchingAnalysis();
 
     /**
      * The text message to display when users are logging out.
@@ -380,20 +277,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String logoutMessageText(String logoutUrl);
-
-    /**
-     * The file type selection field in File Upload dialog
-     * 
-     * @return a string representing the localized text.
-     */
-    String selectFileType();
-
-    /**
-     * Display text for select items menu item.
-     * 
-     * @return a string representing the text.
-     */
-    String selectItems();
 
     /**
      * Display text for my analysis panel
@@ -433,20 +316,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String analysesExecDeleteWarning();
 
     /**
-     * Display text for the warning message when a user tries to cancel a running job.
-     * 
-     * @return a String representing the text
-     */
-    String analysesCancelJobWarning();
-
-    /**
-     * Display text for remove.
-     * 
-     * @return a String representing the text.
-     */
-    String remove();
-
-    /**
      * Display text for start date.
      * 
      * @return a String representing the text.
@@ -473,13 +342,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String image();
-
-    /**
-     * Localized display text used as a tab caption in the viewer.
-     * 
-     * @return a string representing the localized text.
-     */
-    String pdf();
 
     /**
      * Localized text for display as link text for viewing tree data.
@@ -516,10 +378,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String lastModified();
 
-    String catalog();
-
-    String up();
-
     String idParentInvalid();
 
     /**
@@ -555,32 +413,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String nGigabytes(String n);
 
     /**
-     * Localized display text for the heading on the Data Navigation Panel.
-     * 
-     * @return a string representing the localized text.
-     */
-    String navigation();
-
-    /**
-     * Localized display text for the "from data source" menu item.
-     * 
-     * @return a string representing the localized text.
-     */
-    String fromDataSource();
-
-    /**
      * Localized display text for the resource selection dialog.
      * 
      * @return a string representing the localized text.
      */
     String selectedResource();
-
-    /**
-     * Localized display text for the DE catalog
-     * 
-     * @return a string representing the localized text.
-     */
-    String deCatalog();
 
     /**
      * Localized display text for the DE analysis
@@ -616,13 +453,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return string representing the text
      */
     String data();
-
-    /**
-     * Localized text for analysis
-     * 
-     * @return string representing the text
-     */
-    String analysis();
 
     /**
      * Localized text for applications
@@ -674,13 +504,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String hide();
 
     /**
-     * Localized text for all
-     * 
-     * @return string representing the text
-     */
-    String all();
-
-    /**
      * Localized text for mark as Favourite
      * 
      * @return string representing the text
@@ -702,25 +525,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String unrate();
 
     /**
-     * localized text for enabling debug for jobs
+     * localized text for enabling debug for analyses
      * 
      * @return string representing the text
      */
     String debug();
-
-    /**
-     * Localized display text for a "Detailed View" label.
-     * 
-     * @return a string representing the localized text.
-     */
-    String detailView();
-
-    /**
-     * Localized display text for a "Basic View" label.
-     * 
-     * @return a string representing the localized text.
-     */
-    String basicView();
 
     /**
      * Localized error message for invalid import url
@@ -765,7 +574,7 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String readWrite();
 
     /**
-     * Localized text for email job notifications
+     * Localized text for email analysis notifications
      * 
      * @return string representing the text
      */
@@ -878,13 +687,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String appCommentExplanation(String appName);
 
     /**
-     * Localized text for job output destination folder selection
+     * Localized text for analysis output destination folder selection
      * 
      * @param defaultPath default output folder for analyses
      * 
      * @return a string representing the localized text.
      */
-    String selectJobOutputDir(String defaultPath);
+    String selectAnalysisOutputDir(String defaultPath);
 
     /**
      * Localized text for analysis submit confirmation dialog
@@ -1123,13 +932,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String collabSearchPrompt();
 
     /**
-     * Localized display text for searching status
-     * 
-     * @return a string representing the localized text.
-     */
-    String searching();
-
-    /**
      * Localized display text for no collaborators
      * 
      * @return a string representing the localized text.
@@ -1201,13 +1003,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String searchCollab();
 
     /**
-     * Display text for the actions panel.
-     * 
-     * @return a String representing the text.
-     */
-    String actions();
-
-    /**
      * The display text for the view raw menu item.
      * 
      * @return the localized display text
@@ -1229,7 +1024,7 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String saveSession();
 
     /**
-     * default job output folder
+     * default analysis output folder
      * 
      * @return the localized display text
      */

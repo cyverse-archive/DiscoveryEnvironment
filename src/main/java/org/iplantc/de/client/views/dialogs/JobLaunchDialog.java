@@ -96,7 +96,7 @@ public class JobLaunchDialog extends Dialog {
         fieldName.setMaxLength(75);
         fieldName.setWidth(320);
         fieldName.setId("idJobName"); //$NON-NLS-1$
-        fieldName.setValue(I18N.DISPLAY.defaultJobName());
+        fieldName.setValue(I18N.DISPLAY.defaultAnalysisName());
         fieldName.setSelectOnFocus(true);
         fieldName.setAllowBlank(false);
         fieldName.setValidator(new JobNameValidator());
@@ -140,7 +140,7 @@ public class JobLaunchDialog extends Dialog {
         VerticalPanel ret = new VerticalPanel();
         ret.setSpacing(5);
 
-        ret.add(new LabelField(I18N.DISPLAY.jobname() + COLON));
+        ret.add(new LabelField(I18N.DISPLAY.analysisName() + COLON));
 
         initNameField();
 
@@ -155,7 +155,7 @@ public class JobLaunchDialog extends Dialog {
         folderSelector = new FolderSelector(new checkPermissions(), null);
         folderSelector.displayFolderName(defaultOutputFolder);
         folderSelector.setDefaultFolderId(defaultOutputFolder);
-        ret.add(new Label(I18N.DISPLAY.selectJobOutputDir("/"
+        ret.add(new Label(I18N.DISPLAY.selectAnalysisOutputDir("/"
                 + DEProperties.getInstance().getDefaultOutputFolderName())
                 + COLON));
         ret.add(folderSelector.getWidget());
@@ -294,7 +294,7 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private void init() {
-        String caption = I18N.DISPLAY.launchJob();
+        String caption = I18N.DISPLAY.launchAnalysis();
         setHeading(caption);
 
         setResizable(false);
@@ -329,7 +329,7 @@ public class JobLaunchDialog extends Dialog {
 
     private void handleJobLaunchFailure(Throwable caught) {
         closeDialog();
-        ErrorHandler.post(I18N.ERROR.jobFailedToLaunch(fieldName.getValue()), caught);
+        ErrorHandler.post(I18N.ERROR.analysisFailedToLaunch(fieldName.getValue()), caught);
     }
 
     private void launchJob(String idWorkspace, String json, AsyncCallback<String> callback) {
@@ -360,7 +360,7 @@ public class JobLaunchDialog extends Dialog {
 
     private void exportLaunch(String type, String json) {
         String idWorkspace = uinfo.getWorkspaceId();
-        mask(I18N.DISPLAY.launchingJob());
+        mask(I18N.DISPLAY.launchingAnalysis());
 
         // create our callback - this is the same regardless of the job type
         AsyncCallback<String> callback = buildJobLaunchCallback();

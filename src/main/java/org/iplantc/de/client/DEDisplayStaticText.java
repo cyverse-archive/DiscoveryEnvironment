@@ -9,45 +9,6 @@ import com.google.gwt.i18n.client.Constants;
  * 
  */
 public interface DEDisplayStaticText extends Constants {
-    /**
-     * 
-     * Display text for TNRS column header.
-     * 
-     * @return a String representing the text.
-     */
-    String submittedName();
-
-    /**
-     * 
-     * Display text for TNRS column header.
-     * 
-     * @return a String representing the text.
-     */
-    String selectedMatch();
-
-    /**
-     * 
-     * Display text for TNRS column header.
-     * 
-     * @return a String representing the text.
-     */
-    String score();
-
-    /**
-     * 
-     * Display text for TNRS column header.
-     * 
-     * @return a String representing the text.
-     */
-    String detailsHeader();
-
-    /**
-     * 
-     * Display text for TNRS details hyper-link.
-     * 
-     * @return a String representing the text.
-     */
-    String detailsLink();
 
     /**
      * 
@@ -99,22 +60,6 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text when there is one notification.
-     * 
-     * @return a String representing the text.
-     */
-    String notificationCountOne();
-
-    /**
-     * 
-     * Display text when there are multiple notifications.
-     * 
-     * @return a String representing the text.
-     */
-    String notificationCountMultiple();
-
-    /**
-     * 
      * Display text for the word analysis. This could be used in multiple contexts.
      * 
      * @return a String representing the text.
@@ -123,7 +68,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status.
+     * Display text for analysis execution status.
      * 
      * @return a String representing the text.
      */
@@ -131,7 +76,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status.
+     * Display text for analysis execution status.
      * 
      * @return a String representing the text.
      */
@@ -139,7 +84,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status.
+     * Display text for analysis execution status.
      * 
      * @return a String representing the text.
      */
@@ -147,7 +92,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
@@ -155,7 +100,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
@@ -163,7 +108,7 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
@@ -171,21 +116,21 @@ public interface DEDisplayStaticText extends Constants {
 
     /**
      * 
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
     String held();
 
     /**
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
     String idle();
 
     /**
-     * Display text for job execution status
+     * Display text for analysis execution status
      * 
      * @return a String representing the text.
      */
