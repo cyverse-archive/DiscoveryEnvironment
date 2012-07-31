@@ -20,7 +20,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Provides access to remote services for operations related to job submission templates.
+ * Provides access to remote services for operations related to analysis submission templates.
  * 
  * @author Dennis Roberts
  */

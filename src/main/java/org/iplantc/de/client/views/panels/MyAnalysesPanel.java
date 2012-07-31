@@ -55,7 +55,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class MyAnalysesPanel extends ContentPanel {
 
     private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
-    private final String CANCEL_JOB_ITEM_ID = "idCancelJobBtn"; //$NON-NLS-1$
+    private final String CANCEL_ANALYSIS_ITEM_ID = "idCancelAnalysisBtn"; //$NON-NLS-1$
     private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn"; //$NON-NLS-1$
     private static final String VIEW_PARAMETER_ITEM_ID = "idViewParameter";
 
@@ -78,26 +78,26 @@ public class MyAnalysesPanel extends ContentPanel {
     private TextField<String> filter;
 
     /**
-     * Indicates the status of a job's.
+     * Indicates the status of an analysis.
      */
     public static enum EXECUTION_STATUS {
-        /** job status unknown */
+        /** analysis status unknown */
         UNKNOWN(I18N.CONSTANT.unknown()),
-        /** job is ready */
+        /** analysis is ready */
         SUBMITTED(I18N.CONSTANT.submitted()),
-        /** job is running */
+        /** analysis is running */
         RUNNING(I18N.CONSTANT.running()),
-        /** job is complete */
+        /** analysis is complete */
         COMPLETED(I18N.CONSTANT.completed()),
-        /** job timed out */
+        /** analysis timed out */
         HELD(I18N.CONSTANT.held()),
-        /** job failed */
+        /** analysis failed */
         FAILED(I18N.CONSTANT.failed()),
-        /** job was stopped */
+        /** analysis was stopped */
         SUBMISSION_ERR(I18N.CONSTANT.subErr()),
-        /** job is idle */
+        /** analysis is idle */
         IDLE(I18N.CONSTANT.idle()),
-        /** job is removed */
+        /** analysis is removed */
         REMOVED(I18N.CONSTANT.removed());
 
         private String displayText;
@@ -173,7 +173,7 @@ public class MyAnalysesPanel extends ContentPanel {
         topComponentMenu.add(buildViewOpButton());
         topComponentMenu.add(buildViewParamsButton());
         topComponentMenu.add(buildDeleteButton());
-        topComponentMenu.add(buildCancelJobButton());
+        topComponentMenu.add(buildCancelAnalysisButton());
         buildFilterField();
         topComponentMenu.add(filter);
     }
@@ -196,14 +196,14 @@ public class MyAnalysesPanel extends ContentPanel {
             case 1:
                 enableDeleteButtonByStatus();
                 enableViewButtonByStatus();
-                enableCancelJobButtonByStatus();
+                enableCancelAnalysisButtonByStatus();
                 break;
 
             default:
                 analyses_buttons.get(DELETE_ITEM_ID).enable();
                 analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).disable();
                 analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
-                enableCancelJobButtonByStatus();
+                enableCancelAnalysisButtonByStatus();
         }
     }
 
@@ -217,13 +217,13 @@ public class MyAnalysesPanel extends ContentPanel {
         return b;
     }
 
-    private Button buildCancelJobButton() {
+    private Button buildCancelAnalysisButton() {
         Button b = new Button(I18N.DISPLAY.cancelAnalysis());
-        b.setId(CANCEL_JOB_ITEM_ID);
+        b.setId(CANCEL_ANALYSIS_ITEM_ID);
         b.setIcon(AbstractImagePrototype.create(Resources.ICONS.stop()));
         b.setEnabled(false);
-        b.addSelectionListener(new CancelJobSelectListener());
-        analyses_buttons.put(CANCEL_JOB_ITEM_ID, b);
+        b.addSelectionListener(new CancelAnalysisSelectListener());
+        analyses_buttons.put(CANCEL_ANALYSIS_ITEM_ID, b);
 
         return b;
     }
@@ -340,12 +340,12 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
-    private void doCancelJob() {
+    private void doCancelAnalysis() {
         if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
             final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
             for (AnalysisExecution ae : execs) {
                 if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())) {
-                    facadeAnalysisService.stopJob(ae.getId(), new CancelJobServiceCallback(ae));
+                    facadeAnalysisService.stopAnalysis(ae.getId(), new CancelAnalysisServiceCallback(ae));
                 }
             }
         }
@@ -381,7 +381,7 @@ public class MyAnalysesPanel extends ContentPanel {
         analyses_buttons.get(DELETE_ITEM_ID).setEnabled(enable);
     }
 
-    private void enableCancelJobButtonByStatus() {
+    private void enableCancelAnalysisButtonByStatus() {
         List<AnalysisExecution> aes = analysisGrid.getSelectionModel().getSelectedItems();
         boolean enable = false;
         for (AnalysisExecution ae : aes) {
@@ -392,7 +392,7 @@ public class MyAnalysesPanel extends ContentPanel {
                 }
             }
         }
-        analyses_buttons.get(CANCEL_JOB_ITEM_ID).setEnabled(enable);
+        analyses_buttons.get(CANCEL_ANALYSIS_ITEM_ID).setEnabled(enable);
 
     }
 
@@ -403,10 +403,10 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
-    private class CancelJobSelectListener extends SelectionListener<ButtonEvent> {
+    private class CancelAnalysisSelectListener extends SelectionListener<ButtonEvent> {
         @Override
         public void componentSelected(ButtonEvent ce) {
-            doCancelJob();
+            doCancelAnalysis();
         }
     }
 
@@ -511,11 +511,11 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
-    private final class CancelJobServiceCallback implements AsyncCallback<String> {
+    private final class CancelAnalysisServiceCallback implements AsyncCallback<String> {
 
         private final AnalysisExecution ae;
 
-        public CancelJobServiceCallback(final AnalysisExecution ae) {
+        public CancelAnalysisServiceCallback(final AnalysisExecution ae) {
             this.ae = ae;
         }
 
@@ -552,7 +552,7 @@ public class MyAnalysesPanel extends ContentPanel {
             // did the user click yes?
             if (btn.getItemId().equals(Dialog.YES)) {
                 String body = buildDeleteRequestBody(execs);
-                facadeAnalysisService.deleteJob(idWorkspace, body, new DeleteSeviceCallback(
+                facadeAnalysisService.deleteAnalysis(idWorkspace, body, new DeleteSeviceCallback(
                         items_to_delete, execs));
             }
         }

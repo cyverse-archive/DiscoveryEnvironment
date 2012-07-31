@@ -28,10 +28,10 @@ public class AnalysisServiceFacade {
      * Delete an analysis execution
      * 
      * @param workspaceId unique id for a user's workspace.
-     * @param json id of job to delete.
+     * @param json id of analysis to delete.
      * @param callback executed when RPC call completes.
      */
-    public void deleteJob(String workspaceId, String json, AsyncCallback<String> callback) {
+    public void deleteAnalysis(String workspaceId, String json, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
                 + workspaceId + "/executions" + "/delete"; //$NON-NLS-1$ //$NON-NLS-2$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, json);
@@ -42,11 +42,11 @@ public class AnalysisServiceFacade {
     /**
      * Stop a currently running analysis
      * 
-     * @param jobId id of the job to be stopped.
+     * @param analysisId id of the analysis to be stopped.
      * @param callback executed when RPC call completes.
      */
-    public void stopJob(String jobId, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/" + jobId;
+    public void stopAnalysis(String analysisId, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/" + analysisId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
@@ -64,7 +64,7 @@ public class AnalysisServiceFacade {
      * Launch a wizard analysis
      * 
      * @param workspaceId unique id for a user's workspace.
-     * @param json JSON configuration of job to launch.
+     * @param json JSON configuration of analysis to launch.
      * @param callback executed when RPC call completes.
      */
     public void launchAnalysis(String workspaceId, String json, AsyncCallback<String> callback) {

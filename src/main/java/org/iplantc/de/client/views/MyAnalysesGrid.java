@@ -72,7 +72,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     /**
      * Set the id of our current selection.
      * 
-     * @param idCurrentSelection id of currently selected job.
+     * @param idCurrentSelection id of currently selected analysis.
      */
     public void setCurrentSelection(final String idCurrentSelection) {
         this.idCurrentSelection = idCurrentSelection;

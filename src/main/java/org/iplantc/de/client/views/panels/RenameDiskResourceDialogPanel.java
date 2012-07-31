@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.panels;
 
-import org.iplantc.core.client.widgets.validator.JobNameValidator;
+import org.iplantc.core.client.widgets.validator.AnalysisNameValidator;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 
@@ -19,7 +19,7 @@ public abstract class RenameDiskResourceDialogPanel extends IPlantPromptPanel {
      */
     public RenameDiskResourceDialogPanel(String caption, String id, String nameOrig,
             Component maskingParent) {
-        super(caption, -1, new JobNameValidator());
+        super(caption, -1, new AnalysisNameValidator());
 
         this.nameOrig = nameOrig;
         this.id = id;

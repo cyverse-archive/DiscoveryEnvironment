@@ -111,10 +111,10 @@ public class GwtTestEventJSONFactory extends GWTTestCase {
         validateJSON(test, "data"); //$NON-NLS-1$
     }
 
-    public void testBuildJobLaunchedJSON() {
+    public void testBuildAnalysisLaunchedJSON() {
         String json = "{\"name\": \"foo\", \"id\": \"id_analysis\"}"; //$NON-NLS-1$
 
-        JSONObject test = EventJSONFactory.build(EventJSONFactory.ActionType.JOB_LAUNCHED,
+        JSONObject test = EventJSONFactory.build(EventJSONFactory.ActionType.ANALYSIS_LAUNCHED,
                 JsonUtil.getObject(json));
 
         validateJSON(test, "analysis", false); //$NON-NLS-1$

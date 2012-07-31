@@ -2,7 +2,7 @@ package org.iplantc.de.client.views.dialogs;
 
 import org.iplantc.core.client.widgets.BoundedTextField;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
-import org.iplantc.core.client.widgets.validator.JobNameValidator;
+import org.iplantc.core.client.widgets.validator.AnalysisNameValidator;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -11,7 +11,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.JobLaunchedEvent;
+import org.iplantc.de.client.events.AnalysisLaunchedEvent;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
@@ -49,12 +49,12 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Provides the user interface for a user to launch a job within the system.
+ * Provides the user interface for a user to launch an analysis within the system.
  * 
  * @author amuir
  * 
  */
-public class JobLaunchDialog extends Dialog {
+public class AnalysisLaunchDialog extends Dialog {
     private final String tagCaller;
     private final ComponentValueTable tblComponentVals;
     private TextField<String> fieldName;
@@ -64,15 +64,15 @@ public class JobLaunchDialog extends Dialog {
     private FolderSelector folderSelector;
     private static UserInfo uinfo = UserInfo.getInstance();
     private boolean isValidFolder;
-    private String defaultOutputFolder;
+    private final String defaultOutputFolder;
 
     /**
-     * Constructs an instance of the job launch dialog.
+     * Constructs an instance of the analysis launch dialog.
      * 
      * @param tagCaller the identifier, or handle, of the calling window
      * @param tblComponentVals the table modeling component values within a widget or wizard
      */
-    public JobLaunchDialog(String tagCaller, final ComponentValueTable tblComponentVals,
+    public AnalysisLaunchDialog(String tagCaller, final ComponentValueTable tblComponentVals,
             String defaultOutputFolder) {
         this.tagCaller = tagCaller;
         this.tblComponentVals = tblComponentVals;
@@ -95,11 +95,11 @@ public class JobLaunchDialog extends Dialog {
         };
         fieldName.setMaxLength(75);
         fieldName.setWidth(320);
-        fieldName.setId("idJobName"); //$NON-NLS-1$
+        fieldName.setId("idAnalysisName"); //$NON-NLS-1$
         fieldName.setValue(I18N.DISPLAY.defaultAnalysisName());
         fieldName.setSelectOnFocus(true);
         fieldName.setAllowBlank(false);
-        fieldName.setValidator(new JobNameValidator());
+        fieldName.setValidator(new AnalysisNameValidator());
         fieldName.setValidateOnBlur(true);
         fieldName.setFireChangeEventOnSetValue(true);
 
@@ -163,13 +163,13 @@ public class JobLaunchDialog extends Dialog {
     }
 
     private void initDescriptionArea() {
-        areaDescription = new JobDescriptionTextArea() {
+        areaDescription = new AnalysisDescriptionTextArea() {
             @Override
             public void onKeyUp(FieldEvent fe) {
                 updateOkButton();
             }
         };
-        areaDescription.setId("idJobDescription"); //$NON-NLS-1$
+        areaDescription.setId("idAnalysisDescription"); //$NON-NLS-1$
         areaDescription.setSize(320, 100);
         areaDescription.setSelectOnFocus(true);
         areaDescription.setMaxLength(255);
@@ -313,47 +313,47 @@ public class JobLaunchDialog extends Dialog {
         hide();
     }
 
-    private void handleJobLaunchSuccess() {
-        // notify the world that we have successfully launched a job
+    private void handleAnalysisLaunchSuccess() {
+        // notify the world that we have successfully launched an analysis
         EventBus eventbus = EventBus.getInstance();
 
-        JobLaunchedEvent event = new JobLaunchedEvent(tagCaller, fieldName.getValue());
+        AnalysisLaunchedEvent event = new AnalysisLaunchedEvent(tagCaller, fieldName.getValue());
         eventbus.fireEvent(event);
 
-        // close dialog now that job has launched
+        // close dialog now that the analysis has launched
         closeDialog();
 
         MessageBox.info(I18N.DISPLAY.analysisSubmitted(), I18N.DISPLAY.analysisSubmittedMsg(), null);
 
     }
 
-    private void handleJobLaunchFailure(Throwable caught) {
+    private void handleAnalysisLaunchFailure(Throwable caught) {
         closeDialog();
         ErrorHandler.post(I18N.ERROR.analysisFailedToLaunch(fieldName.getValue()), caught);
     }
 
-    private void launchJob(String idWorkspace, String json, AsyncCallback<String> callback) {
+    private void launchAnalysis(String idWorkspace, String json, AsyncCallback<String> callback) {
         AnalysisServiceFacade facade = new AnalysisServiceFacade();
 
         facade.launchAnalysis(idWorkspace, json, callback);
     }
 
-    private AsyncCallback<String> buildJobLaunchCallback() {
+    private AsyncCallback<String> buildAnalysisLaunchCallback() {
         return new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 if (result != null) {
-                    handleJobLaunchSuccess();
+                    handleAnalysisLaunchSuccess();
                 } else { // service is currently not reporting failure correctly, says successful
                          // when not
                          // TODO: get service to report failure correctly
-                    handleJobLaunchFailure(null);
+                    handleAnalysisLaunchFailure(null);
                 }
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                handleJobLaunchFailure(caught);
+                handleAnalysisLaunchFailure(caught);
             }
         };
     }
@@ -362,9 +362,9 @@ public class JobLaunchDialog extends Dialog {
         String idWorkspace = uinfo.getWorkspaceId();
         mask(I18N.DISPLAY.launchingAnalysis());
 
-        // create our callback - this is the same regardless of the job type
-        AsyncCallback<String> callback = buildJobLaunchCallback();
-        launchJob(idWorkspace, json, callback);
+        // create our callback - this is the same regardless of the analysis type
+        AsyncCallback<String> callback = buildAnalysisLaunchCallback();
+        launchAnalysis(idWorkspace, json, callback);
 
     }
 
@@ -441,7 +441,7 @@ public class JobLaunchDialog extends Dialog {
         buttonbar.getElement().setTabIndex(-1);
     }
 
-    private class JobDescriptionTextArea extends TextArea {
+    private class AnalysisDescriptionTextArea extends TextArea {
         /**
          * {@inheritDoc}
          */

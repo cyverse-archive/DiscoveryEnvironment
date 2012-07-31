@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.panels;
 
-import org.iplantc.core.client.widgets.validator.JobNameValidator;
+import org.iplantc.core.client.widgets.validator.AnalysisNameValidator;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.services.FolderCreateCallback;
@@ -24,7 +24,7 @@ public class AddFolderDialogPanel extends IPlantPromptPanel {
      * @param idParent the parent folder's identifier
      */
     public AddFolderDialogPanel(String idParent, Component maskingParent) {
-        super(I18N.DISPLAY.folderName(), -1, new JobNameValidator());
+        super(I18N.DISPLAY.folderName(), -1, new AnalysisNameValidator());
 
         this.idParent = idParent;
         this.maskingParent = maskingParent;

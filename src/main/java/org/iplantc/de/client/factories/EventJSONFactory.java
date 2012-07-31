@@ -16,7 +16,7 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class EventJSONFactory {
     public static enum ActionType {
-        UPLOAD_COMPLETE, FOLDER_CREATED, SAVE_AS, FOLDER_RENAMED, FILE_RENAMED, DELETE, JOB_LAUNCHED, DISPLAY_WINDOW, DISPLAY_VIEWER_WINDOWS, DISPLAY_TREE_VIEWER_WINDOWS, LOGOUT
+        UPLOAD_COMPLETE, FOLDER_CREATED, SAVE_AS, FOLDER_RENAMED, FILE_RENAMED, DELETE, ANALYSIS_LAUNCHED, DISPLAY_WINDOW, DISPLAY_VIEWER_WINDOWS, DISPLAY_TREE_VIEWER_WINDOWS, LOGOUT
     }
 
     private static EventJSONBuilder getBuilder(ActionType type) {
@@ -59,7 +59,7 @@ public class EventJSONFactory {
                 ret = new ViewerWindowLaunchEventJSONBuilder("display_viewer_add_treetab"); //$NON-NLS-1$
                 break;
 
-            case JOB_LAUNCHED:
+            case ANALYSIS_LAUNCHED:
                 ret = new AnalysisLaunchedEventJSONBuilder("analysis_launched"); //$NON-NLS-1$
                 break;
 

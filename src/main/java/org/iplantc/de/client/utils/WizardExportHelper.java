@@ -26,18 +26,18 @@ public class WizardExportHelper {
      */
     public static String buildJSON(final ComponentValueTable tblComponentVals,
             boolean sendEmailNotification) {
-        JSONObject job = new JSONObject();
+        JSONObject analysis = new JSONObject();
 
         if (tblComponentVals != null) {
-            job.put("name", new JSONString(tblComponentVals.getName())); //$NON-NLS-1$
-            job.put("type", new JSONString(tblComponentVals.getType())); //$NON-NLS-1$
-            job.put("description", new JSONString(tblComponentVals.getDescription())); //$NON-NLS-1$
-            job.put("analysis_id", new JSONString(tblComponentVals.getTemplateId())); //$NON-NLS-1$
-            job.put("notify", JSONBoolean.getInstance(sendEmailNotification)); //$NON-NLS-1$
-            job.put("debug", JSONBoolean.getInstance(tblComponentVals.isDebugEnabled())); //$NON-NLS-1$
-            job.put("notify", JSONBoolean.getInstance(tblComponentVals.isNotifyEnabled())); //$NON-NLS-1$
-            job.put("output_dir", new JSONString(tblComponentVals.getOutputFolderId()));//$NON-NLS-1$
-            job.put("create_output_subdir",
+            analysis.put("name", new JSONString(tblComponentVals.getName())); //$NON-NLS-1$
+            analysis.put("type", new JSONString(tblComponentVals.getType())); //$NON-NLS-1$
+            analysis.put("description", new JSONString(tblComponentVals.getDescription())); //$NON-NLS-1$
+            analysis.put("analysis_id", new JSONString(tblComponentVals.getTemplateId())); //$NON-NLS-1$
+            analysis.put("notify", JSONBoolean.getInstance(sendEmailNotification)); //$NON-NLS-1$
+            analysis.put("debug", JSONBoolean.getInstance(tblComponentVals.isDebugEnabled())); //$NON-NLS-1$
+            analysis.put("notify", JSONBoolean.getInstance(tblComponentVals.isNotifyEnabled())); //$NON-NLS-1$
+            analysis.put("output_dir", new JSONString(tblComponentVals.getOutputFolderId()));//$NON-NLS-1$
+            analysis.put("create_output_subdir",
                     JSONBoolean.getInstance(tblComponentVals.isCreateSubFolder()));//$NON-NLS-1$
             JSONObject config = new JSONObject();
 
@@ -58,9 +58,9 @@ public class WizardExportHelper {
             }
 
             // add config
-            job.put("config", config); //$NON-NLS-1$
+            analysis.put("config", config); //$NON-NLS-1$
         }
 
-        return job.toString();
+        return analysis.toString();
     }
 }

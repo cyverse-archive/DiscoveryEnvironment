@@ -12,8 +12,8 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
-import org.iplantc.de.client.events.JobLaunchedEvent;
-import org.iplantc.de.client.events.JobLaunchedEventHandler;
+import org.iplantc.de.client.events.AnalysisLaunchedEvent;
+import org.iplantc.de.client.events.AnalysisLaunchedEventHandler;
 import org.iplantc.de.client.events.WizardValidationEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
@@ -24,7 +24,7 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
-import org.iplantc.de.client.views.dialogs.JobLaunchDialog;
+import org.iplantc.de.client.views.dialogs.AnalysisLaunchDialog;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -42,13 +42,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * Provides interface for setting parameters and launching jobs.
+ * Provides interface for setting parameters and launching analyses.
  * 
  * @author amuir
  * 
  */
 public class WizardWindow extends IPlantWindow {
-    private Button btnLaunchJob;
+    private Button btnLaunchAnalysis;
     private final ComponentValueTable tblComponentVals;
 
     private List<HandlerRegistration> handlers;
@@ -90,20 +90,20 @@ public class WizardWindow extends IPlantWindow {
         List<String> errors = tblComponentVals.validate(false, false);
 
         if (errors.isEmpty()) {
-            btnLaunchJob.enable();
+            btnLaunchAnalysis.enable();
         } else {
-            btnLaunchJob.disable();
+            btnLaunchAnalysis.disable();
         }
     }
 
-    private void doJobLaunch() {
+    private void doAnalysisLaunch() {
         createOutputFolderByDefault();
     }
 
-    private void buildLaunchJobButton() {
-        btnLaunchJob = new Button(I18N.DISPLAY.launchAnalysis());
-        btnLaunchJob.setIcon(AbstractImagePrototype.create(Resources.ICONS.applicationLaunch()));
-        btnLaunchJob.addListener(Events.OnClick, new Listener<BaseEvent>() {
+    private void buildLaunchAnalysisButton() {
+        btnLaunchAnalysis = new Button(I18N.DISPLAY.launchAnalysis());
+        btnLaunchAnalysis.setIcon(AbstractImagePrototype.create(Resources.ICONS.applicationLaunch()));
+        btnLaunchAnalysis.addListener(Events.OnClick, new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
                 // validate again because the user might have clicked the button without blurring an
@@ -111,8 +111,8 @@ public class WizardWindow extends IPlantWindow {
                 status.setBusy(I18N.DISPLAY.loadingMask());
                 List<String> errors = tblComponentVals.validate(false, true);
                 if (errors == null || errors.isEmpty()) {
-                    doJobLaunch();
-                    btnLaunchJob.disable();
+                    doAnalysisLaunch();
+                    btnLaunchAnalysis.disable();
                 }
             }
         });
@@ -124,14 +124,14 @@ public class WizardWindow extends IPlantWindow {
         ret.setHeaderVisible(false);
         ret.setLayout(new FitLayout());
 
-        buildLaunchJobButton();
+        buildLaunchAnalysisButton();
         status = new Status();
 
         ToolBar bar = new ToolBar();
 
         bar.add(status);
         bar.add(new FillToolItem());
-        bar.add(btnLaunchJob);
+        bar.add(btnLaunchAnalysis);
         ret.add(bar);
         return ret;
     }
@@ -156,7 +156,7 @@ public class WizardWindow extends IPlantWindow {
 
     }
 
-    private void handleJobLaunch(final String name) {
+    private void handleAnalysisLaunch(final String name) {
         hide();
     }
 
@@ -172,7 +172,7 @@ public class WizardWindow extends IPlantWindow {
                 new org.iplantc.de.client.events.WizardValidationEventHandler() {
                     @Override
                     public void onInvalid(WizardValidationEvent event) {
-                        btnLaunchJob.disable();
+                        btnLaunchAnalysis.disable();
                     }
 
                     @Override
@@ -183,15 +183,15 @@ public class WizardWindow extends IPlantWindow {
                         // valid fields,
                         // but it'll have to do until the validation rewrite.
                         List<String> errors = tblComponentVals.validate(false, false);
-                        btnLaunchJob.setEnabled(errors == null || errors.isEmpty());
+                        btnLaunchAnalysis.setEnabled(errors == null || errors.isEmpty());
                     }
                 }));
 
-        handlers.add(eventbus.addHandler(JobLaunchedEvent.TYPE, new JobLaunchedEventHandler() {
+        handlers.add(eventbus.addHandler(AnalysisLaunchedEvent.TYPE, new AnalysisLaunchedEventHandler() {
             @Override
-            public void onLaunch(JobLaunchedEvent event) {
+            public void onLaunch(AnalysisLaunchedEvent event) {
                 if (event.getTag().equals(tag)) {
-                    handleJobLaunch(event.getName());
+                    handleAnalysisLaunch(event.getName());
                 }
             }
         }));
@@ -310,9 +310,9 @@ public class WizardWindow extends IPlantWindow {
             status.clearStatus("");
             JSONObject obj = JsonUtil.getObject(result);
             String path = JsonUtil.getString(obj, "path");
-            JobLaunchDialog dlg = new JobLaunchDialog(tag, tblComponentVals, path);
+            AnalysisLaunchDialog dlg = new AnalysisLaunchDialog(tag, tblComponentVals, path);
             dlg.show();
-            btnLaunchJob.enable();
+            btnLaunchAnalysis.enable();
         }
 
         @Override
