@@ -12,7 +12,7 @@ import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
-import com.extjs.gxt.ui.client.widget.VerticalPanel;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -36,21 +36,17 @@ public class AboutApplicationWindow extends IPlantWindow {
     public AboutApplicationWindow(String tag) {
         super(tag);
 
+        setLayout(new RowLayout());
         setId(tag);
         setHeading(I18N.DISPLAY.aboutDiscoveryEnvironment());
         setResizable(false);
-        setWidth(302);
-        setHeight(250);
+        setAutoHeight(true);
         initComponents();
         executeServiceCall();
     }
 
     private void initComponents() {
         lblNSFStatement = new Label(I18N.DISPLAY.nsfProjectText());
-    }
-
-    private String getAboutTemplate() {
-        return "<p>Release: {0}</p><p> Build #: {1}</p><p>User Agent: {2}</p>"; //$NON-NLS-1$
     }
 
     private void executeServiceCall() {
@@ -71,15 +67,9 @@ public class AboutApplicationWindow extends IPlantWindow {
     private void compose() {
         Image logo = new Image(Constants.CLIENT.iplantAboutImage());
 
-        final VerticalPanel pnlInfo = new VerticalPanel();
-        pnlInfo.setSpacing(7);
-        pnlInfo.add(lblNSFStatement);
-
-        VerticalPanel pnlRoot = new VerticalPanel();
-        pnlRoot.add(logo);
-        pnlRoot.add(pnlInfo);
-        pnlRoot.add(buildDetailsContainer());
-        add(pnlRoot);
+        add(logo);
+        add(lblNSFStatement);
+        add(buildDetailsContainer());
         layout();
     }
 
@@ -101,6 +91,10 @@ public class AboutApplicationWindow extends IPlantWindow {
         pnlDetails.add(txt);
 
         return pnlDetails;
+    }
+
+    private String getAboutTemplate() {
+        return "<p>Release: {0}</p><p> Build #: {1}</p><p>User Agent: {2}</p>"; //$NON-NLS-1$
     }
 
     @Override
