@@ -386,7 +386,9 @@ public class MyAnalysesPanel extends ContentPanel {
         boolean enable = false;
         for (AnalysisExecution ae : aes) {
             if (ae != null) {
-                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
+                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.SUBMITTED.toString()))
+                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.IDLE.toString()))
+                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
                     enable = true;
                     break;
                 }
