@@ -18,8 +18,10 @@ import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.events.AnalysisUpdateEventHandler;
 import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.models.AnalysisExecution;
+import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.JsAnalysisExecution;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -35,12 +37,12 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.RowExpander;
-import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -210,8 +212,6 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         grid.addPlugin(expander);
         grid.setAutoExpandMax(2048);
         grid.getView().setForceFit(true);
-        grid.setToolTip(I18N.DISPLAY.analysesGridToolTip());
-        new QuickTip(grid);
 
         return grid;
     }
@@ -234,6 +234,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         start.setDateTimeFormat(format);
         end.setDateTimeFormat(format);
         analysisname.setRenderer(new AppNameCellRenderer());
+        name.setRenderer(new AnalysisNameCellRenderer());
 
         List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
         columns.addAll(Arrays.asList(sm.getColumn(), expander, name, analysisname, start, end, status));
@@ -324,6 +325,7 @@ class AppNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
     public Object render(final AnalysisExecution model, String property, ColumnData config,
             int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
         Hyperlink link = new Hyperlink(model.getAnalysisName(), "analysis_name"); //$NON-NLS-1$
+        link.setToolTip(I18N.DISPLAY.executeThisAnalysis());
         link.addListener(Events.OnClick, new Listener<BaseEvent>() {
 
             @Override
@@ -331,6 +333,31 @@ class AppNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
                 EventBus bus = EventBus.getInstance();
                 UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), model.getAnalysisId());
                 bus.fireEvent(e);
+            }
+        });
+
+        return link;
+    }
+}
+
+class AnalysisNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
+    @Override
+    public Object render(final AnalysisExecution model, String property, ColumnData config,
+            int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
+        Hyperlink link = new Hyperlink(model.getName(), "name"); //$NON-NLS-1$
+        link.setToolTip(I18N.DISPLAY.selectAnalysisOutputs());
+        link.addListener(Events.OnClick, new Listener<BaseEvent>() {
+
+            @Override
+            public void handleEvent(BaseEvent be) {
+                if (model != null && model.getResultFolderId() != null
+                        && !model.getResultFolderId().isEmpty()) {
+                    JSONObject context = new JSONObject();
+                    context.put(DataWindowConfig.FOLDER_ID, new JSONString(model.getResultFolderId()));
+
+                    MyDataViewContextExecutor contextExec = new MyDataViewContextExecutor();
+                    contextExec.execute(context.toString());
+                }
             }
         });
 

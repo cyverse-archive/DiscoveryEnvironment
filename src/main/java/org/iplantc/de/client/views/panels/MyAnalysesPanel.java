@@ -11,9 +11,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisExecution;
-import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.MyAnalysesGrid;
@@ -170,7 +168,6 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private void buildTopComponent() {
         topComponentMenu = new ToolBar();
-        topComponentMenu.add(buildViewOpButton());
         topComponentMenu.add(buildViewParamsButton());
         topComponentMenu.add(buildDeleteButton());
         topComponentMenu.add(buildCancelAnalysisButton());
@@ -225,16 +222,6 @@ public class MyAnalysesPanel extends ContentPanel {
         b.addSelectionListener(new CancelAnalysisSelectListener());
         analyses_buttons.put(CANCEL_ANALYSIS_ITEM_ID, b);
 
-        return b;
-    }
-
-    private Button buildViewOpButton() {
-        Button b = new Button(I18N.DISPLAY.viewOutput());
-        b.setId(VIEW_OUTPUT_ITEM_ID);
-        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
-        b.setEnabled(false);
-        b.addSelectionListener(new ViewOutputSelectionListener());
-        analyses_buttons.put(VIEW_OUTPUT_ITEM_ID, b);
         return b;
     }
 
@@ -412,13 +399,6 @@ public class MyAnalysesPanel extends ContentPanel {
         }
     }
 
-    private class ViewOutputSelectionListener extends SelectionListener<ButtonEvent> {
-        @Override
-        public void componentSelected(ButtonEvent ce) {
-            retrieveOutputFolder(analysisGrid.getSelectionModel().getSelectedItem().getId());
-        }
-    }
-
     private class ViewParamSelectionListener extends SelectionListener<ButtonEvent> {
         @Override
         public void componentSelected(ButtonEvent ce) {
@@ -432,18 +412,6 @@ public class MyAnalysesPanel extends ContentPanel {
             d.setButtons(Dialog.OK);
             d.setHideOnButtonClick(true);
             d.show();
-        }
-    }
-
-    private void retrieveOutputFolder(String id) {
-        AnalysisExecution ae = analysisGrid.getStore().findModel("id", id); //$NON-NLS-1$
-
-        if (ae != null && ae.getResultFolderId() != null && !ae.getResultFolderId().isEmpty()) {
-            JSONObject context = new JSONObject();
-            context.put(DataWindowConfig.FOLDER_ID, new JSONString(ae.getResultFolderId()));
-
-            MyDataViewContextExecutor contextExec = new MyDataViewContextExecutor();
-            contextExec.execute(context.toString());
         }
     }
 

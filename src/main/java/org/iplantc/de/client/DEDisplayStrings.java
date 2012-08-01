@@ -141,6 +141,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String launchAnalysis();
 
     /**
+     * Localized text displaying tooltip info on the hyperlink of an analysis' app in the analysis grid.
+     * 
+     * @return a string representing the localized text.
+     */
+    String executeThisAnalysis();
+
+    /**
      * Localized text for display as button text for viewing data or results.
      * 
      * @return a string representing the localized text.
@@ -305,6 +312,13 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the text.
      */
     String viewOutput();
+
+    /**
+     * Display tooltip text for opening an executed analysis' output(s).
+     * 
+     * @return a string representing the text.
+     */
+    String selectAnalysisOutputs();
 
     /**
      * Display text for warning message when a user tries to delete Analyses.
@@ -593,13 +607,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String filterAnalysesList();
-
-    /**
-     * Localized text for analyses grid tool tip
-     * 
-     * @return a string representing the localized text.
-     */
-    String analysesGridToolTip();
 
     /**
      * Localized text for analyses delete message
