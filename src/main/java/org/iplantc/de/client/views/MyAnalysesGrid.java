@@ -344,7 +344,7 @@ class AnalysisNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
     @Override
     public Object render(final AnalysisExecution model, String property, ColumnData config,
             int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-        Hyperlink link = new Hyperlink(model.getName(), "name"); //$NON-NLS-1$
+        Hyperlink link = new Hyperlink(model.getName(), "analysis_name"); //$NON-NLS-1$
         link.setToolTip(I18N.DISPLAY.selectAnalysisOutputs());
         link.addListener(Events.OnClick, new Listener<BaseEvent>() {
 
