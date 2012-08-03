@@ -6,6 +6,7 @@ import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
+import org.iplantc.core.tito.client.windows.NewToolRequestWindow;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
@@ -81,10 +82,12 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private static final String ACTION_ID_EDIT = "idEdit"; //$NON-NLS-1$
     private static final String ACTION_ID_RUN = "idRun"; //$NON-NLS-1$
     private static final String ACTION_ID_VIEW_DEPLOYED_COMPONENTS = "idViewDeployedComponents"; //$NON-NLS-1$
+    private static final String ID_BTN_NEW_TOOL_BTN = "idBtnNewToolBtn"; //$NON-NLS-1$
 
     private final FastMap<Button> buttons;
     private final FastMap<MenuItem> menuItems;
     private Analysis selectedItem;
+    private final NewToolRequestWindow newToolRequestWin;
 
     /**
      * Creates a new CatalogMainPanel.
@@ -94,6 +97,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
         buttons = new FastMap<Button>();
         menuItems = new FastMap<MenuItem>();
+        newToolRequestWin = new NewToolRequestWindow();
 
         initGridListeners();
         initGridViewConfig();
@@ -305,6 +309,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         Menu actionsMenu = new Menu();
         actionsMenu.add(buildNewAnalysis());
         actionsMenu.add(buildNewWorkflow());
+        actionsMenu.add(buildNewToolRequestMenuItem());
         btn.setMenu(actionsMenu);
 
         return btn;
@@ -359,6 +364,19 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         return actions;
     }
 
+    private MenuItem buildNewToolRequestMenuItem() {
+        MenuItem newToolBtn = new MenuItem(org.iplantc.core.tito.client.I18N.DISPLAY.requestNewTool());
+        newToolBtn.setIcon(AbstractImagePrototype.create(Resources.ICONS.add()));
+        newToolBtn.addSelectionListener(new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                newToolRequestWin.show();
+            }
+        });
+        newToolBtn.setId(ID_BTN_NEW_TOOL_BTN);
+        return newToolBtn;
+    }
+
     private MenuItem buildAddFavouriteMenuItem() {
         MenuItem addFav = new MenuItem(I18N.DISPLAY.markFav());
         addFav.setId(ACTION_ID_MARK_FAV);
@@ -384,7 +402,6 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(I18N.ERROR.favServiceFailure(), caught);
-
                         }
 
                         @Override
@@ -447,7 +464,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                         if (JsonUtil.getBoolean(exportable, "can-export", false)) { //$NON-NLS-1$
                             copyAnalysis(id);
-                            org.iplantc.core.uicommons.client.events.EventBus.getInstance().fireEvent(
+                            EventBus.getInstance().fireEvent(
                                     new AnalysisGroupCountUpdateEvent(true, null));
                         } else {
                             ErrorHandler.post(JsonUtil.getString(exportable, "cause")); //$NON-NLS-1$

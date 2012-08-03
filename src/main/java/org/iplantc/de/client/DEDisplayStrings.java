@@ -307,13 +307,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String run();
 
     /**
-     * Display text for view output
-     * 
-     * @return a string representing the text.
-     */
-    String viewOutput();
-
-    /**
      * Display tooltip text for opening an executed analysis' output(s).
      * 
      * @return a string representing the text.
