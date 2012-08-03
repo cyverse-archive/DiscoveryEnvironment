@@ -309,7 +309,6 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         Menu actionsMenu = new Menu();
         actionsMenu.add(buildNewAnalysis());
         actionsMenu.add(buildNewWorkflow());
-        actionsMenu.add(buildNewToolRequestMenuItem());
         btn.setMenu(actionsMenu);
 
         return btn;
@@ -360,6 +359,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         actionsMenu.add(buildEditMenuItem());
         actionsMenu.add(buildDeleteMenuItem());
         actionsMenu.add(buildSubmitMenuItem());
+        actionsMenu.add(buildNewToolRequestMenuItem());
         actions.setMenu(actionsMenu);
         return actions;
     }

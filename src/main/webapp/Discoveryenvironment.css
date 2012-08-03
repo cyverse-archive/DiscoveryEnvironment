@@ -724,3 +724,9 @@ img.analysis_remove {
 .new_notification {
 	background-color: #EFEFEF;
 }
+
+.request_tool_installation {
+	text-align: center;
+	text-decoration: underline;
+	background-color: #F1F1F1;
+}
