@@ -54,7 +54,6 @@ public class MyAnalysesPanel extends ContentPanel {
 
     private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
     private final String CANCEL_ANALYSIS_ITEM_ID = "idCancelAnalysisBtn"; //$NON-NLS-1$
-    private final String VIEW_OUTPUT_ITEM_ID = "idViewBtn"; //$NON-NLS-1$
     private static final String VIEW_PARAMETER_ITEM_ID = "idViewParameter";
 
     private MyAnalysesGrid analysisGrid;
@@ -199,7 +198,6 @@ public class MyAnalysesPanel extends ContentPanel {
             default:
                 analyses_buttons.get(DELETE_ITEM_ID).enable();
                 analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).disable();
-                analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
                 enableCancelAnalysisButtonByStatus();
         }
     }
@@ -344,10 +342,8 @@ public class MyAnalysesPanel extends ContentPanel {
         if (ae != null) {
             if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.COMPLETED.toString()))
                     || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.FAILED.toString()))) {
-                analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).enable();
                 analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             } else {
-                analyses_buttons.get(VIEW_OUTPUT_ITEM_ID).disable();
                 analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             }
         }
