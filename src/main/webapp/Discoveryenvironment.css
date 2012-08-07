@@ -726,7 +726,44 @@ img.analysis_remove {
 }
 
 .request_tool_installation {
+	color: #414042;
+	background-color: #BCBEC0;
+	cursor: pointer;
+	padding: 8px 13px;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-bottom: 0px;
 	text-align: center;
-	text-decoration: underline;
-	background-color: #F1F1F1;
+	background-image: linear-gradient(bottom, #BCBEC0 0%, #F1F2F2 100%);
+	background-image: -o-linear-gradient(bottom, #BCBEC0 0%, #F1F2F2 100%);
+	background-image: -moz-linear-gradient(bottom, #BCBEC0 0%, #F1F2F2 100%);
+	background-image: -webkit-linear-gradient(bottom, #BCBEC0 0%, #F1F2F2 100%);
+	background-image: -ms-linear-gradient(bottom, #BCBEC0 0%, #F1F2F2 100%);
+	font-family: Verdana;
+	font-size: 11px;
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #BCBEC0),
+		color-stop(1, #F1F2F2) );
+	text-decoration: none;
+	width: 100%;
+}
+
+.request_tool_installation:hover {
+	background-image: linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 100%);
+	background-image: -o-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 100%);
+	background-image: -moz-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 100%);
+	background-image: -webkit-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 100%);
+	background-image: -ms-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 100%);
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #F1F2F2),
+		color-stop(1, #BCBEC0) );
+}
+
+.request_tool_installation:active {
+	background-image: linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 87%, #A7A9AC 100%);
+	background-image: -o-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 87%, #A7A9AC 100%);
+	background-image: -moz-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 87%, #A7A9AC 100%);
+	background-image: -webkit-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 87%, #A7A9AC 100%);
+	background-image: -ms-linear-gradient(bottom, #F1F2F2 0%, #BCBEC0 87%, #A7A9AC 100%);
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #F1F2F2),
+		color-stop(0.87, #BCBEC0), color-stop(1, #A7A9AC) );
 }
