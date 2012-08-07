@@ -13,9 +13,9 @@
 		<!-- Target Java Version -->
         <jdk.version>1.6</jdk.version>
 		<!-- Current GWT Version -->
-        <gwt.version>2.4.0</gwt.version>
+        <gwt.version>2.5.0-rc1</gwt.version>
 		<!-- Current ExtGWT Version -->
-        <gxt.version>2.2.5</gxt.version>
+        <gxt.version>3.0.0</gxt.version>
 		<!-- Define OS/Platform Independent Character Encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
@@ -106,7 +106,7 @@
             <version>${gwt.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.extjs</groupId>
+            <groupId>com.sencha.gxt</groupId>
             <artifactId>gxt</artifactId>
             <version>${gxt.version}</version>
         </dependency>
@@ -383,5 +383,10 @@
             <url>http://projects.iplantcollaborative.org/archiva/repository/internal/
             </url>
         </repository>
+	<repository>
+		<id>sencha-commercial-release</id>
+		<name>Sencha commercial releases</name>
+		<url>https://maven.sencha.com/repo/commercial-release/</url>
+	</repository>
     </repositories>
 </project>
