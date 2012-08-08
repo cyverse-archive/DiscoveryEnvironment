@@ -111,6 +111,11 @@
             <version>${gxt.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.extjs</groupId>
+            <artifactId>gxt</artifactId>
+            <version>2.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
@@ -234,7 +239,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.4.0</version>
+                <version>2.5.0-rc1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -369,24 +374,24 @@
         </plugins>
     </reporting>
     <repositories>
-        <repository>
-            <id>gwt-maven</id>
-            <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
-        </repository>
-        <repository>
-            <id>jboss-public-repository</id>
-            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-        </repository>
-        <repository>
-            <id>iplantCollaborative</id>
-            <name>iPlant Collaborative local repository</name>
-            <url>http://projects.iplantcollaborative.org/archiva/repository/internal/
+	<repository>
+		<id>gwt-maven</id>
+		<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+	</repository>
+	<repository>
+		<id>jboss-public-repository</id>
+		<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+	</repository>
+	<repository>
+		<id>iplantCollaborative</id>
+		<name>iPlant Collaborative local repository</name>
+		<url>http://projects.iplantcollaborative.org/archiva/repository/internal/
             </url>
-        </repository>
+	</repository>
 	<repository>
 		<id>sencha-commercial-release</id>
 		<name>Sencha commercial releases</name>
 		<url>https://maven.sencha.com/repo/commercial-release/</url>
 	</repository>
-    </repositories>
+</repositories>
 </project>
