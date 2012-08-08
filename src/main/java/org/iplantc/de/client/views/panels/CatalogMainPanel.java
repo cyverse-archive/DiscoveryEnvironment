@@ -644,6 +644,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                     if (selectedItem.isPublic()) {
                         menuItems.get(ACTION_ID_MAKE_PUBLIC).disable();
+                        menuItems.get(ACTION_ID_EDIT).disable();
                     }
                 }
                 checkAndBuildFavMenu(selectedItem.isUser_favourite());
