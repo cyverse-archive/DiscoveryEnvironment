@@ -147,6 +147,7 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         commands.put("application/pdf", new PdfDataSuccessCommand()); //$NON-NLS-1$
         commands.put("text/plain", new PreviewSuccessCommand()); //$NON-NLS-1$
         commands.put("preview", new PreviewSuccessCommand()); //$NON-NLS-1$
+        commands.put("application/x-sh", new PreviewSuccessCommand()); //$NON-NLS-1$
     }
 
     /**
