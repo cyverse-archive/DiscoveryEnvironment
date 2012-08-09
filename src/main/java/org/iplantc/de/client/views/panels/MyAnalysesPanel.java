@@ -329,7 +329,9 @@ public class MyAnalysesPanel extends ContentPanel {
         if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
             final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
             for (AnalysisExecution ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())) {
+                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.SUBMITTED.toString()))
+                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.IDLE.toString()))
+                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
                     facadeAnalysisService.stopAnalysis(ae.getId(), new CancelAnalysisServiceCallback(ae));
                 }
             }
