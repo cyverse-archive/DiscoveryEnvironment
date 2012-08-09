@@ -11,8 +11,10 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.DiscoveryEnvironment;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.util.WindowUtil;
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -81,6 +83,20 @@ public class DiskResourceServiceFacade {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "default-output-dir?name="
                 + folderName;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * set user's default analyses output folder
+     * 
+     * @param folderName
+     * @param callback
+     */
+    public void putDefaultOutput(AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "default-output-dir?name="
+                + DEProperties.getInstance().getDefaultOutputFolderName();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                "{\"path\":\"" + DEProperties.getInstance().getDefaultOutputFolderName() + "\"}");
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 

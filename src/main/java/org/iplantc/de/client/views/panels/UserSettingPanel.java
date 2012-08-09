@@ -3,27 +3,34 @@
  */
 package org.iplantc.de.client.views.panels;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserSettings;
+import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.models.Permissions;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.utils.DEInfo;
+import org.iplantc.de.client.utils.DataUtils;
+import org.iplantc.de.client.views.FolderSelector;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
-import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
+import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.layout.TableData;
+import com.extjs.gxt.ui.client.widget.tips.ToolTipConfig;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.iplantc.de.client.utils.DataUtils;
-import org.iplantc.de.client.views.FolderSelector;
-import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
 
 /**
  * @author sriram
@@ -34,7 +41,6 @@ public class UserSettingPanel extends LayoutContainer {
     private static final String ID_REM_LAST_PATH = "idRemLastPath";
     private static final String ID_CHK_NOTIFY = "idChkNotify";
     private static final String ID_DEFAULT_OUTPUT_FOLDER = "idDefaultOutputFolder";
-    private UserPreferencesDialog userPreferencesDialog;
     private CheckBox chkEnableEmailNotifications;
     private CheckBox chkRememberLastFileSelectorPath;
     private RadioGroup radioGrp;
@@ -42,8 +48,7 @@ public class UserSettingPanel extends LayoutContainer {
     private Radio disable;
     private FolderSelector defaultOutputFolder;
 
-    public UserSettingPanel(UserPreferencesDialog userPreferencesDialog) {
-        this.userPreferencesDialog = userPreferencesDialog;
+    public UserSettingPanel() {
         add(buildNotifyField());
         add(buildRememberField());
         add(buildClearSessionPanel());
@@ -62,7 +67,14 @@ public class UserSettingPanel extends LayoutContainer {
         initNotifyField();
 
         ret.add(chkEnableEmailNotifications, td);
-        ret.add(new Html("<div class='form_prompt'>" + I18N.DISPLAY.notifyemail() + "</div>"), td);
+        ret.add(new Html("<div>" + I18N.DISPLAY.notifyemail() + "</div>"), td);
+
+        IconButton ib = new IconButton("help");
+        ToolTipConfig ttc = getToolTipConfig();
+        ttc.setTitle(I18N.DISPLAY.help());
+        ttc.setText(I18N.DISPLAY.notifyemailHelp());
+        ib.setToolTip(ttc);
+        ret.add(ib, td);
 
         return ret;
     }
@@ -77,8 +89,14 @@ public class UserSettingPanel extends LayoutContainer {
         initRememberField();
 
         ret.add(chkRememberLastFileSelectorPath, td);
-        ret.add(new Html("<div class='form_prompt'>" + I18N.DISPLAY.rememberFileSectorPath() + "</div>"),
-                td);
+        ret.add(new Html("<div>" + I18N.DISPLAY.rememberFileSectorPath() + "</div>"), td);
+
+        IconButton ib = new IconButton("help");
+        ToolTipConfig ttc = getToolTipConfig();
+        ttc.setTitle(I18N.DISPLAY.help());
+        ttc.setText((I18N.DISPLAY.rememberFileSectorPathHelp()));
+        ib.setToolTip(ttc);
+        ret.add(ib, td);
 
         return ret;
     }
@@ -92,8 +110,15 @@ public class UserSettingPanel extends LayoutContainer {
         TableData td = new TableData();
         td.setHorizontalAlign(HorizontalAlignment.LEFT);
 
-        add(new Html("<div class='form_prompt'>&nbsp;&nbsp;" + I18N.DISPLAY.saveSession() + ": </div>"));
+        ret.add(new Html("<div>" + I18N.DISPLAY.saveSession() + ": </div>"));
         ret.add(radioGrp, td);
+
+        IconButton ib = new IconButton("help");
+        ToolTipConfig ttc = getToolTipConfig();
+        ttc.setTitle(I18N.DISPLAY.help());
+        ttc.setText(I18N.DISPLAY.saveSessionHelp());
+        ib.setToolTip(ttc);
+        ret.add(ib, td);
 
         return ret;
     }
@@ -104,7 +129,21 @@ public class UserSettingPanel extends LayoutContainer {
 
         initDefaultOutputFolder();
 
-        add(new Html("<div class='form_prompt'>&nbsp;&nbsp;" + I18N.DISPLAY.defaultOutputFolder() + ": </div>"));
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.setSpacing(5);
+
+        TableData td = new TableData();
+        td.setHorizontalAlign(HorizontalAlignment.LEFT);
+
+        hp.add(new Html("<div>" + I18N.DISPLAY.defaultOutputFolder() + ": </div>"), td);
+        IconButton ib = new IconButton("help");
+        ToolTipConfig ttc = getToolTipConfig();
+        ttc.setTitle(I18N.DISPLAY.help());
+        ttc.setText(I18N.DISPLAY.defaultOutputFolderHelp());
+        ib.setToolTip(ttc);
+        hp.add(ib, td);
+
+        ret.add(hp);
         ret.add(defaultOutputFolder.getWidget());
 
         return ret;
@@ -148,7 +187,32 @@ public class UserSettingPanel extends LayoutContainer {
         } else {
             radioGrp.setValue(disable);
         }
+        defaultOutputFolder.setDefaultFolderId(us.getDefaultOutputFolder());
         defaultOutputFolder.displayFolderName(us.getDefaultOutputFolder());
+    }
+
+    public void setDefaultValues() {
+        chkEnableEmailNotifications.setValue(true);
+        chkRememberLastFileSelectorPath.setValue(true);
+        radioGrp.setValue((Radio)radioGrp.get(0));
+        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
+        facade.putDefaultOutput(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.defaultPrefError(), caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject obj = JsonUtil.getObject(result);
+                String opfolder = JsonUtil.getString(obj, "path");
+                defaultOutputFolder.clearSelection();
+                defaultOutputFolder.displayFolderName(opfolder);
+                defaultOutputFolder.setSelectedFolder(new Folder(opfolder, DiskResourceUtil
+                        .parseNameFromPath(opfolder), false, new Permissions(true, true, true)));
+            }
+        });
     }
 
     public void saveData() {
@@ -165,8 +229,7 @@ public class UserSettingPanel extends LayoutContainer {
 
             @Override
             public void onSuccess(String result) {
-                // TODO Auto-generated method stub
-
+                DEInfo.display(I18N.DISPLAY.save(), I18N.DISPLAY.saveSettings());
             }
 
             @Override
@@ -182,10 +245,19 @@ public class UserSettingPanel extends LayoutContainer {
             if (!DataUtils.canUploadToThisFolder(defaultOutputFolder.getSelectedFolder())) {
                 MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
                         I18N.DISPLAY.permissionErrorMessage(), null);
-                userPreferencesDialog.getButtonById(Dialog.OK).disable();
-            } else {
-                userPreferencesDialog.getButtonById(Dialog.OK).enable();
+                UserSettings us = UserSettings.getInstance();
+                defaultOutputFolder.clearSelection();
+                defaultOutputFolder.displayFolderName(us.getDefaultOutputFolder());
+                defaultOutputFolder.setDefaultFolderId(us.getDefaultOutputFolder());
             }
         }
     }
+
+    private ToolTipConfig getToolTipConfig() {
+        ToolTipConfig config = new ToolTipConfig();
+        config.setMouseOffset(new int[] {0, 0});
+        config.setAnchor("left");
+        return config;
+    }
+
 }

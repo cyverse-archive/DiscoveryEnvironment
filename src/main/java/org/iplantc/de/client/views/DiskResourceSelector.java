@@ -228,4 +228,10 @@ public abstract class DiskResourceSelector implements IDiskResourceSelector {
         this.currentFolderId = currentFolderId;
     }
 
+    public void clearSelection() {
+        selectedResource = null;
+        currentFolderId = null;
+        txtResourceName.setValue("");
+    }
+
 }

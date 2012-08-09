@@ -514,4 +514,11 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String deployedComponentRetrievalFailure();
+
+    /**
+     * Localized error message displayed when default preferences values could not be saved
+     * 
+     * @return localized error string.
+     */
+    String defaultPrefError();
 }

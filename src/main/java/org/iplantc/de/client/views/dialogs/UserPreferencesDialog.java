@@ -7,13 +7,19 @@ import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
 
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.button.ButtonBar;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
+import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 
 /**
  * A dialog to collect user general settings for the DE
@@ -43,6 +49,7 @@ public class UserPreferencesDialog extends Dialog {
 
             @Override
             public void handleEvent(ComponentEvent be) {
+
                 settingPanel.saveData();
                 // @TODO temp remove collaborators panel
                 // collabPanel.saveData();
@@ -53,15 +60,47 @@ public class UserPreferencesDialog extends Dialog {
 
     private void initDialog() {
         setHeading(I18N.DISPLAY.preferences());
-        setButtons(Dialog.OK);
+        setButtons();
         setResizable(false);
         setHideOnButtonClick(true);
-        setOkButtonText();
+
     }
 
-    private void setOkButtonText() {
-        Button ok = getButtonById(Dialog.OK);
-        ok.setText(I18N.DISPLAY.done());
+    private void setButtons() {
+        ButtonBar buttonBar = getButtonBar();
+        // buttonBar.setAlignment(HorizontalAlignment.RIGHT);
+        buttonBar.removeAll();
+        setDefaultsButton();
+        buttonBar.add(new SeparatorToolItem());
+        setOkButton();
+
+    }
+
+    private void setOkButton() {
+        Button ok = new Button(I18N.DISPLAY.done());
+        ok.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent ce) {
+                hide();
+
+            }
+        });
+        ok.setId(Dialog.OK);
+        getButtonBar().add(ok);
+    }
+
+    private void setDefaultsButton() {
+        Button def = new Button("Restore Defaults");
+        def.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent ce) {
+                settingPanel.setDefaultValues();
+            }
+        });
+        def.setId("btn_default");
+        getButtonBar().add(def);
     }
 
     private void buildTabPanel() {
@@ -72,7 +111,7 @@ public class UserPreferencesDialog extends Dialog {
 
     private void buildSettingPanel() {
         TabItem ti = new TabItem(I18N.DISPLAY.settings());
-        settingPanel = new UserSettingPanel(this);
+        settingPanel = new UserSettingPanel();
         ti.add(settingPanel);
         tabPanel.add(ti);
     }

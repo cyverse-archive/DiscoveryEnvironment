@@ -1086,4 +1086,39 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String allNotifications();
+
+    /**
+     * help prompt
+     * 
+     * @return the localized display text
+     */
+    String notifyemailHelp();
+
+    /**
+     * help prompt
+     * 
+     * @return the localized display text
+     */
+    String rememberFileSectorPathHelp();
+
+    /**
+     * help prompt
+     * 
+     * @return the localized display text
+     */
+    String saveSessionHelp();
+
+    /**
+     * help prompt
+     * 
+     * @return the localized display text
+     */
+    String defaultOutputFolderHelp();
+
+    /**
+     * save setting success
+     * 
+     * @return the localized display text
+     */
+    String saveSettings();
 }

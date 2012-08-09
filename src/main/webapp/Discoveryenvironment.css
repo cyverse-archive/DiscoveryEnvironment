@@ -767,3 +767,10 @@ img.analysis_remove {
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #F1F2F2),
 		color-stop(0.87, #BCBEC0), color-stop(1, #A7A9AC) );
 }
+
+.help {
+	background-image: url('./images/help.png');
+	height: 16px;
+	width: 16px;
+	vertical-align:top;
+	}
