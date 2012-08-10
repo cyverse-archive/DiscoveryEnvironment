@@ -87,7 +87,6 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private final FastMap<Button> buttons;
     private final FastMap<MenuItem> menuItems;
     private Analysis selectedItem;
-    private final NewToolRequestWindow newToolRequestWin;
 
     /**
      * Creates a new CatalogMainPanel.
@@ -97,7 +96,6 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
         buttons = new FastMap<Button>();
         menuItems = new FastMap<MenuItem>();
-        newToolRequestWin = new NewToolRequestWindow();
 
         initGridListeners();
         initGridViewConfig();
@@ -370,7 +368,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         newToolBtn.addSelectionListener(new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
-                newToolRequestWin.show();
+                new NewToolRequestWindow().show();
             }
         });
         newToolBtn.setId(ID_BTN_NEW_TOOL_BTN);
