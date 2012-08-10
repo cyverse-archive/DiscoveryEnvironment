@@ -25,7 +25,6 @@ import com.google.gwt.user.client.Element;
 public class MyAnalysesWindow extends IPlantWindow {
     private BorderLayoutData centerData;
     private MyAnalysesPanel pnlAnlys;
-    private WindowConfig config;
 
     /**
      * Instantiate from a tag.
