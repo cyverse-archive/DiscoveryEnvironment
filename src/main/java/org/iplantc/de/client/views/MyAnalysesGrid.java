@@ -136,10 +136,6 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         } else {
             AnalysisExecution exec = buildAnalysisExecution(payload);
             getStore().add(exec);
-            if (getSelectionModel().getSelection() == null
-                    || getSelectionModel().getSelection().isEmpty()) {
-                getSelectionModel().select(exec, false);
-            }
         }
 
         sort();
