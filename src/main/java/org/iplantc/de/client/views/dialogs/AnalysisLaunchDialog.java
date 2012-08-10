@@ -21,10 +21,8 @@ import org.iplantc.de.client.views.FolderSelector;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
-import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -90,6 +88,14 @@ public class AnalysisLaunchDialog extends Dialog {
         fieldName = new BoundedTextField<String>() {
             @Override
             public void onKeyUp(FieldEvent fe) {
+                if ((fe.getEvent().getKeyCode() == KeyCodes.KEY_ENTER) && fieldsValid()) {
+                    confirmOutputFolder(new Command() {
+                        @Override
+                        public void execute() {
+                            doExport();
+                        }
+                    });
+                }
                 updateOkButton();
             }
         };
@@ -107,23 +113,6 @@ public class AnalysisLaunchDialog extends Dialog {
             @Override
             public void handleEvent(final BaseEvent be) {
                 updateOkButton();
-            }
-        });
-
-        fieldName.addKeyListener(new KeyListener() {
-            @Override
-            public void componentKeyUp(ComponentEvent event) {
-                if (event.getKeyCode() == KeyCodes.KEY_ENTER && fieldsValid()) {
-                    // once you got a enter key, listen no more
-                    fieldName.removeKeyListener(this);
-
-                    confirmOutputFolder(new Command() {
-                        @Override
-                        public void execute() {
-                            doExport();
-                        }
-                    });
-                }
             }
         });
 
