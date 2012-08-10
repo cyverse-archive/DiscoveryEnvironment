@@ -27,7 +27,6 @@ import com.google.gwt.json.client.JSONString;
  */
 public class NotificationWindow extends IPlantWindow {
     private NotificationPanel panel;
-    private WindowConfig config;
 
     /**
      * Constructs an instance given a unique identifier.
