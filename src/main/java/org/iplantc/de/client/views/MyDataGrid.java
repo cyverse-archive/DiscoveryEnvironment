@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
+import org.iplantc.core.uicommons.client.util.CommonComparator;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
@@ -27,6 +27,8 @@ import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.Store;
+import com.extjs.gxt.ui.client.store.StoreSorter;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
@@ -214,7 +216,6 @@ public class MyDataGrid extends Grid<DiskResource> {
         return new ColumnModel(columns);
     }
 
-    @SuppressWarnings("unchecked")
     private static MyDataGrid createInstanceImpl(String currentFolderId, String tag,
             ClientDataModel controller) {
         final ListStore<DiskResource> store = new ListStore<DiskResource>();
@@ -229,7 +230,7 @@ public class MyDataGrid extends Grid<DiskResource> {
             executor = new DataViewContextExecutor();
         }
 
-        store.setStoreSorter(new CommonStoreSorter());
+        store.setStoreSorter(new DataGridStoreSorter());
         ret = new MyDataGrid(store, colModel, currentFolderId, executor, tag);
 
         if (isMyDataWindow) {
@@ -309,6 +310,32 @@ public class MyDataGrid extends Grid<DiskResource> {
                         handleRowClick(event.getResource(), event.getTag());
                     }
                 }));
+    }
+}
+
+/**
+ * A custom store sorter for the data grid that sorts folders ahead of files.
+ * 
+ * @author psarando
+ * 
+ */
+class DataGridStoreSorter extends StoreSorter<DiskResource> {
+    public DataGridStoreSorter() {
+        super(new CommonComparator());
+    }
+
+    @Override
+    public int compare(Store<DiskResource> store, DiskResource m1, DiskResource m2, String property) {
+        if (DiskResource.NAME.equals(property)) {
+            if (m1 instanceof Folder && m2 instanceof File) {
+                return -1;
+            }
+            if (m1 instanceof File && m2 instanceof Folder) {
+                return 1;
+            }
+        }
+
+        return super.compare(store, m1, m2, property);
     }
 }
 
