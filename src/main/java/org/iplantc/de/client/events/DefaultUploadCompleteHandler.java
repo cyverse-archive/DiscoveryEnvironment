@@ -2,12 +2,15 @@ package org.iplantc.de.client.events;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory;
-import org.iplantc.de.client.utils.MessageDispatcher;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 
+import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
@@ -55,11 +58,27 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     public void onCompletion(String sourceUrl, String response) {
         try {
             JSONObject payload = buildPayload(sourceUrl, response);
-            JSONObject json = EventJSONFactory.build(EventJSONFactory.ActionType.UPLOAD_COMPLETE,
+            final JSONObject json = EventJSONFactory.build(EventJSONFactory.ActionType.UPLOAD_COMPLETE,
                     payload);
 
-            MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-            dispatcher.processMessage(json);
+            json.put("user", new JSONString(UserInfo.getInstance().getUsername()));
+            json.put("email", JSONBoolean.getInstance(false));
+
+            UserSessionServiceFacade facade = new UserSessionServiceFacade();
+            facade.postClientNotification(json, new AsyncCallback<String>() {
+
+                @Override
+                public void onSuccess(String result) {
+                    // do nothing intentionally
+
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                }
+            });
+
         } catch (Exception e) {
             ErrorHandler.post(processXMLErrorMsg(sourceUrl, response), e);
         } finally {

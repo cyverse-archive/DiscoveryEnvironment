@@ -82,4 +82,15 @@ public class UserSessionServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
+    public void postClientNotification(JSONObject notification, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
+                + "send-notification";
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                notification.toString());
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+
+    }
+
 }
