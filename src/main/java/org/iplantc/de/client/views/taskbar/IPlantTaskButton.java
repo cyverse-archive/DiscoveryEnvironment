@@ -1,5 +1,7 @@
 package org.iplantc.de.client.views.taskbar;
 
+import org.iplantc.de.client.dnd.WindowFocusDropTarget;
+
 import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.core.Template;
@@ -18,7 +20,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * 
  */
 public class IPlantTaskButton extends Button {
-    private Window win;
+    private final Window win;
 
     IPlantTaskButton(Window win, Element parent) {
         this.win = win;
@@ -26,6 +28,8 @@ public class IPlantTaskButton extends Button {
         updateText();
         setIcon(win.getIcon());
         template = new Template(getButtonTemplate());
+
+        new IPlantTaskButtonDropTarget(this);
 
         render(parent);
     }
@@ -125,6 +129,24 @@ public class IPlantTaskButton extends Button {
         if (win != null) {
             String text = sizeTextForButton(win.getHeading());
             setText(text);
+        }
+    }
+
+    /**
+     * A WindowFocusDropTarget class that listens to drag events over an IPlantTaskButton in order to
+     * focus its window after a small delay.
+     * 
+     * @author psarando
+     * 
+     */
+    private class IPlantTaskButtonDropTarget extends WindowFocusDropTarget {
+        public IPlantTaskButtonDropTarget(IPlantTaskButton target) {
+            super(target);
+        }
+
+        @Override
+        protected void windowToFront() {
+            win.toFront();
         }
     }
 }
