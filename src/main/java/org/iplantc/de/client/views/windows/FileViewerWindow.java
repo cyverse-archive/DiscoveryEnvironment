@@ -190,10 +190,11 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     private void createViews() {
         String mimeType = JsonUtil.getString(manifest, "content-type");
         RPCSuccessCommand cmd = commands.get(mimeType);
-        if (cmd != null) {
-            updateStatus(1);
-            cmd.execute(file.getFileId());
+        if (cmd == null) {
+            cmd = commands.get("text/plain");
         }
+        updateStatus(1);
+        cmd.execute(file.getFileId());
     }
 
     /**
