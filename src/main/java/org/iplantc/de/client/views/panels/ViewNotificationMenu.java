@@ -23,11 +23,13 @@ import org.iplantc.de.client.utils.NotifyInfo;
 import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.event.ListViewEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
+import com.extjs.gxt.ui.client.widget.ListViewSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.json.client.JSONArray;
@@ -82,6 +84,7 @@ public class ViewNotificationMenu extends Menu {
                             return;
                         }
                         NotificationHelper.getInstance().view(notification);
+                        hide();
                     }
                 });
         view.setItemSelector("div.search-item"); //$NON-NLS-1$
@@ -283,6 +286,16 @@ public class ViewNotificationMenu extends Menu {
         @SuppressWarnings("unused")
         public String getEmptyText() {
             return emptyText;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void onClick(ListViewEvent<M> e) {
+            super.onClick(e);
+            ListViewSelectionModel<M> selectionModel = getSelectionModel();
+            Notification md = (Notification)selectionModel.getSelectedItem();
+            selectionModel.deselectAll();
+            selectionModel.select(false, (M)md);
         }
 
         public void highlight(int index, boolean highLight) {
