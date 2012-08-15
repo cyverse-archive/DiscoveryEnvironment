@@ -1,51 +1,50 @@
 package org.iplantc.de.client.views;
 
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
 import org.iplantc.core.uicommons.client.util.DateParser;
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.events.AnalysisUpdateEventHandler;
-import org.iplantc.de.client.events.UserEvent;
-import org.iplantc.de.client.models.AnalysisExecution;
-import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.JsAnalysisExecution;
+import org.iplantc.de.client.models.gxt3.AnalysisExecution;
+import org.iplantc.de.client.models.gxt3.AnalysisExecutionProperties;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.core.XTemplate;
-import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
-import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-import com.extjs.gxt.ui.client.widget.grid.ColumnData;
-import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
-import com.extjs.gxt.ui.client.widget.grid.Grid;
-import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
-import com.extjs.gxt.ui.client.widget.grid.RowExpander;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.data.client.loader.RpcProxy;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.loader.ListLoader;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
+import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.LiveGridView;
+import com.sencha.gxt.widget.core.client.grid.RowExpander;
 
 /**
  * A grid that is used to display users Analyses
@@ -57,8 +56,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
 
     private String idCurrentSelection;
     private ArrayList<HandlerRegistration> handlers;
-    private static RowExpander expander;
-    private static XTemplate tpl;
+    private static RowExpander<AnalysisExecution> expander;
 
     /**
      * Create a new MyAnalysesGrid
@@ -66,7 +64,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
      * @param store store to be used by the grid
      * @param cm column model describing the columns in the grid
      */
-    public MyAnalysesGrid(ListStore<AnalysisExecution> store, ColumnModel cm) {
+    public MyAnalysesGrid(ListStore<AnalysisExecution> store, ColumnModel<AnalysisExecution> cm) {
         super(store, cm);
         registerHandlers();
     }
@@ -105,7 +103,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         MyAnalysesPanel.EXECUTION_STATUS enumStatus = MyAnalysesPanel.EXECUTION_STATUS
                 .fromTypeString(JsonUtil.getString(payload, "status")); //$NON-NLS-1$
 
-        if (getStore().findModel("id", JsonUtil.getString(payload, "id")) != null) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (getStore().findModelWithKey(JsonUtil.getString(payload, "id")) != null) { //$NON-NLS-1$
             switch (enumStatus) {
                 case COMPLETED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
@@ -142,11 +140,16 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     }
 
     private void sort() {
-        getStore().sort("startdate", SortDir.DESC); //$NON-NLS-1$
+        //        getStore().sort("startdate", SortDir.DESC); //$NON-NLS-1$
+
+        // TODO JDS - Implement sorting for Analysis grid
+        AnalysisExecutionProperties props = GWT.create(AnalysisExecutionProperties.class);
+        // getStore().addSortInfo(new StoreSortInfo<AnalysisExecution>(props.getStartDate(),
+        // SortDir.DESC));
     }
 
     private void updateExecStatus(String id, String status) {
-        AnalysisExecution ae = getStore().findModel("id", id); //$NON-NLS-1$
+        AnalysisExecution ae = getStore().findModelWithKey(id);
 
         if (ae != null) {
             ae.setStatus(status);
@@ -154,15 +157,8 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         }
     }
 
-    private static XTemplate initExpander() {
-
-        String tmpl = "<p><b>Description:</b>{description}</p>"; //$NON-NLS-1$
-
-        return XTemplate.create(tmpl);
-    }
-
     private void updateEndExecStatus(String id, String status, String resultfolderid, Date enddate) {
-        AnalysisExecution ae = getStore().findModel("id", id); //$NON-NLS-1$
+        AnalysisExecution ae = getStore().findModelWithKey(id);
 
         if (ae != null) {
             ae.setStatus(status);
@@ -175,7 +171,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     }
 
     private void updateRunExecStatus(String id, String status, Date startdate) {
-        AnalysisExecution ae = getStore().findModel("id", id); //$NON-NLS-1$
+        AnalysisExecution ae = getStore().findModelWithKey(id);
 
         if (ae != null) {
             ae.setStatus(status);
@@ -200,54 +196,89 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
         return createInstanceImpl(sm);
     }
 
-    @SuppressWarnings("unchecked")
     private static MyAnalysesGrid createInstanceImpl(CheckBoxSelectionModel<AnalysisExecution> sm) {
-        ListStore<AnalysisExecution> gstore = new ListStore<AnalysisExecution>();
-        gstore.setStoreSorter(new CommonStoreSorter());
-        final ColumnModel colModel = buildColumnModel(sm);
-        MyAnalysesGrid grid = new MyAnalysesGrid(gstore, colModel);
+        ListStore<AnalysisExecution> gstore = new ListStore<AnalysisExecution>(
+                new ModelKeyProvider<AnalysisExecution>() {
+
+                    @Override
+                    public String getKey(AnalysisExecution item) {
+                        return item.getId();
+                    }
+                });
+
+        final ColumnModel<AnalysisExecution> colModel = buildColumnModel(sm);
+        final MyAnalysesGrid grid = new MyAnalysesGrid(gstore, colModel);
+        grid.setLoader(new ListLoader<PagingLoadConfig, PagingLoadResult<AnalysisExecution>>(
+                new RpcProxy<PagingLoadConfig, PagingLoadResult<AnalysisExecution>>() {
+
+                    @Override
+                    public void load(PagingLoadConfig loadConfig,
+                            AsyncCallback<PagingLoadResult<AnalysisExecution>> callback) {
+                        grid.retrieveData();
+
+                    }
+                }));
         grid.setSelectionModel(sm);
-        grid.addPlugin(sm);
-        grid.addPlugin(expander);
-        grid.setAutoExpandMax(2048);
-        grid.getView().setForceFit(true);
+        expander.initPlugin(grid);
+
+        final LiveGridView<AnalysisExecution> liveGridView = new LiveGridView<AnalysisExecution>();
+        liveGridView.setForceFit(true);
+
+        // liveGridView.setAutoExpandMax(2048);
+        grid.setView(liveGridView);
 
         return grid;
     }
 
-    private static ColumnModel buildColumnModel(CheckBoxSelectionModel<AnalysisExecution> sm) {
+    private static ColumnModel<AnalysisExecution> buildColumnModel(
+            CheckBoxSelectionModel<AnalysisExecution> sm) {
 
-        tpl = initExpander();
-        expander = new RowExpander(tpl);
+        expander = new RowExpander<AnalysisExecution>(new IdentityValueProvider<AnalysisExecution>(),
+                new ExpanderCell());
         sm.getColumn().setMenuDisabled(true);
         expander.setMenuDisabled(true);
 
-        ColumnConfig name = new ColumnConfig("name", I18N.DISPLAY.name(), 175); //$NON-NLS-1$
-        ColumnConfig analysisname = new ColumnConfig("analysis_name", I18N.DISPLAY.appName(), 250); //$NON-NLS-1$
-        ColumnConfig start = new ColumnConfig("startdate", I18N.DISPLAY.startDate(), 150); //$NON-NLS-1$
-        ColumnConfig end = new ColumnConfig("enddate", I18N.DISPLAY.endDate(), 150); //$NON-NLS-1$
-        ColumnConfig status = new ColumnConfig("status", I18N.DISPLAY.status(), 100); //$NON-NLS-1$
+        AnalysisExecutionProperties props = GWT.create(AnalysisExecutionProperties.class);
+        ColumnConfig<AnalysisExecution, String> name = new ColumnConfig<AnalysisExecution, String>(
+                props.getName(), 175, I18N.DISPLAY.name());
+        ColumnConfig<AnalysisExecution, String> analysisname = new ColumnConfig<AnalysisExecution, String>(
+                props.getAnalysisName(), 250, I18N.DISPLAY.appName());
+        ColumnConfig<AnalysisExecution, Date> start = new ColumnConfig<AnalysisExecution, Date>(
+                props.getStartDate(), 150, I18N.DISPLAY.startDate());
+        ColumnConfig<AnalysisExecution, Date> end = new ColumnConfig<AnalysisExecution, Date>(
+                props.getEndDate(), 150, I18N.DISPLAY.endDate());
+        ColumnConfig<AnalysisExecution, String> status = new ColumnConfig<AnalysisExecution, String>(
+                props.getStatus(), 100, I18N.DISPLAY.status());
 
-        DateTimeFormat format = DateTimeFormat
-                .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
-        start.setDateTimeFormat(format);
-        end.setDateTimeFormat(format);
-        analysisname.setRenderer(new AppNameCellRenderer());
-        name.setRenderer(new AnalysisNameCellRenderer());
+        analysisname.setCell(new AnalysisNameCell());
 
-        List<ColumnConfig> columns = new ArrayList<ColumnConfig>();
-        columns.addAll(Arrays.asList(sm.getColumn(), expander, name, analysisname, start, end, status));
+        name.setCell(new AppNameCell());
+        
+        List<ColumnConfig<AnalysisExecution, ?>> columns = new ArrayList<ColumnConfig<AnalysisExecution, ?>>();
+        columns.add(sm.getColumn());
+        columns.add(expander);
+        columns.add(name);
+        columns.add(analysisname);
+        columns.add(start);
+        columns.add(end);
+        columns.add(status);
 
-        return new ColumnModel(columns);
+        return new ColumnModel<AnalysisExecution>(columns);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void onRender(Element parent, int index) {
-        super.onRender(parent, index);
+    protected void onAfterRenderView() {
+        super.onAfterRenderView();
         retrieveData();
+
+    }
+
+    @Override
+    protected void onResize(int width, int height) {
+        super.onResize(width, height);
+        if (getStore().size() <= 0) {
+            retrieveData();
+        }
     }
 
     private void retrieveData() {
@@ -272,8 +303,9 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
                     }
 
                     ListStore<AnalysisExecution> gstore = getStore();
-                    gstore.add(temp);
+                    gstore.addAll(temp);
                     sort();
+                    getView().refresh(true);
                 }
 
                 selectModel(idCurrentSelection);
@@ -309,7 +341,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
      */
     public void selectModel(final String idSelection) {
         if (idSelection != null) {
-            AnalysisExecution exec = getStore().findModel("id", idSelection); //$NON-NLS-1$
+            AnalysisExecution exec = getStore().findModelWithKey(idSelection);
 
             if (exec != null) {
                 getView().ensureVisible(getStore().indexOf(exec), 0, false);
@@ -317,49 +349,61 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
             }
         }
     }
-}
 
-class AppNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
-    @Override
-    public Object render(final AnalysisExecution model, String property, ColumnData config,
-            int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-        Hyperlink link = new Hyperlink(model.getAnalysisName(), "analysis_name"); //$NON-NLS-1$
-        link.setToolTip(I18N.DISPLAY.executeThisAnalysis());
-        link.addListener(Events.OnClick, new Listener<BaseEvent>() {
+    private static class ExpanderCell extends AbstractCell<AnalysisExecution> {
 
-            @Override
-            public void handleEvent(BaseEvent be) {
-                EventBus bus = EventBus.getInstance();
-                UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), model.getAnalysisId());
-                bus.fireEvent(e);
+        @Override
+        public void render(com.google.gwt.cell.client.Cell.Context context, AnalysisExecution value,
+                SafeHtmlBuilder sb) {
+            if (value == null) {
+                return;
             }
-        });
 
-        return link;
+
+            SafeHtml safeValue = SafeHtmlUtils.fromString(value.getDescription());
+            sb.appendHtmlConstant("<p><b>Description:</b>"); //$NON-NLS-1$
+            sb.append(safeValue);
+            sb.appendHtmlConstant("</p>"); //$NON-NLS-1$
+        }
+
     }
-}
 
-class AnalysisNameCellRenderer implements GridCellRenderer<AnalysisExecution> {
-    @Override
-    public Object render(final AnalysisExecution model, String property, ColumnData config,
-            int rowIndex, int colIndex, ListStore<AnalysisExecution> store, Grid<AnalysisExecution> grid) {
-        Hyperlink link = new Hyperlink(model.getName(), "analysis_name"); //$NON-NLS-1$
-        link.setToolTip(I18N.DISPLAY.selectAnalysisOutputs());
-        link.addListener(Events.OnClick, new Listener<BaseEvent>() {
+    private static class AppNameCell extends AbstractCell<String> {
 
-            @Override
-            public void handleEvent(BaseEvent be) {
-                if (model != null && model.getResultFolderId() != null
-                        && !model.getResultFolderId().isEmpty()) {
-                    JSONObject context = new JSONObject();
-                    context.put(DataWindowConfig.FOLDER_ID, new JSONString(model.getResultFolderId()));
+        public AppNameCell() {
+            super(CLICK);
+        }
 
-                    MyDataViewContextExecutor contextExec = new MyDataViewContextExecutor();
-                    contextExec.execute(context.toString());
-                }
+        @Override
+        public void render(com.google.gwt.cell.client.Cell.Context context, String value,
+                SafeHtmlBuilder sb) {
+
+            if (value == null) {
+                return;
             }
-        });
 
-        return link;
+            SafeHtml safeHl = SafeHtmlUtils
+                    .fromTrustedString(new Hyperlink(value, "app_name").getHTML());
+            sb.append(safeHl);
+        }
+    }
+
+    private static class AnalysisNameCell extends AbstractCell<String> {
+
+        public AnalysisNameCell() {
+            super(CLICK);
+        }
+
+        @Override
+        public void render(com.google.gwt.cell.client.Cell.Context context, String value,
+                SafeHtmlBuilder sb) {
+            if (value == null) {
+                return;
+            }
+
+            SafeHtml safeHl = SafeHtmlUtils.fromTrustedString(new Hyperlink(value,
+                    "analysis_name").getHTML());
+            sb.append(safeHl);
+        }
     }
 }

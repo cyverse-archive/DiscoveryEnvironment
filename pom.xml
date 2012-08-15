@@ -251,7 +251,8 @@
                 <configuration>
                     <extraJvmArgs>-Xmx512M -Xms512M -Xss1024k</extraJvmArgs>
                     <webappDirectory>${basedir}/war</webappDirectory>
-                    <mode>htmlunit</mode>
+                    <mode>htmlunit</mode> 
+		    <compileReport>true</compileReport>
                 </configuration>
             </plugin>
             <plugin>
@@ -371,6 +372,18 @@
                     <targetJdk>${jdk.version}</targetJdk>
                 </configuration>
             </plugin>
+<plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>2.5.0-rc1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>compile-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
         </plugins>
     </reporting>
     <repositories>

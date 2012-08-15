@@ -11,6 +11,7 @@ import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.widget.WidgetComponent;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.google.gwt.json.client.JSONObject;
@@ -88,7 +89,8 @@ public class MyAnalysesWindow extends IPlantWindow {
             pnlAnlys.updateSelection(idCurrentSelection);
         }
 
-        add(pnlAnlys, centerData);
+        // add(new WidgetComponent(pnlAnlys));
+        add(new WidgetComponent(pnlAnlys), centerData);
     }
 
     /**
@@ -97,7 +99,7 @@ public class MyAnalysesWindow extends IPlantWindow {
     @Override
     public void setWindowConfig(WindowConfig config) {
         if (config != null) {
-            this.config = (AnalysesWindowConfig)config;
+            this.config = config;
         }
     }
 

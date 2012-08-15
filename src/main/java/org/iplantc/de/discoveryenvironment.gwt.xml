@@ -24,6 +24,7 @@
 	<!-- Include GWTUpload library, used by File Upload Servlet -->
 	<inherits name="gwtupload.GWTUpload" />
 	<inherits name='com.extjs.gxt.ui.GXT'/>
+	<inherits name='com.sencha.gxt.ui.GXT' />
 		
 	<!-- I18N -->
 	<inherits name="com.google.gwt.i18n.I18N"/>
