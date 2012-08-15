@@ -156,8 +156,13 @@ public class WizardWindow extends IPlantWindow {
 
     }
 
-    private void handleAnalysisLaunch(final String name) {
-        hide();
+    private void handleAnalysisLaunch(final boolean success) {
+        if (success) {
+            hide();
+        } else {
+            btnLaunchAnalysis.enable();
+            status.clearStatus("");
+        }
     }
 
     /**
@@ -191,7 +196,7 @@ public class WizardWindow extends IPlantWindow {
             @Override
             public void onLaunch(AnalysisLaunchedEvent event) {
                 if (event.getTag().equals(tag)) {
-                    handleAnalysisLaunch(event.getName());
+                    handleAnalysisLaunch(event.isSuccess());
                 }
             }
         }));

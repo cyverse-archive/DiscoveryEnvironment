@@ -15,6 +15,7 @@ public class AnalysisLaunchedEvent extends GwtEvent<AnalysisLaunchedEventHandler
 
     private final String tag;
     private final String name;
+    private final boolean success;
 
     /**
      * Constructs an instance of the event.
@@ -22,9 +23,10 @@ public class AnalysisLaunchedEvent extends GwtEvent<AnalysisLaunchedEventHandler
      * @param tag the identifier of window associated with the event
      * @param name the name of the analysis being launched
      */
-    public AnalysisLaunchedEvent(final String tag, final String name) {
+    public AnalysisLaunchedEvent(final String tag, final String name, final boolean success) {
         this.tag = tag;
         this.name = name;
+        this.success = success;
     }
 
     /**
@@ -61,5 +63,12 @@ public class AnalysisLaunchedEvent extends GwtEvent<AnalysisLaunchedEventHandler
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return the success
+     */
+    public boolean isSuccess() {
+        return success;
     }
 }

@@ -306,7 +306,7 @@ public class AnalysisLaunchDialog extends Dialog {
         // notify the world that we have successfully launched an analysis
         EventBus eventbus = EventBus.getInstance();
 
-        AnalysisLaunchedEvent event = new AnalysisLaunchedEvent(tagCaller, fieldName.getValue());
+        AnalysisLaunchedEvent event = new AnalysisLaunchedEvent(tagCaller, fieldName.getValue(), true);
         eventbus.fireEvent(event);
 
         // close dialog now that the analysis has launched
@@ -319,6 +319,10 @@ public class AnalysisLaunchDialog extends Dialog {
     private void handleAnalysisLaunchFailure(Throwable caught) {
         closeDialog();
         ErrorHandler.post(I18N.ERROR.analysisFailedToLaunch(fieldName.getValue()), caught);
+        EventBus eventbus = EventBus.getInstance();
+
+        AnalysisLaunchedEvent event = new AnalysisLaunchedEvent(tagCaller, fieldName.getValue(), false);
+        eventbus.fireEvent(event);
     }
 
     private void launchAnalysis(String idWorkspace, String json, AsyncCallback<String> callback) {
