@@ -2,6 +2,7 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dnd.WindowFocusDropTarget;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.WindowConfig;
 
@@ -32,9 +33,12 @@ public abstract class IPlantWindow extends Window {
     private final String BUTTON_STYLE_RESTORE = "x-tool-restorewindow"; //$NON-NLS-1$
     private final String WINDOW_STYLE_MAXIMIZED = "x-window-maximized"; //$NON-NLS-1$
     private final String WINDOW_STYLE_DRAGGABLE = "x-window-draggable"; //$NON-NLS-1$
+
     protected String tag;
     protected WindowConfig config;
     protected Status status;
+    protected IPlantWindowDropTarget dropTarget;
+
     private Point restorePos;
     private Size restoreSize;
     protected boolean maximized;
@@ -100,6 +104,8 @@ public abstract class IPlantWindow extends Window {
         setBodyStyleName("windowBody"); //$NON-NLS-1$
         setShadow(false);
         setStyleAttribute("outline", "none"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        dropTarget = new IPlantWindowDropTarget(this);
     }
 
     /**
@@ -480,4 +486,25 @@ public abstract class IPlantWindow extends Window {
         // do nothing intentionally
     }
 
+    /**
+     * A WindowFocusDropTarget class that listens to drag events over an IPlantWindow in order to focus
+     * that same window after a small delay.
+     * 
+     * @author psarando
+     * 
+     */
+    protected class IPlantWindowDropTarget extends WindowFocusDropTarget {
+        private final IPlantWindow window;
+
+        public IPlantWindowDropTarget(IPlantWindow target) {
+            super(target);
+
+            window = target;
+        }
+
+        @Override
+        protected void windowToFront() {
+            window.toFront();
+        }
+    }
 }

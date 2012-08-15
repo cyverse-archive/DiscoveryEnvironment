@@ -1,9 +1,12 @@
 package org.iplantc.de.client.views.taskbar;
 
+import org.iplantc.de.client.dnd.WindowFocusDropTarget;
+
 import com.extjs.gxt.ui.client.Style.IconAlign;
 import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.core.Template;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.WindowManager;
@@ -18,7 +21,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * 
  */
 public class IPlantTaskButton extends Button {
-    private Window win;
+    private final Window win;
 
     IPlantTaskButton(Window win, Element parent) {
         this.win = win;
@@ -27,16 +30,21 @@ public class IPlantTaskButton extends Button {
         setIcon(win.getIcon());
         template = new Template(getButtonTemplate());
 
+        new IPlantTaskButtonDropTarget(this);
+
         render(parent);
     }
 
     private native String getButtonTemplate() /*-{
-                                              return [
-                                              '<table border="0" cellpadding="0" cellspacing="0" class="x-btn-wrap"><tbody><tr>',
-                                              '<td class="ux-taskbutton-left"><i>&#160;</i></td><td class="ux-taskbutton-center"><em unselectable="on"><button class="x-btn-text" type="{1}" style="height:28px;">{0}</button></em></td><td class="ux-taskbutton-right"><i>&#160;</i></td>',
-                                              '</tr></tbody></table>'
-                                              ].join("");
-                                              }-*/;
+		return [
+				'<table border="0" cellpadding="0" cellspacing="0" class="x-btn-wrap"><tbody><tr>',
+				'<td class="ux-taskbutton-left"><i>&#160;</i></td>',
+				'<td class="ux-taskbutton-center"><em unselectable="on">',
+				'<button class="x-btn-text" type="{1}" style="height:28px;">{0}</button>',
+				'</em></td>',
+				'<td class="ux-taskbutton-right"><i>&#160;</i></td>',
+				'</tr></tbody></table>' ].join("");
+    }-*/;
 
     /**
      * {@inheritDoc}
@@ -107,24 +115,31 @@ public class IPlantTaskButton extends Button {
         this.icon = icon;
     }
 
-    private String sizeTextForButton(String in) {
-        String ret = ""; //$NON-NLS-1$
-
-        if (in != null) {
-            // if the text is too long, we will truncate and add ellipses
-            ret = (in.length() < 21) ? in : in.substring(0, 18) + "..."; //$NON-NLS-1$
-        }
-
-        return ret;
-    }
-
     /**
      * Update the text for the button.
      */
     public void updateText() {
         if (win != null) {
-            String text = sizeTextForButton(win.getHeading());
+            String text = Format.ellipse(win.getHeading(), 20);
             setText(text);
+        }
+    }
+
+    /**
+     * A WindowFocusDropTarget class that listens to drag events over an IPlantTaskButton in order to
+     * focus its window after a small delay.
+     * 
+     * @author psarando
+     * 
+     */
+    private class IPlantTaskButtonDropTarget extends WindowFocusDropTarget {
+        public IPlantTaskButtonDropTarget(IPlantTaskButton target) {
+            super(target);
+        }
+
+        @Override
+        protected void windowToFront() {
+            win.toFront();
         }
     }
 }
