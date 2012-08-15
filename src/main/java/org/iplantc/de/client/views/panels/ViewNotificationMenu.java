@@ -35,6 +35,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.NotificationMole;
 
 /**
  * @author sriram
@@ -184,23 +185,22 @@ public class ViewNotificationMenu extends Menu {
             if (model == null) {
                 add(category, ret);
                 totalNotificationCount = totalNotificationCount + 1;
-                fireEvents(payload);
-
+                fireEvents(category, payload);
             } else {
                 ret = null;
             }
         }
-
         return ret;
     }
 
-    private void fireEvents(JSONObject payload) {
+    private void fireEvents(final Category category, JSONObject payload) {
         NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getTotalNotificationCount());
         EventBus instance = EventBus.getInstance();
         instance.fireEvent(ncue);
-
-        AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
-        instance.fireEvent(aue);
+        if (category.equals(NotificationHelper.Category.ANALYSIS)) {
+            AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
+            instance.fireEvent(aue);
+        }
     }
 
     /**
