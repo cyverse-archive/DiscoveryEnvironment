@@ -34,7 +34,9 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
     private final CatalogCategoryToolBar toolBar;
     private HandlerRegistration handlerRefresh;
 
-    public CatalogCategoryAdminPanel() {
+    public CatalogCategoryAdminPanel(String tag) {
+        super(tag);
+
         toolBar = new CatalogCategoryToolBar();
         toolBar.setMaskingParent(this);
 

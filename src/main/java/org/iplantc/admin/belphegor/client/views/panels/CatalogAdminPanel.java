@@ -121,8 +121,10 @@ public class CatalogAdminPanel extends ContentPanel {
     }
 
     private void initPanels() {
-        catPanel = new CatalogCategoryAdminPanel();
-        mainPanel = new CatalogMainAdminPanel(Constants.CLIENT.tagBelphegorCatalog());
+        String tag = Constants.CLIENT.tagBelphegorCatalog();
+
+        catPanel = new CatalogCategoryAdminPanel(tag);
+        mainPanel = new CatalogMainAdminPanel(tag);
     }
 
     private void compose() {
