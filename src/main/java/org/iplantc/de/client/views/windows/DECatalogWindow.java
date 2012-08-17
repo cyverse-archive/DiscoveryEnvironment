@@ -151,8 +151,10 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     protected void initPanels() {
-        catPanel = new CatalogCategoryPanel();
-        mainPanel = new CatalogMainPanel(Constants.CLIENT.deCatalog());
+        String tag = Constants.CLIENT.deCatalog();
+
+        catPanel = new CatalogCategoryPanel(tag);
+        mainPanel = new CatalogMainPanel(tag);
     }
 
     protected void selectConfigData() {

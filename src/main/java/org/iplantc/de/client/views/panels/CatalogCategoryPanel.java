@@ -17,12 +17,8 @@ import org.iplantc.de.client.views.windows.DECatalogWindow;
  */
 public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
 
-    /**
-     * An util method to force deselect a category programmatically
-     * 
-     */
-    public void deSelectCurrentCategory() {
-        categoryPanel.getSelectionModel().deselectAll();
+    public CatalogCategoryPanel(String tag) {
+        super(tag);
     }
 
     private String getCategoryNameWorkspace() {
