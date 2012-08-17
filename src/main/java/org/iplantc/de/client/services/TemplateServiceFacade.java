@@ -11,6 +11,7 @@ import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
@@ -57,6 +58,17 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
                 + analysisGroupId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void getPagedAnalysis(String analysisGroupId, int limit, String sortField, int offset,
+            SortDir sortDir, AsyncCallback<String> asyncCallback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
+                + "get-analyses-in-group/" //$NON-NLS-1$
+                + analysisGroupId + "?limit=" + limit + "&sortField=" + sortField + "&sortDir="
+                + sortDir.toString() + "&offset=" + offset;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, asyncCallback);
     }
 
     /**
