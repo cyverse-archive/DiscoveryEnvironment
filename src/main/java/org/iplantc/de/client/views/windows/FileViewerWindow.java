@@ -53,6 +53,7 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     private boolean isDirty;
     private Map<String, RPCSuccessCommand> commands;
     private boolean isViewTree;
+    private boolean isHtmlPanel;
 
     /**
      * Constructs an instance given a window identifier (tag) and file identifier.
@@ -131,7 +132,7 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     protected void init() {
         panel = new ViewerWindowTabPanel();
         isPdfPanel = false;
-
+        isHtmlPanel = false;
         initCommands();
 
         super.init();
@@ -148,6 +149,7 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         commands.put("text/plain", new PreviewSuccessCommand()); //$NON-NLS-1$
         commands.put("preview", new PreviewSuccessCommand()); //$NON-NLS-1$
         commands.put("application/x-sh", new PreviewSuccessCommand()); //$NON-NLS-1$
+        commands.put("text/html", new HtmlDataSuccessCommand()); //$NON-NLS-1$
     }
 
     /**
@@ -269,7 +271,7 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         super.show();
         // PDF files will not display any tabs in this window
         // so we'll hide this window since there are no tabs to render
-        if (isPdfPanel) {
+        if (isPdfPanel || isHtmlPanel) {
             hide();
         }
         setWindowViewState();
@@ -355,6 +357,16 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         public void execute(String result) {
             updateStatus(-1);
             getImage(result);
+        }
+    }
+
+    class HtmlDataSuccessCommand implements RPCSuccessCommand {
+        @Override
+        public void execute(String result) {
+            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
+            WindowUtil.open(fesf.getServletDownloadUrl(file.getFileId()) + "&attachment=0");
+            isHtmlPanel = true;
+
         }
     }
 
