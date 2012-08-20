@@ -35,6 +35,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Element;
@@ -315,7 +316,9 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
         @Override
         public void execute(String fileId) {
             FileEditorServiceFacade facade = new FileEditorServiceFacade();
-            String url = "file/preview?user=" + UserInfo.getInstance().getUsername() + "&path=" + fileId;
+            String url = "file/preview?user="
+                    + URL.encodeQueryString(UserInfo.getInstance().getUsername()) + "&path="
+                    + URL.encodeQueryString(fileId);
             facade.getData(url, new DiskResourceServiceCallback() {
                 @Override
                 public void onFailure(Throwable caught) {

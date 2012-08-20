@@ -11,10 +11,8 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.DiscoveryEnvironment;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.util.WindowUtil;
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 

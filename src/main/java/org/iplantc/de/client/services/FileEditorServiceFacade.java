@@ -7,6 +7,7 @@ import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.extjs.gxt.ui.client.util.Format;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
@@ -34,13 +35,15 @@ public class FileEditorServiceFacade {
     /**
      * Construct a servlet download URL for the given file ID.
      * 
-     * @param idFile the desired file ID to be used in the return URL
+     * @param path the desired file path to be used in the return URL
      * @return a URL for the given file ID.
      */
-    public String getServletDownloadUrl(final String idFile) {
-        return GWT.getModuleBaseURL() + Constants.CLIENT.fileDownloadServlet()
-                + "?url=display-download&user="
-                + UserInfo.getInstance().getUsername() + "&path=" + idFile;
+    public String getServletDownloadUrl(final String path) {
+        String address = Format.substitute("{0}{1}?url=display-download&user={2}&path={3}", //$NON-NLS-1$
+                GWT.getModuleBaseURL(), Constants.CLIENT.fileDownloadServlet(), UserInfo.getInstance()
+                        .getUsername(), path);
+
+        return URL.encode(address);
     }
 
     /**
