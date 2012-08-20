@@ -21,7 +21,6 @@ import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.panels.DataPreviewPanel;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
-import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
@@ -61,7 +60,7 @@ public class MyDataGrid extends Grid<DiskResource> {
 
     protected ClientDataModel controller;
     protected ArrayList<HandlerRegistration> handlers;
-    protected static CheckBoxSelectionModel<DiskResource> sm;
+    protected final static CheckBoxSelectionModel<DiskResource> sm = new DataGridSelectionModel();
     protected String callertag;
     protected String currentFolderId;
 
@@ -133,50 +132,6 @@ public class MyDataGrid extends Grid<DiskResource> {
     }
 
     /**
-     * Builds the CheckBoxSelectionModel used in the ColumnDisplay.ALL ColumnModel.
-     */
-    protected static void buildCheckBoxSelectionModel() {
-        if (sm != null) {
-            return;
-        }
-
-        sm = new CheckBoxSelectionModel<DiskResource>() {
-            @Override
-            protected void handleMouseClick(GridEvent<DiskResource> event) {
-                super.handleMouseClick(event);
-
-                MyDataGrid grid = (MyDataGrid)event.getGrid();
-
-                // Show the actions menu if the menu grid column was clicked.
-                String colId = grid.getColumnModel().getColumnId(event.getColIndex());
-                if (colId != null && colId.equals(COLUMN_ID_MENU)) {
-                    // if the row clicked is not selected, then select it
-                    DiskResource resource = listStore.getAt(event.getRowIndex());
-                    if (resource != null && !isSelected(resource)) {
-                        select(resource, true);
-                    }
-
-                    // show the menu just under the row and column clicked.
-                    Element target = event.getTarget();
-                    grid.showMenu(target.getAbsoluteRight() - 10, target.getAbsoluteBottom());
-                }
-            }
-
-            @Override
-            protected void handleMouseDown(GridEvent<DiskResource> event) {
-                // Only select the row if the checkbox is explicitly selected.
-                // Assume the checkbox is set as the first column of the row.
-                if (event.getColIndex() == 0) {
-                    super.handleMouseDown(event);
-                }
-            }
-        };
-
-        sm.getColumn().setAlignment(HorizontalAlignment.CENTER);
-        sm.getColumn().setFixed(true);
-    }
-
-    /**
      * Create the column model for the tree grid.
      * 
      * @return an instance of ColumnModel representing the columns visible in a grid
@@ -194,7 +149,6 @@ public class MyDataGrid extends Grid<DiskResource> {
 
         if (tag.equals(Constants.CLIENT.myDataTag())) {
             // add the checkbox as the first column of the row
-            buildCheckBoxSelectionModel();
             columns.add(sm.getColumn());
         }
 
@@ -239,7 +193,6 @@ public class MyDataGrid extends Grid<DiskResource> {
             ret.addStyleName("menu-row-over"); //$NON-NLS-1$
         }
 
-        ret.getSelectionModel().setSelectionMode(SelectionMode.SIMPLE);
         ret.getView().setForceFit(false);
         ret.setAutoExpandMax(2048);
 
@@ -310,6 +263,55 @@ public class MyDataGrid extends Grid<DiskResource> {
                         handleRowClick(event.getResource(), event.getTag());
                     }
                 }));
+    }
+}
+
+/**
+ * A CheckBoxSelectionModel that will preserve the current selection when the user clicks the
+ * menu-column, but also adds the row where the menu was clicked to the selection.
+ * 
+ * @author psarando
+ * 
+ */
+class DataGridSelectionModel extends CheckBoxSelectionModel<DiskResource> {
+    public DataGridSelectionModel() {
+        super();
+
+        getColumn().setAlignment(HorizontalAlignment.CENTER);
+        getColumn().setFixed(true);
+    }
+
+    @Override
+    protected void handleMouseDown(GridEvent<DiskResource> event) {
+        // Only handle row selection if the menu-column was not selected. Otherwise the MULTI
+        // selection mode will cause the current selection to be lost when the user clicks the
+        // menu-column.
+        String colId = grid.getColumnModel().getColumnId(event.getColIndex());
+        if (!MyDataGrid.COLUMN_ID_MENU.equals(colId)) {
+            super.handleMouseDown(event);
+        }
+    }
+
+    @Override
+    protected void handleMouseClick(GridEvent<DiskResource> event) {
+        String colId = grid.getColumnModel().getColumnId(event.getColIndex());
+        if (MyDataGrid.COLUMN_ID_MENU.equals(colId) && event.getRowIndex() != -1 && !isLocked()) {
+            // Show the actions menu if the menu-column was clicked.
+            DiskResource resource = listStore.getAt(event.getRowIndex());
+            if (resource != null && !isSelected(resource)) {
+                // If the row clicked is not selected, then select it.
+                select(resource, true);
+            }
+
+            // Show the menu just under the row and column clicked.
+            Element target = event.getTarget();
+            MyDataGrid grid = (MyDataGrid)event.getGrid();
+
+            grid.showMenu(target.getAbsoluteRight() - 10, target.getAbsoluteBottom());
+        } else {
+            // Handle the row selection normally.
+            super.handleMouseClick(event);
+        }
     }
 }
 
