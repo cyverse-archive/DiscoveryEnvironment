@@ -1,8 +1,8 @@
 package org.iplantc.de.client.gxt3.views;
 
-import org.iplantc.core.uiapplications.client.models.Analysis;
-import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
+import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
