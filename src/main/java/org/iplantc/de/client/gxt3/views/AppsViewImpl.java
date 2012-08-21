@@ -1,7 +1,7 @@
 package org.iplantc.de.client.gxt3.views;
 
 import org.iplantc.core.uiapplications.client.models.Analysis;
-import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 
 import com.google.gwt.core.client.GWT;
@@ -19,8 +19,10 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
-import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.event.CellClickEvent;
+import com.sencha.gxt.widget.core.client.event.CellClickEvent.CellClickHandler;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 import com.sencha.gxt.widget.core.client.tree.Tree;
@@ -42,22 +44,22 @@ public class AppsViewImpl extends Composite implements AppsView {
     private Presenter presenter;
 
     @UiField
-    Tree<Folder, String> tree;
+    Tree<AnalysisGroup, String> tree;
 
     @UiField(provided = true)
-    final TreeStore<Folder> treeStore;
+    final TreeStore<AnalysisGroup> treeStore;
 
     @UiField
-    Grid<File> grid;
+    Grid<Analysis> grid;
 
     @UiField
-    GridView<File> gridView;
+    GridView<Analysis> gridView;
 
     @UiField(provided = true)
-    final ListStore<File> listStore;
+    final ListStore<Analysis> listStore;
 
     @UiField(provided = true)
-    final ColumnModel<File> cm;
+    final AnalysisColumnModel cm;
 
     @UiField
     ToolBar toolbar;
@@ -72,7 +74,8 @@ public class AppsViewImpl extends Composite implements AppsView {
     @UiField
     ContentPanel detailPanel;
 
-    public AppsViewImpl(TreeStore<Folder> treeStore, ListStore<File> listStore, ColumnModel<File> cm) {
+    public AppsViewImpl(TreeStore<AnalysisGroup> treeStore, ListStore<Analysis> listStore,
+            AnalysisColumnModel cm) {
         // XXX Using Dependency injection, you can get global references to stores
         // treeStore = new TreeStore<Folder>(new KeyProvider());
         // listStore = new ListStore<File>(new ModelKeyProvider<File>() {
@@ -85,6 +88,14 @@ public class AppsViewImpl extends Composite implements AppsView {
         this.treeStore = treeStore;
         this.listStore = listStore;
         this.cm = cm;
+        grid.addCellClickHandler(new CellClickHandler() {
+
+            @Override
+            public void onCellClick(CellClickEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
         initWidget(uiBinder.createAndBindUi(this));
     }
 
@@ -99,17 +110,17 @@ public class AppsViewImpl extends Composite implements AppsView {
     }
 
     @Override
-    public ListStore<File> getListStore() {
+    public ListStore<Analysis> getListStore() {
         return listStore;
     }
 
     @Override
-    public TreeStore<Folder> getTreeStore() {
+    public TreeStore<AnalysisGroup> getTreeStore() {
         return treeStore;
     }
 
     @Override
-    public void setTreeLoader(final TreeLoader<Folder> treeLoader) {
+    public void setTreeLoader(final TreeLoader<AnalysisGroup> treeLoader) {
         this.tree.setLoader(treeLoader);
     }
 
@@ -126,6 +137,12 @@ public class AppsViewImpl extends Composite implements AppsView {
     @Override
     public void setListLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> listLoader) {
         this.grid.setLoader(listLoader);
+    }
+
+    @Override
+    public GridSelectionModel<Analysis> getGridSelectionModel() {
+        return grid.getSelectionModel();
+
     }
 
 }

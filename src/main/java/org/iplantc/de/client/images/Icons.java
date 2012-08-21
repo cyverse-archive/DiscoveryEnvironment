@@ -27,6 +27,7 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
      * 
      * @return image.
      */
+    @Override
     @Source("new.gif")
     ImageResource add();
 
@@ -333,5 +334,40 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
      */
     @Source("application_go.png")
     ImageResource applicationLaunch();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("star-gold.gif")
+    ImageResource starGold();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("star-red.gif")
+    ImageResource starRed();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("star-white.gif")
+    ImageResource starWhite();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("delete_rating.png")
+    ImageResource deleteRating();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("delete_rating_hover.png")
+    ImageResource deleteRatingHover();
 
 }
