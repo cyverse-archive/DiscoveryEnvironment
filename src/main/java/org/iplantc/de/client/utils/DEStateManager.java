@@ -15,7 +15,12 @@ import org.iplantc.de.client.events.SettingsUpdatedEvent;
 import org.iplantc.de.client.events.SettingsUpdatedEventHandler;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.MessageBox.MessageBoxType;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -194,11 +199,31 @@ public class DEStateManager {
      * 
      */
     public void restoreUserSession() {
-        final MessageBox loadingMask = MessageBox.wait(I18N.DISPLAY.loadingSession(),
-                I18N.DISPLAY.loadingSessionWaitNotice(), I18N.DISPLAY.loadingMask());
+        MessageBox loadingMask = new MessageBox();
+        final LoadSessionCallback loadCallback = new LoadSessionCallback(loadingMask);
+
+        loadingMask.setType(MessageBoxType.WAIT);
+        loadingMask.setTitle(I18N.DISPLAY.loadingSession());
+        loadingMask.setMessage(I18N.DISPLAY.loadingSessionWaitNotice());
+        loadingMask.setProgressText(I18N.DISPLAY.loadingMask());
+        loadingMask.setButtons(Dialog.CANCEL);
+        loadingMask.setClosable(false);
+
+        loadingMask.addCallback(new Listener<MessageBoxEvent>() {
+            @Override
+            public void handleEvent(MessageBoxEvent mbe) {
+                Button btn = mbe.getButtonClicked();
+
+                // did the user click cancel?
+                if (btn.getItemId().equals(Dialog.CANCEL)) {
+                    loadCallback.cancelLoad();
+                }
+            }
+        });
+        loadingMask.show();
 
         UserSessionServiceFacade session = new UserSessionServiceFacade();
-        session.getUserSession(new LoadSessionCallback(loadingMask));
+        session.getUserSession(loadCallback);
     }
 
     private void restoreWindows(JSONObject win_state) {
@@ -240,21 +265,30 @@ public class DEStateManager {
 
     private final class LoadSessionCallback implements AsyncCallback<String> {
         private final MessageBox loadingMask;
+        private boolean loadState = true;
 
         private LoadSessionCallback(MessageBox loadingMask) {
             this.loadingMask = loadingMask;
+        }
+
+        public void cancelLoad() {
+            this.loadState = false;
         }
 
         @Override
         public void onFailure(Throwable caught) {
             GWT.log(I18N.ERROR.loadSessionFailed(), caught);
             loadingMask.close();
-            MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(), null);
+
+            if (loadState) {
+                MessageBox.info(I18N.ERROR.loadSessionFailed(), I18N.ERROR.loadSessionFailureNotice(),
+                        null);
+            }
         }
 
         @Override
         public void onSuccess(String result) {
-            if (result != null && !result.isEmpty()) {
+            if (loadState && result != null && !result.isEmpty()) {
                 JSONObject obj = JsonUtil.getObject(result);
                 JSONObject win_states = JsonUtil.getObject(obj, ACTIVE_WINDOWS);
                 restoreWindows(win_states);
