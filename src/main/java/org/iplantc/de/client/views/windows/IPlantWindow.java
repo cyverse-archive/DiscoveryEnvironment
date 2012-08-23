@@ -137,6 +137,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
      * 
      * @return
      */
+    @Override
     public abstract JSONObject getWindowState();
 
     /**
@@ -520,32 +521,27 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     @Override
     public HandlerRegistration addActivateHandler(
             ActivateHandler<com.sencha.gxt.widget.core.client.Window> handler) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public HandlerRegistration addDeactivateHandler(
             DeactivateHandler<com.sencha.gxt.widget.core.client.Window> handler) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public HandlerRegistration addMinimizeHandler(MinimizeHandler handler) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public HandlerRegistration addHideHandler(HideHandler handler) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public HandlerRegistration addShowHandler(ShowHandler handler) {
-        // TODO Auto-generated method stub
         return null;
     }
 

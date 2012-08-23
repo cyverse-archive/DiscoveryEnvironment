@@ -177,7 +177,7 @@ public class DEAnalysisWindow extends Window implements IPlantWindowInterface {
         return newMaxBtn;
     }
 
-    private ToolButton buildRestoreButton() {
+    private ToolButton createRestoreButton() {
         final ToolButton btnRestore = new ToolButton(BUTTON_STYLE_RESTORE);
         btnRestore.setId("idrestore-" + tag); //$NON-NLS-1$
         btnRestore.sinkEvents(Events.OnMouseOut.getEventCode());
@@ -302,7 +302,7 @@ public class DEAnalysisWindow extends Window implements IPlantWindowInterface {
             getHeader().removeTool(btnMaximize);
             btnMaximize.removeFromParent();
             removeButtonListeners(btnMaximize);
-            btnRestore = buildRestoreButton();
+            btnRestore = createRestoreButton();
 
             // re-insert restore button at same index of maximize button
             getHeader().insertTool(btnRestore, index);
