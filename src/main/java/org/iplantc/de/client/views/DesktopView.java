@@ -28,6 +28,7 @@ import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
 import org.iplantc.de.client.views.windows.FileViewerWindow;
 import org.iplantc.de.client.views.windows.FileWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.DomQuery;
 import com.extjs.gxt.ui.client.core.El;
@@ -49,11 +50,23 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.sencha.gxt.widget.core.client.Window;
+import com.sencha.gxt.widget.core.client.event.ActivateEvent;
+import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
+import com.sencha.gxt.widget.core.client.event.DeactivateEvent;
+import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
+import com.sencha.gxt.widget.core.client.event.HideEvent;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.MinimizeEvent;
+import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
+import com.sencha.gxt.widget.core.client.event.ShowEvent;
+import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
 /**
  * Provides user interface for desktop workspace area.
  */
-public class DesktopView extends ContentPanel {
+public class DesktopView extends ContentPanel implements ActivateHandler<Window>,
+        DeactivateHandler<Window>, HideHandler, MinimizeHandler, ShowHandler {
     @SuppressWarnings("unused")
     private TitoController controllerTito;
     private DEWindowManager mgrWindow;
@@ -111,7 +124,7 @@ public class DesktopView extends ContentPanel {
             tag += config.getTagSuffix();
         }
 
-        IPlantWindow window = mgrWindow.getWindow(tag);
+        IPlantWindowInterface window = mgrWindow.getWindow(tag);
 
         // do we already have this window?
         if (window == null) {
@@ -255,7 +268,7 @@ public class DesktopView extends ContentPanel {
     }
 
     private void markActive(IPlantWindow window) {
-        IPlantWindow activeWindow = mgrWindow.getActiveWindow();
+        IPlantWindowInterface activeWindow = mgrWindow.getActiveWindow();
 
         if (activeWindow != null && activeWindow != window) {
             markInactive(activeWindow);
@@ -269,7 +282,7 @@ public class DesktopView extends ContentPanel {
         window.setData("minimize", null); //$NON-NLS-1$
     }
 
-    private void markInactive(IPlantWindow window) {
+    private void markInactive(IPlantWindowInterface window) {
         if (window == mgrWindow.getActiveWindow()) {
             mgrWindow.setActiveWindow(null);
 
@@ -292,6 +305,36 @@ public class DesktopView extends ContentPanel {
     private void minimizeWindow(IPlantWindow window) {
         window.setData("minimize", true); //$NON-NLS-1$
         window.hide();
+    }
+
+    @Override
+    public void onShow(ShowEvent event) {
+        // TODO Auto-generated method stub
+    
+    }
+
+    @Override
+    public void onMinimize(MinimizeEvent event) {
+        // TODO Auto-generated method stub
+    
+    }
+
+    @Override
+    public void onHide(HideEvent event) {
+        // TODO Auto-generated method stub
+    
+    }
+
+    @Override
+    public void onDeactivate(DeactivateEvent<Window> event) {
+        // TODO Auto-generated method stub
+    
+    }
+
+    @Override
+    public void onActivate(ActivateEvent<Window> event) {
+        // TODO Auto-generated method stub
+    
     }
 
     private void initWindowManager() {
@@ -320,7 +363,7 @@ public class DesktopView extends ContentPanel {
             public void windowShow(WindowEvent we) {
                 onShow((IPlantWindow)we.getWindow());
             }
-        });
+        }, this, this, this, this, this);
     }
 
     private final class DEReloadListener implements Listener<ComponentEvent> {
@@ -482,7 +525,7 @@ public class DesktopView extends ContentPanel {
 
         private void addFileWindow(final String tag, final FileIdentifier file, boolean addTreeTab,
                 WindowConfig config) {
-            IPlantWindow window = mgrWindow.getWindow(tag);
+            IPlantWindowInterface window = mgrWindow.getWindow(tag);
 
             // do we already have a window for this file... let's bring it to the front
             if (window != null) {

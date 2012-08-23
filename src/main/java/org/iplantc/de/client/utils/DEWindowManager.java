@@ -3,31 +3,52 @@ package org.iplantc.de.client.utils;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.windows.IPlantWindow;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.util.Point;
 import com.extjs.gxt.ui.client.widget.Window;
-import com.extjs.gxt.ui.client.widget.WindowManager;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.widget.core.client.WindowManager;
+import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
+import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
+import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
+//import com.extjs.gxt.ui.client.widget.WindowManager;
 
 /**
  * Manages window widgets in the web "desktop" environment.
  */
 public class DEWindowManager extends WindowManager {
     private final WindowListener listener;
-    private IPlantWindow activeWindow;
-    private final FastMap<IPlantWindow> windows = new FastMap<IPlantWindow>();
+    private IPlantWindowInterface activeWindow;
+    private final FastMap<IPlantWindowInterface> windows = new FastMap<IPlantWindowInterface>();
     private Point first_window_postion;
+    private final ActivateHandler<com.sencha.gxt.widget.core.client.Window> activateHandler;
+    private final DeactivateHandler<com.sencha.gxt.widget.core.client.Window> deactivateHandler;
+    private final HideHandler hideHandler;
+    private final MinimizeHandler minimizeHandler;
+    private final ShowHandler showHandler;
 
     /**
      * Instantiate from a window listener.
      * 
      * @param listener window listener.
      */
-    public DEWindowManager(WindowListener listener) {
+    public DEWindowManager(WindowListener listener,
+            ActivateHandler<com.sencha.gxt.widget.core.client.Window> activateHandler,
+            DeactivateHandler<com.sencha.gxt.widget.core.client.Window> deactivateHandler,
+            HideHandler hideHandler, MinimizeHandler minimizeHandler, ShowHandler showHandler) {
         this.listener = listener;
+        this.activateHandler = activateHandler;
+        this.deactivateHandler = deactivateHandler;
+        this.hideHandler = hideHandler;
+        this.minimizeHandler = minimizeHandler;
+        this.showHandler = showHandler;
     }
 
     /**
@@ -35,10 +56,10 @@ public class DEWindowManager extends WindowManager {
      * 
      * @param window window to set as active.
      */
-    public void setActiveWindow(IPlantWindow window) {
+    public void setActiveWindow(IPlantWindowInterface window) {
         activeWindow = window;
         if (window != null) {
-            bringToFront(window);
+            bringToFront(window.asWidget());
         }
     }
 
@@ -47,7 +68,7 @@ public class DEWindowManager extends WindowManager {
      * 
      * @return the active window.
      */
-    public IPlantWindow getActiveWindow() {
+    public IPlantWindowInterface getActiveWindow() {
         return activeWindow;
     }
 
@@ -58,8 +79,8 @@ public class DEWindowManager extends WindowManager {
      * @param config a WindowConfiguration to use for the new window
      * @return newly added window.
      */
-    public IPlantWindow add(String tag, WindowConfig config) {
-        IPlantWindow ret = WindowFactory.build(tag, config);
+    public IPlantWindowInterface add(String tag, WindowConfig config) {
+        IPlantWindowInterface ret = WindowFactory.build(tag, config);
         add(ret);
         return ret;
     }
@@ -69,12 +90,20 @@ public class DEWindowManager extends WindowManager {
      * 
      * @param window window to be added.
      */
-    public void add(IPlantWindow window) {
+    public void add(IPlantWindowInterface window) {
         if (window != null) {
             window.setId(window.getTag());
             getDEWindows().put(window.getTag(), window);
-            window.addWindowListener(listener);
-            register(window);
+            if (window instanceof com.extjs.gxt.ui.client.widget.Window) {
+                window.addWindowListener(listener);
+            } else if (window instanceof com.sencha.gxt.widget.core.client.Window) {
+                window.addActivateHandler(activateHandler);
+                window.addDeactivateHandler(deactivateHandler);
+                window.addHideHandler(hideHandler);
+                window.addMinimizeHandler(minimizeHandler);
+                window.addShowHandler(showHandler);
+            }
+            register(window.asWidget());
         }
     }
 
@@ -84,7 +113,7 @@ public class DEWindowManager extends WindowManager {
      * @param tag unique tag for window to retrieve.
      * @return null on failure. Requested window on success.
      */
-    public IPlantWindow getWindow(String tag) {
+    public IPlantWindowInterface getWindow(String tag) {
         return getDEWindows().get(tag);
     }
 
@@ -94,11 +123,29 @@ public class DEWindowManager extends WindowManager {
      * @param tag tag of the window to remove.
      */
     public void remove(String tag) {
-        IPlantWindow win = getDEWindows().remove(tag);
-        unregister(win);
+        IPlantWindowInterface win = getDEWindows().remove(tag);
+        unregister(win.asWidget());
         if (getDEWindows().size() == 0) {
             first_window_postion = null;
         }
+    }
+
+    public void unregister(Window widget) {
+        unregister(widget);
+        // if (front == widget) {
+        // front = null;
+        // }
+        // accessList.remove(widget);
+        // widgets.remove(widget);
+        // activateLast();
+        // ensureHandlers().fireEvent(new UnregisterEvent<Widget>(widget));
+    }
+
+    private void unregister(Widget widget) {
+        if ((getActive() == widget) && (widget instanceof IPlantWindowInterface)) {
+            setActiveWindow((IPlantWindowInterface)widget);
+        }
+        getStack().remove(widget);
     }
 
     /**
@@ -136,7 +183,7 @@ public class DEWindowManager extends WindowManager {
      */
     public void show(String tag) {
         if (tag != null) {
-            IPlantWindow window = getDEWindows().get(tag);
+            IPlantWindowInterface window = getDEWindows().get(tag);
             if (window != null) {
                 if (getFirst_window_postion() != null) {
                     int new_x = getFirst_window_postion().x + ((getCount() - 1) * 10);
@@ -157,14 +204,14 @@ public class DEWindowManager extends WindowManager {
     /**
      * @return the windows
      */
-    public FastMap<IPlantWindow> getDEWindows() {
+    public FastMap<IPlantWindowInterface> getDEWindows() {
         return windows;
     }
 
     public JSONObject getActiveWindowStates() {
         JSONObject obj = new JSONObject();
         int index = 0;
-        for (Window win : getStack()) {
+        for (Widget win : getStack()) {
             JSONObject state = ((IPlantWindow)win).getWindowState();
             String tag = ((IPlantWindow)win).getTag();
             state.put("order", new JSONString(index++ + ""));

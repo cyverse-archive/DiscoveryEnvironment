@@ -10,7 +10,7 @@ import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
-import org.iplantc.de.client.views.windows.IPlantWindow;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.MyAnalysesWindow;
 import org.iplantc.de.client.views.windows.MyDataWindow;
 import org.iplantc.de.client.views.windows.NotificationWindow;
@@ -32,8 +32,8 @@ public class WindowFactory {
      * @param config a WindowConfiguration suitable for the type of window to create
      * @return new window.
      */
-    public static IPlantWindow build(String type, WindowConfig config) {
-        IPlantWindow ret = null;
+    public static IPlantWindowInterface build(String type, WindowConfig config) {
+        IPlantWindowInterface ret = null;
 
         if (type != null) {
             if (type.equals(Constants.CLIENT.myDataTag())) {

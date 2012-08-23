@@ -74,12 +74,14 @@ class AnalysisPagedProxy extends RpcProxy<PagingLoadConfig, PagingLoadResult<Ana
                         PagingLoadResult<Analysis> callbackResult = new PagingLoadResultBean<Analysis>(
                                 bean.as().getAnalyses(), total, offset);
                         callback.onSuccess(callbackResult);
+                        view.unMaskMainPanel();
                     }
 
                     @Override
                     public void onFailure(Throwable caught) {
                         ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
                         callback.onFailure(caught);
+                        view.unMaskMainPanel();
                     }
                 });
     }

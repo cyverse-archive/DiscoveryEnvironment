@@ -20,15 +20,21 @@ import com.extjs.gxt.ui.client.widget.Header;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
+import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
+import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
 /**
  * Provides a base class for windows in the application desktop.
  */
-public abstract class IPlantWindow extends Window {
+public abstract class IPlantWindow extends Window implements IPlantWindowInterface {
     private final String BUTTON_STYLE_MAXIMIZE = "x-tool-maximizewindow"; //$NON-NLS-1$
     private final String BUTTON_STYLE_RESTORE = "x-tool-restorewindow"; //$NON-NLS-1$
     private final String WINDOW_STYLE_MAXIMIZED = "x-window-maximized"; //$NON-NLS-1$
@@ -217,6 +223,7 @@ public abstract class IPlantWindow extends Window {
      * 
      * @return a string representing a window handle, or a unique identifier.
      */
+    @Override
     public String getTag() {
         return tag;
     }
@@ -473,6 +480,7 @@ public abstract class IPlantWindow extends Window {
     /**
      * Executes define operations for refreshing the window display.
      */
+    @Override
     public void refresh() {
 
     }
@@ -482,6 +490,7 @@ public abstract class IPlantWindow extends Window {
      * 
      * @param config
      */
+    @Override
     public void setWindowConfig(WindowConfig config) {
         // do nothing intentionally
     }
@@ -507,4 +516,37 @@ public abstract class IPlantWindow extends Window {
             window.toFront();
         }
     }
+
+    @Override
+    public HandlerRegistration addActivateHandler(
+            ActivateHandler<com.sencha.gxt.widget.core.client.Window> handler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HandlerRegistration addDeactivateHandler(
+            DeactivateHandler<com.sencha.gxt.widget.core.client.Window> handler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HandlerRegistration addMinimizeHandler(MinimizeHandler handler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HandlerRegistration addHideHandler(HideHandler handler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HandlerRegistration addShowHandler(ShowHandler handler) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

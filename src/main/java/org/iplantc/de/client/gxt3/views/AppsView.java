@@ -20,6 +20,16 @@ public interface AppsView extends IsWidget {
 
         void onAnalysisGroupSelected(final AnalysisGroup ag);
 
+        // XXX JDS Need to verify necessity of these methods. Does the view need them, or something else?
+        void selectCategory(String categoryId);
+        
+        void selectApp(String appID);
+
+        void deSelectCurrentCategory();
+
+        Analysis getSelectedApp();
+
+        AnalysisGroup getSelectedCategory();
     }
 
     void setPresenter(final Presenter presenter);
@@ -36,6 +46,9 @@ public interface AppsView extends IsWidget {
 
     void maskMainPanel(final String loadingMask);
 
+    void unMaskMainPanel();
+
     GridSelectionModel<Analysis> getGridSelectionModel();
+
 
 }

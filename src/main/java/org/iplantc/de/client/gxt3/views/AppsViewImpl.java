@@ -27,7 +27,16 @@ import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
+/**
+ * @author jstroot
+ * 
+ */
 public class AppsViewImpl extends Composite implements AppsView {
+    /**
+     * FIXME This id needs to be applied to nav panel collapse button FIXME CORE-2992: Add an ID to the
+     * Categories panel collapse tool to assist QA.
+     */
+    private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("AppsView.ui.xml")
@@ -132,6 +141,11 @@ public class AppsViewImpl extends Composite implements AppsView {
     @Override
     public void maskMainPanel(final String loadingMask) {
         mainPanel.mask(loadingMask);
+    }
+
+    @Override
+    public void unMaskMainPanel() {
+        mainPanel.unmask();
     }
 
     @Override
