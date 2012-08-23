@@ -489,7 +489,7 @@ public class NotificationPanel extends ContentPanel {
             config.setSortDir(dir);
         }
 
-        if (filter != null && !filter.isEmpty()) {
+        if (filter != null && !filter.isEmpty() && !filter.equalsIgnoreCase("ALL")) {
             config.set("filter", filter.toLowerCase());
         }
 
