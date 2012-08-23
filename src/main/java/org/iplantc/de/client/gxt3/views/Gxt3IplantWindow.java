@@ -38,7 +38,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
  * @author jstroot
  * 
  */
-public class DEAnalysisWindow extends Window implements IPlantWindowInterface {
+public class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
     private static final String BUTTON_STYLE_RESTORE_HOVER = "x-tool-restorewindow-hover";
     private static final String HEADER_STYLE = "windowLayoutTitle"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_CLOSE = "x-tool-closewindow"; //$NON-NLS-1$
@@ -70,22 +70,22 @@ public class DEAnalysisWindow extends Window implements IPlantWindowInterface {
      * 
      * @param tag a unique identifier for the window.
      */
-    protected DEAnalysisWindow(String tag) {
+    protected Gxt3IplantWindow(String tag) {
         this(tag, false, true, false, true);
     }
 
-    public DEAnalysisWindow(WindowAppearance appearance) {
+    public Gxt3IplantWindow(WindowAppearance appearance) {
         super(appearance);
         // TODO Auto-generated constructor stub
     }
 
-    protected DEAnalysisWindow(String tag, boolean haveStatus, boolean isMinimizable,
+    protected Gxt3IplantWindow(String tag, boolean haveStatus, boolean isMinimizable,
             boolean isMaximizable, boolean isClosable, WindowConfig config) {
         this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
         this.config = config;
     }
 
-    public DEAnalysisWindow(String tag, boolean haveStatus, boolean isMinimizable,
+    public Gxt3IplantWindow(String tag, boolean haveStatus, boolean isMinimizable,
             boolean isMaximizable, boolean isClosable) {
         this.tag = tag;
 
