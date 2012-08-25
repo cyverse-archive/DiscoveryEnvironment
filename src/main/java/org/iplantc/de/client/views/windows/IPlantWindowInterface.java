@@ -4,9 +4,9 @@ import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.utils.DEWindowManager;
 
 import com.extjs.gxt.ui.client.event.WindowListener;
-import com.extjs.gxt.ui.client.util.Point;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.HasActivateHandlers;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.HasDeactivateHandlers;
@@ -41,7 +41,7 @@ public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
 
     void refresh();
 
-    Point getPosition(boolean b);
+    Point getPosition3(boolean b);
 
     <X> X getData(String key);
 

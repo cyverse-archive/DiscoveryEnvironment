@@ -1,5 +1,8 @@
 package org.iplantc.de.client.gxt3.views.cells;
 
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+import static com.google.gwt.dom.client.BrowserEvents.MOUSEDOWN;
+
 import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Constants;
@@ -18,37 +21,41 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
-public class HyperlinkCell extends AbstractCell<String> {
+public class HyperlinkCell extends AbstractCell<Analysis> {
 
     private final EventBus eventBus;
     private final CommonAppDisplayStrings displayStrings;
 
     public HyperlinkCell(final EventBus eventBus, final CommonAppDisplayStrings displayStrings) {
+        super(CLICK, MOUSEDOWN);
         this.eventBus = eventBus;
         this.displayStrings = displayStrings;
     }
 
     @Override
-    public void render(Cell.Context context, String value, SafeHtmlBuilder sb) {
-        String name = null;
-        if (!(context.getKey() instanceof Analysis)) {
+    public void render(Cell.Context context, Analysis value, SafeHtmlBuilder sb) {
+        if (value == null) {
             return;
         }
-        Analysis model = (Analysis)context.getKey();
+        String name = null;
+        // if (!(context.getKey() instanceof Analysis)) {
+        // return;
+        // }
+        // Analysis model = (Analysis)context.getKey();
 
-        if (model.isFavorite()) {
+        if (value.isFavorite()) {
             // FIXME JDS Replace hard-coded image path with something more safe
-            name = "<img src='./images/fav.png'/>&nbsp;" + model.getName(); //$NON-NLS-1$
+            name = "<img src='./images/fav.png'/>&nbsp;" + value.getName(); //$NON-NLS-1$
         } else {
-            name = model.getName();
+            name = value.getName();
         }
 
-        if (!model.isDisabled()) {
+        if (!value.isDisabled()) {
             Hyperlink link = new Hyperlink(name, "");
             link.setStyleName("analysis_name"); //$NON-NLS-1$
-            link.setWidth(Integer.toString(model.getName().length()));
+            link.setWidth(Integer.toString(value.getName().length()));
 
-            sb.append(SafeHtmlUtils.fromString(link.toString()));
+            sb.append(SafeHtmlUtils.fromTrustedString(link.toString()));
         } else {
             // FIXME JDS Replace hard-coded image path with something more safe
             name = "<img title ='" //$NON-NLS-1$
@@ -60,15 +67,15 @@ public class HyperlinkCell extends AbstractCell<String> {
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, String value, NativeEvent event,
-            ValueUpdater<String> valueUpdater) {
-        if (!(context.getKey() instanceof Analysis)) {
-            return;
-        }
-        Analysis model = (Analysis)context.getKey();
+    public void onBrowserEvent(Cell.Context context, Element parent, Analysis value, NativeEvent event,
+            ValueUpdater<Analysis> valueUpdater) {
+        // if (!(context.getKey() instanceof Analysis)) {
+        // return;
+        // }
+        // Analysis model = (Analysis)context.getKey();
         if (((HyperlinkImpl)GWT.create(HyperlinkImpl.class)).handleAsClick(Event.as(event))) {
             event.preventDefault();
-            UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), model.getId());
+            UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), value.getId());
             eventBus.fireEvent(e);
         }
     }

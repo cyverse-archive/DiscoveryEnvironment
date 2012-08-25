@@ -10,8 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -100,7 +100,6 @@ public class FileDownloadServlet extends HttpServlet {
         try {
             dispatcher.init(getServletConfig());
         } catch (ServletException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         dispatcher.setContext(getServletContext());

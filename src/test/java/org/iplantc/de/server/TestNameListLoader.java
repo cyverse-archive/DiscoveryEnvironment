@@ -100,7 +100,6 @@ public class TestNameListLoader {
         // }
         // catch(HibernateException e)
         // {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -146,7 +145,6 @@ public class TestNameListLoader {
         // }
         // catch(HibernateException e)
         // {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -192,7 +190,6 @@ public class TestNameListLoader {
         // }
         // catch(HibernateException e)
         // {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -229,7 +226,6 @@ public class TestNameListLoader {
         // }
         // catch(HibernateException e)
         // {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }

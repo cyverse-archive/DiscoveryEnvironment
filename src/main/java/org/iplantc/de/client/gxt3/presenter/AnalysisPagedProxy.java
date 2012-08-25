@@ -55,7 +55,8 @@ class AnalysisPagedProxy extends RpcProxy<PagingLoadConfig, PagingLoadResult<Ana
                 .equals(SortDir.ASC)) ? com.extjs.gxt.ui.client.Style.SortDir.ASC
                 : com.extjs.gxt.ui.client.Style.SortDir.DESC;
 
-        service.getPagedAnalysis(currentAg.getId(), limit, sortInfo.getSortField(), offset, sortDir,
+        String sortField = (sortInfo == null) ? "name" : sortInfo.getSortField();
+        service.getPagedAnalysis(currentAg.getId(), limit, sortField, offset, sortDir,
                 new AsyncCallback<String>() {
 
                     @Override
@@ -66,11 +67,13 @@ class AnalysisPagedProxy extends RpcProxy<PagingLoadConfig, PagingLoadResult<Ana
 
                         // Get Total count of paged call
                         int total = bean.as().getAnalyses().size();
-                        Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result), "total");
+                        Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result),
+                                "template_count");
                         if (jsonTotal != null) {
                             total = jsonTotal.intValue();
                         }
 
+                        int os = offset;
                         PagingLoadResult<Analysis> callbackResult = new PagingLoadResultBean<Analysis>(
                                 bean.as().getAnalyses(), total, offset);
                         callback.onSuccess(callbackResult);

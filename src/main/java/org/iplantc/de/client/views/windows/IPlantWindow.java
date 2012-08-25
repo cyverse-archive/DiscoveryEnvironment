@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.event.WindowEvent;
-import com.extjs.gxt.ui.client.util.Point;
 import com.extjs.gxt.ui.client.util.Size;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Header;
@@ -25,6 +24,7 @@ import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
@@ -131,6 +131,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
         this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
         this.config = config;
     }
+
 
     /**
      * Returns the window state information.
@@ -372,7 +373,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
 
         head.addStyleName(WINDOW_STYLE_DRAGGABLE);
         if (restorePos != null) {
-            setPosition(restorePos.x, restorePos.y);
+            setPosition(restorePos.getX(), restorePos.getY());
             setSize(restoreSize.width, restoreSize.height);
         }
         maximized = false;
@@ -382,7 +383,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     protected void maximizeWindow() {
         if (!maximized) {
             restoreSize = getSize();
-            restorePos = getPosition(true);
+            restorePos = getPosition3(true);
             maximized = true;
             addStyleName(WINDOW_STYLE_MAXIMIZED);
             head.removeStyleName(WINDOW_STYLE_DRAGGABLE);
@@ -400,6 +401,10 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
         } else {
             fitContainer();
         }
+    }
+
+    public Point getPosition3(boolean b) {
+        return new Point(getPosition(b).x, getPosition(b).y);
     }
 
     /**

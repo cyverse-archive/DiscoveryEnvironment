@@ -1,6 +1,7 @@
 package org.iplantc.de.client.factories;
 
 import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.gxt3.views.DEAnalysisWindow;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
@@ -8,7 +9,6 @@ import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
-import org.iplantc.de.client.views.windows.DECatalogWindow;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.MyAnalysesWindow;
@@ -49,7 +49,10 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
                 ret = new MyAnalysesWindow(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
-                ret = new DECatalogWindow(type, config);
+                // TODO !!! JDS This is where you will instantiate DEAnalysisWindow, which will kick off
+                // the View Presenter
+                ret = new DEAnalysisWindow(type, config);
+                // ret = new DECatalogWindow(type, config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {

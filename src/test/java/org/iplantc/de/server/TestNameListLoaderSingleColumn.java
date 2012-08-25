@@ -89,7 +89,6 @@ public class TestNameListLoaderSingleColumn {
         // assertEquals(thisRT.getFields().size(), 1);
         // }
         // } catch (HibernateException e) {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -118,7 +117,6 @@ public class TestNameListLoaderSingleColumn {
         // assertTrue(foundColumn1Value);
         // }
         // } catch (HibernateException e) {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -147,7 +145,6 @@ public class TestNameListLoaderSingleColumn {
         // assertTrue(foundColumn1Value);
         // }
         // } catch (HibernateException e) {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }
@@ -176,7 +173,6 @@ public class TestNameListLoaderSingleColumn {
         // }
         // }
         // } catch (HibernateException e) {
-        // // TODO Auto-generated catch block
         // e.printStackTrace();
         // throw e;
         // }

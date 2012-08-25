@@ -6,10 +6,12 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 
 public interface AnalysisProperties extends PropertyAccess<Analysis>{
 
-	ValueProvider<Analysis, String> getName();
+    // ModelKeyProvider<Analysis> id();
 
-	ValueProvider<Analysis, String> getIntegratedBy();
+    ValueProvider<Analysis, String> name();
 
-    ValueProvider<Analysis, Analysis.AnalysisFeedback> getRating();
+    ValueProvider<Analysis, String> integratorName();
+
+    ValueProvider<Analysis, AnalysisFeedback> rating();
 
 }

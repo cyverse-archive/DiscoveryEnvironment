@@ -26,6 +26,7 @@ public class AnalysisGroupProxy extends RpcProxy<AnalysisGroup, List<AnalysisGro
 
     private final TemplateServiceFacade templateServiceFacade;
     private final UserInfo userInfo;
+    private final AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
 
     public AnalysisGroupProxy(final TemplateServiceFacade templateServiceFacade, final UserInfo userInfo) {
         this.templateServiceFacade = templateServiceFacade;
@@ -38,10 +39,11 @@ public class AnalysisGroupProxy extends RpcProxy<AnalysisGroup, List<AnalysisGro
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
                         AutoBean<AnalysisGroupList> bean = AutoBeanCodex.decode(factory,
                                 AnalysisGroupList.class, result);
-                        callback.onSuccess(bean.as().getGroups());
+                        AnalysisGroupList as = bean.as();
+                        List<AnalysisGroup> groups = as.getGroups();
+                        callback.onSuccess(groups);
                     }
 
                     @Override

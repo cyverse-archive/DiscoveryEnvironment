@@ -36,7 +36,7 @@ public interface AnalysisGroup {
     @PropertyName("workspace_id")
     void setWorkspaceId(String workspaceId);
 
-    void setId();
+    void setId(String id);
 
     void setDescription(String description);
 

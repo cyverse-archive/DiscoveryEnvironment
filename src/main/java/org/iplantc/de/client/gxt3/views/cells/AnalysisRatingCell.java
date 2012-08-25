@@ -6,6 +6,7 @@ import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
 
 import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
+import org.iplantc.de.client.gxt3.model.autoBean.AnalysisFeedback;
 import org.iplantc.de.client.images.Icons;
 import org.iplantc.de.client.images.Resources;
 
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
-public class AnalysisRatingCell extends AbstractCell<Analysis.AnalysisFeedback> {
+public class AnalysisRatingCell extends AbstractCell<AnalysisFeedback> {
     private static final String GOLD_STAR_RATING_STYLE = "apps_rating_gold_button"; //$NON-NLS-1$
     private static final String WHITE_STAR_RATING_STYLE = "apps_rating_white_button"; //$NON-NLS-1$
     
@@ -51,7 +52,7 @@ public class AnalysisRatingCell extends AbstractCell<Analysis.AnalysisFeedback> 
          *            String, in which case the value would be escaped.
          * @return a {@link SafeHtml} instance
          */
-        @SafeHtmlTemplates.Template("<div name=\"{0}\" style=\"{1}\">{2}</div>")
+        @SafeHtmlTemplates.Template("<span name=\"{0}\" style=\"{1}\">{2}</span>")
         SafeHtml cell(String name, SafeStyles styles, SafeHtml value);
     }
 
@@ -69,7 +70,7 @@ public class AnalysisRatingCell extends AbstractCell<Analysis.AnalysisFeedback> 
     }
 
     @Override
-    public void render(Cell.Context context, Analysis.AnalysisFeedback value, SafeHtmlBuilder sb) {
+    public void render(Cell.Context context, AnalysisFeedback value, SafeHtmlBuilder sb) {
         /*
          * Always do a null check on the value. Cell widgets can pass null to cells if the underlying
          * data contains a null, or if the data arrives out of order.
@@ -105,8 +106,8 @@ public class AnalysisRatingCell extends AbstractCell<Analysis.AnalysisFeedback> 
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, Analysis.AnalysisFeedback value,
-            NativeEvent event, ValueUpdater<Analysis.AnalysisFeedback> valueUpdater) {
+    public void onBrowserEvent(Cell.Context context, Element parent, AnalysisFeedback value,
+            NativeEvent event, ValueUpdater<AnalysisFeedback> valueUpdater) {
         if (!(context.getKey() instanceof Analysis)) {
             return;
         }

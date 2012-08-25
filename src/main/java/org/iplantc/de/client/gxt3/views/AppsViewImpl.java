@@ -6,10 +6,11 @@ import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
@@ -21,17 +22,18 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.CellClickEvent;
 import com.sencha.gxt.widget.core.client.event.CellClickEvent.CellClickHandler;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
-import com.sencha.gxt.widget.core.client.grid.GridView;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
+import com.sencha.gxt.widget.core.client.grid.LiveGridView;
 import com.sencha.gxt.widget.core.client.tree.Tree;
+import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 /**
  * @author jstroot
  * 
  */
-public class AppsViewImpl extends Composite implements AppsView {
+public class AppsViewImpl implements AppsView {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -61,16 +63,16 @@ public class AppsViewImpl extends Composite implements AppsView {
     Grid<Analysis> grid;
 
     @UiField
-    GridView<Analysis> gridView;
+    LiveGridView<Analysis> liveGridView;
 
     @UiField(provided = true)
     final ListStore<Analysis> listStore;
 
     @UiField(provided = true)
-    final AnalysisColumnModel cm;
+    final ColumnModel<Analysis> cm;
 
-    @UiField
-    ToolBar toolbar;
+    // @UiField
+    // PagingToolBar toolbar;
 
     @UiField
     BorderLayoutContainer con;
@@ -82,8 +84,10 @@ public class AppsViewImpl extends Composite implements AppsView {
     @UiField
     ContentPanel detailPanel;
 
+    private final Widget widget;
+
     public AppsViewImpl(TreeStore<AnalysisGroup> treeStore, ListStore<Analysis> listStore,
-            AnalysisColumnModel cm) {
+            ColumnModel<Analysis> cm) {
         // XXX Using Dependency injection, you can get global references to stores
         // treeStore = new TreeStore<Folder>(new KeyProvider());
         // listStore = new ListStore<File>(new ModelKeyProvider<File>() {
@@ -96,6 +100,8 @@ public class AppsViewImpl extends Composite implements AppsView {
         this.treeStore = treeStore;
         this.listStore = listStore;
         this.cm = cm;
+        this.widget = uiBinder.createAndBindUi(this);
+        // toolbar.add(new LiveToolItem(grid));
         grid.addCellClickHandler(new CellClickHandler() {
 
             @Override
@@ -104,12 +110,31 @@ public class AppsViewImpl extends Composite implements AppsView {
 
             }
         });
-        initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @UiFactory
+    public ValueProvider<AnalysisGroup, String> createValueProvider() {
+        return new ValueProvider<AnalysisGroup, String>() {
+
+            @Override
+            public String getValue(AnalysisGroup object) {
+                return object.getName();
+            }
+
+            @Override
+            public void setValue(AnalysisGroup object, String value) {
+            }
+
+            @Override
+            public String getPath() {
+                return "name";
+            }
+        };
     }
 
     @Override
     public Widget asWidget() {
-        return uiBinder.createAndBindUi(this);
+        return widget;
     }
 
     @Override
@@ -149,13 +174,18 @@ public class AppsViewImpl extends Composite implements AppsView {
 
     @Override
     public void setListLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> listLoader) {
-        this.grid.setLoader(listLoader);
+        grid.setLoader(listLoader);
     }
 
     @Override
     public GridSelectionModel<Analysis> getGridSelectionModel() {
         return grid.getSelectionModel();
 
+    }
+
+    @Override
+    public TreeSelectionModel<AnalysisGroup> getTreeSelectionModel() {
+        return tree.getSelectionModel();
     }
 
 }

@@ -7,6 +7,10 @@ public interface AnalysisAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Analysis> analysis();
 
+    AutoBean<AnalysisFeedback> analysisFeedback();
+
+    AutoBean<PipelineEligibility> pipelineEligibility();
+
     AutoBean<AnalysisList> analysisList();
 
     AutoBean<AnalysisGroup> analysisGroup();

@@ -12,6 +12,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
+import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 public interface AppsView extends IsWidget {
 
@@ -49,6 +50,8 @@ public interface AppsView extends IsWidget {
     void unMaskMainPanel();
 
     GridSelectionModel<Analysis> getGridSelectionModel();
+
+    TreeSelectionModel<AnalysisGroup> getTreeSelectionModel();
 
 
 }

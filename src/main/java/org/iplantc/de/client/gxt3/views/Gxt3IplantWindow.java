@@ -1,6 +1,7 @@
 package org.iplantc.de.client.gxt3.views;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,17 +13,16 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.WindowListener;
-import com.google.gwt.dev.util.collect.HashMap;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
@@ -38,7 +38,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
  * @author jstroot
  * 
  */
-public class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
+public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
     private static final String BUTTON_STYLE_RESTORE_HOVER = "x-tool-restorewindow-hover";
     private static final String HEADER_STYLE = "windowLayoutTitle"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_CLOSE = "x-tool-closewindow"; //$NON-NLS-1$
@@ -77,6 +77,10 @@ public class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
     public Gxt3IplantWindow(WindowAppearance appearance) {
         super(appearance);
         // TODO Auto-generated constructor stub
+    }
+
+    protected Gxt3IplantWindow(final String tag, final WindowConfig config) {
+        this(tag, false, true, true, true);
     }
 
     protected Gxt3IplantWindow(String tag, boolean haveStatus, boolean isMinimizable,
@@ -365,8 +369,8 @@ public class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
     }
 
     @Override
-    public com.extjs.gxt.ui.client.util.Point getPosition(boolean b) {
-        return new com.extjs.gxt.ui.client.util.Point(getElement().getLeft(), getElement().getTop());
+    public Point getPosition3(boolean b) {
+        return getElement().getPosition(b);
     }
 
     @Override
@@ -374,9 +378,6 @@ public class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
         this.config = config;
     }
 
-    @Override
-    public JSONObject getWindowState() {
-        return config;
-    }
+
 
 }

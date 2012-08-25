@@ -6,40 +6,6 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 public interface Analysis {
     
-    public interface AnalysisFeedback {
-
-        @PropertyName("average")
-        double getAverageRating();
-
-        @PropertyName("user")
-        int getUserRating();
-
-        @PropertyName("comment_id")
-        long getCommentId();
-
-        @PropertyName("average")
-        void setAverageRating(double averageRating);
-
-        @PropertyName("user")
-        void setUserRating(int userRating);
-
-        @PropertyName("comment_id")
-        void setCommentId(long commentId);
-    }
-
-    public interface PipelineEligibility{
-        
-        String getReason();
-
-        @PropertyName("is_valid")
-        boolean isValid();
-
-        void setReason(String reason);
-
-        @PropertyName("is_valid")
-        void setValid(boolean valid);
-    }
-
     @PropertyName("is_favorite")
     boolean isFavorite();
 
