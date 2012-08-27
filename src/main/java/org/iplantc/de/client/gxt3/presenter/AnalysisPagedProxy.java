@@ -73,7 +73,6 @@ class AnalysisPagedProxy extends RpcProxy<PagingLoadConfig, PagingLoadResult<Ana
                             total = jsonTotal.intValue();
                         }
 
-                        int os = offset;
                         PagingLoadResult<Analysis> callbackResult = new PagingLoadResultBean<Analysis>(
                                 bean.as().getAnalyses(), total, offset);
                         callback.onSuccess(callbackResult);

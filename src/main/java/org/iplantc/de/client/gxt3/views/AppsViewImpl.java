@@ -1,6 +1,7 @@
 package org.iplantc.de.client.gxt3.views;
 
-import org.iplantc.core.uidiskresource.client.models.Folder;
+import java.util.List;
+
 import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
 
@@ -12,11 +13,10 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.data.shared.loader.ListLoadConfig;
+import com.sencha.gxt.data.shared.loader.ListLoadResult;
+import com.sencha.gxt.data.shared.loader.ListLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
@@ -24,10 +24,10 @@ import com.sencha.gxt.widget.core.client.event.CellClickEvent;
 import com.sencha.gxt.widget.core.client.event.CellClickEvent.CellClickHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
-import com.sencha.gxt.widget.core.client.grid.LiveGridView;
+import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree;
-import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 /**
  * @author jstroot
@@ -44,13 +44,6 @@ public class AppsViewImpl implements AppsView {
     interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> {
     }
 
-    class KeyProvider implements ModelKeyProvider<Folder> {
-        @Override
-        public String getKey(Folder item) {
-            return (item instanceof Folder ? "f-" : "m-") + item.getId().toString();
-        }
-    }
-
     private Presenter presenter;
 
     @UiField
@@ -63,16 +56,13 @@ public class AppsViewImpl implements AppsView {
     Grid<Analysis> grid;
 
     @UiField
-    LiveGridView<Analysis> liveGridView;
+    GridView<Analysis> gridView;
 
     @UiField(provided = true)
     final ListStore<Analysis> listStore;
 
     @UiField(provided = true)
     final ColumnModel<Analysis> cm;
-
-    // @UiField
-    // PagingToolBar toolbar;
 
     @UiField
     BorderLayoutContainer con;
@@ -88,15 +78,7 @@ public class AppsViewImpl implements AppsView {
 
     public AppsViewImpl(TreeStore<AnalysisGroup> treeStore, ListStore<Analysis> listStore,
             ColumnModel<Analysis> cm) {
-        // XXX Using Dependency injection, you can get global references to stores
-        // treeStore = new TreeStore<Folder>(new KeyProvider());
-        // listStore = new ListStore<File>(new ModelKeyProvider<File>() {
-        // @Override
-        // public String getKey(File item) {
-        // return item.getId();
-        // }
-        // });
-        // cm = new ColumnModel<File>(null);
+        // XXX JDS Using Dependency injection, you can get global references to stores
         this.treeStore = treeStore;
         this.listStore = listStore;
         this.cm = cm;
@@ -110,6 +92,26 @@ public class AppsViewImpl implements AppsView {
 
             }
         });
+
+        grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Analysis>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
+                if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
+                    presenter.onAnalysisSelected(event.getSelection().get(0));
+                }
+            }
+        });
+
+        tree.getSelectionModel().addSelectionChangedHandler(
+                new SelectionChangedHandler<AnalysisGroup>() {
+                    @Override
+                    public void onSelectionChanged(SelectionChangedEvent<AnalysisGroup> event) {
+                        if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
+                            presenter.onAnalysisGroupSelected(event.getSelection().get(0));
+                        }
+                    }
+                });
+
     }
 
     @UiFactory
@@ -173,19 +175,42 @@ public class AppsViewImpl implements AppsView {
     }
 
     @Override
-    public void setListLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> listLoader) {
+    public void setListLoader(ListLoader<ListLoadConfig, ListLoadResult<Analysis>> listLoader) {
         grid.setLoader(listLoader);
     }
 
     @Override
-    public GridSelectionModel<Analysis> getGridSelectionModel() {
-        return grid.getSelectionModel();
-
+    public void selectAnalysis(String analysisId) {
+        Analysis app = listStore.findModelWithKey(analysisId);
+        // TODO JDS Set Heading
+        if (app != null) {
+            grid.getSelectionModel().select(app, true);
+        }
     }
 
     @Override
-    public TreeSelectionModel<AnalysisGroup> getTreeSelectionModel() {
-        return tree.getSelectionModel();
+    public void selectAnalysisGroup(String analysisGroupId) {
+        AnalysisGroup ag = treeStore.findModelWithKey(analysisGroupId);
+        if (ag != null) {
+            tree.getSelectionModel().select(ag, true);
+            // Set heading
+            setMainPanelHeading(ag.getName());
+        }
     }
 
+    @Override
+    public Analysis getSelectedAnalysis() {
+        return grid.getSelectionModel().getSelectedItem();
+    }
+
+    @Override
+    public AnalysisGroup getSelectedAnalysisGroup() {
+        return tree.getSelectionModel().getSelectedItem();
+    }
+
+    @Override
+    public void setAnalyses(final List<Analysis> analyses) {
+        listStore.clear();
+        listStore.addAll(analyses);
+    }
 }

@@ -5,7 +5,6 @@ import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
 
-import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisFeedback;
 import org.iplantc.de.client.images.Icons;
 import org.iplantc.de.client.images.Resources;
@@ -37,6 +36,8 @@ public class AnalysisRatingCell extends AbstractCell<AnalysisFeedback> {
     private static final SafeHtml DELETE_RATING_BUTTON = makeImage(Resources.ICONS.deleteRating());
     private static final SafeHtml DELETE_RATING_BUTTON_HOVER = makeImage(Resources.ICONS
             .deleteRatingHover());
+
+    private final SafeStyles imgStyle = SafeStylesUtils.fromTrustedString("");
 
     /**
      * The HTML templates used to render the cell.
@@ -79,51 +80,38 @@ public class AnalysisRatingCell extends AbstractCell<AnalysisFeedback> {
             return;
         }
 
-        SafeStyles imgStyle = SafeStylesUtils.fromTrustedString("");
-
-        // If the value comes from the user, we escape it to avoid XSS attacks.
-        // SafeHtml safeValue = SafeHtmlUtils.fromString(value.getAverageRating());
-
         // Build five rating stars
-        SafeHtml ratingStar = templates.cell("Rating1", imgStyle, WHITE_RATING_BUTTON);
-        sb.append(ratingStar);
-        ratingStar = templates.cell("Rating2", imgStyle, WHITE_RATING_BUTTON);
-        sb.append(ratingStar);
-        ratingStar = templates.cell("Rating3", imgStyle, WHITE_RATING_BUTTON);
-        sb.append(ratingStar);
-        ratingStar = templates.cell("Rating4", imgStyle, WHITE_RATING_BUTTON);
-        sb.append(ratingStar);
-        ratingStar = templates.cell("Rating5", imgStyle, WHITE_RATING_BUTTON);
-        sb.append(ratingStar);
+        sb.append(templates.cell("Rating1", imgStyle, WHITE_RATING_BUTTON));
+        sb.append(templates.cell("Rating2", imgStyle, WHITE_RATING_BUTTON));
+        sb.append(templates.cell("Rating3", imgStyle, WHITE_RATING_BUTTON));
+        sb.append(templates.cell("Rating4", imgStyle, WHITE_RATING_BUTTON));
+        sb.append(templates.cell("Rating5", imgStyle, WHITE_RATING_BUTTON));
 
         // Determine if user has rated the app, and if so, add the unrate icon/button
         if (value.getUserRating() > 0) {
             // Add unrate icon
-            SafeHtml unrateIcon = templates.cell("Unrate", imgStyle, DELETE_RATING_BUTTON);
-            sb.append(unrateIcon);
+            sb.append(templates.cell("Unrate", imgStyle, DELETE_RATING_BUTTON));
         }
-
     }
 
     @Override
     public void onBrowserEvent(Cell.Context context, Element parent, AnalysisFeedback value,
             NativeEvent event, ValueUpdater<AnalysisFeedback> valueUpdater) {
-        if (!(context.getKey() instanceof Analysis)) {
+        if (value == null) {
             return;
         }
-        Analysis model = (Analysis)context.getKey();
 
         // Handle Click event
         if (((HyperlinkImpl)GWT.create(HyperlinkImpl.class)).handleAsClick(Event.as(event))) {
             // Ignore clicks that occur outside of the outermost element.
             EventTarget eventTarget = event.getEventTarget();
             if (parent.isOrHasChild(Element.as(eventTarget))) {
-
+                // TODO JDS Implement rating cell events.
             }
         }
 
         // Handle OnMouseOver event
-        if (Event.as(event).equals(Event.ONMOUSEOVER)) {
+        if (Event.as(event).getCharCode() == Event.ONMOUSEOVER) {
             // Ignore mouse over events that occur outside of the outermost element.
             EventTarget eventTarget = event.getEventTarget();
             if (parent.isOrHasChild(Element.as(eventTarget))) {

@@ -32,13 +32,14 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> {
         List<ColumnConfig<Analysis, ?>> list = new ArrayList<ColumnConfig<Analysis, ?>>();
 
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(
-                new IdentityValueProvider<Analysis>(), 180,
-                I18N.DISPLAY.name());
+                new IdentityValueProvider<Analysis>(), 180, I18N.DISPLAY.name());
         ColumnConfig<Analysis, String> integrator = new ColumnConfig<Analysis, String>(
                 props.integratorName(), 130, I18N.DISPLAY.integratedby());
         ColumnConfig<Analysis, AnalysisFeedback> rating = new ColumnConfig<Analysis, AnalysisFeedback>(
-                props.rating(),
-                105, "Rating"); //$NON-NLS-1$
+                props.rating(), 80, "Rating"); //$NON-NLS-1$
+
+        name.setResizable(true);
+        rating.setResizable(false);
 
         // FIXME JDS Implement name and rating cells
         name.setCell(new HyperlinkCell(eventBus, displayStrings));

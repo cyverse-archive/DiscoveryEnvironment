@@ -1,36 +1,29 @@
 package org.iplantc.de.client.gxt3.views;
 
 
+import java.util.List;
+
 import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.data.shared.loader.ListLoadConfig;
+import com.sencha.gxt.data.shared.loader.ListLoadResult;
+import com.sencha.gxt.data.shared.loader.ListLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
-import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
-import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 public interface AppsView extends IsWidget {
 
-    public interface Presenter {
+    public interface Presenter extends org.iplantc.de.client.gxt3.presenter.Presenter {
         void onAnalysisSelected(final Analysis analysis);
 
         void onAnalysisGroupSelected(final AnalysisGroup ag);
 
-        // XXX JDS Need to verify necessity of these methods. Does the view need them, or something else?
-        void selectCategory(String categoryId);
-        
-        void selectApp(String appID);
+        Analysis getSelectedAnalysis();
 
-        void deSelectCurrentCategory();
-
-        Analysis getSelectedApp();
-
-        AnalysisGroup getSelectedCategory();
+        AnalysisGroup getSelectedAnalysisGroup();
     }
 
     void setPresenter(final Presenter presenter);
@@ -39,7 +32,7 @@ public interface AppsView extends IsWidget {
 
     TreeStore<AnalysisGroup> getTreeStore();
 
-    void setListLoader(final PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> listLoader);
+    void setListLoader(final ListLoader<ListLoadConfig, ListLoadResult<Analysis>> listLoader);
 
     void setTreeLoader(final TreeLoader<AnalysisGroup> treeLoader);
 
@@ -49,9 +42,14 @@ public interface AppsView extends IsWidget {
 
     void unMaskMainPanel();
 
-    GridSelectionModel<Analysis> getGridSelectionModel();
+    void selectAnalysis(String analysisId);
 
-    TreeSelectionModel<AnalysisGroup> getTreeSelectionModel();
+    void selectAnalysisGroup(String analysisGroupId);
 
+    Analysis getSelectedAnalysis();
+
+    AnalysisGroup getSelectedAnalysisGroup();
+
+    void setAnalyses(List<Analysis> analyses);
 
 }
