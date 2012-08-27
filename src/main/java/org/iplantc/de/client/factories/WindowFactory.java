@@ -49,10 +49,7 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
                 ret = new MyAnalysesWindow(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
-                // TODO !!! JDS This is where you will instantiate DEAnalysisWindow, which will kick off
-                // the View Presenter
                 ret = new DEAnalysisWindow(type, config);
-                // ret = new DECatalogWindow(type, config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
