@@ -1,4 +1,4 @@
-package org.iplantc.de.client.gxt3.presenter;
+package org.iplantc.de.client.gxt3.presenter.proxy;
 
 import java.util.List;
 

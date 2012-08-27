@@ -10,6 +10,7 @@ import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisAutoBeanFactory;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisList;
+import org.iplantc.de.client.gxt3.presenter.proxy.AnalysisGroupProxy;
 import org.iplantc.de.client.gxt3.views.AppsView;
 import org.iplantc.de.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.services.TemplateServiceFacade;
