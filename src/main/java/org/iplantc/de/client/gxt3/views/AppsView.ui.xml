@@ -28,9 +28,9 @@
    <ui:with field="westMargins"
             type="com.sencha.gxt.core.client.util.Margins">
       <ui:attributes top="0"
-                     right="5"
+                     right="0"
                      bottom="0"
-                     left="5" />
+                     left="0" />
    </ui:with>
    <ui:with field="centerMargins"
             type="com.sencha.gxt.core.client.util.Margins">
@@ -77,7 +77,7 @@
             </container:north>
                 <!-- This is the navigation panel -->
             <container:west layoutData="{westData}">
-               <gxt:ContentPanel ui:field="navPanel">
+               <gxt:ContentPanel ui:field="navPanel" bodyBorder="false">
                   <tree:Tree ui:field="tree"
                              valueProvider="{valueProvider}"
                              store="{treeStore}" 
@@ -87,7 +87,7 @@
 			    <!-- This is the main panel -->
             <container:center layoutData="{centerData}">
                <gxt:ContentPanel ui:field="mainPanel"
-                                 resize="true">
+                                 resize="true" bodyBorder="false">
                         <grid:Grid ui:field="grid"
                                    cm="{cm}"
                                    store="{listStore}"

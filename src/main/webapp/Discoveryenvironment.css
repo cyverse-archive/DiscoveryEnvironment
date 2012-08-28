@@ -368,6 +368,17 @@ ul.ux-taskbuttons-strip li.ux-taskbuttons-edge {
 	border-radius: 10px 10px 0px 0px;
 }
 
+.windowBody3 {
+	background-color: #EDEDED;
+	outline: none;
+	}
+
+.windowLayoutTitle3 {
+	font-size: 12px;
+	height: 14px !important;
+	color: #ffffff;
+}
+
 .x-tool-collapse {
 	background-image: url('./images/accordian/arrow_down_unhover.png');
 	height: 15px;

@@ -111,7 +111,14 @@ public class AppsViewImpl implements AppsView {
                         }
                     }
                 });
+        setTreeIcons();
+    }
 
+    private void setTreeIcons() {
+        com.sencha.gxt.widget.core.client.tree.TreeStyle style = tree.getStyle();
+        style.setNodeCloseIcon(org.iplantc.de.client.images.Resources.ICONS.category());
+        style.setNodeOpenIcon(org.iplantc.de.client.images.Resources.ICONS.category_open());
+        style.setLeafIcon(org.iplantc.de.client.images.Resources.ICONS.subCategory());
     }
 
     @UiFactory

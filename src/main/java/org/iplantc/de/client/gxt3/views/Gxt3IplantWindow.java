@@ -31,6 +31,7 @@ import com.sencha.gxt.widget.core.client.event.MaximizeEvent.MaximizeHandler;
 import com.sencha.gxt.widget.core.client.event.RestoreEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.theme.gray.client.window.GrayWindowAppearance;
 
 /**
  * This class is intended to be a GXT 3 replacement of the {@link DECatalogWindow}.
@@ -40,7 +41,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
  */
 public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInterface {
     private static final String BUTTON_STYLE_RESTORE_HOVER = "x-tool-restorewindow-hover";
-    private static final String HEADER_STYLE = "windowLayoutTitle"; //$NON-NLS-1$
+    private static final String HEADER_STYLE = "windowLayoutTitle3"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_CLOSE = "x-tool-closewindow"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_CLOSE_HOVER = "x-tool-closewindow-hover"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_MAXIMIZE = "x-tool-maximizewindow"; //$NON-NLS-1$
@@ -48,7 +49,7 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     private static final String BUTTON_STYLE_MINIMIZED = "x-tool-minimizewindow"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_MINIMIZED_HOVER = "x-tool-minimizewindow-hover"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_RESTORE = "x-tool-restorewindow"; //$NON-NLS-1$
-    private static final String WINDOW_STYLE_BODY = "windowBody"; //$NON-NLS-1$
+    private static final String WINDOW_STYLE_BODY = "windowBody3"; //$NON-NLS-1$
 
     protected String tag;
     protected WindowConfig config;
@@ -91,6 +92,7 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
 
     public Gxt3IplantWindow(String tag, boolean haveStatus, boolean isMinimizable,
             boolean isMaximizable, boolean isClosable) {
+        super(new GrayWindowAppearance());
         this.tag = tag;
 
         if (haveStatus) {
@@ -122,8 +124,10 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
         getHeader().addStyleName(HEADER_STYLE);
         getHeader().setIcon(Resources.ICONS.whitelogoSmall());
 
-        setBodyStyleName(WINDOW_STYLE_BODY);
+        setStyleName(WINDOW_STYLE_BODY);
         setShadow(false);
+        setBodyBorder(false);
+        setBorders(false);
 
         addHandler(new RestoreEvent.RestoreHandler() {
             @Override
@@ -237,7 +241,6 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
                 newMinBtn.addStyleName(BUTTON_STYLE_MINIMIZED_HOVER);
             }
         }, MouseOverEvent.getType());
-
 
         newMinBtn.addHandler(new MouseOutHandler() {
             @Override
@@ -377,7 +380,5 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     public void setWindowConfig(WindowConfig config) {
         this.config = config;
     }
-
-
 
 }
