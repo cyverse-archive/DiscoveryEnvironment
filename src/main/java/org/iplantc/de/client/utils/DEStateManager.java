@@ -215,7 +215,7 @@ public class DEStateManager {
                 Button btn = mbe.getButtonClicked();
 
                 // did the user click cancel?
-                if (btn.getItemId().equals(Dialog.CANCEL)) {
+                if (btn != null && Dialog.CANCEL.equals(btn.getItemId())) {
                     loadCallback.cancelLoad();
                 }
             }
