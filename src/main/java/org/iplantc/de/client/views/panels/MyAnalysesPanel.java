@@ -10,45 +10,39 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.gxt3.AnalysisExecution;
+import org.iplantc.de.client.models.AnalysisExecution;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.MyAnalysesGrid;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.BaseEvent;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.FieldEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.Store;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.store.StoreFilter;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Dialog;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.PushButton;
-import com.sencha.gxt.core.client.IdentityValueProvider;
-import com.sencha.gxt.core.client.resources.ThemeStyles;
-import com.sencha.gxt.data.shared.Store;
-import com.sencha.gxt.data.shared.Store.StoreFilter;
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent.StoreUpdateHandler;
-import com.sencha.gxt.widget.core.client.Dialog;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.Resizable;
-import com.sencha.gxt.widget.core.client.WidgetComponent;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
-import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
-import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
-import com.sencha.gxt.widget.core.client.menu.Menu;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * A container panel of MyAanalysesGrid
@@ -56,7 +50,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  * @author sriram
  * 
  */
-public class MyAnalysesPanel extends VerticalLayoutContainer {
+public class MyAnalysesPanel extends ContentPanel {
 
     private final String DELETE_ITEM_ID = "idDeleteBtn"; //$NON-NLS-1$
     private final String CANCEL_ANALYSIS_ITEM_ID = "idCancelAnalysisBtn"; //$NON-NLS-1$
@@ -64,7 +58,7 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
     private MyAnalysesGrid analysisGrid;
 
-    private final HashMap<String, PushButton> analyses_buttons;
+    private final HashMap<String, Button> analyses_buttons;
     private final HashMap<String, Menu> menus;
 
     private ToolBar topComponentMenu;
@@ -78,7 +72,7 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
     private final AnalysisServiceFacade facadeAnalysisService;
 
     protected static CheckBoxSelectionModel<AnalysisExecution> sm;
-    private TextField filter;
+    private TextField<String> filter;
 
     /**
      * Indicates the status of an analysis.
@@ -147,12 +141,11 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
      */
     public MyAnalysesPanel(final String caption, final String idCurrentSelection) {
         this.idCurrentSelection = idCurrentSelection;
-        analyses_buttons = new LinkedHashMap<String, PushButton>();
+        analyses_buttons = new LinkedHashMap<String, Button>();
         menus = new HashMap<String, Menu>();
         init(caption);
         initWorkspaceId();
 
-        // setHeaderVisible(false);
         facadeAnalysisService = new AnalysisServiceFacade();
     }
 
@@ -161,13 +154,11 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
     }
 
     private void init(String caption) {
-        // buildTopComponent();
-
-        // setTopComponent(topComponentMenu);
-        // setHeadingText(caption);
-        // setLayout(new FitLayout());
+        buildTopComponent();
+        setTopComponent(topComponentMenu);
+        setHeading(caption);
+        setLayout(new FitLayout());
         registerHandlers();
-
     }
 
     private void registerHandlers() {
@@ -176,13 +167,11 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
     private void buildTopComponent() {
         topComponentMenu = new ToolBar();
-        // topComponentMenu = getButtonBar();
         topComponentMenu.add(buildViewParamsButton());
         topComponentMenu.add(buildDeleteButton());
         topComponentMenu.add(buildCancelAnalysisButton());
         buildFilterField();
         topComponentMenu.add(filter);
-
     }
 
     private void setButtonState() {
@@ -194,8 +183,8 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
         switch (selectionSize) {
             case 0:
-                for (PushButton btn : analyses_buttons.values()) {
-                    btn.setEnabled(false);
+                for (Button btn : analyses_buttons.values()) {
+                    btn.disable();
                 }
 
                 break;
@@ -207,43 +196,39 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
                 break;
 
             default:
-                analyses_buttons.get(DELETE_ITEM_ID).setEnabled(true);
-                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).setEnabled(false);
+                analyses_buttons.get(DELETE_ITEM_ID).enable();
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).disable();
                 enableCancelAnalysisButtonByStatus();
         }
     }
 
-    private PushButton buildDeleteButton() {
-        PushButton b = new PushButton(AbstractImagePrototype.create(Resources.ICONS.cancel())
-                .createImage());
-        b.ensureDebugId(DELETE_ITEM_ID);
-        b.setText(I18N.DISPLAY.delete());
+    private Button buildDeleteButton() {
+        Button b = new Button(I18N.DISPLAY.delete());
+        b.setId(DELETE_ITEM_ID);
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.cancel()));
         b.setEnabled(false);
-        b.addClickHandler(new DeleteClickHandler());
+        b.addSelectionListener(new DeleteSelectionListener());
         analyses_buttons.put(DELETE_ITEM_ID, b);
         return b;
     }
 
-    private PushButton buildCancelAnalysisButton() {
-        PushButton b = new PushButton(AbstractImagePrototype.create(Resources.ICONS.stop())
-                .createImage());
-        b.setText(I18N.DISPLAY.cancelAnalysis());
-        b.ensureDebugId(CANCEL_ANALYSIS_ITEM_ID);
+    private Button buildCancelAnalysisButton() {
+        Button b = new Button(I18N.DISPLAY.cancelAnalysis());
+        b.setId(CANCEL_ANALYSIS_ITEM_ID);
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.stop()));
         b.setEnabled(false);
-        b.addClickHandler(new CancelAnalysisClickHandler());
+        b.addSelectionListener(new CancelAnalysisSelectListener());
         analyses_buttons.put(CANCEL_ANALYSIS_ITEM_ID, b);
 
         return b;
     }
 
-    private PushButton buildViewParamsButton() {
-        PushButton b = new PushButton(AbstractImagePrototype.create(Resources.ICONS.fileView())
-                .createImage());
-        b.setText(I18N.DISPLAY.viewParamLbl());
-        b.ensureDebugId(VIEW_PARAMETER_ITEM_ID);
+    private Button buildViewParamsButton() {
+        Button b = new Button(I18N.DISPLAY.viewParamLbl());
+        b.setId(VIEW_PARAMETER_ITEM_ID);
+        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.fileView()));
         b.setEnabled(false);
-        b.addClickHandler(new ViewParamClickHandler());
-
+        b.addSelectionListener(new ViewParamSelectionListener());
         analyses_buttons.put(VIEW_PARAMETER_ITEM_ID, b);
         return b;
     }
@@ -252,20 +237,40 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
      * Builds a text field for filtering items displayed in the data container.
      */
     private void buildFilterField() {
-        filter = new TextField() {
+        filter = new TextField<String>() {
             @Override
-            public void onKeyUp(Event fe) {
-                // We want to apply the filters, so we will set them to enabled to do so.
-                // analysisGrid.getStore().setEnableFilters(true);
+            public void onKeyUp(FieldEvent fe) {
+                analysisGrid.getStore().applyFilters(null);
             }
         };
+
         filter.setEmptyText(I18N.DISPLAY.filterAnalysesList());
+
     }
 
+    private class StoreFilterImpl implements StoreFilter<AnalysisExecution> {
+        @Override
+        public boolean select(Store<AnalysisExecution> store, AnalysisExecution parent,
+                AnalysisExecution item, String property) {
+            if (filter != null && filter.getValue() != null && !filter.getValue().isEmpty()) {
+                return item.getName().toLowerCase().startsWith(filter.getValue().toLowerCase())
+                        || item.getAnalysisName().toLowerCase()
+                                .startsWith(filter.getValue().toLowerCase());
+            }
+
+            return true;
+
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void onAfterFirstAttach() {
-        super.onAfterFirstAttach();
-      
+    protected void onRender(Element parent, int index) {
+        super.onRender(parent, index);
+
         buildCheckBoxSelectionModel(menus);
         analysisGrid = MyAnalysesGrid.createInstance(sm);
         if (getIdCurrentSelection() != null && analysisGrid.getStore() != null) {
@@ -274,20 +279,7 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
         analysisGrid.getStore().addFilter(new StoreFilterImpl());
         analysisGrid.getView().setEmptyText(I18N.DISPLAY.noAnalyses());
-
-        ToolBar toolBar = new ToolBar();
-        toolBar.add(new LiveToolItem(analysisGrid));
-        toolBar.addStyleName(ThemeStyles.getStyle().borderTop());
-        toolBar.getElement().getStyle().setProperty("borderBottom", "none");
-
-        buildTopComponent();
-        new Resizable(this);
-        add(topComponentMenu, new VerticalLayoutData(1, -1));
-        // add(analysisGrid);
-        // add(toolBar);
-        add(new WidgetComponent(analysisGrid), new VerticalLayoutData(1, 1));
-        add(toolBar, new VerticalLayoutData(1, 25));
-
+        add(analysisGrid);
         addGridEventListeners();
     }
 
@@ -300,29 +292,26 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
         if (sm != null) {
             return;
         }
-        sm = new CheckBoxSelectionModel<AnalysisExecution>(
-                new IdentityValueProvider<AnalysisExecution>());
-        sm.getColumn().setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        sm = new CheckBoxSelectionModel<AnalysisExecution>();
+        sm.getColumn().setAlignment(HorizontalAlignment.CENTER);
     }
 
+    @SuppressWarnings({"rawtypes"})
     private void addGridEventListeners() {
-        analysisGrid.getSelectionModel().addSelectionHandler(new SelectionHandler<AnalysisExecution>() {
-
+        analysisGrid.getSelectionModel().addListener(Events.SelectionChange, new Listener<BaseEvent>() {
             @Override
-            public void onSelection(SelectionEvent<AnalysisExecution> event) {
+            public void handleEvent(BaseEvent be) {
                 setButtonState();
                 AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
                 if (ae != null) {
                     idCurrentSelection = ae.getId();
                 }
-
             }
         });
-
-        analysisGrid.getStore().addStoreUpdateHandler(new StoreUpdateHandler<AnalysisExecution>() {
+        analysisGrid.getStore().addListener(Store.Update, new Listener<StoreEvent>() {
 
             @Override
-            public void onUpdate(StoreUpdateEvent<AnalysisExecution> event) {
+            public void handleEvent(StoreEvent be) {
                 setButtonState();
             }
         });
@@ -330,11 +319,9 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
     private void doDelete() {
         if (analysisGrid.getSelectionModel().getSelectedItems().size() > 0) {
-            final List<AnalysisExecution> execs = analysisGrid
-                    .getSelectionModel().getSelectedItems();
-            ConfirmMessageBox mb = new ConfirmMessageBox(I18N.DISPLAY.warning(),
-                    I18N.DISPLAY.analysesExecDeleteWarning());
-            mb.addHideHandler(new DeleteMessageBoxHandler(execs, mb));
+            final List<AnalysisExecution> execs = analysisGrid.getSelectionModel().getSelectedItems();
+            MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesExecDeleteWarning(),
+                    new DeleteMessageBoxListener(execs));
         }
     }
 
@@ -353,14 +340,13 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
     }
 
     private void enableViewButtonByStatus() {
-        AnalysisExecution ae = analysisGrid.getSelectionModel()
-                .getSelectedItem();
+        AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
         if (ae != null) {
             if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.COMPLETED.toString()))
                     || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.FAILED.toString()))) {
-                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).setEnabled(true);
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             } else {
-                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).setEnabled(true);
+                analyses_buttons.get(VIEW_PARAMETER_ITEM_ID).enable();
             }
         }
     }
@@ -397,6 +383,36 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
     }
 
+    private class DeleteSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            doDelete();
+        }
+    }
+
+    private class CancelAnalysisSelectListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            doCancelAnalysis();
+        }
+    }
+
+    private class ViewParamSelectionListener extends SelectionListener<ButtonEvent> {
+        @Override
+        public void componentSelected(ButtonEvent ce) {
+            AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
+            Dialog d = new Dialog();
+            d.setLayout(new FitLayout());
+            d.setResizable(false);
+            d.setHeading(I18N.DISPLAY.viewParameters(ae.getName()));
+            d.add(new AnalysisParameterViewerPanel(ae.getId()));
+            d.setSize(520, 375);
+            d.setButtons(Dialog.OK);
+            d.setHideOnButtonClick(true);
+            d.show();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -431,53 +447,6 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
         return idCurrentSelection;
     }
 
-    private class StoreFilterImpl implements StoreFilter<AnalysisExecution> {
-        @Override
-        public boolean select(Store<AnalysisExecution> store, AnalysisExecution parent,
-                AnalysisExecution item) {
-            if (filter != null && filter.getValue() != null && !filter.getValue().isEmpty()) {
-                return item.getName().toLowerCase().startsWith(filter.getValue().toLowerCase())
-                        || item.getAnalysisName().toLowerCase()
-                                .startsWith(filter.getValue().toLowerCase());
-            }
-    
-            return true;
-        }
-    
-    }
-
-    private class DeleteClickHandler implements ClickHandler {
-        @Override
-        public void onClick(ClickEvent event) {
-            doDelete();
-        }
-    }
-
-    private class CancelAnalysisClickHandler implements ClickHandler {
-        @Override
-        public void onClick(ClickEvent event) {
-            doCancelAnalysis();
-        }
-    }
-
-    private class ViewParamClickHandler implements ClickHandler {
-    
-        @Override
-        public void onClick(ClickEvent event) {
-            AnalysisExecution ae = analysisGrid.getSelectionModel().getSelectedItem();
-            Dialog d = new Dialog();
-            d.setResizable(false);
-            d.setHeadingText(I18N.DISPLAY.viewParameters(ae.getName()));
-            d.add(new WidgetComponent(new AnalysisParameterViewerPanel(ae.getId())));
-            d.setSize("520", "375");
-            d.setPredefinedButtons(Dialog.PredefinedButton.OK);
-            d.setHideOnButtonClick(true);
-            d.show();
-            d.toFront();
-        }
-    
-    }
-
     private final class DeleteSeviceCallback implements AsyncCallback<String> {
         private final List<AnalysisExecution> execs;
         private final List<AnalysisExecution> items_to_delete;
@@ -505,9 +474,7 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
             }
 
             if (items_to_delete == null || execs.size() != items_to_delete.size()) {
-                AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(),
-                        I18N.DISPLAY.analysesNotDeleted());
-                amb.show();
+                MessageBox.alert(I18N.DISPLAY.warning(), I18N.DISPLAY.analysesNotDeleted(), null);
             }
         }
     }
@@ -528,47 +495,51 @@ public class MyAnalysesPanel extends VerticalLayoutContainer {
 
         @Override
         public void onFailure(Throwable caught) {
+            /*
+             * JDS Send generic error message. In the future, the "error_code" string should be parsed
+             * from the JSON to provide more detailed user feedback.
+             */
             ErrorHandler.post(I18N.ERROR.stopAnalysisError(ae.getName()), caught);
         }
 
     }
 
-    private class DeleteMessageBoxHandler implements HideHandler {
+    private final class DeleteMessageBoxListener implements Listener<MessageBoxEvent> {
         private final List<AnalysisExecution> execs;
-        private final ArrayList<AnalysisExecution> items_to_delete;
-        private final ConfirmMessageBox mb;
-    
-        public DeleteMessageBoxHandler(final List<AnalysisExecution> execs, final ConfirmMessageBox mb) {
+        private final List<AnalysisExecution> items_to_delete;
+
+        private DeleteMessageBoxListener(List<AnalysisExecution> execs) {
             this.execs = execs;
-            this.mb = mb;
             items_to_delete = new ArrayList<AnalysisExecution>();
         }
-    
+
         @Override
-        public void onHide(HideEvent event) {
-            if (mb.getHideButton() == mb.getButtonById(PredefinedButton.YES.name())) {
+        public void handleEvent(MessageBoxEvent ce) {
+            Button btn = ce.getButtonClicked();
+
+            // did the user click yes?
+            if (btn.getItemId().equals(Dialog.YES)) {
                 String body = buildDeleteRequestBody(execs);
                 facadeAnalysisService.deleteAnalysis(idWorkspace, body, new DeleteSeviceCallback(
                         items_to_delete, execs));
             }
         }
-    
-        private String buildDeleteRequestBody(List<AnalysisExecution> execs2) {
+
+        private String buildDeleteRequestBody(List<AnalysisExecution> execs) {
             JSONObject obj = new JSONObject();
             JSONArray items = new JSONArray();
             int count = 0;
-            for (AnalysisExecution ae : execs2) {
+            for (AnalysisExecution ae : execs) {
                 if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.COMPLETED.toString()))
                         || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.FAILED.toString()))) {
                     items.set(count++, new JSONString(ae.getId()));
                     items_to_delete.add(ae);
                 }
-    
+
             }
             obj.put("executions", items); //$NON-NLS-1$
             return obj.toString();
         }
-    
     }
 
 }
