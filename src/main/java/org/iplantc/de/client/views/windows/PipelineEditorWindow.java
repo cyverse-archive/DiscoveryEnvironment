@@ -40,7 +40,7 @@ public class PipelineEditorWindow extends IPlantWindow {
 
     private void compose() {
         categoryPanel = new CatalogCategoryPanel(tag);
-        editorPanel = new PipelineEditorPanel(categoryPanel, new TemplateServiceFacade(),
+        editorPanel = new PipelineEditorPanel(tag, categoryPanel, new TemplateServiceFacade(),
                 new PublishCallbackCommand());
         add(editorPanel);
     }
