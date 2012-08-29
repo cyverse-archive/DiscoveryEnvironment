@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-public class AppsViewPresenter implements Presenter, AppsView.Presenter {
+public class AppsViewPresenter implements  AppsView.Presenter {
 
     private final AppsView view;
     private final TemplateServiceFacade templateService;
