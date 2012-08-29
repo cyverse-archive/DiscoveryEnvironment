@@ -23,7 +23,6 @@ import com.extjs.gxt.ui.client.widget.MessageBox.MessageBoxType;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -60,19 +59,29 @@ public class DEStateManager {
             @Override
             public void onFailure(Throwable caught) {
                 // by default enable save session
-                start();
-                saveSession = true;
+                enableSessionSave();
             }
 
             @Override
             public void onSuccess(String result) {
-                loadPrerences(JSONParser.parseStrict(result).isObject());
+                loadPrerences(JsonUtil.getObject(result));
                 checkSettings();
 
             }
         });
 
         initListeners();
+    }
+
+    private void enableSessionSave() {
+        start();
+        saveSession = true;
+    }
+
+    private void disableSessionSave() {
+        stop();
+        saveSession = false;
+        clearSession();
     }
 
     private void loadPrerences(JSONObject obj) {
@@ -182,14 +191,12 @@ public class DEStateManager {
 
             @Override
             public void onSuccess(String result) {
-                // TODO Auto-generated method stub
-
+                // intentionally do nothing
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
-
+                // intentionally do nothing, since the user is logging out or reloading the page
             }
         });
     }
@@ -215,7 +222,7 @@ public class DEStateManager {
                 Button btn = mbe.getButtonClicked();
 
                 // did the user click cancel?
-                if (btn.getItemId().equals(Dialog.CANCEL)) {
+                if (btn != null && Dialog.CANCEL.equals(btn.getItemId())) {
                     loadCallback.cancelLoad();
                 }
             }
@@ -254,12 +261,9 @@ public class DEStateManager {
     private void checkSettings() {
         UserSettings us = UserSettings.getInstance();
         if (us.isSaveSession()) {
-            start();
-            saveSession = true;
+            enableSessionSave();
         } else {
-            stop();
-            saveSession = false;
-            clearSession();
+            disableSessionSave();
         }
     }
 

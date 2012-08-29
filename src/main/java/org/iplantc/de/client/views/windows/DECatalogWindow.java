@@ -91,6 +91,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     @Override
     public void cleanup() {
+        catPanel.cleanup();
+        mainPanel.cleanup();
+
         for (HandlerRegistration handler : handlers) {
             handler.removeHandler();
         }

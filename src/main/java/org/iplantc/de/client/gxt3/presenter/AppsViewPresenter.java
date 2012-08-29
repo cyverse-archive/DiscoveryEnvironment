@@ -121,12 +121,6 @@ public class AppsViewPresenter implements  AppsView.Presenter {
             public void onSuccess(List<AnalysisGroup> result) {
                 addAnalysisGroup(null, result);
 
-                for (AnalysisGroup ag : view.getTreeStore().getAll()) {
-                    if (!ag.isPublic()) {
-                        view.getTreeStore().remove(ag);
-                    }
-                }
-
                 // Select previous user selections
                 if (config != null) {
                     view.selectAnalysisGroup(config.getCategoryId());
