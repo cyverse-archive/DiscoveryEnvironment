@@ -7,13 +7,13 @@ import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
 import org.iplantc.core.uiapplications.client.I18N;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
-import org.iplantc.de.client.gxt3.model.autoBean.AnalysisFeedback;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisProperties;
 import org.iplantc.de.client.gxt3.views.cells.AnalysisRatingCell;
 import org.iplantc.de.client.gxt3.views.cells.HyperlinkCell;
 import org.iplantc.de.client.images.Icons;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -35,15 +35,16 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> {
                 new IdentityValueProvider<Analysis>(), 180, I18N.DISPLAY.name());
         ColumnConfig<Analysis, String> integrator = new ColumnConfig<Analysis, String>(
                 props.integratorName(), 130, I18N.DISPLAY.integratedby());
-        ColumnConfig<Analysis, AnalysisFeedback> rating = new ColumnConfig<Analysis, AnalysisFeedback>(
-                props.rating(), 80, "Rating"); //$NON-NLS-1$
+        ColumnConfig<Analysis, Analysis> rating = new ColumnConfig<Analysis, Analysis>(
+                new IdentityValueProvider<Analysis>(), 80, "Rating"); //$NON-NLS-1$
 
         name.setResizable(true);
         rating.setResizable(false);
 
-        // FIXME JDS Implement name and rating cells
         name.setCell(new HyperlinkCell(eventBus, displayStrings));
         rating.setCell(new AnalysisRatingCell(icons));
+
+        rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         list.add(name);
         list.add(integrator);

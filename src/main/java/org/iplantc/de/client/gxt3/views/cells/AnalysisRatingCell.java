@@ -1,60 +1,100 @@
 package org.iplantc.de.client.gxt3.views.cells;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.I18N;
+import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
 import org.iplantc.de.client.gxt3.model.autoBean.AnalysisFeedback;
 import org.iplantc.de.client.images.Icons;
-import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.services.TemplateServiceFacade;
+import org.iplantc.de.client.views.dialogs.AppCommentDialog;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AnalysisRatingCell extends AbstractCell<AnalysisFeedback> {
+public class AnalysisRatingCell extends AbstractCell<Analysis> {
     private static final String GOLD_STAR_RATING_STYLE = "apps_rating_gold_button"; //$NON-NLS-1$
     private static final String WHITE_STAR_RATING_STYLE = "apps_rating_white_button"; //$NON-NLS-1$
+    private static final String RED_STAR_RATING_STYLE = "apps_rating_red_button"; //$NON-NLS-1$
+    private static final String UNRATE_RATING_STYLE = "apps_rating_unrate_button"; //$NON-NLS-1$
+    private static final String UNRATE_HOVER_RATING_STYLE = "apps_rating_unrate_button_hover"; //$NON-NLS-1$
     
-    private static final SafeHtml GOLD_RATING_BUTTON = makeImage(Resources.ICONS.starGold());
-    private static final SafeHtml RED_RATING_BUTTON = makeImage(Resources.ICONS.starRed());
-    private static final SafeHtml WHITE_RATING_BUTTON = makeImage(Resources.ICONS.starWhite());
-    private static final SafeHtml DELETE_RATING_BUTTON = makeImage(Resources.ICONS.deleteRating());
-    private static final SafeHtml DELETE_RATING_BUTTON_HOVER = makeImage(Resources.ICONS
-            .deleteRatingHover());
+    private final SafeStyles imgStyle1 = SafeStylesUtils.fromTrustedString("float: left;");
+    private final SafeStyles imgStyl2 = SafeStylesUtils.fromTrustedString("float: left; display: none;");
 
-    private final SafeStyles imgStyle = SafeStylesUtils.fromTrustedString("");
+    private final TemplateServiceFacade templateService = new TemplateServiceFacade();
+
+    public static enum RATING_CONSTANT {
+
+        HATE_IT(I18N.DISPLAY.hateIt()), DID_NOT_LIKE_IT(I18N.DISPLAY.didNotLike()), LIKED_IT(
+                I18N.DISPLAY.likedIt()), REALLY_LIKED_IT(I18N.DISPLAY.reallyLikedIt()), LOVED_IT(
+                I18N.DISPLAY.lovedIt());
+
+        private String displayText;
+
+        private RATING_CONSTANT(String displaytext) {
+            this.displayText = displaytext;
+        }
+
+        /**
+         * Returns a string that identifies the RATING_CONSTANT.
+         * 
+         * @return
+         */
+        public String getTypeString() {
+            return toString().toLowerCase();
+        }
+
+        /**
+         * Null-safe and case insensitive variant of valueOf(String)
+         * 
+         * @param typeString name of an EXECUTION_STATUS constant
+         * @return
+         */
+        public static RATING_CONSTANT fromTypeString(String typeString) {
+            if (typeString == null || typeString.isEmpty()) {
+                return null;
+            }
+
+            return valueOf(typeString.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return displayText;
+        }
+    }
 
     /**
      * The HTML templates used to render the cell.
      */
     interface Templates extends SafeHtmlTemplates {
 
-        /**
-         * The template for this Cell, which includes styles and a value.
-         * 
-         * @param styles the styles to include in the style attribute of the div
-         * @param value the safe value. Since the value type is {@link SafeHtml}, it will not be escaped
-         *            before including it in the template. Alternatively, you could make the value type
-         *            String, in which case the value would be escaped.
-         * @return a {@link SafeHtml} instance
-         */
-        @SafeHtmlTemplates.Template("<span name=\"{0}\" style=\"{1}\">{2}</span>")
-        SafeHtml cell(String name, SafeStyles styles, SafeHtml value);
+        @SafeHtmlTemplates.Template("<div  name=\"{0}\" title=\"{1}\" class=\"{2}\" style=\"{3}\"></div>")
+        SafeHtml cell(String name, String toolTip, String cssClass, SafeStyles styles);
     }
 
     /**
@@ -62,75 +102,261 @@ public class AnalysisRatingCell extends AbstractCell<AnalysisFeedback> {
      */
     private static Templates templates = GWT.create(Templates.class);
 
-    public AnalysisRatingCell(final Icons icons) {
-        // Sink browser events
-        // TODO JDS May need to remove sink of KEYDOWN if we find it unnecessary
-        super(CLICK, MOUSEOVER, MOUSEOUT, KEYDOWN);
+    private final List<String> ratings;
 
-        Resources.ICONS.add();
+    public AnalysisRatingCell(final Icons icons) {
+        super(CLICK, MOUSEOVER, MOUSEOUT);
+
+        ratings = new ArrayList<String>();
+        ratings.add(0, RATING_CONSTANT.HATE_IT.displayText);
+        ratings.add(1, RATING_CONSTANT.DID_NOT_LIKE_IT.displayText);
+        ratings.add(2, RATING_CONSTANT.LIKED_IT.displayText);
+        ratings.add(3, RATING_CONSTANT.REALLY_LIKED_IT.displayText);
+        ratings.add(4, RATING_CONSTANT.LOVED_IT.displayText);
+
     }
 
     @Override
-    public void render(Cell.Context context, AnalysisFeedback value, SafeHtmlBuilder sb) {
-        /*
-         * Always do a null check on the value. Cell widgets can pass null to cells if the underlying
-         * data contains a null, or if the data arrives out of order.
-         */
+    public void render(Cell.Context context, Analysis value, SafeHtmlBuilder sb) {
         if (value == null) {
             return;
         }
 
+        int rating = (int)((value.getRating().getUserRating() != 0) ? value.getRating().getUserRating()
+                : Math.floor(value.getRating()
+                .getAverageRating()));
         // Build five rating stars
-        sb.append(templates.cell("Rating1", imgStyle, WHITE_RATING_BUTTON));
-        sb.append(templates.cell("Rating2", imgStyle, WHITE_RATING_BUTTON));
-        sb.append(templates.cell("Rating3", imgStyle, WHITE_RATING_BUTTON));
-        sb.append(templates.cell("Rating4", imgStyle, WHITE_RATING_BUTTON));
-        sb.append(templates.cell("Rating5", imgStyle, WHITE_RATING_BUTTON));
+        for (int i = 0; i < ratings.size(); i++) {
+            if (i < rating) {
+                if (value.getRating().getUserRating() != 0) {
+                    sb.append(templates.cell("Rating-" + i, ratings.get(i), GOLD_STAR_RATING_STYLE,
+                            imgStyle1));
+                } else {
+                    sb.append(templates.cell("Rating-" + i, ratings.get(i), RED_STAR_RATING_STYLE,
+                            imgStyle1));
+                }
+            } else {
+                sb.append(templates.cell("Rating-" + i, ratings.get(i), WHITE_STAR_RATING_STYLE,
+                        imgStyle1));
+            }
+        }
 
         // Determine if user has rated the app, and if so, add the unrate icon/button
-        if (value.getUserRating() > 0) {
+        if (value.getRating().getUserRating() > 0) {
             // Add unrate icon
-            sb.append(templates.cell("Unrate", imgStyle, DELETE_RATING_BUTTON));
+            sb.append(templates.cell("Unrate", "Unrate", UNRATE_RATING_STYLE, imgStyle1));
+        } else {
+            sb.append(templates.cell("Unrate", "Unrate", UNRATE_RATING_STYLE, imgStyl2));
         }
+
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, AnalysisFeedback value,
-            NativeEvent event, ValueUpdater<AnalysisFeedback> valueUpdater) {
+    public boolean handlesSelection() {
+        return true;
+    }
+
+    @Override
+    public void onBrowserEvent(Cell.Context context, Element parent, Analysis value, NativeEvent event,
+            ValueUpdater<Analysis> valueUpdater) {
         if (value == null) {
             return;
         }
 
-        // Handle Click event
-        if (((HyperlinkImpl)GWT.create(HyperlinkImpl.class)).handleAsClick(Event.as(event))) {
-            // Ignore clicks that occur outside of the outermost element.
-            EventTarget eventTarget = event.getEventTarget();
-            if (parent.isOrHasChild(Element.as(eventTarget))) {
-                // TODO JDS Implement rating cell events.
+        if (parent.isOrHasChild(Element.as(event.getEventTarget()))) {
+            Element eventTarget = Element.as(event.getEventTarget());
+
+            switch (Event.as(event).getTypeInt()) {
+                case Event.ONCLICK:
+                    onRatingClicked(parent, eventTarget, value);
+                    break;
+                case Event.ONMOUSEOVER:
+                    onRatingMouseOver(parent, eventTarget);
+                    break;
+                case Event.ONMOUSEOUT:
+                    resetRatingStarColors(parent, value);
+                    break;
+                default:
+                    // TODO JDS Handle this case
+                    break;
             }
         }
+    }
 
-        // Handle OnMouseOver event
-        if (Event.as(event).getCharCode() == Event.ONMOUSEOVER) {
-            // Ignore mouse over events that occur outside of the outermost element.
-            EventTarget eventTarget = event.getEventTarget();
-            if (parent.isOrHasChild(Element.as(eventTarget))) {
+    private void resetRatingStarColors(Element parent, Analysis value) {
+        int rating = (int)((value.getRating().getUserRating() != 0) ? value.getRating().getUserRating()
+                : Math.floor(value.getRating().getAverageRating()));
 
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            Element child = Element.as(parent.getChild(i));
+            // Reset rating stars
+            if (child.getAttribute("name").startsWith("Rating")) {
+                if (i < rating) {
+                    if (value.getRating().getUserRating() != 0) {
+                        child.setClassName(GOLD_STAR_RATING_STYLE);
+                    } else {
+                        child.setClassName(RED_STAR_RATING_STYLE);
+                    }
+                } else {
+                    child.setClassName(WHITE_STAR_RATING_STYLE);
+                }
+            } else if (child.getAttribute("name").equalsIgnoreCase("unrate")) {
+                // Show/Hide unrate button
+                if (value.getRating().getUserRating() != 0) {
+                    child.getStyle().setDisplay(Display.BLOCK);
+                    child.setClassName(UNRATE_RATING_STYLE);
+                } else {
+                    // if there is no rating, hide the cell.
+                    child.getStyle().setDisplay(Display.NONE);
+                }
             }
+        }
+    }
 
-            /*
-             * for (int i = 0; i <= hoveredRating; i++) { icon = getIcon(pnlParent, i);
-             * icon.setStyleName("GOLD_STAR_RATING_STYLE"); } for (int j = i; j < ratings.size(); j++) {
-             * icon = getIcon(pnlParent, j); icon.setStyleName("WHITE_STAR_RATING_STYLE"); }
-             */
+    private void onRatingMouseOver(Element parent, Element eventTarget) {
+        boolean setWhiteStar = false;
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            Element child = Element.as(parent.getChild(i));
+            if (child.getAttribute("name").startsWith("Rating")) {
+                if (setWhiteStar) {
+                    child.setClassName(WHITE_STAR_RATING_STYLE);
+                } else {
+                    child.setClassName(GOLD_STAR_RATING_STYLE);
+                }
+                if (child.getAttribute("name").equals(eventTarget.getAttribute("name"))) {
+                    setWhiteStar = true;
+                }
+            }
+        }
+        if (eventTarget.getAttribute("name").equalsIgnoreCase("unrate")) {
+            eventTarget.setClassName(UNRATE_HOVER_RATING_STYLE);
+        }
+    }
+
+    private void onRatingClicked(final Element parent, Element eventTarget, final Analysis value) {
+        if (eventTarget.getAttribute("name").startsWith("Rating")) {
+            String[] g = eventTarget.getAttribute("name").split("-");
+            final int score = Integer.parseInt(g[1]) + 1;
+
+            // populate dialog via an async call if previous comment ID exists, otherwise show blank dlg
+            final AppCommentDialog dlg = new AppCommentDialog(value.getName());
+            Long commentId = value.getRating().getCommentId();
+            if (commentId == null) {
+                dlg.unmaskDialog();
+            } else {
+                ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String comment) {
+                        dlg.setText(comment);
+                        dlg.unmaskDialog();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable e) {
+                        // ErrorHandler.post(e.getMessage(), e);
+                        dlg.unmaskDialog();
+                    }
+                });
+            }
+            Command onConfirm = new Command() {
+                @Override
+                public void execute() {
+                    persistRating(value, score, dlg.getComment(), parent);
+                }
+            };
+            dlg.setCommand(onConfirm);
+            dlg.show();
+        } else if (eventTarget.getAttribute("name").equalsIgnoreCase("unrate")) {
+            // Hide unrate button
+            eventTarget.getStyle().setDisplay(Display.NONE);
+            onUnrate(parent, value);
         }
 
     }
 
-    private static SafeHtml makeImage(ImageResource resource) {
-        AbstractImagePrototype proto = AbstractImagePrototype.create(resource);
+    private void onUnrate(final Element parent, final Analysis value) {
+        Long commentId = null;
+        try {
+            AnalysisFeedback feedback = value.getRating();
+            if (feedback != null) {
+                commentId = feedback.getCommentId();
+            }
+        } catch (NumberFormatException e) {
+            // comment id empty or not a number, leave it null and proceed
+        }
 
-        return proto.getSafeHtml();
+        templateService.deleteRating(value.getId(), parsePageName(value.getWikiUrl()), commentId,
+                new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        value.getRating().setUserRating(0);
+                        value.getRating().setCommentId(0);
+
+                        if (result == null || result.isEmpty()) {
+                            value.getRating().setAverageRating(0);
+                        } else {
+                            JSONObject jsonObj = JsonUtil.getObject(result);
+                            if (jsonObj != null) {
+                                double newAverage = JsonUtil.getNumber(jsonObj, "avg").doubleValue(); //$NON-NLS-1$
+                                value.getRating().setAverageRating(newAverage);
+                            }
+                        }
+
+                        resetRatingStarColors(parent, value);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(caught.getMessage(), caught);
+                    }
+                });
+
+    }
+
+    /** saves a rating to the database and the wiki page */
+    private void persistRating(final Analysis value, final int score, String comment,
+            final Element parent) {
+
+        AsyncCallback<String> callback = new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                AnalysisFeedback userFeedback = value.getRating();
+
+                try {
+                    userFeedback.setCommentId(Long.valueOf(result));
+                } catch (NumberFormatException e) {
+                    // no comment id, do nothing
+                }
+
+                userFeedback.setUserRating(score);
+
+                resetRatingStarColors(parent, value);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(org.iplantc.de.client.I18N.ERROR.confluenceError(), caught);
+            }
+        };
+
+        Long commentId = value.getRating().getCommentId();
+        if ((commentId == null) || (commentId == 0)) {
+            templateService.rateAnalysis(value.getId(), score, parsePageName(value.getWikiUrl()),
+                    comment, value.getIntegratorEmail(), callback);
+        } else {
+            templateService.updateRating(value.getId(), score, parsePageName(value.getWikiUrl()),
+                    commentId, comment, value.getIntegratorEmail(), callback);
+        }
+    }
+
+    private String parsePageName(String url) {
+        String name = null;
+        if (url != null && !url.isEmpty()) {
+            String[] tokens = url.split("/"); //$NON-NLS-1$
+            name = URL.decode(tokens[tokens.length - 1]);
+        }
+
+        return name;
     }
 
 }

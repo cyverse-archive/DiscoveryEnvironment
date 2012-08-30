@@ -38,41 +38,31 @@ public class HyperlinkCell extends AbstractCell<Analysis> {
             return;
         }
         String name = null;
-        // if (!(context.getKey() instanceof Analysis)) {
-        // return;
-        // }
-        // Analysis model = (Analysis)context.getKey();
 
         if (value.isFavorite()) {
-            // FIXME JDS Replace hard-coded image path with something more safe
             name = "<img src='./images/fav.png'/>&nbsp;" + value.getName(); //$NON-NLS-1$
         } else {
             name = value.getName();
         }
 
         if (!value.isDisabled()) {
-            Hyperlink link = new Hyperlink(name, "");
+            Hyperlink link = new Hyperlink(SafeHtmlUtils.fromTrustedString(name), "");
             link.setStyleName("analysis_name"); //$NON-NLS-1$
             link.setWidth(Integer.toString(value.getName().length()));
 
             sb.append(SafeHtmlUtils.fromTrustedString(link.toString()));
         } else {
-            // FIXME JDS Replace hard-coded image path with something more safe
             name = "<img title ='" //$NON-NLS-1$
                     + displayStrings.appUnavailable()
                     + "' src='./images/exclamation.png'/>&nbsp;" + name; //$NON-NLS-1$
 
-            sb.append(SafeHtmlUtils.fromString(name));
+            sb.append(SafeHtmlUtils.fromTrustedString(name));
         }
     }
 
     @Override
     public void onBrowserEvent(Cell.Context context, Element parent, Analysis value, NativeEvent event,
             ValueUpdater<Analysis> valueUpdater) {
-        // if (!(context.getKey() instanceof Analysis)) {
-        // return;
-        // }
-        // Analysis model = (Analysis)context.getKey();
         if (((HyperlinkImpl)GWT.create(HyperlinkImpl.class)).handleAsClick(Event.as(event))) {
             event.preventDefault();
             UserEvent e = new UserEvent(Constants.CLIENT.windowTag(), value.getId());
