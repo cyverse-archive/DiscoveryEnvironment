@@ -64,7 +64,7 @@ public class TitoWindow extends IPlantWindow {
     }
 
     private void init() {
-        setHeading(I18N.DISPLAY.createApps());
+        setTitle(I18N.DISPLAY.createApps());
         setSize(800, 600);
         setLayout(new FitLayout());
     }

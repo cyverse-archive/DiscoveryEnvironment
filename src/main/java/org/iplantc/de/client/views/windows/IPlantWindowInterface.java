@@ -5,7 +5,9 @@ import org.iplantc.de.client.utils.DEWindowManager;
 
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.HasActivateHandlers;
@@ -15,7 +17,8 @@ import com.sencha.gxt.widget.core.client.event.MinimizeEvent.HasMinimizeHandlers
 import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
 
 /**
- * This interface is intended to be used by the {@link DEWindowManager} in place of the {@link IPlantWindow} class.
+ * This interface is intended to be used by the {@link DEWindowManager} in place of the
+ * {@link IPlantWindow} class.
  * 
  * FIXME Rename this file to "IPlantWindow" and rename "IPlantWindow" -> "IPlantWindowImpl" JDS Ensure
  * that you use 'git mv' in order to preserve history.
@@ -24,8 +27,7 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
  * 
  */
 public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
-        HasDeactivateHandlers<Window>, HasMinimizeHandlers,
- HasHideHandlers, HasShowHandlers, IsWidget {
+        HasDeactivateHandlers<Window>, HasMinimizeHandlers, HasHideHandlers, HasShowHandlers, IsWidget {
 
     String getTag();
 
@@ -49,4 +51,27 @@ public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
 
     JSONObject getWindowState();
 
+    boolean isVisible();
+
+    boolean isMaximized();
+
+    void minimize();
+
+    void setMinimized(boolean min);
+
+    void setTitle(String wintitle);
+
+    String getTitle();
+
+    boolean isMinimized();
+
+    void setPixelSize(int width, int height);
+
+    void setPosition(int left, int top);
+
+    int getHeaderOffSetHeight();
+
+    void alignTo(Element e, AnchorAlignment align, int[] offsets);
+
+    void hide();
 }

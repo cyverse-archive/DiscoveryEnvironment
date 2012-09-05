@@ -1,7 +1,7 @@
 package org.iplantc.de.client.factories;
 
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.gxt3.views.DEAnalysisWindow;
+import org.iplantc.de.client.gxt3.views.DEAppsWindow;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
@@ -49,7 +49,7 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
                 ret = new MyAnalysesWindow(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
-                ret = new DEAnalysisWindow(type, config);
+                ret = new DEAppsWindow(type, config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {

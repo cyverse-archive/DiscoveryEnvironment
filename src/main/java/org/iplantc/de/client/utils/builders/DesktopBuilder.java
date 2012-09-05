@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.iplantc.de.client.models.ShortcutDesc;
 
+import com.google.gwt.resources.client.ImageResource;
+
 /**
  * Abstract class for managing desktop shortcuts.
  * 
@@ -34,8 +36,8 @@ public abstract class DesktopBuilder {
      * @param action action to be fired on shortcut click.
      * @param tag associated tag.
      */
-    protected void addShortcut(String id, String caption, String action, String tag) {
-        shortcuts.add(new ShortcutDesc(id, caption, action, tag));
+    protected void addShortcut(String id, String caption, String action, String tag, ImageResource icon) {
+        shortcuts.add(new ShortcutDesc(id, caption, action, tag, icon));
     }
 
     /**

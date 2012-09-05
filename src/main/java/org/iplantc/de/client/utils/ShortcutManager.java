@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.gxt3.desktop.widget.Shortcut;
 import org.iplantc.de.client.models.ShortcutDesc;
 import org.iplantc.de.client.utils.builders.DesktopBuilder;
-import org.iplantc.de.client.views.Shortcut;
 
-import com.extjs.gxt.ui.client.event.ComponentEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 /**
  * Contains all of the application's desktop shortcuts.
@@ -20,14 +20,26 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 public class ShortcutManager {
     private final List<Shortcut> shortcuts = new ArrayList<Shortcut>();
 
-    private final SelectionListener<ComponentEvent> listener = new SelectionListener<ComponentEvent>() {
-        @Override
-        public void componentSelected(ComponentEvent ce) {
-            Shortcut shortcut = (Shortcut)ce.getComponent();
+    // private final SelectionListener<ComponentEvent> listener = new SelectionListener<ComponentEvent>()
+    // {
+    // @Override
+    // public void componentSelected(ComponentEvent ce) {
+    // Shortcut shortcut = (Shortcut)ce.getComponent();
+    //
+    // // Dispatch window display action
+    // WindowDispatcher dispatcher = new WindowDispatcher();
+    // dispatcher.dispatchAction(shortcut.getTag());
+    // }
+    // };
 
-            // Dispatch window display action
+    private final SelectHandler handler = new SelectHandler() {
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            Shortcut shortcut = (Shortcut)event.getSource();
             WindowDispatcher dispatcher = new WindowDispatcher();
             dispatcher.dispatchAction(shortcut.getTag());
+
         }
     };
 
@@ -50,7 +62,7 @@ public class ShortcutManager {
             List<ShortcutDesc> descs = builder.getShortcuts();
 
             for (ShortcutDesc desc : descs) {
-                shortcuts.add(new Shortcut(desc, listener));
+                shortcuts.add(new Shortcut(desc, handler));
             }
         }
     }

@@ -44,7 +44,7 @@ public abstract class IPlantThreePanelWindow extends IPlantWindow {
         pnlContents.setHeaderVisible(false);
 
         setId(tag);
-        setHeading(getCaption());
+        setTitle(getCaption());
         setInitialSize();
     }
 

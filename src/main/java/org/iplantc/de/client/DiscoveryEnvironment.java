@@ -1,8 +1,14 @@
 package org.iplantc.de.client;
 
+import org.iplantc.de.client.gxt3.presenter.DEPresenter;
+import org.iplantc.de.client.gxt3.views.DEView;
+import org.iplantc.de.client.gxt3.views.DEView.Presenter;
+import org.iplantc.de.client.gxt3.views.DEViewImpl;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Defines the web application entry point for the system.
@@ -14,15 +20,16 @@ public class DiscoveryEnvironment implements EntryPoint {
      */
     public void onModuleLoad() {
         setEntryPointTitle();
-
-        HistoryManager mgrHistory = new HistoryManager();
-        String token = History.getToken();
-
-        if (token == null || token.isEmpty()) {
-            mgrHistory.handleToken("workspace"); //$NON-NLS-1$
-        } else {
-            mgrHistory.processCommand(token);
-        }
+        DEView view = new DEViewImpl();
+        Presenter p = new DEPresenter(view);
+        // HistoryManager mgrHistory = new HistoryManager();
+        // String token = History.getToken();
+        //
+        // if (token == null || token.isEmpty()) {
+        //            mgrHistory.handleToken("workspace"); //$NON-NLS-1$
+        // } else {
+        // mgrHistory.processCommand(token);
+        // }
     }
 
     /**

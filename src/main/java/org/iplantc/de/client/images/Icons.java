@@ -370,4 +370,25 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("delete_rating_hover.png")
     ImageResource deleteRatingHover();
 
+    /**
+     * 
+     * @return image.
+     */
+    @Source("shortcut_analyses.png")
+    ImageResource shortcutAnalyses();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("shortcut_apps.png")
+    ImageResource shortcutApps();
+
+    /**
+     * 
+     * @return image.
+     */
+    @Source("shortcut_data.png")
+    ImageResource shortcutData();
+
 }

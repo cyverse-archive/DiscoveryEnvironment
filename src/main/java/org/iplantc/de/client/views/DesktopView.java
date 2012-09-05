@@ -15,6 +15,7 @@ import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.gxt3.views.Gxt3IplantWindow;
 import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
@@ -150,13 +151,13 @@ public class DesktopView extends ContentPanel implements ActivateHandler<Window>
     }
 
     private void initShortcuts() {
-        ShortcutManager mgr = new ShortcutManager(new DefaultDesktopBuilder());
-
-        List<Shortcut> shortcuts = mgr.getShortcuts();
-
-        for (Shortcut shortcut : shortcuts) {
-            addShortcut(shortcut);
-        }
+        // ShortcutManager mgr = new ShortcutManager(new DefaultDesktopBuilder());
+        //
+        // List<Shortcut> shortcuts = mgr.getShortcuts();
+        //
+        // for (Shortcut shortcut : shortcuts) {
+        // addShortcut(shortcut);
+        // }
     }
 
     private void initDesktop() {
@@ -307,34 +308,47 @@ public class DesktopView extends ContentPanel implements ActivateHandler<Window>
         window.hide();
     }
 
+    private void minimizeWindow(Gxt3IplantWindow window) {
+        window.setData("minimize", true); //$NON-NLS-1$
+        window.hide();
+    }
+
     @Override
     public void onShow(ShowEvent event) {
-        // TODO Auto-generated method stub
-    
+        Window w = (Window)event.getSource();
+        IPlantTaskButton btn = w.getData("taskButton"); //$NON-NLS-1$
+        w.setData("minimize", null); //$NON-NLS-1$
+
+        if (btn != null && taskBar.getButtons().contains(btn)) {
+            return;
+        }
+
+        // taskBar.addTaskButton(w);
+
     }
 
     @Override
     public void onMinimize(MinimizeEvent event) {
-        // TODO Auto-generated method stub
-    
+        minimizeWindow((Gxt3IplantWindow)event.getSource());
+
     }
 
     @Override
     public void onHide(HideEvent event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     @Override
     public void onDeactivate(DeactivateEvent<Window> event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     @Override
     public void onActivate(ActivateEvent<Window> event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     private void initWindowManager() {

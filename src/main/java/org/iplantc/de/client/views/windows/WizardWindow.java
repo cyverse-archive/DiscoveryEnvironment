@@ -276,7 +276,7 @@ public class WizardWindow extends IPlantWindow {
     private void initWizard(String json) {
         WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
         WizardBuilder builder = new WizardBuilder();
-        setHeading(container.getLabel());
+        setTitle(container.getLabel());
 
         final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
         final ContentPanel pnlLaunchButton = buildButtonPanel();
