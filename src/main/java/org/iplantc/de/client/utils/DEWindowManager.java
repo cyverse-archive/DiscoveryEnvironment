@@ -1,9 +1,9 @@
 package org.iplantc.de.client.utils;
 
+import org.iplantc.core.uicommons.client.models.WindowConfig;
+import org.iplantc.core.uicommons.client.views.IPlantWindowInterface;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
-import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;

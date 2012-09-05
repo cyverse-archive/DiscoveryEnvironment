@@ -7,13 +7,13 @@ import org.iplantc.core.tito.client.TitoPanel;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.TitoWindowConfig;
-import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;

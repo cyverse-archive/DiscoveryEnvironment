@@ -3,6 +3,7 @@ package org.iplantc.de.client.models;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
 

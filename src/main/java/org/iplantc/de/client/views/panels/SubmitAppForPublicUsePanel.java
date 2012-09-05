@@ -8,14 +8,14 @@ import org.iplantc.core.client.widgets.utils.FormLabel;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.dialogs.CategorySelectionDialog;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Scroll;
@@ -40,6 +40,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -67,6 +68,9 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
     private List<AnalysisGroupTreeModel> selectedItems;
 
     private ReferenceEditorGridPanel refPanel;
+
+    private static AppTemplateUserServiceFacade templateService = GWT
+            .create(AppTemplateUserServiceFacade.class);
 
     /**
      * Creates a new instance of PublishToWorldPanel
@@ -330,8 +334,8 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
     }
 
     private void loadCategories() {
-        TemplateServiceFacade service = new TemplateServiceFacade();
-        service.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        // TemplateServiceFacade service = new TemplateServiceFacade();
+        templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -384,8 +388,8 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
                     @Override
                     public void onSuccess(String url) {
                         wikiUrl = url;
-                        TemplateServiceFacade service = new TemplateServiceFacade();
-                        service.publishToWorld(toJson(), new AsyncCallback<String>() {
+                        // TemplateServiceFacade service = new TemplateServiceFacade();
+                        templateService.publishToWorld(toJson(), new AsyncCallback<String>() {
                             @Override
                             public void onSuccess(String result) {
                                 closeCallback.onSuccess(wikiUrl);

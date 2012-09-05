@@ -47,6 +47,10 @@
     <inherits name="org.iplantc.core.tito"/>
 	<!-- for server push -->
 	<inherits name="com.google.gwt.rpc.RPC" />
+
+    <replace-with class="org.iplantc.core.uiapplications.client.services.TemplateServiceFacade">
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade"/>
+    </replace-with>
 	
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />

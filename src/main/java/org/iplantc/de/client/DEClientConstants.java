@@ -84,13 +84,6 @@ public interface DEClientConstants extends CommonUiConstants {
     String wizardTag();
 
     /**
-     * The default tag prefix used by the window manager when creating a "handle" for a window.
-     * 
-     * @return a string representing the default prefix used for a window
-     */
-    String windowTag();
-
-    /**
      * The history token for the logout operation.
      * 
      * @return a string representing the history token for logout

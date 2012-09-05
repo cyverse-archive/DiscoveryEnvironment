@@ -13,20 +13,20 @@ import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEve
 import org.iplantc.core.uiapplications.client.events.AppSelectedEvent;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisFeedback;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.views.dialogs.AppCommentDialog;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.events.UserEvent;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.TitoWindowDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
-import org.iplantc.de.client.events.UserEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.TitoWindowConfig;
-import org.iplantc.de.client.services.TemplateServiceFacade;
-import org.iplantc.de.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
@@ -58,6 +58,7 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
@@ -88,11 +89,14 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private final FastMap<MenuItem> menuItems;
     private Analysis selectedItem;
 
+    private static AppTemplateUserServiceFacade templateService = GWT
+            .create(AppTemplateUserServiceFacade.class);
+
     /**
      * Creates a new CatalogMainPanel.
      */
     public CatalogMainPanel(String tag) {
-        super(tag, new TemplateServiceFacade());
+        super(tag, templateService);
 
         buttons = new FastMap<Button>();
         menuItems = new FastMap<MenuItem>();
@@ -102,8 +106,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         addToolBarActions();
     }
 
-    private TemplateServiceFacade getTemplateService() {
-        return (TemplateServiceFacade)templateService;
+    private AppTemplateUserServiceFacade getTemplateService() {
+        return templateService;
     }
 
     private void initGridListeners() {

@@ -1,8 +1,8 @@
 package org.iplantc.de.client.dispatchers;
 
+import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.CatalogWindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
 

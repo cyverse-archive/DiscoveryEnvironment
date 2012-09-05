@@ -9,23 +9,24 @@ import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEven
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.CatalogWindowConfig;
-import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
 import com.extjs.gxt.ui.client.widget.Component;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -51,6 +52,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String FAVORITES;
     public static String APPLICATIONS_UNDER_DEVLOPMENT;
     public static String BETA_GROUP_ID;
+
+    private final AppTemplateUserServiceFacade templateService = GWT
+            .create(AppTemplateUserServiceFacade.class);
 
     /**
      * 
@@ -125,9 +129,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private void getData() {
-        TemplateServiceFacade facade = new TemplateServiceFacade();
+        // TemplateServiceFacade facade = new TemplateServiceFacade();
 
-        facade.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -240,9 +244,9 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private void updateAnalysesListing(final AnalysisGroup group) {
-        TemplateServiceFacade facade = new TemplateServiceFacade();
+        // TemplateServiceFacade facade = new TemplateServiceFacade();
         mask(I18N.DISPLAY.loadingMask());
-        facade.getAnalysis(group.getId(), new AsyncCallback<String>() {
+        templateService.getAnalysis(group.getId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ArrayList<Analysis> analyses = new ArrayList<Analysis>();

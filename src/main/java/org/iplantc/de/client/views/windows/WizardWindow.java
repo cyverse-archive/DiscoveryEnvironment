@@ -6,9 +6,11 @@ import java.util.List;
 import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.DEProperties;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -18,10 +20,8 @@ import org.iplantc.de.client.events.WizardValidationEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
 import org.iplantc.de.client.views.dialogs.AnalysisLaunchDialog;
@@ -36,6 +36,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -54,6 +55,9 @@ public class WizardWindow extends IPlantWindow {
     private List<HandlerRegistration> handlers;
     private WizardWindowConfig config;
     private Status status;
+
+    private final AppTemplateUserServiceFacade templateService = GWT
+            .create(AppTemplateUserServiceFacade.class);
 
     /**
      * Constructs an instance of the object given an identifier.
@@ -140,8 +144,8 @@ public class WizardWindow extends IPlantWindow {
         if (config != null) {
             initWizard(config.getWizardConfig().toString());
         } else {
-            TemplateServiceFacade facade = new TemplateServiceFacade();
-            facade.getTemplate(tag, new AsyncCallback<String>() {
+            // TemplateServiceFacade facade = new TemplateServiceFacade();
+            templateService.getTemplate(tag, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);

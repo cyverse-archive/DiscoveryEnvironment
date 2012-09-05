@@ -5,16 +5,17 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.JsDeployedComponent;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.AccordionLayout;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,6 +28,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class AppDCDetailsPanel extends IPlantDialogPanel {
     private final ContentPanel contents = new ContentPanel();
 
+    private final AppTemplateUserServiceFacade templateService = GWT
+            .create(AppTemplateUserServiceFacade.class);
+
     public AppDCDetailsPanel(Analysis app) {
         contents.setLayout(new AccordionLayout());
         contents.setHeaderVisible(false);
@@ -37,8 +41,8 @@ public class AppDCDetailsPanel extends IPlantDialogPanel {
     private void getDCDetails(final String appId) {
         contents.mask(I18N.DISPLAY.loadingMask());
 
-        TemplateServiceFacade facade = new TemplateServiceFacade();
-        facade.getDCDetails(appId, new AsyncCallback<String>() {
+        // TemplateServiceFacade facade = new TemplateServiceFacade();
+        templateService.getDCDetails(appId, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {

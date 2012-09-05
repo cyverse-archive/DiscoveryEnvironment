@@ -72,14 +72,6 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     ImageResource whitelogo();
 
     /**
-     * Image resource for window title-bars and the taskbar.
-     * 
-     * @return image.
-     */
-    @Source("whitelogo_sm.png")
-    ImageResource whitelogoSmall();
-
-    /**
      * Image resource.
      * 
      * @return image.
