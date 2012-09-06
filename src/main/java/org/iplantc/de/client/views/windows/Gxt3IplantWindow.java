@@ -17,9 +17,11 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.theme.gray.client.window.GrayWindowAppearance;
 import com.sencha.gxt.widget.core.client.Status;
@@ -52,6 +54,9 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     protected String tag;
     protected WindowConfig config;
     protected Status status;
+
+    protected boolean maximized;
+    protected boolean minimized;
     // FIXME Add drag and drop functionality
 
     private ToolButton btnMinimize;
@@ -156,8 +161,10 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
             public void onSelect(SelectEvent event) {
                 if (!isMaximized()) {
                     maximize();
+                    maximized = true;
                 } else {
                     restore();
+                    maximized = false;
                 }
             }
         });
@@ -229,6 +236,7 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
             @Override
             public void onSelect(SelectEvent event) {
                 minimize();
+                minimized = true;
                 newMinBtn.removeStyleName(BUTTON_STYLE_MINIMIZED_HOVER);
             }
         });
@@ -377,6 +385,56 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     @Override
     public void setWindowConfig(WindowConfig config) {
         this.config = config;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return super.isVisible();
+    }
+
+    @Override
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    @Override
+    public void minimize() {
+        super.minimize();
+    }
+
+    @Override
+    public boolean isMinimized() {
+        return minimized;
+    }
+
+    @Override
+    public void setMinimized(boolean min) {
+        minimized = min;
+    }
+
+    @Override
+    public void setTitle(String wintitle) {
+        getHeader().setTitle(wintitle);
+    }
+
+    @Override
+    public String getTitle() {
+        return getHeader().getTitle();
+    }
+
+    @Override
+    public void setPixelSize(int width, int height) {
+        super.setPixelSize(width, height);
+    }
+
+    @Override
+    public int getHeaderOffSetHeight() {
+        return getHeader().getOffsetHeight();
+    }
+
+    @Override
+    public void alignTo(Element e, AnchorAlignment align, int[] offsets) {
+        super.alignTo(e, align, offsets);
     }
 
 }

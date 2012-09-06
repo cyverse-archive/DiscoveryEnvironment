@@ -27,8 +27,7 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
  * 
  */
 public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
-        HasDeactivateHandlers<Window>, HasMinimizeHandlers,
- HasHideHandlers, HasShowHandlers, IsWidget {
+        HasDeactivateHandlers<Window>, HasMinimizeHandlers, HasHideHandlers, HasShowHandlers, IsWidget {
 
     String getTag();
 

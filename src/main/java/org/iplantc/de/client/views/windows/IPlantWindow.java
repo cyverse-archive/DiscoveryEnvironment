@@ -135,7 +135,6 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
         this.config = config;
     }
 
-
     /**
      * Returns the window state information.
      * 
@@ -407,6 +406,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
         }
     }
 
+    @Override
     public Point getPosition3(boolean b) {
         return new Point(getPosition(b).x, getPosition(b).y);
     }
@@ -592,11 +592,6 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     @Override
     public void setPixelSize(int width, int height) {
         setSize(width, height);
-    }
-
-    @Override
-    public void setPosition(int left, int top) {
-        setPagePosition(left, top);
     }
 
     @Override

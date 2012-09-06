@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.factories.WindowFactory;
+import org.iplantc.de.client.gxt3.desktop.widget.TaskButton;
 import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
@@ -20,7 +21,6 @@ import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
-
 
 /**
  * Manages window widgets in the web "desktop" environment.
