@@ -52,13 +52,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String createFolderFailed();
 
     /**
-     * Error message displayed when the application fails to retrieve folder contents.
-     * 
-     * @return localized error string.
-     */
-    String retrieveFolderInfoFailed();
-
-    /**
      * Error message displayed when a file fails to upload.
      * 
      * @return localized error string.
@@ -479,13 +472,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
      * @return localized error string.
      */
     String loadSessionFailureNotice();
-
-    /**
-     * Localized error message to show when something goes wrong with confluence
-     * 
-     * @return
-     */
-    String confluenceError();
 
     /**
      * Localized error message to show when something goes wrong with sharing

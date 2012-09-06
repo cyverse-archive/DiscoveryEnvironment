@@ -3,6 +3,7 @@ package org.iplantc.de.client.views.windows;
 import java.util.List;
 
 import org.iplantc.core.client.widgets.Hyperlink;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
@@ -10,7 +11,6 @@ import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
-import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.Scroll;

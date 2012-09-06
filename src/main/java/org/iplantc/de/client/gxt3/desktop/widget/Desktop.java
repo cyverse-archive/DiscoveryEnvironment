@@ -10,11 +10,12 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.events.UserEvent;
+import org.iplantc.core.uicommons.client.events.UserEventHandler;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.UserEvent;
-import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
@@ -24,7 +25,6 @@ import org.iplantc.de.client.gxt3.desktop.layout.DesktopLayout;
 import org.iplantc.de.client.gxt3.desktop.layout.DesktopLayout.RequestType;
 import org.iplantc.de.client.gxt3.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.gxt3.desktop.layout.TileDesktopLayout;
-import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEWindowManager;
@@ -125,7 +125,7 @@ public class Desktop implements IsWidget {
     private DesktopLayout desktopLayout;
     private FastMap<DesktopLayout> desktopLayouts;
     private DEWindowManager windowManager;
-    private WindowConfigFactory factoryWindowConfig;
+    private final WindowConfigFactory factoryWindowConfig;
 
     /**
      * Creates a new Desktop window.

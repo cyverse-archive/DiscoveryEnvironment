@@ -249,7 +249,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <extraJvmArgs>-Xmx512M -Xms512M -Xss1024k</extraJvmArgs>
+                    <extraJvmArgs>-Xmx1024M -Xms512M -Xss4M</extraJvmArgs>
                     <webappDirectory>${basedir}/war</webappDirectory>
                     <mode>htmlunit</mode> 
 		    <compileReport>true</compileReport>

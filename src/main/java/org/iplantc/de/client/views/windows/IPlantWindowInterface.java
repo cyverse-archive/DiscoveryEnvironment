@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.utils.DEWindowManager;
 
 import com.extjs.gxt.ui.client.event.WindowListener;

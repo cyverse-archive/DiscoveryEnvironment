@@ -1,15 +1,13 @@
-package org.iplantc.de.client.gxt3.views;
+package org.iplantc.de.client.views.windows;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.views.windows.DECatalogWindow;
-import org.iplantc.de.client.views.windows.IPlantWindowInterface;
+import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.core.uicommons.client.images.Resources;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.WindowListener;

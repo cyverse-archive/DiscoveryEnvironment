@@ -1,6 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.client.models.WindowConfig;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BorderLayoutEvent;

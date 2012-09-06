@@ -1,33 +1,30 @@
 package org.iplantc.de.client.views;
 
-import java.util.List;
-
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.events.UserEvent;
+import org.iplantc.core.uicommons.client.events.UserEventHandler;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.events.LogoutEvent;
 import org.iplantc.de.client.events.LogoutEventHandler;
-import org.iplantc.de.client.events.UserEvent;
-import org.iplantc.de.client.events.UserEventHandler;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.gxt3.views.Gxt3IplantWindow;
-import org.iplantc.de.client.models.WindowConfig;
+
 import org.iplantc.de.client.services.DiskResourceServiceCallback;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.LogoutUtil;
-import org.iplantc.de.client.utils.ShortcutManager;
-import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
 import org.iplantc.de.client.views.windows.FileViewerWindow;
 import org.iplantc.de.client.views.windows.FileWindow;
+import org.iplantc.de.client.views.windows.Gxt3IplantWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 

@@ -3,10 +3,10 @@ package org.iplantc.de.client.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.gxt3.desktop.widget.TaskButton;
 import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
-import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -22,8 +22,6 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
-// import com.extjs.gxt.ui.client.widget.WindowManager;
-
 /**
  * Manages window widgets in the web "desktop" environment.
  */
@@ -37,7 +35,7 @@ public class DEWindowManager extends IplantWindowManager {
     private final HideHandler hideHandler;
     private final MinimizeHandler minimizeHandler;
     private final ShowHandler showHandler;
-    private Map<String, TaskButton> taskButtons;
+    private final Map<String, TaskButton> taskButtons;
 
     /**
      * Instantiate from a window listener.

@@ -1,12 +1,12 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.AnalysesWindowConfig;
-import org.iplantc.de.client.models.WindowConfig;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;

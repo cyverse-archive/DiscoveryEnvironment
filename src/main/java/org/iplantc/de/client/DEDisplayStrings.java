@@ -473,34 +473,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * 
      * @return string representing the text
      */
-    String close();
-
-    /**
-     * Localized text for applications
-     * 
-     * @return string representing the text
-     */
-    String maximize();
-
-    /**
-     * Localized text for applications
-     * 
-     * @return string representing the text
-     */
-    String minimize();
-
-    /**
-     * Localized text for applications
-     * 
-     * @return string representing the text
-     */
-    String restore();
-
-    /**
-     * Localized text for applications
-     * 
-     * @return string representing the text
-     */
     String show();
 
     /**
@@ -672,21 +644,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String idropLiteDownloadNotice();
 
     /**
-     * Localized text for the App Comment dialog title
-     * 
-     * @return a string representing the localized text.
-     */
-    String appCommentDialogTitle();
-
-    /**
-     * Localized text for the text appearing the App Comment dialog before the text area.
-     * 
-     * @param appName name of the app
-     * @return a string representing the localized text.
-     */
-    String appCommentExplanation(String appName);
-
-    /**
      * Localized text for analysis output destination folder selection
      * 
      * @param defaultPath default output folder for analyses
@@ -741,22 +698,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return a string representing the localized text.
      */
     String paramValue();
-
-    /**
-     * Localized text for the subject line in rating notifications.
-     * 
-     * @param appName the name of the app
-     * @return a string representing the localized text.
-     */
-    String ratingEmailSubject(String appName);
-
-    /**
-     * Localized text for the email body in rating notifications.
-     * 
-     * @param appName the name of the app
-     * @return a string representing the localized text.
-     */
-    String ratingEmailText(String appName);
 
     /**
      * Localized text empty parameter grid

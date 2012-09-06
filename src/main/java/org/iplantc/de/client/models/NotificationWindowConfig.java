@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.extjs.gxt.ui.client.Style.SortDir;

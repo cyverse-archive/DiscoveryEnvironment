@@ -64,11 +64,6 @@ response.setDateHeader("Expires", 0);
 <!-- to create a completely dynamic UI.        -->
 <!--                                           -->
 <body>
-<!-- 
-	<div id="x-desktop">
-		<dl id="x-shortcuts"></dl>
-	</div>
- -->
 	<!-- include for history support -->
 	<iframe src="javascript:''" id="__gwt_historyFrame" 
 		style="position: absolute; width: 0; height: 0; border: 0">

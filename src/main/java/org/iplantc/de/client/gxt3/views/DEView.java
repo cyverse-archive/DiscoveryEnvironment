@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface DEView extends IsWidget {
 
-    public interface Presenter extends org.iplantc.de.client.gxt3.presenter.Presenter {
+    public interface Presenter extends org.iplantc.core.uicommons.client.presenter.Presenter {
 
     }
 

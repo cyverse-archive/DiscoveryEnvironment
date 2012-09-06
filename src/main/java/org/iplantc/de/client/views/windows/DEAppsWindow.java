@@ -1,22 +1,26 @@
-package org.iplantc.de.client.gxt3.views;
+package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
+import org.iplantc.core.uiapplications.client.I18N;
+import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
+import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
+import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
+import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.views.AnalysisColumnModel;
+import org.iplantc.core.uiapplications.client.views.AppsView;
+import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.images.Icons;
+import org.iplantc.core.uicommons.client.images.Resources;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.DEDisplayStrings;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.gxt3.model.autoBean.Analysis;
-import org.iplantc.de.client.gxt3.model.autoBean.AnalysisGroup;
-import org.iplantc.de.client.gxt3.presenter.AppsViewPresenter;
-import org.iplantc.de.client.images.Icons;
-import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.CatalogWindowConfig;
-import org.iplantc.de.client.models.WindowConfig;
-import org.iplantc.de.client.services.TemplateServiceFacade;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
@@ -32,16 +36,16 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         super(tag, config);
         // FIXME JDS Use dependency injection to get the classes needed in the constructor.
         CommonAppDisplayStrings commonAppDisplayStrings = org.iplantc.core.uiapplications.client.I18N.DISPLAY;
-        DEDisplayStrings deDisplayStrings = org.iplantc.de.client.I18N.DISPLAY;
+        CommonAppDisplayStrings deDisplayStrings = I18N.DISPLAY;
         EventBus eventBus = EventBus.getInstance();
         Icons icons = Resources.ICONS;
-        TemplateServiceFacade templateService = new TemplateServiceFacade();
+        AppTemplateUserServiceFacade templateService = GWT.create(AppTemplateUserServiceFacade.class);
         UserInfo userInfo = UserInfo.getInstance();
 
         TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
                 new AnalysisGroupModelKeyProvider());
         ListStore<Analysis> listStore = new ListStore<Analysis>(new AnalysisModelKeyProvider());
-        AnalysisColumnModel cm = new AnalysisColumnModel(eventBus, commonAppDisplayStrings, icons);
+        AnalysisColumnModel cm = new AnalysisColumnModel(eventBus, commonAppDisplayStrings);
 
         AppsView view = new AppsViewImpl(treeStore, listStore, cm);
         presenter = new AppsViewPresenter(view, templateService, deDisplayStrings, userInfo, tag,
@@ -98,6 +102,30 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
         return dispatcher.getDispatchJson(Constants.CLIENT.deCatalog(), ActionType.DISPLAY_WINDOW);
         // return config;
+    }
+
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setMinimized(boolean min) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean isMinimized() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getHeaderOffSetHeight() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

@@ -139,6 +139,7 @@ public class DEViewImpl implements DEView {
      * 
      * @param view a new component to set in the center of the BorderLayout.
      */
+    @Override
     public void replaceCenterPanel(IsWidget view) {
         con.remove(con.getCenterWidget());
         con.setCenterWidget(view, centerData);
@@ -244,7 +245,7 @@ public class DEViewImpl implements DEView {
     private Menu buildUserMenu() {
         final Menu userMenu = buildMenu();
 
-        userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(), linkStyle, hoverStyle, //$NON-NLS-1$ //$NON-NLS-2$
+        userMenu.add(new MenuHyperlink(I18N.DISPLAY.logout(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {
@@ -252,7 +253,7 @@ public class DEViewImpl implements DEView {
                         userMenu.hide();
                     }
                 }, null));
-        userMenu.add(new MenuHyperlink(I18N.DISPLAY.preferences(), linkStyle, hoverStyle, //$NON-NLS-1$ //$NON-NLS-2$
+        userMenu.add(new MenuHyperlink(I18N.DISPLAY.preferences(), linkStyle, hoverStyle,
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {

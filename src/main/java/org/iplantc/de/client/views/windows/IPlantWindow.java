@@ -1,10 +1,10 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dnd.WindowFocusDropTarget;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.models.WindowConfig;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
@@ -406,6 +406,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
         }
     }
 
+    @Override
     public Point getPosition3(boolean b) {
         return new Point(getPosition(b).x, getPosition(b).y);
     }
