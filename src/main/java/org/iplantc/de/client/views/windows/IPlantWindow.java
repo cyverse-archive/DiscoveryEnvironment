@@ -594,11 +594,6 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     }
 
     @Override
-    public void setPosition(int left, int top) {
-        setPagePosition(left, top);
-    }
-
-    @Override
     public int getHeaderOffSetHeight() {
         return getHeader().getOffsetHeight();
     }

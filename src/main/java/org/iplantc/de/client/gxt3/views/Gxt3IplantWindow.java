@@ -430,11 +430,6 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     }
 
     @Override
-    public void setPosition(int left, int top) {
-        setPagePosition(left, top);
-    }
-
-    @Override
     public int getHeaderOffSetHeight() {
         return getHeader().getOffsetHeight();
     }

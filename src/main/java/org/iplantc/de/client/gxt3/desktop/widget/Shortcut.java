@@ -30,6 +30,7 @@ public class Shortcut extends TextButton {
 
         this.addSelectHandler(handler);
         setIcon(desc.getIcon());
+        setBorders(false);
     }
 
     /**

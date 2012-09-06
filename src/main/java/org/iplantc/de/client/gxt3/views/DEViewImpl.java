@@ -11,8 +11,6 @@ import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
-import org.iplantc.de.client.gxt3.desktop.widget.Desktop.CopyRightLayoutContainerTemplate;
-import org.iplantc.de.client.gxt3.views.AppsView.Presenter;
 import org.iplantc.de.client.util.WindowUtil;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -21,7 +19,6 @@ import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
-import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -33,12 +30,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.XTemplates;
-import com.sencha.gxt.core.client.XTemplates.XTemplate;
-import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer.HorizontalLayoutData;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
@@ -111,12 +105,19 @@ public class DEViewImpl implements DEView {
         //  headerPanel.setStyleName("iplantc-portal-component"); //$NON-NLS-1$
 
         headerPanel.add(buildLogoPanel());
+        headerPanel.add(buildBufferPanel());
         headerPanel.add(buildHtmlActionsPanel());
+    }
+
+    private HorizontalLayoutContainer buildBufferPanel() {
+        final HorizontalLayoutContainer buffer = new HorizontalLayoutContainer();
+        buffer.setWidth("47%");
+        return buffer;
     }
 
     private VerticalLayoutContainer buildLogoPanel() {
         VerticalLayoutContainer panel = new VerticalLayoutContainer();
-        panel.setBorders(true);
+        panel.setWidth("33%");
 
         Image logo = new Image(Constants.CLIENT.iplantLogo());
         logo.addStyleName("iplantc-logo"); //$NON-NLS-1$
@@ -143,50 +144,57 @@ public class DEViewImpl implements DEView {
         con.setCenterWidget(view, centerData);
     }
 
-    private HorizontalLayoutContainer buildActionsPanel() {
-        final HorizontalLayoutContainer pnlActions = new HorizontalLayoutContainer();
-        pnlActions.setBorders(true);
-
-        pnlActions.setStyleName("iplantc-header-actions"); //$NON-NLS-1$
-
+    private HtmlLayoutContainer buildHtmlActionsPanel() {
+        MenuContainerLayoutContainerTemplate menu_template = GWT
+                .create(MenuContainerLayoutContainerTemplate.class);
+        HtmlLayoutContainer menuContainer = new HtmlLayoutContainer(menu_template.getTemplate());
+        menuContainer.setWidth("20%");
         // add user actions menu
-        pnlActions.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()),
-                new HorizontalLayoutData(1, 1, new Margins(0)));
-
-        // add help actions menu
-        pnlActions.add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()), new HorizontalLayoutData(
-                1, 1, new Margins(0)));
-
+        menuContainer
+                .add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()), new HtmlData(".cell1"));
+        menuContainer.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()),
+                new HtmlData(".cell3"));
         // // add notification actions menu
-        // HorizontalPanel notificationPanel = buildNotificationMenu(I18N.DISPLAY.notifications());
+        menuContainer.add(buildNotificationMenu(I18N.DISPLAY.notifications()), new HtmlData(".cell2"));
         //
         // lblNotifications = new NotificationIndicator(0);
         // notificationPanel.add(lblNotifications);
         //
         // pnlActions.add(notificationPanel);
 
-        return pnlActions;
-    }
-
-    private HtmlLayoutContainer buildHtmlActionsPanel() {
-        MenuContainerLayoutContainerTemplate menu_template = GWT
-                .create(MenuContainerLayoutContainerTemplate.class);
-        HtmlLayoutContainer menuContainer = new HtmlLayoutContainer(menu_template.getTemplate());
-        menuContainer.setWidth("100%");
-        menuContainer
-                .add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()), new HtmlData(".cell2"));
-
-        // add user actions menu
-        menuContainer.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()),
-                new HtmlData(".cell1"));
-
         return menuContainer;
     }
 
     public interface MenuContainerLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<table border=\"1\" height=\"100%\" width=\"100%\"><tr><td> &nbsp; </td></tr><tr><td> &nbsp; </td></tr>"
-                + "<tr><td align=\"right\" class=\"cell1\"> </td> <td class=\"cell2\"></td></tr></table>")
+        @XTemplate("<div class=\"cell1\" style =\"width:25%; float:right;padding-top:15px\"></div><div class=\"cell2\" style =\"width:45%;float:right;padding-top:15px\"></div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
         SafeHtml getTemplate();
+    }
+
+    private HorizontalLayoutContainer buildNotificationMenu(String menuHeaderText) {
+        final HorizontalLayoutContainer ret = new HorizontalLayoutContainer();
+        ret.setStyleName("de_header_menu_panel"); //$NON-NLS-1$
+        // build menu header text and icon
+        MenuLabel menuHeader = new MenuLabel(menuHeaderText,
+                "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
+        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                // showNotificationView(ret);
+            }
+        });
+
+        IconButton icon = new IconButton("de_header_menu_button", //$NON-NLS-1$
+                new SelectionListener<IconButtonEvent>() {
+                    @Override
+                    public void componentSelected(IconButtonEvent ce) {
+                        // showNotificationView(ret);
+                    }
+                });
+
+        ret.add(menuHeader);
+        ret.add(icon);
+
+        return ret;
     }
 
     private HorizontalLayoutContainer buildActionsMenu(String menuHeaderText, final Menu menu) {
