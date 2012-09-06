@@ -144,7 +144,6 @@ public class WizardWindow extends IPlantWindow {
         if (config != null) {
             initWizard(config.getWizardConfig().toString());
         } else {
-            // TemplateServiceFacade facade = new TemplateServiceFacade();
             templateService.getTemplate(tag, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
@@ -280,7 +279,7 @@ public class WizardWindow extends IPlantWindow {
     private void initWizard(String json) {
         WizardPropertyGroupContainer container = new WizardPropertyGroupContainer(json);
         WizardBuilder builder = new WizardBuilder();
-        setHeading(container.getLabel());
+        setTitle(container.getLabel());
 
         final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
         final ContentPanel pnlLaunchButton = buildButtonPanel();

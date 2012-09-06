@@ -129,8 +129,6 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private void getData() {
-        // TemplateServiceFacade facade = new TemplateServiceFacade();
-
         templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
@@ -244,7 +242,6 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private void updateAnalysesListing(final AnalysisGroup group) {
-        // TemplateServiceFacade facade = new TemplateServiceFacade();
         mask(I18N.DISPLAY.loadingMask());
         templateService.getAnalysis(group.getId(), new AsyncCallback<String>() {
             @Override

@@ -334,7 +334,6 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
     }
 
     private void loadCategories() {
-        // TemplateServiceFacade service = new TemplateServiceFacade();
         templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
@@ -388,7 +387,6 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
                     @Override
                     public void onSuccess(String url) {
                         wikiUrl = url;
-                        // TemplateServiceFacade service = new TemplateServiceFacade();
                         templateService.publishToWorld(toJson(), new AsyncCallback<String>() {
                             @Override
                             public void onSuccess(String result) {

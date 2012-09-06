@@ -38,7 +38,7 @@ public class AboutApplicationWindow extends IPlantWindow {
 
         setLayout(new RowLayout());
         setId(tag);
-        setHeading(I18N.DISPLAY.aboutDiscoveryEnvironment());
+        setTitle(I18N.DISPLAY.aboutDiscoveryEnvironment());
         setResizable(false);
         setAutoHeight(true);
         initComponents();
@@ -108,7 +108,8 @@ public class AboutApplicationWindow extends IPlantWindow {
         storeWindowViewState(configData);
 
         WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(), configData);
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.myAboutTag(),
+                configData);
         WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
 
         return dispatcher.getDispatchJson(Constants.CLIENT.myAboutTag(), ActionType.DISPLAY_WINDOW);

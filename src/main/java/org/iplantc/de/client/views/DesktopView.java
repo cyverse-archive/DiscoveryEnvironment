@@ -1,7 +1,5 @@
 package org.iplantc.de.client.views;
 
-import java.util.List;
-
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.events.UserEvent;
@@ -21,12 +19,11 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.LogoutUtil;
-import org.iplantc.de.client.utils.ShortcutManager;
-import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
 import org.iplantc.de.client.views.windows.FileViewerWindow;
 import org.iplantc.de.client.views.windows.FileWindow;
+import org.iplantc.de.client.views.windows.Gxt3IplantWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
@@ -150,13 +147,13 @@ public class DesktopView extends ContentPanel implements ActivateHandler<Window>
     }
 
     private void initShortcuts() {
-        ShortcutManager mgr = new ShortcutManager(new DefaultDesktopBuilder());
-
-        List<Shortcut> shortcuts = mgr.getShortcuts();
-
-        for (Shortcut shortcut : shortcuts) {
-            addShortcut(shortcut);
-        }
+        // ShortcutManager mgr = new ShortcutManager(new DefaultDesktopBuilder());
+        //
+        // List<Shortcut> shortcuts = mgr.getShortcuts();
+        //
+        // for (Shortcut shortcut : shortcuts) {
+        // addShortcut(shortcut);
+        // }
     }
 
     private void initDesktop() {
@@ -307,34 +304,47 @@ public class DesktopView extends ContentPanel implements ActivateHandler<Window>
         window.hide();
     }
 
+    private void minimizeWindow(Gxt3IplantWindow window) {
+        window.setData("minimize", true); //$NON-NLS-1$
+        window.hide();
+    }
+
     @Override
     public void onShow(ShowEvent event) {
-        // TODO Auto-generated method stub
-    
+        Window w = (Window)event.getSource();
+        IPlantTaskButton btn = w.getData("taskButton"); //$NON-NLS-1$
+        w.setData("minimize", null); //$NON-NLS-1$
+
+        if (btn != null && taskBar.getButtons().contains(btn)) {
+            return;
+        }
+
+        // taskBar.addTaskButton(w);
+
     }
 
     @Override
     public void onMinimize(MinimizeEvent event) {
-        // TODO Auto-generated method stub
-    
+        minimizeWindow((Gxt3IplantWindow)event.getSource());
+
     }
 
     @Override
     public void onHide(HideEvent event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     @Override
     public void onDeactivate(DeactivateEvent<Window> event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     @Override
     public void onActivate(ActivateEvent<Window> event) {
         // TODO Auto-generated method stub
-    
+
     }
 
     private void initWindowManager() {

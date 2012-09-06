@@ -104,4 +104,28 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         // return config;
     }
 
+    @Override
+    public void setWindowConfig(WindowConfig config) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setMinimized(boolean min) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean isMinimized() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getHeaderOffSetHeight() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

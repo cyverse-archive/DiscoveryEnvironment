@@ -41,7 +41,6 @@ public class AppDCDetailsPanel extends IPlantDialogPanel {
     private void getDCDetails(final String appId) {
         contents.mask(I18N.DISPLAY.loadingMask());
 
-        // TemplateServiceFacade facade = new TemplateServiceFacade();
         templateService.getDCDetails(appId, new AsyncCallback<String>() {
 
             @Override

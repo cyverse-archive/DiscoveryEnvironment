@@ -50,8 +50,6 @@ public class PipelineEditorWindow extends IPlantWindow {
     }
 
     private void getData() {
-        // TemplateServiceFacade facade = new TemplateServiceFacade();
-
         templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override

@@ -23,7 +23,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
@@ -48,6 +50,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     private Point restorePos;
     private Size restoreSize;
     protected boolean maximized;
+    protected boolean minimized;
     private ToolButton btnMinimize;
     private ToolButton btnMaximize;
     private ToolButton btnRestore;
@@ -299,6 +302,7 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
             @Override
             public void componentSelected(IconButtonEvent ce) {
                 minimize();
+                minimized = true;
                 btnMinimize.removeStyleName("x-tool-minimizewindow-hover"); //$NON-NLS-1$
             }
         });
@@ -548,6 +552,61 @@ public abstract class IPlantWindow extends Window implements IPlantWindowInterfa
     @Override
     public HandlerRegistration addShowHandler(ShowHandler handler) {
         return null;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return super.isVisible();
+    }
+
+    @Override
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    @Override
+    public void minimize() {
+        super.minimize();
+    }
+
+    @Override
+    public void setMinimized(boolean min) {
+        minimized = min;
+    }
+
+    @Override
+    public void setTitle(String wintitle) {
+        setHeading(wintitle);
+    }
+
+    @Override
+    public String getTitle() {
+        return getHeading();
+    }
+
+    @Override
+    public boolean isMinimized() {
+        return minimized;
+    }
+
+    @Override
+    public void setPixelSize(int width, int height) {
+        setSize(width, height);
+    }
+
+    @Override
+    public void setPosition(int left, int top) {
+        setPagePosition(left, top);
+    }
+
+    @Override
+    public int getHeaderOffSetHeight() {
+        return getHeader().getOffsetHeight();
+    }
+
+    @Override
+    public void alignTo(Element e, AnchorAlignment align, int[] offsets) {
+        // super.alignTo(e, new AnchorAlignment(align.getTargetAlign()), offsets);
     }
 
 }

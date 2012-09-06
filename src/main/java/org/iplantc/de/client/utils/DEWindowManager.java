@@ -1,5 +1,8 @@
 package org.iplantc.de.client.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
@@ -17,7 +20,7 @@ import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.MinimizeEvent.MinimizeHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
-//import com.extjs.gxt.ui.client.widget.WindowManager;
+
 
 /**
  * Manages window widgets in the web "desktop" environment.
@@ -32,6 +35,7 @@ public class DEWindowManager extends IplantWindowManager {
     private final HideHandler hideHandler;
     private final MinimizeHandler minimizeHandler;
     private final ShowHandler showHandler;
+    private final Map<String, TaskButton> taskButtons;
 
     /**
      * Instantiate from a window listener.
@@ -48,6 +52,7 @@ public class DEWindowManager extends IplantWindowManager {
         this.hideHandler = hideHandler;
         this.minimizeHandler = minimizeHandler;
         this.showHandler = showHandler;
+        taskButtons = new HashMap<String, TaskButton>();
     }
 
     /**
@@ -129,6 +134,17 @@ public class DEWindowManager extends IplantWindowManager {
         }
     }
 
+    /**
+     * Check if a window already exists
+     * 
+     * @param tag
+     * @return boolean
+     */
+    public boolean contains(String tag) {
+        IPlantWindowInterface win = getDEWindows().remove(tag);
+        return !(win == null);
+    }
+
     public void unregister(Window widget) {
         unregister(widget);
         // if (front == widget) {
@@ -191,6 +207,26 @@ public class DEWindowManager extends IplantWindowManager {
             }
 
         }
+    }
+
+    /**
+     * Set the task button associated with the window
+     * 
+     * @param tag window tag
+     * @param btn taskbutton
+     */
+    public void setTaskButton(String tag, TaskButton btn) {
+        taskButtons.put(tag, btn);
+    }
+
+    /**
+     * get the task button associated with a window tag
+     * 
+     * @param tag window tag
+     * @return the task button
+     */
+    public TaskButton getTaskButton(String tag) {
+        return taskButtons.get(tag);
     }
 
     /**

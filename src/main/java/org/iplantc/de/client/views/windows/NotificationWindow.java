@@ -44,7 +44,7 @@ public class NotificationWindow extends IPlantWindow {
 
     private void init() {
         setId(tag);
-        setHeading(I18N.DISPLAY.myNotifications());
+        setTitle(I18N.DISPLAY.myNotifications());
         setResizable(true);
         setWidth(740);
         setHeight(400);
