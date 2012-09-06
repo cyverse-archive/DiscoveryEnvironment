@@ -15,7 +15,6 @@ import org.iplantc.core.uicommons.client.images.Icons;
 import org.iplantc.core.uicommons.client.images.Resources;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
-import org.iplantc.core.uicommons.client.views.Gxt3IplantWindow;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
@@ -29,11 +28,11 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 
-public class DEAnalysisWindow extends Gxt3IplantWindow {
+public class DEAppsWindow extends Gxt3IplantWindow {
 
     private final AppsView.Presenter presenter;
 
-    public DEAnalysisWindow(String tag, WindowConfig config) {
+    public DEAppsWindow(String tag, WindowConfig config) {
         super(tag, config);
         // FIXME JDS Use dependency injection to get the classes needed in the constructor.
         CommonAppDisplayStrings commonAppDisplayStrings = org.iplantc.core.uiapplications.client.I18N.DISPLAY;

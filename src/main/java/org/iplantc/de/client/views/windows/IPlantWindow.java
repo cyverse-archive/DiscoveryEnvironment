@@ -2,7 +2,6 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
-import org.iplantc.core.uicommons.client.views.IPlantWindowInterface;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dnd.WindowFocusDropTarget;
 import org.iplantc.de.client.images.Resources;

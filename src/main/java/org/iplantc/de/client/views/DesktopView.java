@@ -7,7 +7,6 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.events.UserEvent;
 import org.iplantc.core.uicommons.client.events.UserEventHandler;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
-import org.iplantc.core.uicommons.client.views.IPlantWindowInterface;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
@@ -29,6 +28,7 @@ import org.iplantc.de.client.views.taskbar.IPlantTaskbar;
 import org.iplantc.de.client.views.windows.FileViewerWindow;
 import org.iplantc.de.client.views.windows.FileWindow;
 import org.iplantc.de.client.views.windows.IPlantWindow;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.DomQuery;
 import com.extjs.gxt.ui.client.core.El;
