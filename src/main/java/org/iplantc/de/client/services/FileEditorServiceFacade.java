@@ -4,6 +4,7 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
+import org.iplantc.de.shared.SharedServiceFacade;
 import org.iplantc.de.shared.SharedUnsecuredServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -69,7 +70,7 @@ public class FileEditorServiceFacade {
         String address = "org.iplantc.services.buggalo.baseUrl?path=" + URL.encodeQueryString(idFile); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
+        SharedServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     public void uploadTextAsFile(String destination, String fileContents, AsyncCallback<String> callback) {
