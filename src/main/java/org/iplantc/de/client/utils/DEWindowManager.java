@@ -11,7 +11,6 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;
-import com.extjs.gxt.ui.client.widget.Window;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.ui.Widget;
@@ -143,17 +142,6 @@ public class DEWindowManager extends IplantWindowManager {
     public boolean contains(String tag) {
         IPlantWindowInterface win = getDEWindows().remove(tag);
         return !(win == null);
-    }
-
-    public void unregister(Window widget) {
-        unregister(widget);
-        // if (front == widget) {
-        // front = null;
-        // }
-        // accessList.remove(widget);
-        // widgets.remove(widget);
-        // activateLast();
-        // ensureHandlers().fireEvent(new UnregisterEvent<Widget>(widget));
     }
 
     /**
