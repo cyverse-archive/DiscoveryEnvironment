@@ -4,21 +4,19 @@
 package org.iplantc.de.client.gxt3.views;
 
 import org.iplantc.core.client.widgets.MenuHyperlink;
-import org.iplantc.core.client.widgets.MenuLabel;
+import org.iplantc.core.client.widgets.PushButton;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
+import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.util.WindowUtil;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.button.IconButton;
+import com.extjs.gxt.ui.client.widget.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +24,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,6 +61,7 @@ public class DEViewImpl implements DEView {
     BorderLayoutContainer con;
 
     private Presenter presenter;
+    private NotificationIndicator lblNotifications;
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
@@ -100,10 +100,6 @@ public class DEViewImpl implements DEView {
 
     @Override
     public void drawHeader() {
-        headerPanel.setBorders(true);
-
-        //  headerPanel.setStyleName("iplantc-portal-component"); //$NON-NLS-1$
-
         headerPanel.add(buildLogoPanel());
         headerPanel.add(buildBufferPanel());
         headerPanel.add(buildHtmlActionsPanel());
@@ -151,94 +147,79 @@ public class DEViewImpl implements DEView {
         HtmlLayoutContainer menuContainer = new HtmlLayoutContainer(menu_template.getTemplate());
         menuContainer.setWidth("20%");
         // add user actions menu
-        menuContainer
-                .add(buildActionsMenu(I18N.DISPLAY.help(), buildHelpMenu()), new HtmlData(".cell1"));
-        menuContainer.add(buildActionsMenu(UserInfo.getInstance().getUsername(), buildUserMenu()),
+        menuContainer.add(buildActionsMenu(I18N.DISPLAY.help(), 45, buildHelpMenu()), new HtmlData(
+                ".cell2"));
+        menuContainer.add(buildActionsMenu(UserInfo.getInstance().getUsername(), 55, buildUserMenu()),
                 new HtmlData(".cell3"));
         // // add notification actions menu
-        menuContainer.add(buildNotificationMenu(I18N.DISPLAY.notifications()), new HtmlData(".cell2"));
-        //
-        // lblNotifications = new NotificationIndicator(0);
-        // notificationPanel.add(lblNotifications);
-        //
-        // pnlActions.add(notificationPanel);
+        menuContainer.add(buildNotificationMenu(I18N.DISPLAY.notifications(), 85),
+                new HtmlData(".cell1"));
 
         return menuContainer;
     }
 
     public interface MenuContainerLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<div class=\"cell1\" style =\"width:25%; float:right;padding-top:15px\"></div><div class=\"cell2\" style =\"width:45%;float:right;padding-top:15px\"></div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
+        @XTemplate("<div class=\"cell1\" style =\"width:45%; float:right;padding-top:15px\"></div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\"></div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
         SafeHtml getTemplate();
     }
 
-    private HorizontalLayoutContainer buildNotificationMenu(String menuHeaderText) {
+    private HorizontalLayoutContainer buildNotificationMenu(String menuHeaderText, int headerWidth) {
         final HorizontalLayoutContainer ret = new HorizontalLayoutContainer();
-        ret.setStyleName("de_header_menu_panel"); //$NON-NLS-1$
-        // build menu header text and icon
-        MenuLabel menuHeader = new MenuLabel(menuHeaderText,
-                "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
-        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+        lblNotifications = new NotificationIndicator(0);
+        ret.add(lblNotifications);
+
+        PushButton button = new PushButton(menuHeaderText, headerWidth);
+        button.addClickHandler(new ClickHandler() {
+
             @Override
-            public void handleEvent(BaseEvent be) {
+            public void onClick(ClickEvent arg0) {
                 // showNotificationView(ret);
+
             }
         });
 
-        IconButton icon = new IconButton("de_header_menu_button", //$NON-NLS-1$
-                new SelectionListener<IconButtonEvent>() {
-                    @Override
-                    public void componentSelected(IconButtonEvent ce) {
-                        // showNotificationView(ret);
-                    }
-                });
-
-        ret.add(menuHeader);
-        ret.add(icon);
+        button.setImage(new Image(Resources.ICONS.menuAnchor()));
+        ret.add(button);
 
         return ret;
     }
 
-    private HorizontalLayoutContainer buildActionsMenu(String menuHeaderText, final Menu menu) {
+    private HorizontalLayoutContainer buildActionsMenu(String menuHeaderText, int headerWidth,
+            final Menu menu) {
         final HorizontalLayoutContainer ret = new HorizontalLayoutContainer();
         ret.setBorders(true);
-        ret.setStyleName("de_header_menu_panel"); //$NON-NLS-1$
 
-        // build menu header text and icon
-        MenuLabel menuHeader = new MenuLabel(menuHeaderText,
-                "de_header_menu_label", "de_header_menu_label_hover"); //$NON-NLS-1$ //$NON-NLS-2$
-        menuHeader.addListener(Events.OnClick, new Listener<BaseEvent>() {
+        final PushButton button = new PushButton(menuHeaderText, headerWidth);
+        button.addClickHandler(new ClickHandler() {
+
             @Override
-            public void handleEvent(BaseEvent be) {
+            public void onClick(ClickEvent arg0) {
                 showHeaderActionsMenu(ret, menu);
+
             }
         });
 
-        IconButton icon = new IconButton("de_header_menu_button", //$NON-NLS-1$
-                new SelectionListener<IconButtonEvent>() {
-                    @Override
-                    public void componentSelected(IconButtonEvent ce) {
-                        showHeaderActionsMenu(ret, menu);
-                    }
-                });
-
-        ret.add(menuHeader);
-        ret.add(icon);
-
         menu.addShowHandler(new ShowHandler() {
+
             @Override
             public void onShow(ShowEvent event) {
-                ret.addStyleName("de_header_menu_selected"); //$NON-NLS-1$
+                button.addStyleName("de_header_menu_selected");
 
             }
         });
 
         menu.addHideHandler(new HideHandler() {
+
             @Override
             public void onHide(HideEvent event) {
-                ret.removeStyleName("de_header_menu_selected"); //$NON-NLS-1$
+                button.removeStyleName("de_header_menu_selected");
 
             }
         });
+
+        button.setImage(new Image(Resources.ICONS.menuAnchor()));
+        ret.add(button);
+
         return ret;
     }
 
@@ -323,12 +304,40 @@ public class DEViewImpl implements DEView {
         com.sencha.gxt.core.client.util.Point point = new com.sencha.gxt.core.client.util.Point(
                 anchor.getAbsoluteLeft(), anchor.getAbsoluteTop());
         //
-        actionsMenu.showAt(point.getX() + anchor.getElement().getWidth(true), point.getY()
-                + anchor.getElement().getHeight(true) + 20);
+        actionsMenu.showAt(point.getX() + anchor.getElement().getWidth(true) + 2, point.getY()
+                + anchor.getElement().getHeight(true) + 25);
     }
 
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
+    }
+
+    /**
+     * A Label with a setCount method that can set the label's styled text to the count when it's greater
+     * than 0, or setting empty text and removing the style for a count of 0 or less.
+     * 
+     * @author psarando
+     * 
+     */
+    private class NotificationIndicator extends Label {
+        public NotificationIndicator(int initialCount) {
+            super();
+
+            setStyleName("de_notification_indicator"); //$NON-NLS-1$
+            setCount(initialCount);
+        }
+
+        public void setCount(int count) {
+            if (count > 0) {
+                setText(String.valueOf(count));
+                addStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
+                Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
+            } else {
+                setText("&nbsp;&nbsp;"); //$NON-NLS-1$
+                removeStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
+                Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
+            }
+        }
     }
 }

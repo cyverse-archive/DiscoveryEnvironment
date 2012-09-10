@@ -13,8 +13,6 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.core.client.util.Padding;
-import com.sencha.gxt.messages.client.DefaultMessages;
-import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
@@ -22,29 +20,6 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  */
 public class TaskBar extends ToolBar {
 
-    /**
-     * Provides access to task bar messages.
-     */
-    public interface TaskBarMessages {
-
-        /**
-         * Returns the task bar start button text.
-         * 
-         * @return the task bar start button text
-         */
-        String startButtonText();
-
-    }
-
-    protected class DefaultTaskBarMessages implements TaskBarMessages {
-
-        public String startButtonText() {
-            return DefaultMessages.getMessages().desktop_startButton();
-        }
-
-    }
-
-    private TaskBarMessages messages;
     private int buttonWidth = 168;
     private int minButtonWidth = 118;
     private boolean resizeButtons = true;
@@ -54,7 +29,8 @@ public class TaskBar extends ToolBar {
      */
     public TaskBar() {
         setHeight(30);
-        addStyleName("x-taskbar");
+        // setId("ux-taskbar");
+        // addStyleName("x-taskbar");
         setSpacing(-1);
         getElement().getStyle().setProperty("border", "none");
         setPadding(new Padding(0));
@@ -92,18 +68,6 @@ public class TaskBar extends ToolBar {
     }
 
     /**
-     * Returns the task bar messages.
-     * 
-     * @return the task bar messages
-     */
-    public TaskBarMessages getMessages() {
-        if (messages == null) {
-            messages = new DefaultTaskBarMessages();
-        }
-        return messages;
-    }
-
-    /**
      * Removes a button.
      * 
      * @param btn the button to remove
@@ -121,15 +85,6 @@ public class TaskBar extends ToolBar {
      */
     public void setActiveButton(TaskButton btn) {
         // TODO: Provide implementation, v2 did not provide full support
-    }
-
-    /**
-     * Sets the task bar messages.
-     * 
-     * @param messages the messages
-     */
-    public void setMessages(TaskBarMessages messages) {
-        this.messages = messages;
     }
 
     private void autoSize() {

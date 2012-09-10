@@ -383,4 +383,11 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
     @Source("shortcut_data.png")
     ImageResource shortcutData();
 
+    /**
+     * 
+     * @return image.
+     */
+    @Source("arrow.gif")
+    ImageResource menuAnchor();
+
 }
