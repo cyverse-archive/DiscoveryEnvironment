@@ -182,7 +182,7 @@
         <dependency>
             <groupId>org.irods.idrop</groupId>
             <artifactId>idrop-lite</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
             <scope>provided</scope> <!-- we don't want the applet in WEB-INF/classes -->
         </dependency>
         <dependency>
@@ -309,9 +309,9 @@
                                 <artifactItem>
                                     <groupId>org.irods.idrop</groupId>
                                     <artifactId>idrop-lite</artifactId>
-                                    <version>1.0.1-SNAPSHOT</version>
+                                    <version>1.0.2-SNAPSHOT</version>
                                     <outputDirectory>${basedir}/war/applets</outputDirectory>
-                                    <destFileName>idrop-lite-1.0.1-SNAPSHOT.jar</destFileName>
+                                    <destFileName>idrop-lite-1.0.2-SNAPSHOT.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
