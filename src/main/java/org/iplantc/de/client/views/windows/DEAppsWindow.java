@@ -6,13 +6,11 @@ import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AnalysisColumnModel;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.images.Icons;
-import org.iplantc.core.uicommons.client.images.Resources;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
@@ -38,8 +36,7 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         CommonAppDisplayStrings commonAppDisplayStrings = org.iplantc.core.uiapplications.client.I18N.DISPLAY;
         CommonAppDisplayStrings deDisplayStrings = I18N.DISPLAY;
         EventBus eventBus = EventBus.getInstance();
-        Icons icons = Resources.ICONS;
-        AppTemplateUserServiceFacade templateService = GWT.create(AppTemplateUserServiceFacade.class);
+        AppTemplateServiceFacade templateService = GWT.create(AppTemplateServiceFacade.class);
         UserInfo userInfo = UserInfo.getInstance();
 
         TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
@@ -48,7 +45,7 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         AnalysisColumnModel cm = new AnalysisColumnModel(eventBus, commonAppDisplayStrings);
 
         AppsView view = new AppsViewImpl(treeStore, listStore, cm);
-        presenter = new AppsViewPresenter(view, templateService, deDisplayStrings, userInfo, tag,
+        presenter = new AppsViewPresenter(view, templateService, deDisplayStrings, userInfo,
                 (CatalogWindowConfig)config);
 
         setSize("800", "410");
