@@ -3,8 +3,6 @@
  */
 package org.iplantc.de.client.gxt3.model;
 
-import java.util.Date;
-
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.sencha.gxt.core.client.ValueProvider;
@@ -20,6 +18,6 @@ public interface NotificationProperties extends PropertyAccess<Notification> {
 
     ValueProvider<Notification, String> message();
 
-    ValueProvider<Notification, Date> timestamp();
+    ValueProvider<Notification, Long> timestamp();
 
 }

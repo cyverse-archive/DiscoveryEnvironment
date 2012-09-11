@@ -5,4 +5,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 public interface NotificationAutoBeanFactory extends AutoBeanFactory {
     AutoBean<Notification> getNotification();
+
+    AutoBean<NotificationList> getNotificationList();
 }

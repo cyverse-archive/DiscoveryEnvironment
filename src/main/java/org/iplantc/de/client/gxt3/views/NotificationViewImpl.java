@@ -8,18 +8,23 @@ import java.util.List;
 import org.iplantc.de.client.gxt3.model.Notification;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.widget.grid.GridView;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.SortDir;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 
 /**
  * @author sriram
@@ -49,13 +54,17 @@ public class NotificationViewImpl implements NotificationView {
     @UiField
     BorderLayoutContainer con;
 
+    @UiField
+    PagingToolBar toolBar;
+
     private final Widget widget;
     private Presenter presenter;
 
     public NotificationViewImpl(ListStore<Notification> listStore, ColumnModel<Notification> cm) {
-        this.widget = uiBinder.createAndBindUi(this);
         this.cm = cm;
         this.listStore = listStore;
+        this.widget = uiBinder.createAndBindUi(this);
+        toolBar.getElement().getStyle().setProperty("borderBottom", "none");
     }
 
     /*
@@ -152,6 +161,22 @@ public class NotificationViewImpl implements NotificationView {
         listStore.clear();
         listStore.addAll(notifications);
 
+    }
+
+    @Override
+    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> loader) {
+        grid.setLoader(loader);
+        toolBar.bind(loader);
+
+        // for the first time
+        Timer t = new Timer() {
+
+            @Override
+            public void run() {
+                grid.getLoader().load();
+            }
+        };
+        t.schedule(100);
     }
 
 }

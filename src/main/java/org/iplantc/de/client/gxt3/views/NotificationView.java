@@ -5,9 +5,12 @@ import java.util.List;
 import org.iplantc.de.client.gxt3.model.Notification;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.SortDir;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 public interface NotificationView extends IsWidget {
     public interface Presenter extends org.iplantc.core.uicommons.client.presenter.Presenter {
@@ -87,5 +90,7 @@ public interface NotificationView extends IsWidget {
     public ListStore<Notification> getListStore();
 
     public void setNotifications(List<Notification> notifications);
+
+    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> loader);
 
 }

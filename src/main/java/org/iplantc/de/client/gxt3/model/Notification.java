@@ -36,9 +36,9 @@ public interface Notification {
     void setContext(String context);
 
     @PropertyName("timestamp")
-    void setTimeStamp(long date);
+    void setTimestamp(long date);
 
     @PropertyName("timestamp")
-    long getTimeStamp();
+    long getTimestamp();
 
 }
