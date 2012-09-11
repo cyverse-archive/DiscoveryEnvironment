@@ -80,7 +80,7 @@ client behaves when a Zookeeper operations fails.  The available settings are:
         </tr>
         <tr>
             <td>encoding</td>
-            <td>The chracter encoding to use for data in Zookeepere.</td>
+            <td>The chracter encoding to use for data in Zookeeper.</td>
             <td>UTF-8</td>
         </tr>
     </tbody>
