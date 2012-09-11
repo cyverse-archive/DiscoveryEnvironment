@@ -6,6 +6,7 @@ import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
 
@@ -13,7 +14,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -22,6 +22,7 @@ public class Belphegor implements EntryPoint {
     /**
      * This is the entry point method.
      */
+    @Override
     public void onModuleLoad() {
         setEntryPointTitle();
         initUserInfo();

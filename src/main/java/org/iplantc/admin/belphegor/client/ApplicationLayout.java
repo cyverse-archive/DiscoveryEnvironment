@@ -1,10 +1,21 @@
 package org.iplantc.admin.belphegor.client;
 
+import org.iplantc.admin.belphegor.client.gxt3.presenter.BelphegorAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.gxt3.views.BelphegorAnalysisColumnModel;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
-import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
+import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
+import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
+import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.core.uiapplications.client.views.AppsView;
+import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.images.Icons;
+import org.iplantc.core.uicommons.client.images.Resources;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -24,6 +35,7 @@ import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
+import com.extjs.gxt.ui.client.widget.WidgetComponent;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -31,6 +43,10 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
 /**
  * Defines the overall layout for the root panel of the web application.
@@ -127,6 +143,15 @@ public class ApplicationLayout extends Viewport {
         }
     }
 
+    /**
+     * Used to place GXT3 widgets inside the center panel.
+     * 
+     * @param view
+     */
+    public void replaceCenterPanel(com.sencha.gxt.widget.core.client.Component view) {
+        replaceCenterPanel(new WidgetComponent(view));
+    }
+
     public void reset() {
         // clear our center
         if (center != null) {
@@ -160,13 +185,49 @@ public class ApplicationLayout extends Viewport {
         ReferenceGenomeListingPanel refPanel = new ReferenceGenomeListingPanel();
         refItem.add(refPanel);
 
-        CatalogAdminPanel panel = new CatalogAdminPanel();
-        appItem.add(panel);
+        // CatalogAdminPanel panel = new CatalogAdminPanel();
+
+        // --------->
+        CommonAppDisplayStrings commonAppDisplayStrings = org.iplantc.core.uiapplications.client.I18N.DISPLAY;
+        EventBus eventBus = EventBus.getInstance();
+        Icons icons = Resources.ICONS;
+        AppTemplateServiceFacade templateService = GWT.create(AppTemplateServiceFacade.class);
+        UserInfo userInfo = UserInfo.getInstance();
+
+        TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
+                new AnalysisGroupModelKeyProvider());
+        ListStore<Analysis> listStore = new ListStore<Analysis>(new AnalysisModelKeyProvider());
+        BelphegorAnalysisColumnModel cm = new BelphegorAnalysisColumnModel(eventBus,
+                commonAppDisplayStrings);
+        AppsView view = new AppsViewImpl(treeStore, listStore, cm);
+
+        BelphegorAppsViewPresenter presenter = new BelphegorAppsViewPresenter(view, templateService,
+                commonAppDisplayStrings, userInfo);
+        // Create view and presenter and add it here.
+        SimpleContainer appViewContentPanel = new SimpleContainer();
+        appViewContentPanel.setPixelSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        presenter.go(appViewContentPanel);
+        appItem.add(appViewContentPanel);
+        // appItem.add(panel);
 
         tabPanel.add(appItem);
         tabPanel.add(refItem);
 
         replaceCenterPanel(tabPanel);
+    }
+
+    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AnalysisGroup> {
+        @Override
+        public String getKey(AnalysisGroup item) {
+            return item.getId();
+        }
+    }
+
+    private final class AnalysisModelKeyProvider implements ModelKeyProvider<Analysis> {
+        @Override
+        public String getKey(Analysis item) {
+            return item.getId();
+        }
     }
 
     private class HeaderPanel extends HorizontalPanel {

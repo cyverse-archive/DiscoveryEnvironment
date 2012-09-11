@@ -15,6 +15,11 @@
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name="com.google.gwt.resources.Resources" />
 	<inherits name='com.extjs.gxt.ui.GXT' />
+    <inherits name='com.sencha.gxt.ui.GXT' />
+    <inherits name='com.sencha.gxt.theme.gray.Gray'/>
+    
+    <inherits name="com.google.gwt.uibinder.UiBinder" />
+    
 	<inherits name="org.iplantc.core.JsonUtil" />
 
 	<!-- Specify the app entry point class. -->
@@ -28,4 +33,8 @@
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='shared' />
+   
+   <replace-with class="org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade">
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade"/>
+   </replace-with>
 </module>

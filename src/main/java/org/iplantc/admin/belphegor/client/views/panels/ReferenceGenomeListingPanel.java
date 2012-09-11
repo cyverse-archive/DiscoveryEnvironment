@@ -130,7 +130,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     /**
      * Displays ref genome names as hyperlinks; clicking a link will allow users to edit.
      */
-    public class RefNameCellRenderer implements GridCellRenderer<ReferenceGenome> {
+    private class RefNameCellRenderer implements GridCellRenderer<ReferenceGenome> {
 
         @Override
         public Object render(final ReferenceGenome model, String property, ColumnData config,
@@ -183,7 +183,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
         @Override
         protected void onSuccess(JSONObject jsonResult) {
-            updateRefGenome(parseResult(jsonResult)); //$NON-NLS-1$
+            updateRefGenome(parseResult(jsonResult)); 
             closeDialog();
         }
 
@@ -235,6 +235,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
              * 
              * @param event the component event
              */
+            @Override
             public void componentKeyPress(ComponentEvent event) {
                 if (event.getKeyCode() == 13) {
                     filterGrid(filter.getValue());
