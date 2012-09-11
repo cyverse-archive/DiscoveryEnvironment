@@ -67,7 +67,11 @@ public class ClavinClientFactory {
     }
 
     /**
-     * Gets the Clavin client for the given service name.
+     * Gets the Clavin client for the given service name.  If the properties file for the service is present anywhere
+     * on the classpath then an instance of FilesClavinClient will be created.  If the properties file is not available
+     * but the Zookeeper connection information file is available then an instance of ZookeeperClavinClient will be
+     * created.  If neither the properties file for the service nor the Zookeeper connection information file is
+     * available then a ClavinClientCreationException is thrown.
      *
      * @param serviceName the name of the service.
      * @return the Clavin client.
