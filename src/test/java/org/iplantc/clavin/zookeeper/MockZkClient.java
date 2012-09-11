@@ -60,16 +60,4 @@ public class MockZkClient extends AbstractZkClient {
         }
         return nodes.get(path);
     }
-
-    /**
-     * Reads the data at the node corresponding to a base path and a node name.
-     *
-     * @param base the base path.
-     * @param name the node name.
-     * @return the data stored in the node as a string.
-     */
-    public String readNode(String base, String name) {
-        validatePath(base);
-        return readNode(validatePath(base + "/" + name));
-    }
 }
