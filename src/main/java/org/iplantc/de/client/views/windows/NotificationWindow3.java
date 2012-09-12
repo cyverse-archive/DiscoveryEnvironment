@@ -8,12 +8,14 @@ import java.util.List;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.gxt3.model.Notification;
-import org.iplantc.de.client.gxt3.model.NotificationProperties;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
+import org.iplantc.de.client.gxt3.model.NotificationMessageProperties;
 import org.iplantc.de.client.gxt3.presenter.NotificationPresenter;
 import org.iplantc.de.client.gxt3.views.NotificationView;
 import org.iplantc.de.client.gxt3.views.NotificationView.Presenter;
 import org.iplantc.de.client.gxt3.views.NotificationViewImpl;
+import org.iplantc.de.client.gxt3.views.cells.NotificationMessageCell;
+import org.iplantc.de.client.gxt3.views.cells.NotificationMessageTmestampCell;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
@@ -35,8 +37,8 @@ public class NotificationWindow3 extends Gxt3IplantWindow {
     public NotificationWindow3(String tag, WindowConfig config) {
         super(tag, config);
         NotificationKeyProvider keyProvider = new NotificationKeyProvider();
-        ListStore<Notification> store = new ListStore<Notification>(keyProvider);
-        ColumnModel<Notification> cm = buildNotificationColumnModel();
+        ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
+        ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
         NotificationView view = new NotificationViewImpl(store, cm);
         Presenter presenter = new NotificationPresenter(view, new MessageServiceFacade());
         setSize("800", "410");
@@ -44,43 +46,45 @@ public class NotificationWindow3 extends Gxt3IplantWindow {
     }
 
     @SuppressWarnings("unchecked")
-    private static ColumnModel<Notification> buildNotificationColumnModel() {
-        NotificationProperties props = GWT.create(NotificationProperties.class);
-        List<ColumnConfig<Notification, ?>> configs = new LinkedList<ColumnConfig<Notification, ?>>();
+    private static ColumnModel<NotificationMessage> buildNotificationColumnModel() {
+        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
+        List<ColumnConfig<NotificationMessage, ?>> configs = new LinkedList<ColumnConfig<NotificationMessage, ?>>();
 
-        CheckBoxSelectionModel<Notification> checkBoxModel = new CheckBoxSelectionModel<Notification>(
-                new IdentityValueProvider<Notification>());
+        CheckBoxSelectionModel<NotificationMessage> checkBoxModel = new CheckBoxSelectionModel<NotificationMessage>(
+                new IdentityValueProvider<NotificationMessage>());
         @SuppressWarnings("rawtypes")
         ColumnConfig colCheckBox = checkBoxModel.getColumn();
         configs.add(colCheckBox);
 
-        ColumnConfig<Notification, Category> colCategory = new ColumnConfig<Notification, Category>(
+        ColumnConfig<NotificationMessage, Category> colCategory = new ColumnConfig<NotificationMessage, Category>(
                 props.category(), 100);
         colCategory.setHeader(I18N.CONSTANT.category());
         configs.add(colCategory);
         colCategory.setMenuDisabled(true);
         colCategory.setSortable(false);
 
-        ColumnConfig<Notification, String> colMessage = new ColumnConfig<Notification, String>(
-                props.message(), 420);
+        ColumnConfig<NotificationMessage, NotificationMessage> colMessage = new ColumnConfig<NotificationMessage, NotificationMessage>(
+                new IdentityValueProvider<NotificationMessage>(), 420);
         colMessage.setHeader(I18N.DISPLAY.messagesGridHeader());
+        colMessage.setCell(new NotificationMessageCell());
         configs.add(colMessage);
         colMessage.setSortable(false);
         colMessage.setMenuDisabled(true);
 
-        ColumnConfig<Notification, Long> colTimestamp = new ColumnConfig<Notification, Long>(
-                props.timestamp(), 170);
+        ColumnConfig<NotificationMessage, NotificationMessage> colTimestamp = new ColumnConfig<NotificationMessage, NotificationMessage>(
+                new IdentityValueProvider<NotificationMessage>(), 170);
+        colTimestamp.setCell(new NotificationMessageTmestampCell());
         colTimestamp.setHeader(I18N.DISPLAY.createdDateGridHeader());
 
         configs.add(colTimestamp);
-        ColumnModel<Notification> columnModel = new ColumnModel<Notification>(configs);
+        ColumnModel<NotificationMessage> columnModel = new ColumnModel<NotificationMessage>(configs);
         return columnModel;
     }
 
-    private class NotificationKeyProvider implements ModelKeyProvider<Notification> {
+    private class NotificationKeyProvider implements ModelKeyProvider<NotificationMessage> {
 
         @Override
-        public String getKey(Notification item) {
+        public String getKey(NotificationMessage item) {
             return item.getId();
         }
 

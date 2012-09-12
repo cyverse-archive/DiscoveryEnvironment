@@ -1,9 +1,11 @@
 package org.iplantc.de.client.gxt3.presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.gxt3.model.Notification;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.gxt3.model.NotificationAutoBeanFactory;
 import org.iplantc.de.client.gxt3.model.NotificationList;
 import org.iplantc.de.client.gxt3.views.NotificationView;
@@ -33,11 +35,44 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public class NotificationPresenter implements Presenter {
 
+    private final class NotificationServiceCallback implements AsyncCallback<String> {
+        private final PagingLoadConfig loadConfig;
+        private final AsyncCallback<PagingLoadResult<NotificationMessage>> callback;
+
+        private NotificationServiceCallback(PagingLoadConfig loadConfig,
+                AsyncCallback<PagingLoadResult<NotificationMessage>> callback) {
+            this.loadConfig = loadConfig;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            org.iplantc.core.uicommons.client.ErrorHandler.post(caught);
+
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            AutoBean<NotificationList> bean = AutoBeanCodex.decode(factory, NotificationList.class,
+                    result);
+            int total = 0;
+            Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result), "total");
+            if (jsonTotal != null) {
+                total = jsonTotal.intValue();
+            }
+
+            List<NotificationMessage> messages = getNotificationMessages(bean);
+            callbackResult = new PagingLoadResultBean<NotificationMessage>(messages, total,
+                    loadConfig.getOffset());
+            callback.onSuccess(callbackResult);
+        }
+    }
+
     private final NotificationView view;
     private final MessageServiceFacade facade;
     private final NotificationAutoBeanFactory factory = GWT.create(NotificationAutoBeanFactory.class);
 
-    private PagingLoadResult<Notification> callbackResult;
+    private PagingLoadResult<NotificationMessage> callbackResult;
 
     public NotificationPresenter(NotificationView view, MessageServiceFacade facade) {
         this.view = view;
@@ -51,47 +86,25 @@ public class NotificationPresenter implements Presenter {
         view.setLoader(initProxyLoader());
     }
 
-    private PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> initProxyLoader() {
+    private PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>> initProxyLoader() {
 
-        RpcProxy<PagingLoadConfig, PagingLoadResult<Notification>> proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<Notification>>() {
+        RpcProxy<PagingLoadConfig, PagingLoadResult<NotificationMessage>> proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<NotificationMessage>>() {
             @Override
             public void load(final PagingLoadConfig loadConfig,
-                    final AsyncCallback<PagingLoadResult<Notification>> callback) {
+                    final AsyncCallback<PagingLoadResult<NotificationMessage>> callback) {
                 // TODO: implement sorting and filter
                 facade.getNotifications(loadConfig.getLimit(), loadConfig.getOffset(), "",
-                        com.sencha.gxt.data.shared.SortDir.DESC.toString(), new AsyncCallback<String>() {
-
-                            @Override
-                            public void onFailure(Throwable caught) {
-                                org.iplantc.core.uicommons.client.ErrorHandler.post(caught);
-
-                            }
-
-                            @Override
-                            public void onSuccess(String result) {
-                                AutoBean<NotificationList> bean = AutoBeanCodex.decode(factory,
-                                        NotificationList.class, result);
-                                int total = 0;
-                                Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result),
-                                        "total");
-                                if (jsonTotal != null) {
-                                    total = jsonTotal.intValue();
-                                }
-                                System.out.println("--->" + bean.as().getNotifications());
-                                callbackResult = new PagingLoadResultBean<Notification>(bean.as()
-                                        .getNotifications(), total, loadConfig.getOffset());
-                                callback.onSuccess(callbackResult);
-                            }
-                        });
+                        com.sencha.gxt.data.shared.SortDir.DESC.toString(),
+                        new NotificationServiceCallback(loadConfig, callback));
 
             }
 
         };
 
-        final PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>>(
+        final PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>> loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>>(
                 proxy);
         loader.setRemoteSort(true);
-        loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, Notification, PagingLoadResult<Notification>>(
+        loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, NotificationMessage, PagingLoadResult<NotificationMessage>>(
                 view.getListStore()));
 
         return loader;
@@ -122,9 +135,19 @@ public class NotificationPresenter implements Presenter {
     }
 
     @Override
-    public List<Notification> getSelectedItems() {
+    public List<NotificationMessage> getSelectedItems() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    private List<NotificationMessage> getNotificationMessages(AutoBean<NotificationList> bean) {
+        List<NotificationMessage> messages = new ArrayList<NotificationMessage>();
+        for (Notification n : bean.as().getNotifications()) {
+            NotificationMessage nm = n.getMessage();
+            nm.setCategory(Category.fromTypeString(n.getCategory()));
+            messages.add(nm);
+        }
+        return messages;
     }
 
 }

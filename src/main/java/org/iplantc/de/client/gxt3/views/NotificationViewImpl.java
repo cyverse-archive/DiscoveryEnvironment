@@ -5,7 +5,7 @@ package org.iplantc.de.client.gxt3.views;
 
 import java.util.List;
 
-import org.iplantc.de.client.gxt3.model.Notification;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.google.gwt.core.client.GWT;
@@ -39,14 +39,14 @@ public class NotificationViewImpl implements NotificationView {
     }
 
     @UiField(provided = true)
-    final ListStore<Notification> listStore;
+    final ListStore<NotificationMessage> listStore;
     @UiField(provided = true)
-    final ColumnModel<Notification> cm;
+    final ColumnModel<NotificationMessage> cm;
     @UiField
     GridView gridView;
 
     @UiField
-    Grid<Notification> grid;
+    Grid<NotificationMessage> grid;
 
     @UiField
     FramedPanel mainPanel;
@@ -60,7 +60,7 @@ public class NotificationViewImpl implements NotificationView {
     private final Widget widget;
     private Presenter presenter;
 
-    public NotificationViewImpl(ListStore<Notification> listStore, ColumnModel<Notification> cm) {
+    public NotificationViewImpl(ListStore<NotificationMessage> listStore, ColumnModel<NotificationMessage> cm) {
         this.cm = cm;
         this.listStore = listStore;
         this.widget = uiBinder.createAndBindUi(this);
@@ -128,7 +128,7 @@ public class NotificationViewImpl implements NotificationView {
      * @see org.iplantc.de.client.gxt3.views.NotificationView#getSelectedItems()
      */
     @Override
-    public List<Notification> getSelectedItems() {
+    public List<NotificationMessage> getSelectedItems() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -152,19 +152,19 @@ public class NotificationViewImpl implements NotificationView {
      * @see org.iplantc.de.client.gxt3.views.NotificationView#getListStore()
      */
     @Override
-    public ListStore<Notification> getListStore() {
+    public ListStore<NotificationMessage> getListStore() {
         return listStore;
     }
 
     @Override
-    public void setNotifications(List<Notification> notifications) {
+    public void setNotifications(List<NotificationMessage> notifications) {
         listStore.clear();
         listStore.addAll(notifications);
 
     }
 
     @Override
-    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> loader) {
+    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>> loader) {
         grid.setLoader(loader);
         toolBar.bind(loader);
 

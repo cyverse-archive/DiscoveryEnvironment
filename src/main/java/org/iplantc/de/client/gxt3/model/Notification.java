@@ -1,44 +1,25 @@
 package org.iplantc.de.client.gxt3.model;
 
-import org.iplantc.de.client.utils.NotificationHelper.Category;
-
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-/**
- * 
- * Notification bean
- * 
- * @author sriram
- * 
- */
 public interface Notification {
 
-    @PropertyName("id")
-    void setId(String id);
+    @PropertyName("seen")
+    void setSeen(boolean seen);
 
-    @PropertyName("id")
-    String getId();
-
-    void setCategory(Category category);
-
-    Category getCategory();
+    @PropertyName("seen")
+    boolean isSeen();
 
     @PropertyName("message")
-    String getMessage();
+    void setMessage(NotificationMessage message);
 
     @PropertyName("message")
-    void setMessage(String message);
+    NotificationMessage getMessage();
 
-    @PropertyName("context")
-    String getContext();
+    @PropertyName("type")
+    void setCategory(String category);
 
-    @PropertyName("context")
-    void setContext(String context);
-
-    @PropertyName("timestamp")
-    void setTimestamp(long date);
-
-    @PropertyName("timestamp")
-    long getTimestamp();
+    @PropertyName("type")
+    String getCategory();
 
 }

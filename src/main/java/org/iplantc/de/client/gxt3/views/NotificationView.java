@@ -2,7 +2,7 @@ package org.iplantc.de.client.gxt3.views;
 
 import java.util.List;
 
-import org.iplantc.de.client.gxt3.model.Notification;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -47,7 +47,7 @@ public interface NotificationView extends IsWidget {
          * 
          * @return a list containing selected notification objects
          */
-        public List<Notification> getSelectedItems();
+        public List<NotificationMessage> getSelectedItems();
     }
 
     /**
@@ -83,14 +83,14 @@ public interface NotificationView extends IsWidget {
      * 
      * @return a list containing selected notification objects
      */
-    public List<Notification> getSelectedItems();
+    public List<NotificationMessage> getSelectedItems();
 
     public void setPresenter(final Presenter presenter);
 
-    public ListStore<Notification> getListStore();
+    public ListStore<NotificationMessage> getListStore();
 
-    public void setNotifications(List<Notification> notifications);
+    public void setNotifications(List<NotificationMessage> notifications);
 
-    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<Notification>> loader);
+    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>> loader);
 
 }
