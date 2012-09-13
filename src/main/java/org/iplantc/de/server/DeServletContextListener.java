@@ -1,19 +1,16 @@
 package org.iplantc.de.server;
 
 import java.util.Properties;
-import java.util.TreeSet;
-import javax.servlet.ServletContextEvent;
 import org.apache.log4j.Logger;
+import org.iplantc.de.server.spring.AbstractServletContextListener;
 import org.iplantc.de.server.spring.ClavinPropertyPlaceholderConfigurer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * A Servlet context listener written specifically for the DE.
  *
  * @author Dennis Roberts
  */
-public class DeServletContextListener extends ContextLoaderListener {
+public class DeServletContextListener extends AbstractServletContextListener {
 
     /**
      * Used to log configuration settings.
@@ -21,57 +18,29 @@ public class DeServletContextListener extends ContextLoaderListener {
     private static final Logger LOG = Logger.getLogger(DeServletContextListener.class);
 
     /**
-     * The discovery environment configuration settings.
+     * The Discovery Environment configuration settings.
      */
     private Properties deConfig;
 
     /**
-     * The confluence client configuration settings.
+     * The Confluence client configuration settings.
      */
     private Properties confluenceConfig;
 
     /**
-     * Loads the configuration and initializes the web application context.
+     * Loads the configuration settings.
      *
-     * @param event the ServletContextEvent containing the ServletContext being initialized.
+     * @param configurer the property placeholder configurer that was used to load the configuration settings.
      */
     @Override
-    public void contextInitialized(ServletContextEvent event) {
-        super.contextInitialized(event);
-        loadConfigs();
+    protected void loadConfigs(ClavinPropertyPlaceholderConfigurer configurer) {
+        deConfig = loadConfig(configurer, "discoveryenvironment");
+        confluenceConfig = loadConfig(configurer, "confluence");
     }
 
     /**
-     * Loads the configuration settings.
+     * Registers the servlets used by the DE.
      */
-    private void loadConfigs() {
-        WebApplicationContext wac = getCurrentWebApplicationContext();
-        ClavinPropertyPlaceholderConfigurer configurer
-                = (ClavinPropertyPlaceholderConfigurer) wac.getBean("propertyPlaceholderConfigurer");
-        if (configurer != null) {
-            deConfig = loadConfig(configurer, "discoveryenvironment");
-            confluenceConfig = loadConfig(configurer, "confluence");
-        }
-    }
-
-    /**
-     * Loads a single configuration from the configurer bean.
-     *
-     * @param configurer the configurer bean.
-     * @param configName the name of the configuration to load.
-     * @return the configuration settings as a {@link Properties} instance.
-     */
-    private Properties loadConfig(ClavinPropertyPlaceholderConfigurer configurer, String configName) {
-        LOG.warn("CONFIGURATION: retrieving config - " + configName);
-        Properties props = configurer.getConfig(configName);
-        if (props != null) {
-            for (String propName : new TreeSet<String>(props.stringPropertyNames())) {
-                LOG.warn("CONFIGURATION: " + propName + " = " + props.getProperty(propName));
-            }
-        }
-        else {
-            LOG.warn("CONFIGURATION: no configuration found - " + configName);
-        }
-        return props;
-    }
+    @Override
+    protected void registerServlets() {}
 }
