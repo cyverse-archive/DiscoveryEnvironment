@@ -190,7 +190,7 @@
 	</session-config>
 
     <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+        <listener-class>org.iplantc.de.server.DeServletContextListener</listener-class>
     </listener>
 
 	<!-- Default page to serve -->
