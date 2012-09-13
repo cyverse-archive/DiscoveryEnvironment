@@ -55,10 +55,6 @@
     </filter-mapping>
     <!-- Servlets -->
 	<servlet>
-		<servlet-name>sessionInitializationServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>logoutSuccessServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
 	</servlet>
@@ -120,10 +116,6 @@
     </servlet>
 
 	<!-- Servlet Mapping Definitions -->
-	<servlet-mapping>
-		<servlet-name>sessionInitializationServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/login</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>logoutSuccessServlet</servlet-name>
 		<url-pattern>/discoveryenvironment/logout</url-pattern>
