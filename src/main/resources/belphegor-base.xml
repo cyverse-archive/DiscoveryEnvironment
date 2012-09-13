@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <bean id="propertyPlaceholderConfigurer" class="org.iplantc.de.server.spring.ClavinPropertyPlaceholderConfigurer">
+    <bean id="propertyPlaceholderConfigurer" class="org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer">
         <property name="serviceName" value="belphegor" />
         <property name="configNames">
             <list>
