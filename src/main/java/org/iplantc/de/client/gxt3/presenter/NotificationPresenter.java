@@ -5,21 +5,22 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.gxt3.model.Notification;
-import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.gxt3.model.NotificationAutoBeanFactory;
 import org.iplantc.de.client.gxt3.model.NotificationList;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.gxt3.views.NotificationView;
 import org.iplantc.de.client.gxt3.views.NotificationView.Presenter;
 import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
-import com.sencha.gxt.data.shared.SortDir;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.sencha.gxt.data.client.loader.RpcProxy;
+import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -35,49 +36,18 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public class NotificationPresenter implements Presenter {
 
-    private final class NotificationServiceCallback implements AsyncCallback<String> {
-        private final PagingLoadConfig loadConfig;
-        private final AsyncCallback<PagingLoadResult<NotificationMessage>> callback;
-
-        private NotificationServiceCallback(PagingLoadConfig loadConfig,
-                AsyncCallback<PagingLoadResult<NotificationMessage>> callback) {
-            this.loadConfig = loadConfig;
-            this.callback = callback;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            org.iplantc.core.uicommons.client.ErrorHandler.post(caught);
-
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            AutoBean<NotificationList> bean = AutoBeanCodex.decode(factory, NotificationList.class,
-                    result);
-            int total = 0;
-            Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result), "total");
-            if (jsonTotal != null) {
-                total = jsonTotal.intValue();
-            }
-
-            List<NotificationMessage> messages = getNotificationMessages(bean);
-            callbackResult = new PagingLoadResultBean<NotificationMessage>(messages, total,
-                    loadConfig.getOffset());
-            callback.onSuccess(callbackResult);
-        }
-    }
-
     private final NotificationView view;
     private final MessageServiceFacade facade;
     private final NotificationAutoBeanFactory factory = GWT.create(NotificationAutoBeanFactory.class);
 
     private PagingLoadResult<NotificationMessage> callbackResult;
+    private NotificationHelper helper;
 
     public NotificationPresenter(NotificationView view, MessageServiceFacade facade) {
         this.view = view;
         this.facade = facade;
         this.view.setPresenter(this);
+        helper = NotificationHelper.getInstance();
     }
 
     @Override
@@ -148,6 +118,40 @@ public class NotificationPresenter implements Presenter {
             messages.add(nm);
         }
         return messages;
+    }
+
+    private final class NotificationServiceCallback implements AsyncCallback<String> {
+        private final PagingLoadConfig loadConfig;
+        private final AsyncCallback<PagingLoadResult<NotificationMessage>> callback;
+
+        private NotificationServiceCallback(PagingLoadConfig loadConfig,
+                AsyncCallback<PagingLoadResult<NotificationMessage>> callback) {
+            this.loadConfig = loadConfig;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            org.iplantc.core.uicommons.client.ErrorHandler.post(caught);
+
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            AutoBean<NotificationList> bean = AutoBeanCodex.decode(factory, NotificationList.class,
+                    result);
+            int total = 0;
+            Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result), "total");
+            if (jsonTotal != null) {
+                total = jsonTotal.intValue();
+            }
+
+            List<NotificationMessage> messages = getNotificationMessages(bean);
+
+            callbackResult = new PagingLoadResultBean<NotificationMessage>(messages, total,
+                    loadConfig.getOffset());
+            callback.onSuccess(callbackResult);
+        }
     }
 
 }

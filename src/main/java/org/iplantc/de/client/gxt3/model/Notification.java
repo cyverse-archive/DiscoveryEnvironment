@@ -22,4 +22,10 @@ public interface Notification {
     @PropertyName("type")
     String getCategory();
 
+    @PropertyName("payload")
+    NotificationPayload getNotificationPayload();
+
+    @PropertyName("payload")
+    void setNotificationPayload(NotificationPayload payload);
+
 }

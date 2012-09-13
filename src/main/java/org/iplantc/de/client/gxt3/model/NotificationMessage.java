@@ -35,4 +35,8 @@ public interface NotificationMessage {
 
     void setCategory(Category type);
 
+    String getContext();
+
+    void setContext(String context);
+
 }

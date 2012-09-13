@@ -17,6 +17,7 @@ import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -67,6 +68,7 @@ public class DEViewImpl implements DEView {
 
     private Presenter presenter;
     private NotificationIndicator lblNotifications;
+    private ViewNotificationMenu actionsMenu;
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
@@ -164,7 +166,9 @@ public class DEViewImpl implements DEView {
     }
 
     public interface MenuContainerLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<div class=\"cell1\" style =\"width:45%; float:right;padding-top:15px\"></div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\"></div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
+        @XTemplate("<div class=\"cell1\" style =\"width:40%; float:right;padding-top:15px\">"
+                + "</div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\">"
+                + "</div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
         SafeHtml getTemplate();
     }
 
@@ -173,13 +177,34 @@ public class DEViewImpl implements DEView {
         lblNotifications = new NotificationIndicator(0);
         ret.add(lblNotifications);
 
-        PushButton button = new PushButton(menuHeaderText, headerWidth);
+        final PushButton button = new PushButton(menuHeaderText, headerWidth);
+        actionsMenu = new ViewNotificationMenu();
+        actionsMenu.setBorders(true);
+        actionsMenu.setStyleName("de_header_menu_body"); //$NON-NLS-1$
+        actionsMenu.setShadow(false);
+        actionsMenu.addShowHandler(new ShowHandler() {
+
+            @Override
+            public void onShow(ShowEvent event) {
+                button.addStyleName("de_header_menu_selected");
+
+            }
+        });
+
+        actionsMenu.addHideHandler(new HideHandler() {
+
+            @Override
+            public void onHide(HideEvent event) {
+                button.removeStyleName("de_header_menu_selected");
+
+            }
+        });
         button.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                showNotificationWindow(Category.ALL);
-
+                // showNotificationWindow(Category.ALL);
+                showHeaderActionsMenu(ret, actionsMenu);
             }
         });
 
