@@ -49,8 +49,8 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      */
     @Override
     public void searchAnalysis(String search, AsyncCallback<String> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl() + "/" //$NON-NLS-1$
-                + URL.encodeQueryString(search);
+        String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl()
+                + "?search=" + URL.encodeQueryString(search); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
