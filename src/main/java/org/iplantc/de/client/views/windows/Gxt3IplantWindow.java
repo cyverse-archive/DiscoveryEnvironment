@@ -17,6 +17,9 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.json.client.JSONBoolean;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
@@ -362,6 +365,19 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
         }
 
         return index;
+    }
+
+    protected void storeWindowViewState(JSONObject obj) {
+        if (obj == null) {
+            return;
+        }
+
+        obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(isMaximized()));
+        obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
+        obj.put(WindowConfig.WIN_LEFT, new JSONNumber(getAbsoluteLeft()));
+        obj.put(WindowConfig.WIN_TOP, new JSONNumber(getAbsoluteTop()));
+        obj.put(WindowConfig.WIN_WIDTH, new JSONNumber(getElement().getWidth(true)));
+        obj.put(WindowConfig.WIN_HEIGHT, new JSONNumber(getElement().getHeight(true)));
     }
 
     @Override

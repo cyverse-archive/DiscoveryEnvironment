@@ -9,10 +9,15 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.images.Resources;
+import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
+import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -20,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -62,6 +68,7 @@ public class DEViewImpl implements DEView {
 
     private Presenter presenter;
     private NotificationIndicator lblNotifications;
+    private ViewNotificationMenu actionsMenu;
 
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
@@ -159,7 +166,9 @@ public class DEViewImpl implements DEView {
     }
 
     public interface MenuContainerLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<div class=\"cell1\" style =\"width:45%; float:right;padding-top:15px\"></div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\"></div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
+        @XTemplate("<div class=\"cell1\" style =\"width:40%; float:right;padding-top:15px\">"
+                + "</div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\">"
+                + "</div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
         SafeHtml getTemplate();
     }
 
@@ -168,13 +177,34 @@ public class DEViewImpl implements DEView {
         lblNotifications = new NotificationIndicator(0);
         ret.add(lblNotifications);
 
-        PushButton button = new PushButton(menuHeaderText, headerWidth);
+        final PushButton button = new PushButton(menuHeaderText, headerWidth);
+        actionsMenu = new ViewNotificationMenu();
+        actionsMenu.setBorders(true);
+        actionsMenu.setStyleName("de_header_menu_body"); //$NON-NLS-1$
+        actionsMenu.setShadow(false);
+        actionsMenu.addShowHandler(new ShowHandler() {
+
+            @Override
+            public void onShow(ShowEvent event) {
+                button.addStyleName("de_header_menu_selected");
+
+            }
+        });
+
+        actionsMenu.addHideHandler(new HideHandler() {
+
+            @Override
+            public void onHide(HideEvent event) {
+                button.removeStyleName("de_header_menu_selected");
+
+            }
+        });
         button.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                // showNotificationView(ret);
-
+                // showNotificationWindow(Category.ALL);
+                showHeaderActionsMenu(ret, actionsMenu);
             }
         });
 
@@ -311,6 +341,18 @@ public class DEViewImpl implements DEView {
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
+    }
+
+    private void showNotificationWindow(final Category category) {
+        NotificationWindowConfig config = new NotificationWindowConfig();
+        config.setCategory(category);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory
+                .buildWindowConfig(Constants.CLIENT.myNotifyTag(), config);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
     }
 
     /**

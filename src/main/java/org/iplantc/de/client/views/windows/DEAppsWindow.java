@@ -67,19 +67,6 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         }
     }
 
-    protected void storeWindowViewState(JSONObject obj) {
-        if (obj == null) {
-            return;
-        }
-
-        obj.put(WindowConfig.IS_MAXIMIZED, JSONBoolean.getInstance(isMaximized()));
-        obj.put(WindowConfig.IS_MINIMIZED, JSONBoolean.getInstance(!isVisible()));
-        obj.put(WindowConfig.WIN_LEFT, new JSONNumber(getAbsoluteLeft()));
-        obj.put(WindowConfig.WIN_TOP, new JSONNumber(getAbsoluteTop()));
-        obj.put(WindowConfig.WIN_WIDTH, new JSONNumber(getElement().getWidth(true)));
-        obj.put(WindowConfig.WIN_HEIGHT, new JSONNumber(getElement().getHeight(true)));
-    }
-
     @Override
     public JSONObject getWindowState() {
         CatalogWindowConfig configData = new CatalogWindowConfig(config);

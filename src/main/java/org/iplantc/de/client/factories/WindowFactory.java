@@ -13,7 +13,7 @@ import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.MyAnalysesWindow;
 import org.iplantc.de.client.views.windows.MyDataWindow;
-import org.iplantc.de.client.views.windows.NotificationWindow;
+import org.iplantc.de.client.views.windows.NotificationWindow3;
 import org.iplantc.de.client.views.windows.PipelineEditorWindow;
 import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
 import org.iplantc.de.client.views.windows.TitoWindow;
@@ -39,7 +39,7 @@ public class WindowFactory {
             if (type.equals(Constants.CLIENT.myDataTag())) {
                 ret = new MyDataWindow(type, config);
             } else if (type.equals(Constants.CLIENT.myNotifyTag())) {
-                ret = new NotificationWindow(type, (NotificationWindowConfig)config);
+                ret = new NotificationWindow3(type, (NotificationWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.myHelpTag())) {
                 // since the help page is now a wiki page, open it in a new window so that the user may
                 // login to the Wiki.

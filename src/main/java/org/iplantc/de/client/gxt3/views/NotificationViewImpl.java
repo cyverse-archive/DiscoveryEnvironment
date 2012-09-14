@@ -5,21 +5,26 @@ package org.iplantc.de.client.gxt3.views;
 
 import java.util.List;
 
-import org.iplantc.de.client.gxt3.model.Notification;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.widget.grid.GridView;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.SortDir;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 
 /**
  * @author sriram
@@ -34,14 +39,14 @@ public class NotificationViewImpl implements NotificationView {
     }
 
     @UiField(provided = true)
-    final ListStore<Notification> listStore;
+    final ListStore<NotificationMessage> listStore;
     @UiField(provided = true)
-    final ColumnModel<Notification> cm;
+    final ColumnModel<NotificationMessage> cm;
     @UiField
     GridView gridView;
 
     @UiField
-    Grid<Notification> grid;
+    Grid<NotificationMessage> grid;
 
     @UiField
     FramedPanel mainPanel;
@@ -49,13 +54,17 @@ public class NotificationViewImpl implements NotificationView {
     @UiField
     BorderLayoutContainer con;
 
+    @UiField
+    PagingToolBar toolBar;
+
     private final Widget widget;
     private Presenter presenter;
 
-    public NotificationViewImpl(ListStore<Notification> listStore, ColumnModel<Notification> cm) {
-        this.widget = uiBinder.createAndBindUi(this);
+    public NotificationViewImpl(ListStore<NotificationMessage> listStore, ColumnModel<NotificationMessage> cm) {
         this.cm = cm;
         this.listStore = listStore;
+        this.widget = uiBinder.createAndBindUi(this);
+        toolBar.getElement().getStyle().setProperty("borderBottom", "none");
     }
 
     /*
@@ -119,7 +128,7 @@ public class NotificationViewImpl implements NotificationView {
      * @see org.iplantc.de.client.gxt3.views.NotificationView#getSelectedItems()
      */
     @Override
-    public List<Notification> getSelectedItems() {
+    public List<NotificationMessage> getSelectedItems() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -143,15 +152,31 @@ public class NotificationViewImpl implements NotificationView {
      * @see org.iplantc.de.client.gxt3.views.NotificationView#getListStore()
      */
     @Override
-    public ListStore<Notification> getListStore() {
+    public ListStore<NotificationMessage> getListStore() {
         return listStore;
     }
 
     @Override
-    public void setNotifications(List<Notification> notifications) {
+    public void setNotifications(List<NotificationMessage> notifications) {
         listStore.clear();
         listStore.addAll(notifications);
 
+    }
+
+    @Override
+    public void setLoader(PagingLoader<PagingLoadConfig, PagingLoadResult<NotificationMessage>> loader) {
+        grid.setLoader(loader);
+        toolBar.bind(loader);
+
+        // for the first time
+        Timer t = new Timer() {
+
+            @Override
+            public void run() {
+                grid.getLoader().load();
+            }
+        };
+        t.schedule(100);
     }
 
 }

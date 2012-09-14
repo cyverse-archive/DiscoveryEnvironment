@@ -417,44 +417,44 @@ public class ApplicationLayout extends Viewport {
         Point point = ret.getPosition(false);
         point.x = point.x - 142;
         point.y = point.y + 22;
-
-        view.removeAllListeners();
-        // update header style when menu is shown
-        view.addListener(Events.Show, new Listener<MenuEvent>() {
-            @Override
-            public void handleEvent(MenuEvent be) {
-                ret.addStyleName("de_header_menu_selected"); //$NON-NLS-1$
-            }
-        });
-
-        view.addListener(Events.Hide, new Listener<MenuEvent>() {
-            @Override
-            public void handleEvent(MenuEvent be) {
-                ret.removeStyleName("de_header_menu_selected"); //$NON-NLS-1$
-            }
-        });
-        lblNotifications.setCount(0);
-        view.showAt(point.x, point.y);
-        view.resetCount();
+        //
+        // view.removeAllListeners();
+        // // update header style when menu is shown
+        // view.addListener(Events.Show, new Listener<MenuEvent>() {
+        // @Override
+        // public void handleEvent(MenuEvent be) {
+        //                ret.addStyleName("de_header_menu_selected"); //$NON-NLS-1$
+        // }
+        // });
+        //
+        // view.addListener(Events.Hide, new Listener<MenuEvent>() {
+        // @Override
+        // public void handleEvent(MenuEvent be) {
+        //                ret.removeStyleName("de_header_menu_selected"); //$NON-NLS-1$
+        // }
+        // });
+        // lblNotifications.setCount(0);
+        // view.showAt(point.x, point.y);
+        // view.resetCount();
     }
 
     private void initViewNotification() {
-        view = new ViewNotificationMenu();
-        view.setBorders(true);
-        view.setSize(250, 310);
-
-        view.setStyleName("de_header_menu_body");
-        view.setShadow(false);
-        HorizontalPanel hp = new HorizontalPanel();
-        hp.add(new MenuHyperlink(I18N.DISPLAY.allNotifications(), linkStyle, "",
-                new Listener<BaseEvent>() {
-                    @Override
-                    public void handleEvent(BaseEvent be) {
-                        showNotificationWindow(NotificationHelper.Category.ALL);
-                        view.hide();
-                    }
-                }));
-        view.add(hp);
+        // view = new ViewNotificationMenu();
+        // view.setBorders(true);
+        // view.setSize(250, 310);
+        //
+        // view.setStyleName("de_header_menu_body");
+        // view.setShadow(false);
+        // HorizontalPanel hp = new HorizontalPanel();
+        // hp.add(new MenuHyperlink(I18N.DISPLAY.allNotifications(), linkStyle, "",
+        // new Listener<BaseEvent>() {
+        // @Override
+        // public void handleEvent(BaseEvent be) {
+        // showNotificationWindow(NotificationHelper.Category.ALL);
+        // view.hide();
+        // }
+        // }));
+        // view.add(hp);
     }
 
     /**
