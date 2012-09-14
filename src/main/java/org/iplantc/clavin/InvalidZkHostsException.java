@@ -10,7 +10,7 @@ public class InvalidZkHostsException extends ClavinException {
     /**
      * The format string to use when formatting the detail message for this exception.
      */
-    private static final String MESSAGE_FORMAT_STR = "Zookeeper connection information file, {0}, is invalid";
+    private static final String MESSAGE_FORMAT_STR = "Zookeeper connection information file, %s, is invalid";
 
     /**
      * The path to the Zookeeper connection information file.

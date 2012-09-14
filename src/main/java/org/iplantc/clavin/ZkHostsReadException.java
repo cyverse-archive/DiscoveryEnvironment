@@ -10,7 +10,7 @@ public class ZkHostsReadException extends ClavinException {
     /**
      * The format string to use when creating the detail message for this exception.
      */
-    private static final String MESSAGE_FORMAT_STR = "unable to retrieve the Zookeeper connection information from {0}";
+    private static final String MESSAGE_FORMAT_STR = "unable to retrieve the Zookeeper connection information from %s";
 
     /**
      * The path to the Zookeeper connection information file.

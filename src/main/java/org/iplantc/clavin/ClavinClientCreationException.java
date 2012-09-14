@@ -11,7 +11,7 @@ public class ClavinClientCreationException extends ClavinException {
      * The format string to use when generating the detail message.
      */
     private static final String MESSAGE_FORMAT_STR
-            = "No configuration file was found for {0} and the Zookeeper connection information file, {1}, "
+            = "No configuration file was found for %s and the Zookeeper connection information file, %s, "
             + "was not found.";
 
     /**

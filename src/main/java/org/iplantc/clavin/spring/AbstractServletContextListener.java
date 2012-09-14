@@ -178,6 +178,9 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
         public void register(ServletContext context) {
             LOG.warn("registering servlet " + name + " at " + path);
             ServletRegistration.Dynamic reg = context.addServlet(name, servletProvider.getServlet());
+            if (reg == null) {
+                throw new ServletRegistrationException(name);
+            }
             reg.addMapping(path);
         }
     }
