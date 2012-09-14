@@ -48,10 +48,6 @@
 	<!-- for server push -->
 	<inherits name="com.google.gwt.rpc.RPC" />
 
-    <replace-with class="org.iplantc.core.uiapplications.client.services.TemplateServiceFacade">
-      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade"/>
-    </replace-with>
-	
     <replace-with class="org.iplantc.de.client.gxt3.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
        <when-type-is class="org.iplantc.de.client.gxt3.desktop.widget.ShortcutCell.ShortcutCellAppearance" />
     </replace-with>
