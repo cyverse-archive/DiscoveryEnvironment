@@ -13,6 +13,7 @@ import org.iplantc.de.client.gxt3.views.NotificationView.Presenter;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -115,6 +116,10 @@ public class NotificationPresenter implements Presenter {
         for (Notification n : bean.as().getNotifications()) {
             NotificationMessage nm = n.getMessage();
             nm.setCategory(Category.fromTypeString(n.getCategory()));
+            if (n.getCategory().equalsIgnoreCase(Category.ANALYSIS.toString())) {
+                AnalysisContextBuilder builder = new AnalysisContextBuilder();
+                nm.setContext(builder.build(n.getNotificationPayload()));
+            }
             messages.add(nm);
         }
         return messages;

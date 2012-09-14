@@ -203,7 +203,7 @@ public class DEViewImpl implements DEView {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                // showNotificationWindow(Category.ALL);
+                showNotificationWindow(Category.ALL);
                 showHeaderActionsMenu(ret, actionsMenu);
             }
         });

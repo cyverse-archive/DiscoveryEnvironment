@@ -41,8 +41,6 @@ public class NotifyInfo {
         doDisplay(title, text, null);
     }
 
-
-
     private static void doDisplay(final String title, final String text, Params parameters) {
         makeInfoCall(title, text, parameters);
     }
@@ -59,10 +57,11 @@ public class NotifyInfo {
         NotificationHelper mgr = NotificationHelper.getInstance();
 
         // only add to the notification manager when we want inclusion
+        // TODO: fix add notification add
         if (parameters == null) {
-            mgr.add(category, new Notification(text));
+            // mgr.add(category, new Notification(text));
         } else {
-            mgr.add(category, new Notification(Format.substitute(text, parameters)));
+            // mgr.add(category, new Notification(Format.substitute(text, parameters)));
         }
     }
 

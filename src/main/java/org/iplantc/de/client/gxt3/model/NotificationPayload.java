@@ -30,7 +30,7 @@ public interface NotificationPayload {
     String getAnalysisId();
 
     @PropertyName("analysis_name")
-    void setAnalysisName();
+    void setAnalysisName(String name);
 
     @PropertyName("analysis_name")
     String getAnalysisName();
@@ -45,7 +45,7 @@ public interface NotificationPayload {
     long getEndDate();
 
     @PropertyName("enddate")
-    void setEndDate();
+    void setEndDate(long date);
 
     @PropertyName("id")
     void setId(String id);
@@ -66,10 +66,10 @@ public interface NotificationPayload {
     String getResultFolderId();
 
     @PropertyName("startdate")
-    Long getStartDate();
+    long getStartDate();
 
     @PropertyName("startdate")
-    void setStartDate(Long startdate);
+    void setStartDate(long startdate);
 
     @PropertyName("status")
     String getStatus();

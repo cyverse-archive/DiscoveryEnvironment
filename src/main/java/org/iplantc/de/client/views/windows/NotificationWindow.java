@@ -92,7 +92,7 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void cleanup() {
         super.cleanup();
-        NotificationHelper.getInstance().cleanup();
+        // NotificationHelper.getInstance().cleanup();
 
     }
 
@@ -108,12 +108,12 @@ public class NotificationWindow extends IPlantWindow {
     public JSONObject getWindowState() {
         NotificationWindowConfig configData = new NotificationWindowConfig(config);
         storeWindowViewState(configData);
-
-        configData.setSelectedIds(panel.getSelectedItems());
-        configData.setCategory(panel.getCurrentFilter());
-        configData.setCurrentPage(panel.getCurrentOffset());
-        configData.put(NotificationWindowConfig.SORT_DIR, new JSONString(panel.getCurrentSortDir()
-                .toString()));
+        //
+        // configData.setSelectedIds(panel.getSelectedItems());
+        // configData.setCategory(panel.getCurrentFilter());
+        // configData.setCurrentPage(panel.getCurrentOffset());
+        // configData.put(NotificationWindowConfig.SORT_DIR, new JSONString(panel.getCurrentSortDir()
+        // .toString()));
 
         // Build window config
         WindowConfigFactory configFactory = new WindowConfigFactory();
