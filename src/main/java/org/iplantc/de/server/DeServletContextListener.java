@@ -1,6 +1,7 @@
 package org.iplantc.de.server;
 
 import java.util.Properties;
+import javax.servlet.Servlet;
 import org.iplantc.clavin.spring.AbstractServletContextListener;
 import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
 
@@ -10,6 +11,11 @@ import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
  * @author Dennis Roberts
  */
 public class DeServletContextListener extends AbstractServletContextListener {
+
+    /**
+     * The prefix for property names in the application configuration settings.
+     */
+    private static final String PROPERTY_NAME_PREFIX = "org.iplantc.discoveryenvironment";
 
     /**
      * The Discovery Environment configuration settings.
@@ -25,8 +31,17 @@ public class DeServletContextListener extends AbstractServletContextListener {
      * Servlet registration information.
      */
     private ServletRegistrationInfo[] regInfo = {
+
+        // The session initialization servlet.
         new ServletRegistrationInfo(new CasSessionInitializationServlet("#workspace"), "sessionInitializationServlet",
-            "/discoveryenvironment/login")
+            "/discoveryenvironment/login"),
+
+        // The logout success servlet.
+        new ServletRegistrationInfo(new ServletProvider() {
+            @Override public Servlet getServlet() {
+                return new CasLogoutServlet(deConfig, PROPERTY_NAME_PREFIX);
+            }
+        }, "logoutSuccessServlet", "/discoveryenvironment/logout")
     };
 
     /**

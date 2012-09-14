@@ -55,10 +55,6 @@
     </filter-mapping>
     <!-- Servlets -->
 	<servlet>
-		<servlet-name>logoutSuccessServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>fileUploadServlet</servlet-name>
 		<servlet-class>org.iplantc.de.server.FileUploadServlet</servlet-class>
 	</servlet>
@@ -116,10 +112,6 @@
     </servlet>
 
 	<!-- Servlet Mapping Definitions -->
-	<servlet-mapping>
-		<servlet-name>logoutSuccessServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/logout</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>jUnitHostImpl</servlet-name>
 		<url-pattern>/discoveryenvironment/junithost</url-pattern>
