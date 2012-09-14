@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:MyWidgets="urn:import:org.iplantc.core.uiapplications.client.views.widgets">
+             
+   <ui:with type="org.iplantc.core.uiapplications.client.images.Icons" field="icons"/>
+   <ui:with type="org.iplantc.admin.belphegor.client.DisplayStrings" field="strings"/>
+   
+   <container:SimpleContainer>
+     <toolbar:ToolBar ui:field="toolBar">
+       <button:TextButton ui:field="addCategory"
+                          text="{strings.add}"
+                          icon="{icons.add}"/>
+       <button:TextButton ui:field="renameCategory"
+                          text="{strings.rename}"
+                          icon="{icons.requestTool}"/>
+       <button:TextButton ui:field="delete"
+                          text="{strings.delete}"
+                          icon="{icons.delete}"/>
+       <menu:SeparatorMenuItem/>
+       <button:TextButton ui:field="restoreApp"
+                          text="{strings.restoreApp}"
+                          icon="{icons.submitForPublic}"/>
+       <MyWidgets:AppSearchField3 ui:field="appSearch"/>
+     </toolbar:ToolBar>
+   </container:SimpleContainer>
+</ui:UiBinder> 

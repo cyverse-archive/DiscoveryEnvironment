@@ -3,6 +3,8 @@ package org.iplantc.admin.belphegor.client.gxt3.presenter;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.gxt3.presenter.proxy.AnalysisGroupProxy;
+import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.core.uiapplications.client.I18N;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
@@ -16,7 +18,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.presenter.Presenter;
 import org.iplantc.de.client.CommonDisplayStrings;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -31,12 +33,14 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter {
+public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter,
+        BelphegorAppsToolbar.Presenter {
 
     private final AppsView view;
     private final AppTemplateServiceFacade templateService;
     private final CommonDisplayStrings displayStrings;
     private final AnalysisGroupProxy analysisGroupProxy;
+    private final BelphegorAppsToolbar toolbar;
 
     public BelphegorAppsViewPresenter(final AppsView view,
             final AppTemplateServiceFacade templateService, final CommonDisplayStrings displayStrings,
@@ -46,13 +50,34 @@ public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter
         this.displayStrings = displayStrings;
 
         analysisGroupProxy = new AnalysisGroupProxy(templateService, userInfo);
+        toolbar = new BelphegorAppsToolbarImpl();
+        view.setNorthWidget(toolbar);
+
         this.view.setPresenter(this);
     }
 
     @Override
     public void onAnalysisGroupSelected(final AnalysisGroup ag) {
+        if (ag == null)
+            return;
+
         view.setMainPanelHeading(ag.getName());
+        toolbar.setAddCategoryButtonEnabled(true);
+        toolbar.setRenameCategoryButtonEnabled(true);
+        toolbar.setDeleteButtonEnabled(true);
+        toolbar.setRestoreButtonEnabled(false);
         fetchApps(ag);
+    }
+
+    @Override
+    public void onAnalysisSelected(final Analysis analysis) {
+        if (analysis == null)
+            return;
+
+        toolbar.setAddCategoryButtonEnabled(false);
+        toolbar.setRenameCategoryButtonEnabled(false);
+        toolbar.setDeleteButtonEnabled(true);
+        toolbar.setRestoreButtonEnabled(true);
     }
 
     /**
@@ -92,6 +117,30 @@ public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter
     }
 
     @Override
+    public void onAddCategoryClicked() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onRenameCategoryClicked() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onDeleteClicked() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onRestoreAppClicked() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public void go(final HasOneWidget container) {
         container.setWidget(view.asWidget());
 
@@ -125,9 +174,5 @@ public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter
 
     }
 
-    @Override
-    public void onAnalysisSelected(final Analysis analysis) {
-        // TODO Auto-generated method stub
-    }
 
 }

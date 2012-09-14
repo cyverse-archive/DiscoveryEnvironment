@@ -12,7 +12,7 @@ import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisPropertie
 import org.iplantc.core.uiapplications.client.views.cells.HyperlinkCell;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
