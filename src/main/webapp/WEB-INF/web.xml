@@ -3,22 +3,22 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
-	<context-param>
-		<param-name>appPropertyFile</param-name>
-		<param-value>discoveryenvironment.properties</param-value>
-	</context-param>
+    <context-param>
+        <param-name>appPropertyFile</param-name>
+        <param-value>discoveryenvironment.properties</param-value>
+    </context-param>
     <context-param>
         <param-name>appPropertyPrefix</param-name>
         <param-value>org.iplantc.discoveryenvironment</param-value>
     </context-param>
-	<context-param>
-		<param-name>org.iplantc.initial-page</param-name>
-		<param-value>#workspace</param-value>
-	</context-param>
-	<context-param>
-		<param-name>org.iplantc.properties</param-name>
-		<param-value>/discoveryenvironment.properties</param-value>
-	</context-param>
+    <context-param>
+        <param-name>org.iplantc.initial-page</param-name>
+        <param-value>#workspace</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.iplantc.properties</param-name>
+        <param-value>/discoveryenvironment.properties</param-value>
+    </context-param>
     <context-param>
         <param-name>org.iplantc.properties.confluence</param-name>
         <param-value>/confluence.properties</param-value>
@@ -31,11 +31,11 @@
         <param-name>org.iplantc.logout-forward</param-name>
         <param-value>http://iplantcollaborative.org</param-value>
     </context-param>
-	<context-param>
-		<!-- max size of the upload request -->
-		<param-name>maxSize</param-name>
-		<param-value>2040109465</param-value>
-	</context-param>
+    <context-param>
+        <!-- max size of the upload request -->
+        <param-name>maxSize</param-name>
+        <param-value>2040109465</param-value>
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -43,7 +43,7 @@
             /WEB-INF/classes/de-security.xml
         </param-value>
     </context-param>
-	<!-- Filters -->
+    <!-- Filters -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -54,131 +54,51 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <!-- Servlets -->
-	<servlet>
-		<servlet-name>fileUploadServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.FileUploadServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>deServiceDispatcher</servlet-name>
-		<servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
-		<servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>fileDownloadServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.FileDownloadServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>sessionManagementServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>propertyServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>jUnitHostImpl</servlet-name>
-		<servlet-class>com.google.gwt.junit.server.JUnitHostImpl</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>dataApiServiceDispatcher</servlet-name>
-		<servlet-class>org.iplantc.de.server.DataApiServiceDispatcher</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>aboutAppServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>confluenceServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>emailServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>emptyResponseServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
-	</servlet>
-	<servlet>
-        <servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.AuthenticationValidatingServiceDispatcher</servlet-class>
+    <servlet>
+        <servlet-name>confluenceServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
     </servlet>
-	<servlet>
+    <servlet>
+        <servlet-name>emailServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>toolSubmitServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.NewToolRequestServlet</servlet-class>
     </servlet>
 
-	<!-- Servlet Mapping Definitions -->
-	<servlet-mapping>
-		<servlet-name>jUnitHostImpl</servlet-name>
-		<url-pattern>/discoveryenvironment/junithost</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>fileUploadServlet</servlet-name>
-		<url-pattern>*.gupld</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>fileDownloadServlet</servlet-name>
-		<url-pattern>*.gdwnld</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>deServiceDispatcher</servlet-name>
-		<url-pattern>/discoveryenvironment/deservice</url-pattern>
-	</servlet-mapping>
+    <!-- Servlet Mapping Definitions -->
     <servlet-mapping>
-        <servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
-        <url-pattern>/discoveryenvironment/auth-de-service</url-pattern>
+        <servlet-name>confluenceServlet</servlet-name>
+        <url-pattern>/discoveryenvironment/confluence</url-pattern>
     </servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>unsecuredDeServiceDispatcher</servlet-name>
-		<url-pattern>/discoveryenvironment/unsecureddeservice</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>propertyServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/properties</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>sessionManagementServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/sessionmanagement</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>dataApiServiceDispatcher</servlet-name>
-		<url-pattern>/discoveryenvironment/data-api-service</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>aboutAppServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/about</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>confluenceServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/confluence</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>emailServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/email</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>emptyResponseServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/empty</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>emailServlet</servlet-name>
+        <url-pattern>/discoveryenvironment/email</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <url-pattern>/discoveryenvironment/empty</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>toolSubmitServlet</servlet-name>
         <url-pattern>/tito/new_tool_request</url-pattern>
     </servlet-mapping>
 
-	<session-config>
-		<session-timeout>60</session-timeout>
-	</session-config>
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
 
     <listener>
         <listener-class>org.iplantc.de.server.DeServletContextListener</listener-class>
     </listener>
 
-	<!-- Default page to serve -->
-	<welcome-file-list>
-		<welcome-file>Discoveryenvironment.jsp</welcome-file>
-	</welcome-file-list>
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>Discoveryenvironment.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

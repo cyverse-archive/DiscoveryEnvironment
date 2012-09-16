@@ -5,13 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -23,6 +21,18 @@ public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"}; //$NON-NLS-1$
 
     private static final Logger LOG = Logger.getLogger(FileDownloadServlet.class);
+
+    /**
+     * Used to resolve aliased service calls.
+     */
+    private final ServiceCallResolver serviceResolver;
+
+    /**
+     * @param serviceResolver used to resolve aliased service calls.
+     */
+    public FileDownloadServlet(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+    }
 
     /**
      * {@inheritDoc}
@@ -54,7 +64,7 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * Copies the file contents from the given input stream to the output stream controlled by the given
      * response object.
-     * 
+     *
      * @param response the HTTP servlet response object.
      * @param fileContents the input stream used to retrieve the file contents.
      * @throws IOException if an I/O error occurs.
@@ -76,7 +86,7 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * Copies the content type along with any other HTTP header fields that are supposed to be copied
      * from the original HTTP response to our HTTP servlet response.
-     * 
+     *
      * @param response our HTTP servlet response.
      * @param fileContents the file contents along with the HTTP headers and content type.
      */
@@ -91,17 +101,16 @@ public class FileDownloadServlet extends HttpServlet {
 
     /**
      * Creates the service dispatcher that will be used to fetch the file contents.
-     * 
+     *
      * @param request our HTTP servlet request.
      * @return the service dispatcher.
      */
     private DataApiServiceDispatcher createServiceDispatcher(HttpServletRequest request) {
-        DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher();
+        DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher(serviceResolver);
         try {
             dispatcher.init(getServletConfig());
         } catch (ServletException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("service dispatcher initialization failed", e);
         }
         dispatcher.setContext(getServletContext());
         dispatcher.setRequest(request);
@@ -110,7 +119,7 @@ public class FileDownloadServlet extends HttpServlet {
 
     /**
      * Builds the URL used to fetch the file contents.
-     * 
+     *
      * @param request out HTTP servlet request.
      * @return the URL.
      * @throws UnsupportedEncodingException

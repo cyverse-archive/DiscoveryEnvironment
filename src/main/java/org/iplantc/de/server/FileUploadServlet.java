@@ -2,18 +2,14 @@ package org.iplantc.de.server;
 
 import gwtupload.server.UploadAction;
 import gwtupload.server.exceptions.UploadActionException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,6 +34,18 @@ public class FileUploadServlet extends UploadAction {
      * The logger for error and informational messages.
      */
     private static Logger LOG = Logger.getLogger(FileUploadServlet.class);
+
+    /**
+     * Used to resolve aliased service calls.
+     */
+    private ServiceCallResolver serviceResolver;
+
+    /**
+     * @param serviceResolver used to resolve aliased service calls.
+     */
+    public FileUploadServlet(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+    }
 
     /**
      * Performs the necessary operations for an upload action.
@@ -116,13 +124,12 @@ public class FileUploadServlet extends UploadAction {
         ServletConfig servletConfig = getServletConfig();
 
         // Call the file upload service for each file.
-        DataApiServiceDispatcher dispatcherDataApi = new DataApiServiceDispatcher();
+        DataApiServiceDispatcher dispatcherDataApi = new DataApiServiceDispatcher(serviceResolver);
 
         try {
             dispatcherDataApi.init(servletConfig);
         } catch (Exception e) {
             LOG.error("DEServiceDispatcher::init - unable to init from getServletConfig()", e);
-            e.printStackTrace();
 
             jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
             jsonResults.put("results", jsonResultsArray);
@@ -141,8 +148,6 @@ public class FileUploadServlet extends UploadAction {
                 fileContents = item.getInputStream();
             } catch (IOException e) {
                 LOG.error("invokeService - Exception while getting file input stream.", e);
-                e.printStackTrace();
-
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
                 jsonResults.put("results", jsonResultsArray);
@@ -162,7 +167,6 @@ public class FileUploadServlet extends UploadAction {
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
                 LOG.error("invokeService - unable to upload file", e);
-                e.printStackTrace();
 
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
@@ -177,7 +181,6 @@ public class FileUploadServlet extends UploadAction {
             dispatcherDataApi.init(servletConfig);
         } catch (Exception e) {
             LOG.error("DataApiServiceDispatcher::init - unable to init from getServletConfig()", e);
-            e.printStackTrace();
 
             jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
             jsonResults.put("results", jsonResultsArray);
@@ -201,7 +204,6 @@ public class FileUploadServlet extends UploadAction {
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
             } catch (Exception e) {
                 LOG.error("invokeService - unable to import URL", e);
-                e.printStackTrace();
 
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, url, e));

@@ -1,22 +1,19 @@
 package org.iplantc.de.server;
 
 import gwtupload.server.exceptions.UploadActionException;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 
 /**
  * A class to accept files from the client.
- * 
+ *
  * This class extends the UploadAction class provided by the GWT Upload library. The executeAction method
  * must be overridden for custom behavior.
- * 
+ *
  * @author sriram
- * 
+ *
  */
 @SuppressWarnings("nls")
 public class NewToolRequestServlet extends UploadServlet {
@@ -27,9 +24,13 @@ public class NewToolRequestServlet extends UploadServlet {
      */
     private static Logger LOG = Logger.getLogger(NewToolRequestServlet.class);
 
+    public NewToolRequestServlet(ServiceCallResolver serviceResolver) {
+        super(serviceResolver);
+    }
+
     /**
      * Performs the necessary operations for an upload action.
-     * 
+     *
      * @param request the HTTP request associated with the action.
      * @param fileItems the file associated with the action.
      * @return a string representing data in JSON format.
