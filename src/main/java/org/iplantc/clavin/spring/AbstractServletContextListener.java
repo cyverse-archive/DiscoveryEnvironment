@@ -35,8 +35,16 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
         ClavinPropertyPlaceholderConfigurer configurer = getPropertyPlaceholderConfigurer();
         Assert.notNull(configurer, "a ClavinPropertyPlaceholderConfigurer bean must be defined");
         loadConfigs(configurer);
+        initialize();
         registerServlets(event.getServletContext());
     }
+
+    /**
+     * Allows subclasses to initialize any objects that are required for the servlets that they register.  This
+     * method is designed to be overridden by subclasses, but is implemented as a no-op in this class so that
+     * subclasses don't have to implement it.
+     */
+    protected void initialize() {}
 
     /**
      * @return the property placeholder configurer.
