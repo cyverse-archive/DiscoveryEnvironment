@@ -5,17 +5,11 @@ import org.iplantc.admin.belphegor.client.gxt3.views.BelphegorAnalysisColumnMode
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
-import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.I18N;
-import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.images.Icons;
-import org.iplantc.core.uicommons.client.images.Resources;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -188,21 +182,13 @@ public class ApplicationLayout extends Viewport {
         // CatalogAdminPanel panel = new CatalogAdminPanel();
 
         // --------->
-        CommonAppDisplayStrings commonAppDisplayStrings = org.iplantc.core.uiapplications.client.I18N.DISPLAY;
-        EventBus eventBus = EventBus.getInstance();
-        Icons icons = Resources.ICONS;
-        AppTemplateServiceFacade templateService = GWT.create(AppTemplateServiceFacade.class);
-        UserInfo userInfo = UserInfo.getInstance();
-
         TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
                 new AnalysisGroupModelKeyProvider());
         ListStore<Analysis> listStore = new ListStore<Analysis>(new AnalysisModelKeyProvider());
-        BelphegorAnalysisColumnModel cm = new BelphegorAnalysisColumnModel(eventBus,
-                commonAppDisplayStrings);
+        BelphegorAnalysisColumnModel cm = new BelphegorAnalysisColumnModel();
         AppsView view = new AppsViewImpl(treeStore, listStore, cm);
 
-        BelphegorAppsViewPresenter presenter = new BelphegorAppsViewPresenter(view, templateService,
-                commonAppDisplayStrings, userInfo);
+        BelphegorAppsViewPresenter presenter = new BelphegorAppsViewPresenter(view);
         // Create view and presenter and add it here.
         SimpleContainer appViewContentPanel = new SimpleContainer();
         appViewContentPanel.setPixelSize(Integer.MAX_VALUE, Integer.MAX_VALUE);

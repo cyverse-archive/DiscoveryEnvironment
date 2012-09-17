@@ -1,6 +1,7 @@
 package org.iplantc.admin.belphegor.client.services;
 
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 

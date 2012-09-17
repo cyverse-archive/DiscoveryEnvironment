@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
@@ -150,9 +150,9 @@ public class CatalogAdminPanel extends ContentPanel {
     }
 
     private void updateAnalysesListing(final AnalysisGroup group) {
-        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
         mask(I18N.DISPLAY.loadingMask());
-        facade.getAnalysis(group.getId(), new AsyncCallback<String>() {
+
+        Services.TEMPLATE_SERVICE.getAnalysis(group.getId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ArrayList<Analysis> analyses = new ArrayList<Analysis>();

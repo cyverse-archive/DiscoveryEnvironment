@@ -3,9 +3,10 @@ package org.iplantc.admin.belphegor.client.gxt3.presenter;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.gxt3.presenter.proxy.AnalysisGroupProxy;
-import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
+import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.core.uiapplications.client.I18N;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
@@ -14,7 +15,6 @@ import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
 import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.presenter.Presenter;
 import org.iplantc.de.client.CommonDisplayStrings;
 
@@ -42,14 +42,12 @@ public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter
     private final AnalysisGroupProxy analysisGroupProxy;
     private final BelphegorAppsToolbar toolbar;
 
-    public BelphegorAppsViewPresenter(final AppsView view,
-            final AppTemplateServiceFacade templateService, final CommonDisplayStrings displayStrings,
-            final UserInfo userInfo) {
+    public BelphegorAppsViewPresenter(final AppsView view) {
         this.view = view;
-        this.templateService = templateService;
-        this.displayStrings = displayStrings;
+        this.templateService = Services.TEMPLATE_SERVICE;
+        this.displayStrings = I18N.DISPLAY;
 
-        analysisGroupProxy = new AnalysisGroupProxy(templateService, userInfo);
+        analysisGroupProxy = new AnalysisGroupProxy();
         toolbar = new BelphegorAppsToolbarImpl();
         view.setNorthWidget(toolbar);
 

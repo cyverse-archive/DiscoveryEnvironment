@@ -3,6 +3,7 @@ package org.iplantc.admin.belphegor.client.gxt3.presenter.proxy;
 import java.util.List;
 
 import org.iplantc.core.uiapplications.client.I18N;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroupList;
@@ -26,10 +27,9 @@ public class AnalysisGroupProxy extends RpcProxy<AnalysisGroup, List<AnalysisGro
     private final UserInfo userInfo;
     private final AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
 
-    public AnalysisGroupProxy(final AppTemplateServiceFacade templateServiceFacade,
-            final UserInfo userInfo) {
-        this.templateServiceFacade = templateServiceFacade;
-        this.userInfo = userInfo;
+    public AnalysisGroupProxy() {
+        this.templateServiceFacade = Services.TEMPLATE_SERVICE;
+        this.userInfo = UserInfo.getInstance();
     }
 
     @Override

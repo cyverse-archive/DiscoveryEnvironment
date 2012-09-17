@@ -22,9 +22,6 @@
     
 	<inherits name="org.iplantc.core.JsonUtil" />
 
-	<!-- Specify the app entry point class. -->
-	<entry-point class='org.iplantc.admin.belphegor.client.Belphegor' />
-
 	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
 	<inherits name="org.iplantc.core.ui-commons"/>
 	<inherits name="org.iplantc.core.applications"/>
@@ -34,7 +31,12 @@
 	<source path='client' />
 	<source path='shared' />
    
-   <replace-with class="org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade">
+   <!-- ui-applications deferred binding rules -->
+   <replace-with class="org.iplantc.admin.belphegor.client.services.impl.AppTemplateAdminServiceFacade">
       <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade"/>
    </replace-with>
+
+
+	<!-- Specify the app entry point class. -->
+	<entry-point class='org.iplantc.admin.belphegor.client.Belphegor' />
 </module>

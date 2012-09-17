@@ -1,11 +1,12 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
-import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
-import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.admin.belphegor.client.services.impl.AppTemplateAdminServiceFacade;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
@@ -54,9 +55,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
     }
 
     private void loadCategories() {
-        AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
-
-        facade.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        Services.ADMIN_TEMPLATE_SERVICE.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {

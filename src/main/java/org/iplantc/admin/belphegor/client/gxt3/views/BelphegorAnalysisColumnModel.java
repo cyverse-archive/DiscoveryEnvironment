@@ -20,9 +20,8 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 public class BelphegorAnalysisColumnModel extends ColumnModel<Analysis> {
 
-    public BelphegorAnalysisColumnModel(final EventBus eventBus,
-            final CommonAppDisplayStrings displayStrings) {
-        super(createColumnConfigList(eventBus, displayStrings));
+    public BelphegorAnalysisColumnModel() {
+        super(createColumnConfigList(EventBus.getInstance(), I18N.DISPLAY));
     }
 
     public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(final EventBus eventBus,
@@ -40,7 +39,7 @@ public class BelphegorAnalysisColumnModel extends ColumnModel<Analysis> {
         name.setResizable(true);
         rating.setResizable(false);
 
-        name.setCell(new HyperlinkCell(eventBus, displayStrings));
+        name.setCell(new HyperlinkCell());
         rating.setCell(new AvgAnalysisUserRatingCell());
 
         rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);

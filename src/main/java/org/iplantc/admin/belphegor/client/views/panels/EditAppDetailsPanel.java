@@ -2,8 +2,8 @@ package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
-import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -282,20 +282,17 @@ public class EditAppDetailsPanel extends LayoutContainer {
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught.getMessage());
-                            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
-                            facade.updateApplication(toJson(), closeCallback);
+                            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
                         }
 
                         @Override
                         public void onSuccess(String result) {
                             urlField.setValue(result);
-                            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
-                            facade.updateApplication(toJson(), closeCallback);
+                            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
                         }
                     });
         } else {
-            AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade();
-            facade.updateApplication(toJson(), closeCallback);
+            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
         }
 
     }

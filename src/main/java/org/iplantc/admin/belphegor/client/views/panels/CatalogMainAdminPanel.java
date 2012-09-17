@@ -1,11 +1,12 @@
 package org.iplantc.admin.belphegor.client.views.panels;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.images.Resources;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
-import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
-import org.iplantc.admin.belphegor.client.services.AppTemplateAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.admin.belphegor.client.services.impl.AppTemplateAdminServiceFacade;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.Analysis;
@@ -52,7 +53,7 @@ public class CatalogMainAdminPanel extends BaseCatalogMainPanel {
      * @param templateService
      */
     public CatalogMainAdminPanel(String tag) {
-        super(tag, new AppTemplateAdminServiceFacade());
+        super(tag, Services.ADMIN_TEMPLATE_SERVICE);
 
         addToolBarButtons();
 
