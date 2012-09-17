@@ -55,10 +55,6 @@
     </filter-mapping>
     <!-- Servlets -->
     <servlet>
-        <servlet-name>confluenceServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>emailServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
     </servlet>
@@ -72,10 +68,6 @@
     </servlet>
 
     <!-- Servlet Mapping Definitions -->
-    <servlet-mapping>
-        <servlet-name>confluenceServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/confluence</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>emailServlet</servlet-name>
         <url-pattern>/discoveryenvironment/email</url-pattern>

@@ -103,18 +103,17 @@ public class DeServletContextListener extends AbstractServletContextListener {
         }, "propertyServlet", "/discoveryenvironment/properties"),
 
         // A servlet to provide a mock host for unit testing.
-        new ServletRegistrationInfo(new ServletProvider() {
-            @Override public Servlet getServlet() {
-                return new JUnitHostImpl();
-            }
-        }, "jUnitHostImpl", "/discoveryenvironment/junithost"),
+        new ServletRegistrationInfo(new JUnitHostImpl(), "jUnitHostImpl", "/discoveryenvironment/junithost"),
 
         // A servlet to provide information about the application.
+        new ServletRegistrationInfo(new AboutApplicationServlet(), "aboutAppServlet", "/discoveryenvironment/about"),
+
+        // A servlet to provide an interface to Confluence.
         new ServletRegistrationInfo(new ServletProvider() {
             @Override public Servlet getServlet() {
-                return new AboutApplicationServlet();
+                return new ConfluenceServlet(confluenceConfig);
             }
-        }, "aboutAppServlet", "/discoveryenvironment/about")
+        }, "confluenceServlet", "/discoveryenvironment/confluence")
     };
 
     /**
