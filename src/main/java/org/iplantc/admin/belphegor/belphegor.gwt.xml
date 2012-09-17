@@ -35,6 +35,9 @@
    <replace-with class="org.iplantc.admin.belphegor.client.services.impl.AppTemplateAdminServiceFacade">
       <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade"/>
    </replace-with>
+   <replace-with class="org.iplantc.admin.belphegor.client.services.impl.AppTemplateAdminUserServiceFacade">
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade"/>
+   </replace-with>
 
 
 	<!-- Specify the app entry point class. -->

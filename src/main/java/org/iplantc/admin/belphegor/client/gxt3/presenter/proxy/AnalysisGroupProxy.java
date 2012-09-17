@@ -2,8 +2,8 @@ package org.iplantc.admin.belphegor.client.gxt3.presenter.proxy;
 
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroupList;

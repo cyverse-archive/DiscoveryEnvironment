@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;

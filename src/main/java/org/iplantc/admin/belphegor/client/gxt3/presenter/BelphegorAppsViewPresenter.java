@@ -2,11 +2,11 @@ package org.iplantc.admin.belphegor.client.gxt3.presenter;
 
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.gxt3.presenter.proxy.AnalysisGroupProxy;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
