@@ -7,6 +7,7 @@ import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
 import org.iplantc.de.server.CasLogoutServlet;
 import org.iplantc.de.server.CasServiceDispatcher;
 import org.iplantc.de.server.CasSessionInitializationServlet;
+import org.iplantc.de.server.ConfluenceServlet;
 import org.iplantc.de.server.DefaultServiceCallResolver;
 import org.iplantc.de.server.PropertyServlet;
 import org.iplantc.de.server.ServiceCallResolver;
@@ -79,7 +80,14 @@ public class BelphegorServletContextListener extends AbstractServletContextListe
             @Override public Servlet getServlet() {
                 return new PropertyServlet(belphegorConfig);
             }
-        }, "propertyServlet", "/belphegor/properties")
+        }, "propertyServlet", "/belphegor/properties"),
+
+        // A servlet to provide an interface to Confluence.
+        new ServletRegistrationInfo(new ServletProvider() {
+            @Override public Servlet getServlet() {
+                return new ConfluenceServlet(confluenceConfig);
+            }
+        }, "confluenceServlet", "/discoveryenvironment/confluence", "/belphegor/confluence")
     };
 
     /**
