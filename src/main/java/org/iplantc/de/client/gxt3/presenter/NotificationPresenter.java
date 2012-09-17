@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.gxt3.model.Notification;
 import org.iplantc.de.client.gxt3.model.NotificationAutoBeanFactory;
 import org.iplantc.de.client.gxt3.model.NotificationList;
 import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.gxt3.views.NotificationView;
 import org.iplantc.de.client.gxt3.views.NotificationView.Presenter;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
@@ -38,15 +38,13 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 public class NotificationPresenter implements Presenter {
 
     private final NotificationView view;
-    private final MessageServiceFacade facade;
     private final NotificationAutoBeanFactory factory = GWT.create(NotificationAutoBeanFactory.class);
 
     private PagingLoadResult<NotificationMessage> callbackResult;
-    private NotificationHelper helper;
+    private final NotificationHelper helper;
 
-    public NotificationPresenter(NotificationView view, MessageServiceFacade facade) {
+    public NotificationPresenter(NotificationView view) {
         this.view = view;
-        this.facade = facade;
         this.view.setPresenter(this);
         helper = NotificationHelper.getInstance();
     }
@@ -64,7 +62,8 @@ public class NotificationPresenter implements Presenter {
             public void load(final PagingLoadConfig loadConfig,
                     final AsyncCallback<PagingLoadResult<NotificationMessage>> callback) {
                 // TODO: implement sorting and filter
-                facade.getNotifications(loadConfig.getLimit(), loadConfig.getOffset(), "",
+                Services.MESSAGE_SERVICE.getNotifications(loadConfig.getLimit(), loadConfig.getOffset(),
+                        "",
                         com.sencha.gxt.data.shared.SortDir.DESC.toString(),
                         new NotificationServiceCallback(loadConfig, callback));
 

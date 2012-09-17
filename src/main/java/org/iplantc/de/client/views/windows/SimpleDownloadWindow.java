@@ -11,7 +11,7 @@ import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ComponentEvent;

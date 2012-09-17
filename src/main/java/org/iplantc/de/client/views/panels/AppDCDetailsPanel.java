@@ -4,6 +4,7 @@
 package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -15,7 +16,6 @@ import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.core.XTemplate;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.AccordionLayout;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -28,8 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AppDCDetailsPanel extends IPlantDialogPanel {
     private final ContentPanel contents = new ContentPanel();
 
-    private final AppTemplateUserServiceFacade templateService = GWT
-            .create(AppTemplateUserServiceFacade.class);
+    private final AppTemplateUserServiceFacade templateService = Services.USER_TEMPLATE_SERVICE;
 
     public AppDCDetailsPanel(Analysis app) {
         contents.setLayout(new AccordionLayout());

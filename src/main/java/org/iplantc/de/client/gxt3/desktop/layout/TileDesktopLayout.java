@@ -5,13 +5,11 @@
  */
 package org.iplantc.de.client.gxt3.desktop.layout;
 
-import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.google.gwt.user.client.Element;
 import com.sencha.gxt.core.client.Style.Anchor;
 import com.sencha.gxt.core.client.Style.AnchorAlignment;
-import com.sencha.gxt.widget.core.client.Window;
 
 public class TileDesktopLayout implements DesktopLayout {
 

@@ -3,6 +3,7 @@ package org.iplantc.de.client.views.windows;
 import java.util.ArrayList;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
@@ -10,7 +11,7 @@ import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEven
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -26,7 +27,6 @@ import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 import org.iplantc.de.client.views.panels.CatalogMainPanel;
 
 import com.extjs.gxt.ui.client.widget.Component;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -53,8 +53,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String APPLICATIONS_UNDER_DEVLOPMENT;
     public static String BETA_GROUP_ID;
 
-    private final AppTemplateUserServiceFacade templateService = GWT
-            .create(AppTemplateUserServiceFacade.class);
+    private final AppTemplateServiceFacade templateService = Services.TEMPLATE_SERVICE;
 
     /**
      * 

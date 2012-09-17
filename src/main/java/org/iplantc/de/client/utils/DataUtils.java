@@ -6,8 +6,8 @@ import java.util.List;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.DiskResouceDuplicatesCheckCallback;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResouceDuplicatesCheckCallback;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 
 import com.google.gwt.i18n.client.NumberFormat;
 

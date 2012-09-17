@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.callbacks;
 
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;

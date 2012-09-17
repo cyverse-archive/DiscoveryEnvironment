@@ -14,8 +14,8 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FolderDeleteCallback;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 

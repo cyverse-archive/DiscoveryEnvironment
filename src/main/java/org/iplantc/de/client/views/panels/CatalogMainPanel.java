@@ -7,6 +7,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent;
 import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.tito.client.windows.NewToolRequestWindow;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
@@ -58,7 +59,6 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
@@ -89,8 +89,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private final FastMap<MenuItem> menuItems;
     private Analysis selectedItem;
 
-    private static AppTemplateUserServiceFacade templateService = GWT
-            .create(AppTemplateUserServiceFacade.class);
+    private static AppTemplateUserServiceFacade templateService = Services.USER_TEMPLATE_SERVICE;
 
     /**
      * Creates a new CatalogMainPanel.

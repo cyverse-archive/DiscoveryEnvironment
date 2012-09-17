@@ -9,7 +9,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 
 import com.extjs.gxt.ui.client.Style.Scroll;

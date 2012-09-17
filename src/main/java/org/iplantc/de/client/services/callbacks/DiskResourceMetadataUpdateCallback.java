@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.callbacks;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;

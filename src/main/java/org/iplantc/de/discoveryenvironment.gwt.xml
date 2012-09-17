@@ -54,6 +54,14 @@
     <replace-with class="org.iplantc.de.client.gxt3.desktop.theme.taskbutton.TaskButtonCellDefaultAppearance">
        <when-type-is class="org.iplantc.de.client.gxt3.desktop.widget.TaskButtonCell.TaskButtonCellAppearance" />
     </replace-with>
+    
+    <!-- ui-applications deferred binding rules -->
+    <replace-with class="org.iplantc.de.client.services.impl.TemplateServiceFacade">
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade"/>
+   </replace-with>
+   <replace-with class="org.iplantc.de.client.services.impl.TemplateServiceFacade">
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade"/>
+   </replace-with>
 
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />

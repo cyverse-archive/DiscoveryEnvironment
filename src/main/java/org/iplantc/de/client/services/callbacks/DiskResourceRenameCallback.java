@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.callbacks;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;

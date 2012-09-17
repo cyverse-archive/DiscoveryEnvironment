@@ -6,12 +6,9 @@
 package org.iplantc.de.client.gxt3.desktop.layout;
 
 import org.iplantc.de.client.gxt3.desktop.layout.DesktopLayout.RequestType;
-import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.google.gwt.user.client.Element;
-import com.sencha.gxt.widget.core.client.Window;
-import com.sencha.gxt.widget.core.client.WindowManager;
 
 public abstract class LimitedDesktopLayout {
 

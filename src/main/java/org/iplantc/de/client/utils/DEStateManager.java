@@ -11,9 +11,9 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.util.ByteArrayComparer;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.SettingsUpdatedEvent;
 import org.iplantc.de.client.events.SettingsUpdatedEventHandler;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -53,8 +53,7 @@ public class DEStateManager {
 
     private DEStateManager() {
 
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
-        facade.getUserPreferences(new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.getUserPreferences(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -138,8 +137,7 @@ public class DEStateManager {
     }
 
     private void clearSession() {
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
-        facade.clearUserSession(new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.clearUserSession(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -171,8 +169,9 @@ public class DEStateManager {
 
             final byte[] tempHash = JsonUtil.generateHash(obj.toString());
             if (!ByteArrayComparer.arraysEqual(hash, tempHash)) {
-                UserSessionServiceFacade session = new UserSessionServiceFacade();
-                session.saveUserSession(obj, new SaveSessionCallback(savingMask, tempHash, callback));
+                Services.USER_SESSION_SERVICE.saveUserSession(obj, new SaveSessionCallback(savingMask,
+                        tempHash,
+                        callback));
             }
         } else {
             if (callback != null) {
@@ -186,8 +185,8 @@ public class DEStateManager {
      * 
      */
     public void saveUserSession() {
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
-        facade.saveUserPreferences(UserSettings.getInstance().toJson(), new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.saveUserPreferences(UserSettings.getInstance().toJson(),
+                new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -229,8 +228,7 @@ public class DEStateManager {
         });
         loadingMask.show();
 
-        UserSessionServiceFacade session = new UserSessionServiceFacade();
-        session.getUserSession(loadCallback);
+        Services.USER_SESSION_SERVICE.getUserSession(loadCallback);
     }
 
     private void restoreWindows(JSONObject win_state) {

@@ -14,7 +14,7 @@ import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.MyDataGrid;
 

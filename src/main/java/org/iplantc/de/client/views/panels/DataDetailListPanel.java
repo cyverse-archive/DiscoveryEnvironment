@@ -8,7 +8,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;

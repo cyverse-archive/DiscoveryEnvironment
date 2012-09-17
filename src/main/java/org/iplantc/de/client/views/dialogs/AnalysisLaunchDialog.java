@@ -11,9 +11,9 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.AnalysisLaunchedEvent;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.WizardExportHelper;
 import org.iplantc.de.client.views.FolderSelector;
@@ -326,9 +326,7 @@ public class AnalysisLaunchDialog extends Dialog {
     }
 
     private void launchAnalysis(String idWorkspace, String json, AsyncCallback<String> callback) {
-        AnalysisServiceFacade facade = new AnalysisServiceFacade();
-
-        facade.launchAnalysis(idWorkspace, json, callback);
+        Services.ANALYSIS_SERVICE.launchAnalysis(idWorkspace, json, callback);
     }
 
     private AsyncCallback<String> buildAnalysisLaunchCallback() {

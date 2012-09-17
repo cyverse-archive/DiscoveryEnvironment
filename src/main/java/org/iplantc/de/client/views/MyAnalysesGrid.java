@@ -15,12 +15,12 @@ import org.iplantc.core.uicommons.client.util.CommonStoreSorter;
 import org.iplantc.core.uicommons.client.util.DateParser;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.events.AnalysisUpdateEventHandler;
 import org.iplantc.de.client.models.AnalysisExecution;
 import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.JsAnalysisExecution;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
 
@@ -253,9 +253,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     private void retrieveData() {
         mask(I18N.DISPLAY.loadingMask());
 
-        AnalysisServiceFacade facade = new AnalysisServiceFacade();
-
-        facade.getAnalyses(UserInfo.getInstance().getWorkspaceId(), new AsyncCallback<String>() {
+        Services.ANALYSIS_SERVICE.getAnalyses(UserInfo.getInstance().getWorkspaceId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 JSONObject JSON = JsonUtil.getObject(result);

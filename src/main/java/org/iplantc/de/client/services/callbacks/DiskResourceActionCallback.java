@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.callbacks;
 
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.utils.MessageDispatcher;

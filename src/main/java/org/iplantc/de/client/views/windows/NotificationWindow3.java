@@ -16,7 +16,6 @@ import org.iplantc.de.client.gxt3.views.NotificationView.Presenter;
 import org.iplantc.de.client.gxt3.views.NotificationViewImpl;
 import org.iplantc.de.client.gxt3.views.cells.NotificationMessageCell;
 import org.iplantc.de.client.gxt3.views.cells.NotificationMessageTmestampCell;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.google.gwt.core.shared.GWT;
@@ -40,7 +39,7 @@ public class NotificationWindow3 extends Gxt3IplantWindow {
         ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
         NotificationView view = new NotificationViewImpl(store, cm);
-        Presenter presenter = new NotificationPresenter(view, new MessageServiceFacade());
+        Presenter presenter = new NotificationPresenter(view);
         setSize("800", "410");
         presenter.go(this);
     }

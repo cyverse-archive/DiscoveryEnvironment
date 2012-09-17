@@ -16,8 +16,8 @@ import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
-import org.iplantc.de.client.services.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.SelectionMode;

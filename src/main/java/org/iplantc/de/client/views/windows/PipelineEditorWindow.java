@@ -1,7 +1,8 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.client.pipelines.views.panels.PipelineEditorPanel;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.Services;
+import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -16,7 +17,6 @@ import org.iplantc.de.client.models.PipelineEditorWindowConfig;
 import org.iplantc.de.client.views.panels.CatalogCategoryPanel;
 
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,8 +26,7 @@ public class PipelineEditorWindow extends IPlantWindow {
     private AbstractCatalogCategoryPanel categoryPanel;
     private WindowConfig config;
 
-    private final AppTemplateUserServiceFacade templateService = GWT
-            .create(AppTemplateUserServiceFacade.class);
+    private final AppTemplateServiceFacade templateService = Services.TEMPLATE_SERVICE;
 
     public PipelineEditorWindow(String tag) {
         super(tag);
@@ -44,8 +43,7 @@ public class PipelineEditorWindow extends IPlantWindow {
 
     private void compose() {
         categoryPanel = new CatalogCategoryPanel(tag);
-        editorPanel = new PipelineEditorPanel(tag, categoryPanel, templateService,
-                new PublishCallbackCommand());
+        editorPanel = new PipelineEditorPanel(tag, categoryPanel, new PublishCallbackCommand());
         add(editorPanel);
     }
 

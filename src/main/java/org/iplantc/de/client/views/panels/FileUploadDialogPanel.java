@@ -11,7 +11,7 @@ import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.DiskResouceDuplicatesCheckCallback;
+import org.iplantc.de.client.services.callbacks.DiskResouceDuplicatesCheckCallback;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.Scroll;

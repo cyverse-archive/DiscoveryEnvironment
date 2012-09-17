@@ -1,20 +1,17 @@
 package org.iplantc.de.client.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,12 +70,9 @@ public class NotificationHelper {
     private DataViewContextExecutor dataContextExecutor;
     private AnalysisViewContextExecutor analysisContextExecutor;
 
-    private final MessageServiceFacade facadeMessageService;
-
     private int total;
 
     private NotificationHelper() {
-        facadeMessageService = new MessageServiceFacade();
         initContextExecuters();
     }
 
@@ -125,7 +119,7 @@ public class NotificationHelper {
     private void doDelete(final List<Notification> notifications, final JSONObject json,
             final Command callback) {
         if (notifications != null && json != null) {
-            facadeMessageService.deleteMessages(json, new AsyncCallback<String>() {
+            Services.MESSAGE_SERVICE.deleteMessages(json, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.notificationDeletFail(), caught);
