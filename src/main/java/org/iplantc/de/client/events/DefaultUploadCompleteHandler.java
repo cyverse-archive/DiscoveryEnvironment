@@ -4,8 +4,8 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.factories.EventJSONFactory;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
@@ -64,8 +64,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
             json.put("user", new JSONString(UserInfo.getInstance().getUsername()));
             json.put("email", JSONBoolean.getInstance(false));
 
-            UserSessionServiceFacade facade = new UserSessionServiceFacade();
-            facade.postClientNotification(json, new AsyncCallback<String>() {
+            Services.USER_SESSION_SERVICE.postClientNotification(json, new AsyncCallback<String>() {
 
                 @Override
                 public void onSuccess(String result) {

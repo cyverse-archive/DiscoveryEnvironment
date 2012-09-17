@@ -9,13 +9,13 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog.DialogOkClickHandler;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisParameter;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.SaveAsDialog;
@@ -149,8 +149,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     }
 
     private void retrieveData(final String analysisId) {
-        AnalysisServiceFacade facade = new AnalysisServiceFacade();
-        facade.getAnalysisParams(analysisId, new AsyncCallback<String>() {
+        Services.ANALYSIS_SERVICE.getAnalysisParams(analysisId, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {

@@ -16,7 +16,7 @@ import org.iplantc.de.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.client.events.CollaboratorsLoadedEventHandler;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.Sharing;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.SharePanel;

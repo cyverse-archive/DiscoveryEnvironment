@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
@@ -80,15 +80,15 @@ public class NotificationPanel extends ContentPanel {
      * ids of notification that will be preselected
      * 
      */
-    private List<String> selectedIds;
+    private final List<String> selectedIds;
 
     private PagingLoader<PagingLoadResult<Notification>> loader;
 
     private ListStore<Notification> store;
     private ToolBar toolBar;
-    private int currentOffSet;
-    private Category currentCategory;
-    private SortDir currSortDir;
+    private final int currentOffSet;
+    private final Category currentCategory;
+    private final SortDir currSortDir;
 
     /**
      * Creates a new NotificationPanel with config.
@@ -156,8 +156,7 @@ public class NotificationPanel extends ContentPanel {
             protected void load(Object loadConfig,
                     final AsyncCallback<PagingLoadResult<Notification>> callback) {
                 final PagingLoadConfig config = (PagingLoadConfig)loadConfig;
-                MessageServiceFacade facade = new MessageServiceFacade();
-                facade.getNotifications(config.getLimit(), config.getOffset(),
+                Services.MESSAGE_SERVICE.getNotifications(config.getLimit(), config.getOffset(),
                         config.get("filter") != null ? config.get("filter").toString() : "", config
                                 .getSortDir().toString(), new NotificationServiceCallback(config,
                                 callback));
@@ -335,6 +334,7 @@ public class NotificationPanel extends ContentPanel {
                     }
                 });
         grdNotifications.addListener(Events.Attach, new Listener<GridEvent<Notification>>() {
+            @Override
             public void handleEvent(GridEvent<Notification> be) {
                 PagingLoadConfig config = buildDefaultLoadConfig();
                 loader.load(config);
@@ -513,7 +513,7 @@ public class NotificationPanel extends ContentPanel {
     public SortDir getCurrentSortDir() {
         Map<String, Object> state = grdNotifications.getState();
         if (state.containsKey("sortField")) {
-            String dir = (String)state.get("sortDir").toString();
+            String dir = state.get("sortDir").toString();
             return SortDir.valueOf(dir.equalsIgnoreCase("NONE") ? "DESC" : dir);
         }
         return SortDir.DESC;

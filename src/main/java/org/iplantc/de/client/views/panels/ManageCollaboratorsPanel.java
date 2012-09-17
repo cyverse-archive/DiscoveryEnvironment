@@ -5,10 +5,10 @@ import java.util.List;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Collaborator;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.FieldEvent;
@@ -144,8 +144,8 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
         }
         panel.setHeading(I18N.DISPLAY.search() + ": " + search);
         status.setBusy("");
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
-        facade.searchCollaborators(search, new AsyncCallback<String>() {
+
+        Services.USER_SESSION_SERVICE.searchCollaborators(search, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -165,9 +165,8 @@ public class ManageCollaboratorsPanel extends LayoutContainer {
     }
 
     private void loadCollaborators() {
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
         status.setBusy("");
-        facade.getCollaborators(new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.getCollaborators(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {

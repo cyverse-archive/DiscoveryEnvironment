@@ -16,8 +16,8 @@ import org.iplantc.core.uidiskresource.client.models.DiskResourceMetadata;
 import org.iplantc.core.uidiskresource.client.models.JsDiskResourceMetaData;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;

@@ -7,7 +7,6 @@ import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.UserSettingPanel;
 
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -19,7 +18,6 @@ import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ButtonBar;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
-import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 
 /**
  * A dialog to collect user general settings for the DE

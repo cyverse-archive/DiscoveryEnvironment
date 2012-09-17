@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.callbacks;
 
 import java.util.List;
 
@@ -7,14 +7,14 @@ import org.iplantc.de.client.I18N;
 import com.google.gwt.json.client.JSONObject;
 
 /**
- * Defines an asynchronous callback for a file Delete event.
+ * Defines an asynchronous callback for a folder Delete event.
  * 
  * @author psarando
  * 
  */
-public class FileDeleteCallback extends DiskResourceDeleteCallback {
+public class FolderDeleteCallback extends DiskResourceDeleteCallback {
 
-    public FileDeleteCallback(List<String> listFolders) {
+    public FolderDeleteCallback(List<String> listFolders) {
         super(listFolders);
     }
 
@@ -23,7 +23,7 @@ public class FileDeleteCallback extends DiskResourceDeleteCallback {
      */
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.deleteFileFailed();
+        return I18N.ERROR.deleteFolderFailed();
     }
 
     /**
@@ -31,7 +31,7 @@ public class FileDeleteCallback extends DiskResourceDeleteCallback {
      */
     @Override
     protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
-        return getErrorMessageForFiles(code, parsePathsToNameList(jsonError));
+        return getErrorMessageForFolders(code, parsePathsToNameList(jsonError));
     }
 
     /**
@@ -39,6 +39,6 @@ public class FileDeleteCallback extends DiskResourceDeleteCallback {
      */
     @Override
     protected String getResourceListKey() {
-        return "files"; //$NON-NLS-1$
+        return "folders"; //$NON-NLS-1$
     }
 }

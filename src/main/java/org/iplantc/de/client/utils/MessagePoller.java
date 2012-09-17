@@ -2,7 +2,7 @@ package org.iplantc.de.client.utils;
 
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.Services;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,9 +71,8 @@ public class MessagePoller {
 
         @Override
         public void run() {
-            MessageServiceFacade facade = new MessageServiceFacade();
 
-            facade.getMessages(new AsyncCallback<String>() {
+            Services.MESSAGE_SERVICE.getMessages(new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     // currently we do nothing on failure

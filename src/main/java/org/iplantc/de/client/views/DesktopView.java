@@ -15,8 +15,8 @@ import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 
-import org.iplantc.de.client.services.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEStateManager;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.LogoutUtil;

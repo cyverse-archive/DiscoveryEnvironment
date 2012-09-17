@@ -6,9 +6,7 @@ import org.iplantc.de.client.gxt3.views.DEView.Presenter;
 import org.iplantc.de.client.gxt3.views.DEViewImpl;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Defines the web application entry point for the system.
@@ -18,6 +16,7 @@ public class DiscoveryEnvironment implements EntryPoint {
     /**
      * Entry point for the application.
      */
+    @Override
     public void onModuleLoad() {
         setEntryPointTitle();
         DEView view = new DEViewImpl();

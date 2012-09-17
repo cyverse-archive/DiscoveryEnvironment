@@ -10,8 +10,8 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.Permissions;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.Services;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DEInfo;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.FolderSelector;
@@ -224,8 +224,7 @@ public class UserSettingPanel extends LayoutContainer {
         if (defaultOutputFolder.getSelectedFolderId() != null) {
             us.setDefaultOutputFolder(defaultOutputFolder.getSelectedFolderId());
         }
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
-        facade.saveUserPreferences(us.toJson(), new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.saveUserPreferences(us.toJson(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {

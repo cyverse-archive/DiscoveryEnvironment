@@ -1,8 +1,8 @@
 package org.iplantc.de.client.views.panels;
 
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.FolderRenameCallback;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.FolderRenameCallback;
 
 import com.extjs.gxt.ui.client.widget.Component;
 

@@ -14,7 +14,7 @@ import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.IDropLite;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 

@@ -10,7 +10,6 @@ import java.util.Random;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.google.gwt.user.client.Element;
-import com.sencha.gxt.widget.core.client.Window;
 
 public class CenterDesktopLayout extends LimitedDesktopLayout implements DesktopLayout {
 
@@ -20,7 +19,7 @@ public class CenterDesktopLayout extends LimitedDesktopLayout implements Desktop
     private int left;
     private int top;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     @Override
     public DesktopLayoutType getDesktopLayoutType() {

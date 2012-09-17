@@ -10,9 +10,9 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.JsCollaborators;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 
@@ -53,6 +53,7 @@ public class CollaboratorsPanel extends ContentPanel {
 
     // list that holds user's collaborators
     private List<Collaborator> my_collaborators;
+
 
     public CollaboratorsPanel(String title, ManageCollaboratorsPanel.MODE mode, int width, int height) {
         setHeading(title);
@@ -214,9 +215,8 @@ public class CollaboratorsPanel extends ContentPanel {
     }
 
     private void addCollaborators(final Collaborator model) {
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
         JSONObject obj = buildJSONModel(model);
-        facade.addCollaborators(obj, new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.addCollaborators(obj, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -238,9 +238,8 @@ public class CollaboratorsPanel extends ContentPanel {
     }
 
     private void removeCollaborators(final Collaborator model) {
-        UserSessionServiceFacade facade = new UserSessionServiceFacade();
         JSONObject obj = buildJSONModel(model);
-        facade.removeCollaborators(obj, new AsyncCallback<String>() {
+        Services.USER_SESSION_SERVICE.removeCollaborators(obj, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {

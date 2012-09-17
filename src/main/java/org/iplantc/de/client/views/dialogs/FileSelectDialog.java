@@ -12,7 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.ManageDataRefreshEventHandler;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.FileSelectDialogPanel;
 
 import com.extjs.gxt.ui.client.event.Events;

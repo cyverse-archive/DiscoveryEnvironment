@@ -6,6 +6,7 @@ import org.iplantc.core.client.widgets.BoundedTextArea;
 import org.iplantc.core.client.widgets.BoundedTextField;
 import org.iplantc.core.client.widgets.utils.FormLabel;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
+import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroupTreeModel;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
@@ -40,7 +41,6 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -69,8 +69,7 @@ public class SubmitAppForPublicUsePanel extends LayoutContainer {
 
     private ReferenceEditorGridPanel refPanel;
 
-    private static AppTemplateUserServiceFacade templateService = GWT
-            .create(AppTemplateUserServiceFacade.class);
+    private static AppTemplateUserServiceFacade templateService = Services.USER_TEMPLATE_SERVICE;
 
     /**
      * Creates a new instance of PublishToWorldPanel

@@ -9,9 +9,9 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisExecution;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.MyAnalysesGrid;
@@ -68,8 +68,6 @@ public class MyAnalysesPanel extends ContentPanel {
     private String idWorkspace;
 
     private String idCurrentSelection;
-
-    private final AnalysisServiceFacade facadeAnalysisService;
 
     protected static CheckBoxSelectionModel<AnalysisExecution> sm;
     private TextField<String> filter;
@@ -145,8 +143,6 @@ public class MyAnalysesPanel extends ContentPanel {
         menus = new HashMap<String, Menu>();
         init(caption);
         initWorkspaceId();
-
-        facadeAnalysisService = new AnalysisServiceFacade();
     }
 
     private void initWorkspaceId() {
@@ -332,7 +328,8 @@ public class MyAnalysesPanel extends ContentPanel {
                 if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.SUBMITTED.toString()))
                         || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.IDLE.toString()))
                         || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
-                    facadeAnalysisService.stopAnalysis(ae.getId(), new CancelAnalysisServiceCallback(ae));
+                    Services.ANALYSIS_SERVICE.stopAnalysis(ae.getId(),
+                            new CancelAnalysisServiceCallback(ae));
                 }
             }
         }
@@ -520,7 +517,7 @@ public class MyAnalysesPanel extends ContentPanel {
             // did the user click yes?
             if (btn.getItemId().equals(Dialog.YES)) {
                 String body = buildDeleteRequestBody(execs);
-                facadeAnalysisService.deleteAnalysis(idWorkspace, body, new DeleteSeviceCallback(
+                Services.ANALYSIS_SERVICE.deleteAnalysis(idWorkspace, body, new DeleteSeviceCallback(
                         items_to_delete, execs));
             }
         }

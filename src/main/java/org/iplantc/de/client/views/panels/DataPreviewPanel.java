@@ -2,8 +2,8 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 
 import com.extjs.gxt.ui.client.widget.Status;
 import com.google.gwt.json.client.JSONObject;

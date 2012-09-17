@@ -27,7 +27,7 @@ import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.DataWindowConfig;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.DataDetailsPanel;
 import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;

@@ -6,8 +6,8 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
@@ -74,12 +74,9 @@ public class NotificationHelper {
     private DataViewContextExecutor dataContextExecutor;
     private AnalysisViewContextExecutor analysisContextExecutor;
 
-    private final MessageServiceFacade facadeMessageService;
-
     private int total;
 
     private NotificationHelper() {
-        facadeMessageService = new MessageServiceFacade();
         storeAll = new ArrayList<Notification>();
 
         initContextBuilders();
@@ -220,7 +217,7 @@ public class NotificationHelper {
     private void doDelete(final List<Notification> notifications, final JSONObject json,
             final Command callback) {
         if (notifications != null && json != null) {
-            facadeMessageService.deleteMessages(json, new AsyncCallback<String>() {
+            Services.MESSAGE_SERVICE.deleteMessages(json, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.notificationDeletFail(), caught);
