@@ -7,10 +7,6 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
@@ -19,50 +15,47 @@ import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
 
 import com.google.gwt.user.client.rpc.SerializationException;
+import java.util.Properties;
 
 /**
  * A service for interfacing with Confluence via SOAP.
- * 
+ *
  * @author hariolf
- * 
  */
+@SuppressWarnings("nls")
 public class ConfluenceServlet extends SessionManagementServlet implements ConfluenceService {
     private static final long serialVersionUID = -8576144366505536966L;
 
     private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
-    
+
     /** A filled star */
-    private static final String BLACK_STAR = "&#x2605;"; //$NON-NLS-1$
-    
+    private static final String BLACK_STAR = "&#x2605;";
+
     /** An outlined star */
-    private static final String WHITE_STAR = "&#x2606;"; //$NON-NLS-1$
-    
+    private static final String WHITE_STAR = "&#x2606;";
+
     /** Name of the session attribute that stores the authentication token */
-    private static final String AUTH_TOKEN_ATTR = "confluenceToken"; //$NON-NLS-1$
+    private static final String AUTH_TOKEN_ATTR = "confluenceToken";
 
     /** a wiki template file containing Confluence markup */
-    private static final String TEMPLATE_FILE = "wiki_template"; //$NON-NLS-1$
+    private static final String TEMPLATE_FILE = "wiki_template";
 
     /** a string in the template that is replaced with the tool name */
-    private static final String TOOL_NAME_PLACEHOLDER = "@TOOLNAME"; //$NON-NLS-1$
+    private static final String TOOL_NAME_PLACEHOLDER = "@TOOLNAME";
 
     /** a string in the template that is replaced with the tool description */
-    private static final String DESCRIPTION_PLACEHOLDER = "@DESCRIPTION"; //$NON-NLS-1$
+    private static final String DESCRIPTION_PLACEHOLDER = "@DESCRIPTION";
 
     /** a string in the template that is replaced with rating stars */
-    private static final String AVG_RATING_PLACEHOLDER = "@AVGRATING"; //$NON-NLS-1$
-
-    /** name of the init parameter that contains the name of the .properties file */
-    private static final String PROPERTIES_FILE_KEY = "org.iplantc.properties.confluence"; //$NON-NLS-1$
+    private static final String AVG_RATING_PLACEHOLDER = "@AVGRATING";
 
     private ConfluenceProperties properties;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        ServletContext context = config.getServletContext();
-        String propFilename = context.getInitParameter(PROPERTIES_FILE_KEY);
-        properties = new ConfluenceProperties(propFilename);
+    /**
+     * @param properties the configuration settings used to initialize the ConfluenceProperties instance.
+     */
+    public ConfluenceServlet(Properties properties) {
+        this.properties = new ConfluenceProperties(properties);
     }
 
     /**
@@ -75,7 +68,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             content = getTemplate();
             content = replaceTemplate(content, toolName, description);
         } catch (IOException e) {
-            LOG.error("Can't read wiki template file.", e); //$NON-NLS-1$
+            LOG.error("Can't read wiki template file.", e);
             // if the template cannot be read, use the raw description text instead
             content = description;
         }
@@ -108,8 +101,8 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             }
 
             // remove all stars
-            content = content.replaceAll(BLACK_STAR, ""); //$NON-NLS-1$
-            content = content.replaceAll(WHITE_STAR, ""); //$NON-NLS-1$
+            content = content.replaceAll(BLACK_STAR, "");
+            content = content.replaceAll(WHITE_STAR, "");
 
             // add the new stars
             StringBuilder stars = new StringBuilder();
@@ -130,7 +123,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
 
     /**
      * Substitutes placeholders in a template with a tool name and a tool description.
-     * 
+     *
      * @param template the contents of the template file in one string
      * @param toolName name of the DE tool
      * @param description description of the DE Tool
@@ -147,7 +140,7 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * Reads the template file from a Resource in the same directory as this class. Although
      * ConfluenceClient can read a file via the --file option, this option is not used here because the
      * file is not guaranteed to be in the file system (it could be in a .jar).
-     * 
+     *
      * @return the contents of TEMPLATE_FILE
      * @throws IOException
      */
@@ -192,17 +185,19 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     private String generateCommentMarkup(String comment, int score, String username) {
         StringBuilder markup = new StringBuilder();
         // add full stars
-        for (int i = 0; i < score; i++)
+        for (int i = 0; i < score; i++) {
             markup.append(BLACK_STAR);
+        }
         // add empty stars so it is 5 stars total
-        for (int i = 0; i < 5 - score; i++)
+        for (int i = 0; i < 5 - score; i++) {
             markup.append(WHITE_STAR);
-        markup.append(" ").append(comment).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-        
+        }
+        markup.append(" ").append(comment).append(" ");
+
         // replace placeholder with username
         String suffix = properties.getRatingCommentSuffix();
-        suffix = suffix.replace("{0}", username); //$NON-NLS-1$
-        
+        suffix = suffix.replace("{0}", username);
+
         markup.append(suffix);
         return markup.toString();
     }

@@ -1,19 +1,15 @@
 package org.iplantc.de.server;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 
 /**
  * Contains methods for accessing the confluence.properties file.
- * 
+ *
  * @author hariolf
- * 
+ *
  */
 public class ConfluenceProperties {
-    private final Logger LOGGER = Logger.getLogger(ConfluenceProperties.class);
 
     // The prefix for all of the properties.
     private static final String PREFIX = "org.iplantc.discoveryenvironment.confluence"; //$NON-NLS-1$
@@ -37,17 +33,17 @@ public class ConfluenceProperties {
 
     /**
      * Creates a new ConfluenceProperties object and loads properties.
-     * 
-     * @param propFileName the name of the properties file
+     *
+     * @param properties = the configuration properties.
      */
-    public ConfluenceProperties(String propFileName) {
-        loadProperties(propFileName);
+    public ConfluenceProperties(Properties properties) {
+        this.properties = properties;
         validateProperties(REQUIRED_PROPERTIES);
     }
 
     /**
      * Validates that we have values for all required properties.
-     * 
+     *
      * @throws RuntimeException if a required property isn't found in the file
      */
     private void validateProperties(String[] propertyNames) {
@@ -60,34 +56,8 @@ public class ConfluenceProperties {
     }
 
     /**
-     * Loads the discovery environment properties. If an error occurs while loading the file, we log the
-     * message, but do not throw an exception; the property validation will catch any required properties
-     * that are missing.
-     * 
-     * @param propFileName the name of the properties file
-     */
-    private void loadProperties(String propFileName) {
-        properties = new Properties();
-        InputStream stream = ConfluenceProperties.class.getResourceAsStream(propFileName);
-        try {
-            properties.load(stream);
-        } catch (IOException e) {
-            String msg = "unable to load discovery environment properties"; //$NON-NLS-1$
-            LOGGER.error(msg, e);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.error("Cannot close input stream for file " + propFileName, e); //$NON-NLS-1$
-                }
-            }
-        }
-    }
-
-    /**
      * Gets the base URL used to access the Confluence wiki.
-     * 
+     *
      * @return the URL as a string.
      */
     public String getConfluenceBaseUrl() {
@@ -96,7 +66,7 @@ public class ConfluenceProperties {
 
     /**
      * Gets the name of the 'List of Applications' page.
-     * 
+     *
      * @return the name as a string.
      */
     public String getConfluenceParentPage() {
@@ -105,7 +75,7 @@ public class ConfluenceProperties {
 
     /**
      * Gets the Confluence user for adding documentation pages.
-     * 
+     *
      * @return the user name
      */
     public String getConfluenceUser() {
@@ -114,7 +84,7 @@ public class ConfluenceProperties {
 
     /**
      * Gets the Confluence password for adding documentation pages.
-     * 
+     *
      * @return the password
      */
     public String getConfluencePassword() {
@@ -123,7 +93,7 @@ public class ConfluenceProperties {
 
     /**
      * Gets the name of the 'DE Applications' space in Confluence.
-     * 
+     *
      * @return the name as a string.
      */
     public String getConfluenceSpaceName() {
@@ -132,7 +102,7 @@ public class ConfluenceProperties {
 
     /**
      * Gets the URL of the 'DE Applications' space in Confluence.
-     * 
+     *
      * @return the URL as a string.
      */
     public String getConfluenceSpaceUrl() {
@@ -142,7 +112,7 @@ public class ConfluenceProperties {
     /**
      * Gets localized text that is added to rating comments for the wiki; contains a placeholder for the
      * current DE user.
-     * 
+     *
      * @return a string representing the localized text.
      */
     public String getRatingCommentSuffix() {
