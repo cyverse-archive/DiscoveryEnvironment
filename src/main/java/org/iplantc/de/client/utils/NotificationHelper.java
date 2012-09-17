@@ -1,19 +1,17 @@
 package org.iplantc.de.client.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
+import org.iplantc.de.client.gxt3.model.NotificationMessage;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -66,8 +64,6 @@ public class NotificationHelper {
 
     private static NotificationHelper instance = null;
 
-    private final List<Notification> storeAll;
-
     private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
 
@@ -77,17 +73,9 @@ public class NotificationHelper {
     private int total;
 
     private NotificationHelper() {
-        storeAll = new ArrayList<Notification>();
-
-        initContextBuilders();
         initContextExecuters();
         initMessagePoller();
 
-    }
-
-    private void initContextBuilders() {
-        dataContextBuilder = new DataContextBuilder();
-        analysisContextBuilder = new AnalysisContextBuilder();
     }
 
     private void initContextExecuters() {
@@ -95,26 +83,14 @@ public class NotificationHelper {
         analysisContextExecutor = new AnalysisViewContextExecutor();
     }
 
-    private Notification addItemToStore(final Category category, final JSONObject objMessage,
-            final String context) {
-        Notification ret = null; // assume failure
-
-        if (objMessage != null) {
-            ret = new Notification(objMessage, context);
-            add(category, ret);
-        }
-
-        return ret;
-    }
-
     /** View a notification */
-    public void view(Notification notification) {
-        if (notification != null) {
-            NotificationHelper.Category category = notification.getCategory();
+    public void view(NotificationMessage msg) {
+        if (msg != null) {
+            NotificationHelper.Category category = msg.getCategory();
 
             // did we get a category?
             if (category != null) {
-                String context = notification.getContext();
+                String context = msg.getContext();
 
                 // did we get a context to execute?
                 if (context != null) {
@@ -140,78 +116,6 @@ public class NotificationHelper {
         }
 
         return instance;
-    }
-
-    /**
-     * Add a new notification.
-     * 
-     * @param category category for this notification.
-     * @param notification notification to add.
-     */
-    public void add(final Category category, final Notification notification) {
-        // did we get a valid notification?
-        if (category != Category.ALL && notification != null) {
-            notification.setCategory(category);
-
-            getStoreAll().add(notification);
-        }
-    }
-
-    public void addInitialNotificationsToStore(final String json) {
-        storeAll.clear();
-        JSONObject objMessages = JSONParser.parseStrict(json).isObject();
-        setTotal(JsonUtil.getNumber(objMessages, "total").intValue());
-
-        if (objMessages != null) {
-            JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
-
-            if (arr != null) {
-                String type;
-                JSONObject objItem;
-
-                for (int i = 0,len = arr.size(); i < len; i++) {
-                    objItem = arr.get(i).isObject();
-
-                    if (objItem != null) {
-                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
-
-                        addItemToStore(type, objItem);
-                    }
-                }
-            }
-
-        }
-    }
-
-    public String buildAnalysisContext(JSONObject objPayload) {
-        return analysisContextBuilder.build(objPayload);
-    }
-
-    public String buildDataContext(JSONObject objPayload) {
-        return dataContextBuilder.build(objPayload);
-    }
-
-    private Notification addItemToStore(final String type, final JSONObject objItem) {
-        if (type != null && objItem != null) {
-            JSONObject objMessage = objItem.get("message").isObject(); //$NON-NLS-1$
-            JSONObject objPayload = objItem.get("payload").isObject(); //$NON-NLS-1$
-
-            if (type.equals("data")) { //$NON-NLS-1$
-                return addItemToStore(Category.DATA, objMessage, dataContextBuilder.build(objPayload));
-            } else if (type.equals("analysis")) { //$NON-NLS-1$
-                return addItemToStore(Category.ANALYSIS, objMessage,
-                        analysisContextBuilder.build(objPayload));
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Initialize the notification manager.
-     */
-    public void init() {
-        // initialization code goes here.
     }
 
     private void doDelete(final List<Notification> notifications, final JSONObject json,
@@ -257,17 +161,6 @@ public class NotificationHelper {
     private void initMessagePoller() {
         MessagePoller poller = MessagePoller.getInstance();
         poller.start();
-    }
-
-    public void cleanup() {
-        getStoreAll().clear();
-    }
-
-    /**
-     * @return the storeAll
-     */
-    public List<Notification> getStoreAll() {
-        return storeAll;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
+import org.iplantc.de.client.gxt3.model.NotificationPayload;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -43,10 +44,6 @@ public class DataContextBuilder extends AbstractContextBuilder {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String build(final JSONObject objPayload) {
         String ret = null; // assume failure
 
@@ -96,5 +93,11 @@ public class DataContextBuilder extends AbstractContextBuilder {
         obj.put("idParent", new JSONString(DiskResourceUtil.parseParent(idDiskResource)));
 
         return obj.toString();
+    }
+
+    @Override
+    public String build(NotificationPayload payload) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

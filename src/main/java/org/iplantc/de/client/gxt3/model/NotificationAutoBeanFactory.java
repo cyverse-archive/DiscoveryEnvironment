@@ -10,4 +10,6 @@ public interface NotificationAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Notification> getNotification();
 
+    AutoBean<NotificationPayload> getNotificationPayload();
+
 }

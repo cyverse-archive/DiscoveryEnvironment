@@ -53,11 +53,6 @@ public class DEPresenter implements DEView.Presenter {
         return userInfo.getWorkspaceId();
     }
 
-    private void initNotificationManager() {
-        NotificationHelper mgrNotification = NotificationHelper.getInstance();
-        mgrNotification.init();
-    }
-
     /**
      * Initializes the session keepalive timer.
      */
@@ -145,7 +140,6 @@ public class DEPresenter implements DEView.Presenter {
             public void onSuccess(String result) {
                 parseWorkspaceId(result);
                 initializeUserInfoAttributes();
-                initNotificationManager();
                 initKeepaliveTimer();
             }
         });

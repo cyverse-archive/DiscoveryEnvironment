@@ -1,8 +1,7 @@
 package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-
-import com.google.gwt.json.client.JSONObject;
+import org.iplantc.de.client.gxt3.model.NotificationPayload;
 
 /**
  * Build a JSON string to provide context when a user clicks on an item with an analysis context
@@ -12,20 +11,15 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public class AnalysisContextBuilder extends AbstractContextBuilder {
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
-    public String build(JSONObject objPayload) {
+    public String build(NotificationPayload payload) {
         String ret = null; // assume failure
-
-        if (objPayload != null) {
-            String action = getAction(objPayload);
-
+        if (payload != null) {
+            String action = getAction(payload);
             if (action != null) {
                 if (action.equals("job_status_change")) { //$NON-NLS-1$
-                    String id = JsonUtil.getString(objPayload, "id"); //$NON-NLS-1$
-
+                    String id = payload.getId();
                     ret = "{\"id\": " + JsonUtil.quoteString(id) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }

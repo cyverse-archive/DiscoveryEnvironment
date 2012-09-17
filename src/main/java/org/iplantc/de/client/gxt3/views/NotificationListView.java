@@ -10,9 +10,12 @@ import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
 import org.iplantc.de.client.events.DataPayloadEvent;
 import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.gxt3.model.NotificationAutoBeanFactory;
+import org.iplantc.de.client.gxt3.model.NotificationList;
 import org.iplantc.de.client.gxt3.model.NotificationMessage;
+import org.iplantc.de.client.gxt3.model.NotificationPayload;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONObject;
@@ -109,9 +112,8 @@ public class NotificationListView implements IsWidget {
         eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
             @Override
             public void onFire(DataPayloadEvent event) {
-                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-                        NotificationHelper.getInstance().buildDataContext(event.getPayload()),
-                        event.getPayload());
+                // TODO:Add data context
+                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(), null);
                 // highlightNewNotifications();
             }
         });
@@ -120,21 +122,25 @@ public class NotificationListView implements IsWidget {
         eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
             public void onFire(AnalysisPayloadEvent event) {
+                AutoBean<NotificationPayload> bean = AutoBeanCodex.decode(factory,
+                        NotificationPayload.class, event.getPayload().toString());
+                AnalysisContextBuilder builder = new AnalysisContextBuilder();
                 addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()),
-                        event.getPayload());
+                        builder.build(bean.as()));
                 // highlightNewNotifications();
             }
         });
     }
 
     private void addFromEventHandler(final Category category, final String header,
-            final JSONObject objMessage, final String context, final JSONObject payload) {
+            final JSONObject objMessage, final String context) {
 
         AutoBean<NotificationMessage> bean = AutoBeanCodex.decode(factory, NotificationMessage.class,
                 objMessage.toString());
 
         NotificationMessage nm = bean.as();
+        nm.setCategory(category);
+        nm.setContext(context);
 
         NotificationMessage existing = view.getStore().findModelWithKey(nm.getTimestamp() + "");
 
@@ -159,8 +165,10 @@ public class NotificationListView implements IsWidget {
 
                     @Override
                     public void onSelectionChanged(SelectionChangedEvent<NotificationMessage> event) {
-                        // TODO Auto-generated method stub
-
+                        final NotificationMessage msg = event.getSelection().get(0);
+                        if (msg != null) {
+                            NotificationHelper.getInstance().view(msg);
+                        }
                     }
 
                 });

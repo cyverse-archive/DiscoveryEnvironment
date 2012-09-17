@@ -46,11 +46,6 @@ public class DefaultWorkspaceView implements View {
         return userInfo.getWorkspaceId();
     }
 
-    private void initNotificationManager() {
-        NotificationHelper mgrNotification = NotificationHelper.getInstance();
-        mgrNotification.init();
-    }
-
     /**
      * Initializes the session keepalive timer.
      */
@@ -159,7 +154,6 @@ public class DefaultWorkspaceView implements View {
             public void onSuccess(String result) {
                 parseWorkspaceId(result);
                 initializeUserInfoAttributes();
-                initNotificationManager();
                 initKeepaliveTimer();
             }
         });

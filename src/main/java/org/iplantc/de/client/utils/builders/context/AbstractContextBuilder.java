@@ -1,6 +1,7 @@
 package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.de.client.gxt3.model.NotificationPayload;
 
 import com.google.gwt.json.client.JSONObject;
 
@@ -12,10 +13,8 @@ import com.google.gwt.json.client.JSONObject;
  */
 public abstract class AbstractContextBuilder {
     /**
-     * Parse the action from payload JSON.
-     * 
-     * @param objPayload payload to parse.
-     * @return String representing the action. null on failure.
+     * // * Parse the action from payload JSON. // * // * @param objPayload payload to parse. // * @return
+     * String representing the action. null on failure. //
      */
     protected String getAction(final JSONObject objPayload) {
         String ret = null; // assume failure
@@ -27,11 +26,28 @@ public abstract class AbstractContextBuilder {
         return ret;
     }
 
+    //
+    // /**
+    // * Build a context info object from payload JSON.
+    // *
+    // * @param objPayload payload to parse.
+    // * @return String representation of context JSON. null on failure.
+    // */
+    // public abstract String build(final JSONObject objPayload);
+
+    protected String getAction(final NotificationPayload payload) {
+        if (payload != null) {
+            return payload.getAction();
+        }
+
+        return null;
+    }
+
     /**
-     * Build a context info object from payload JSON.
+     * Build a context info object from payload.
      * 
      * @param objPayload payload to parse.
      * @return String representation of context JSON. null on failure.
      */
-    public abstract String build(final JSONObject objPayload);
+    public abstract String build(final NotificationPayload payload);
 }
