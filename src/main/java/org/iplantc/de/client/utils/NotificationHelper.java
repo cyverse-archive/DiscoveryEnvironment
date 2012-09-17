@@ -80,8 +80,6 @@ public class NotificationHelper {
     private NotificationHelper() {
         facadeMessageService = new MessageServiceFacade();
         initContextExecuters();
-        initMessagePoller();
-
     }
 
     private void initContextExecuters() {
@@ -162,11 +160,6 @@ public class NotificationHelper {
 
             doDelete(notifications, obj, callback);
         }
-    }
-
-    private void initMessagePoller() {
-        MessagePoller poller = MessagePoller.getInstance();
-        poller.start();
     }
 
     /**

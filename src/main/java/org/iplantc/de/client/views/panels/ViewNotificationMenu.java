@@ -11,121 +11,20 @@ import org.iplantc.de.client.gxt3.views.NotificationListView;
  */
 public class ViewNotificationMenu extends com.sencha.gxt.widget.core.client.menu.Menu {
 
+    private NotificationListView view;
+
     public ViewNotificationMenu() {
-        NotificationListView view = new NotificationListView();
+        view = new NotificationListView();
         add(view.asWidget());
     }
-    // private ListStore<Notification> store;
-    //
-    // public static final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
-    //
-    // private int totalNotificationCount;
-    //
-    // private CustomListView<Notification> view;
-    //
-    // public ViewNotificationMenu() {
-    // setLayout(new FitLayout());
-    // registerEventHandlers();
-    // view = initList();
-    // LayoutContainer lc = buildPanel();
-    // lc.add(view);
-    // add(lc);
-    // }
-    //
-    // private LayoutContainer buildPanel() {
-    // LayoutContainer lc = new LayoutContainer();
-    // lc.setLayout(new FitLayout());
-    // lc.setSize(250, 270);
-    // lc.setBorders(false);
-    // return lc;
-    // }
-    //
-    // private CustomListView<Notification> initList() {
-    // store = new ListStore<Notification>();
-    // CustomListView<Notification> view = new CustomListView<Notification>();
-    //
-    // view.setTemplate(getTemplate());
-    // view.getSelectionModel().addSelectionChangedListener(
-    // new SelectionChangedListener<Notification>() {
-    //
-    // @Override
-    // public void selectionChanged(SelectionChangedEvent<Notification> se) {
-    // final Notification notification = se.getSelectedItem();
-    // if (notification == null) {
-    // return;
-    // }
-    // NotificationHelper.getInstance().view(notification);
-    // hide();
-    // }
-    // });
-    //        view.setItemSelector("div.search-item"); //$NON-NLS-1$
-    // view.setStore(store);
-    // view.setEmptyText(I18N.DISPLAY.noNewNotifications());
-    // return view;
-    // }
-    //
-    // private void registerEventHandlers() {
-    // final EventBus eventbus = EventBus.getInstance();
-    //
-    // // handle data events
-    // eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
-    // @Override
-    // public void onFire(DataPayloadEvent event) {
-    // addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-    // NotificationHelper.getInstance().buildDataContext(event.getPayload()),
-    // event.getPayload());
-    // highlightNewNotifications();
-    // }
-    // });
-    //
-    // // handle analysis events
-    // eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
-    // @Override
-    // public void onFire(AnalysisPayloadEvent event) {
-    // addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-    // NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()),
-    // event.getPayload());
-    // highlightNewNotifications();
-    // }
-    // });
-    // }
-    //
-    // @Override
-    // public void showAt(int x, int y) {
-    // super.showAt(x, y);
-    // highlightNewNotifications();
-    // markAsSeen();
-    // }
-    //
-    // private void markAsSeen() {
-    // List<Notification> new_notifications = store.getModels();
-    // JSONArray arr = new JSONArray();
-    // int i = 0;
-    // if (new_notifications.size() > 0) {
-    // for (Notification n : new_notifications) {
-    // arr.set(i++, new JSONString(n.get("id").toString()));
-    // n.set(Notification.SEEN, true);
-    // }
-    //
-    // JSONObject obj = new JSONObject();
-    // obj.put("uuids", arr);
-    //
-    // MessageServiceFacade facade = new MessageServiceFacade();
-    // facade.markAsSeen(obj, new AsyncCallback<String>() {
-    //
-    // @Override
-    // public void onSuccess(String result) {
-    // // Do nothing intentionally
-    // }
-    //
-    // @Override
-    // public void onFailure(Throwable caught) {
-    // ErrorHandler.post(caught);
-    // }
-    // });
-    // }
-    //
-    // }
+
+    @Override
+    public void showAt(int x, int y) {
+        super.showAt(x, y);
+        view.highlightNewNotifications();
+        view.markAsSeen();
+    }
+
     //
     // /**
     // *

@@ -11,7 +11,7 @@ import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.gxt3.desktop.widget.Desktop;
 import org.iplantc.de.client.gxt3.views.DEView;
-import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.utils.MessagePoller;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;
@@ -42,6 +42,7 @@ public class DEPresenter implements DEView.Presenter {
         view.drawHeader();
         view.replaceCenterPanel(widget);
         RootPanel.get().add(view.asWidget());
+        initMessagePoller();
     }
 
     private String parseWorkspaceId(String json) {
@@ -51,6 +52,11 @@ public class DEPresenter implements DEView.Presenter {
         UserInfo userInfo = UserInfo.getInstance();
         userInfo.init(obj.toString());
         return userInfo.getWorkspaceId();
+    }
+
+    private void initMessagePoller() {
+        MessagePoller poller = MessagePoller.getInstance();
+        poller.start();
     }
 
     /**

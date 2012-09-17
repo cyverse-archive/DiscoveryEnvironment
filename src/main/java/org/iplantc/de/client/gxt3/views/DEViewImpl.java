@@ -26,19 +26,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.core.client.XTemplates;
-import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -99,7 +96,7 @@ public class DEViewImpl implements DEView {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        // lblNotifications.setCount(ncue.getTotal());
+                        lblNotifications.setCount(ncue.getTotal());
 
                     }
                 });
@@ -114,7 +111,7 @@ public class DEViewImpl implements DEView {
 
     private HorizontalLayoutContainer buildBufferPanel() {
         final HorizontalLayoutContainer buffer = new HorizontalLayoutContainer();
-        buffer.setWidth("47%");
+        buffer.setWidth("37%");
         return buffer;
     }
 
@@ -148,34 +145,20 @@ public class DEViewImpl implements DEView {
         con.setCenterWidget(view, centerData);
     }
 
-    private HtmlLayoutContainer buildHtmlActionsPanel() {
-        MenuContainerLayoutContainerTemplate menu_template = GWT
-                .create(MenuContainerLayoutContainerTemplate.class);
-        HtmlLayoutContainer menuContainer = new HtmlLayoutContainer(menu_template.getTemplate());
-        menuContainer.setWidth("20%");
-        // add user actions menu
-        menuContainer.add(buildActionsMenu(I18N.DISPLAY.help(), 45, buildHelpMenu()), new HtmlData(
-                ".cell2"));
-        menuContainer.add(buildActionsMenu(UserInfo.getInstance().getUsername(), 55, buildUserMenu()),
-                new HtmlData(".cell3"));
-        // // add notification actions menu
-        menuContainer.add(buildNotificationMenu(I18N.DISPLAY.notifications(), 85),
-                new HtmlData(".cell1"));
+    private HorizontalPanel buildHtmlActionsPanel() {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(10);
+        panel.setWidth("20%");
+        panel.add(buildActionsMenu(UserInfo.getInstance().getUsername(), 60, buildUserMenu()));
+        panel.add(buildActionsMenu(I18N.DISPLAY.help(), 60, buildHelpMenu()));
+        panel.add(buildNotificationMenu(I18N.DISPLAY.notifications(), 85));
 
-        return menuContainer;
-    }
-
-    public interface MenuContainerLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<div class=\"cell1\" style =\"width:40%; float:right;padding-top:15px\">"
-                + "</div><div class=\"cell2\" style =\"width:25%;float:right;padding-top:15px\">"
-                + "</div><div class=\"cell3\" style =\"width:25%;float:right;padding-top:15px\"></div>")
-        SafeHtml getTemplate();
+        return panel;
     }
 
     private HorizontalLayoutContainer buildNotificationMenu(String menuHeaderText, int headerWidth) {
         final HorizontalLayoutContainer ret = new HorizontalLayoutContainer();
         lblNotifications = new NotificationIndicator(0);
-        ret.add(lblNotifications);
 
         final PushButton button = new PushButton(menuHeaderText, headerWidth);
         actionsMenu = new ViewNotificationMenu();
@@ -205,11 +188,13 @@ public class DEViewImpl implements DEView {
             public void onClick(ClickEvent arg0) {
                 showNotificationWindow(Category.ALL);
                 showHeaderActionsMenu(ret, actionsMenu);
+                lblNotifications.setCount(0);
             }
         });
 
         button.setImage(new Image(Resources.ICONS.menuAnchor()));
         ret.add(button);
+        ret.add(lblNotifications);
 
         return ret;
     }
