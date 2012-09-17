@@ -12,8 +12,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * An abstract ServletContextListener for services that need to authenticate using CAS and obtain configuration
- * settings using a Clavin client.
+ * An abstract ServletContextListener for services that need to authenticate using CAS and obtain configuration settings
+ * using a Clavin client.
  *
  * @author Dennis Roberts
  */
@@ -40,11 +40,12 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
     }
 
     /**
-     * Allows subclasses to initialize any objects that are required for the servlets that they register.  This
-     * method is designed to be overridden by subclasses, but is implemented as a no-op in this class so that
-     * subclasses don't have to implement it.
+     * Allows subclasses to initialize any objects that are required for the servlets that they register. This method is
+     * designed to be overridden by subclasses, but is implemented as a no-op in this class so that subclasses don't
+     * have to implement it.
      */
-    protected void initialize() {}
+    protected void initialize() {
+    }
 
     /**
      * @return the property placeholder configurer.
@@ -55,7 +56,7 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
     }
 
     /**
-     * Loads any configurations that still need to be loaded.  The configurations are assumed to be stored in a
+     * Loads any configurations that still need to be loaded. The configurations are assumed to be stored in a
      * {@link ClavinPropertyPlaceholderConfigurer} instance.
      *
      * @param configurer the Clavin property placeholder configurer to get the configurations from.
@@ -113,8 +114,8 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
     }
 
     /**
-     * The default servlet provider implementation, which simply returns the servlet that was passed to it
-     * in the constructor.
+     * The default servlet provider implementation, which simply returns the servlet that was passed to it in the
+     * constructor.
      */
     private class DefaultServletProvider implements ServletProvider {
 
@@ -156,7 +157,7 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
         /**
          * The path to the servlet, relative to the context path.
          */
-        String path;
+        String[] paths;
 
         /**
          * @param servlet the servlet to register.
@@ -172,10 +173,10 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
          * @param name the name of the servlet.
          * @param path the path to the servlet, relative to the context path.
          */
-        public ServletRegistrationInfo(ServletProvider servletProvider, String name, String path) {
+        public ServletRegistrationInfo(ServletProvider servletProvider, String name, String... paths) {
             this.servletProvider = servletProvider;
             this.name = name;
-            this.path = path;
+            this.paths = paths;
         }
 
         /**
@@ -184,12 +185,15 @@ public abstract class AbstractServletContextListener extends ContextLoaderListen
          * @param context the servlet context.
          */
         public void register(ServletContext context) {
-            LOG.warn("registering servlet " + name + " at " + path);
+            LOG.warn("registering servlet " + name);
             ServletRegistration.Dynamic reg = context.addServlet(name, servletProvider.getServlet());
             if (reg == null) {
                 throw new ServletRegistrationException(name);
             }
-            reg.addMapping(path);
+            for (String path : paths) {
+                LOG.warn("mapping servlet " + name + " to path " + path);
+                reg.addMapping(path);
+            }
         }
     }
 }
