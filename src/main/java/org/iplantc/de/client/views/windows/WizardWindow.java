@@ -27,12 +27,15 @@ import org.iplantc.de.client.utils.builders.WizardBuilder;
 import org.iplantc.de.client.views.dialogs.AnalysisLaunchDialog;
 import org.iplantc.de.client.views.taskbar.IPlantTaskButton;
 
+import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
@@ -61,7 +64,7 @@ public class WizardWindow extends IPlantWindow {
      * @param tag a unique identifier used as a "window handle."
      */
     public WizardWindow(String tag, WindowConfig config) {
-        super(tag, false, true, false, true);
+        super(tag, false, true, true, true);
 
         tblComponentVals = new ComponentValueTable(new WizardValidationBroadcastStrategy());
         this.config = (WizardWindowConfig)config;
@@ -70,9 +73,8 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void init() {
+        setLayout(new BorderLayout());
         setBorders(false);
-        setShadow(false);
-        setResizable(false);
         setSize(640, 410);
     }
 
@@ -280,18 +282,9 @@ public class WizardWindow extends IPlantWindow {
 
         final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
         final ContentPanel pnlLaunchButton = buildButtonPanel();
-        pnlLaunchButton.addListener(Events.Render, new Listener<BaseEvent>() {
 
-            @Override
-            public void handleEvent(BaseEvent be) {
-                pnlGroupContainer.setSize(getInnerWidth(),
-                        getInnerHeight() - pnlLaunchButton.getHeight());
-
-            }
-        });
-
-        add(pnlGroupContainer);
-        add(pnlLaunchButton);
+        add(pnlGroupContainer, new BorderLayoutData(LayoutRegion.CENTER));
+        add(pnlLaunchButton, new BorderLayoutData(LayoutRegion.SOUTH, 30));
 
         layout();
 

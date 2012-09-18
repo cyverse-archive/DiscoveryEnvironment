@@ -43,6 +43,7 @@ public class WizardBuilder {
         ret.setBorders(false);
         ret.setShadow(false);
         ret.setFrame(false);
+        ret.setScrollMode(Scroll.AUTO);
 
         return ret;
     }
@@ -68,18 +69,12 @@ public class WizardBuilder {
             final ComponentValueTable tblComponentVals, int numGroups) {
         if (group != null) {
             // build the panel for our accordian
-            // final ContentPanel panel = (numGroups == 1) ? new ContentPanel() : new
-            // AccordionChildPanelImpl(group.getId());
             final ContentPanel panel = allocateContentPanel(numGroups, group);
             panel.setScrollMode(Scroll.AUTOY);
-            panel.setAutoHeight(false);
 
             // add an inner panel for formatting purposes
             final VerticalPanel panelInner = new VerticalPanel();
-            panelInner.setAutoHeight(true);
-            panelInner.setWidth(500);
             panelInner.setSpacing(10);
-            panelInner.setAutoHeight(false);
 
             WizardWidgetFactory factory = new WizardWidgetFactory(new DiskResourceSelectorBuilderImpl());
             List<Property> properties = group.getProperties();
@@ -94,7 +89,6 @@ public class WizardBuilder {
             // try to build a widget for each property
             for (Property property : properties) {
                 WizardWidgetPanel widget = factory.build(property, tblComponentVals);
-                widget.setAutoHeight(false);
 
                 // were we able to build a widget?
                 if (widget != null) {
