@@ -111,12 +111,6 @@
 					<include>org/iplantc/de/server/wiki_template</include>
 				</includes>
 			</resource>
-           <resource>
-               <directory>src/main/resources</directory>
-               <includes>
-                   <include>confluence.properties</include>
-               </includes>
-           </resource>
 		</resources>
 	</build>
 	<reporting>

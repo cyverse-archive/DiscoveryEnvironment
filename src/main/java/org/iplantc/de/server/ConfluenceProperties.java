@@ -4,24 +4,25 @@ import java.util.Properties;
 
 
 /**
- * Contains methods for accessing the confluence.properties file.
+ * Contains methods for obtaining information from confluence client configuration settings.
  *
  * @author hariolf
  *
  */
+@SuppressWarnings("nls")
 public class ConfluenceProperties {
 
     // The prefix for all of the properties.
-    private static final String PREFIX = "org.iplantc.discoveryenvironment.confluence"; //$NON-NLS-1$
+    private static final String PREFIX = "org.iplantc.discoveryenvironment.confluence";
 
-    private static final String CONFLUENCE_BASE_URL = PREFIX + ".baseUrl"; //$NON-NLS-1$
-    private static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".parentPageName"; //$NON-NLS-1$
-    private static final String CONFLUENCE_USER = PREFIX + ".user"; //$NON-NLS-1$
-    private static final String CONFLUENCE_PASSWORD = PREFIX + ".password"; //$NON-NLS-1$
-    private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".spaceName"; //$NON-NLS-1$
-    private static final String CONFLUENCE_SPACE_URL = PREFIX + ".spaceUrl"; //$NON-NLS-1$
+    private static final String CONFLUENCE_BASE_URL = PREFIX + ".baseUrl";
+    private static final String CONFLUENCE_PARENT_PAGE = PREFIX + ".parentPageName";
+    private static final String CONFLUENCE_USER = PREFIX + ".user";
+    private static final String CONFLUENCE_PASSWORD = PREFIX + ".password";
+    private static final String CONFLUENCE_SPACE_NAME = PREFIX + ".spaceName";
+    private static final String CONFLUENCE_SPACE_URL = PREFIX + ".spaceUrl";
     /** this is an internationalized string #translate #i18n */
-    private static final String CONFLUENCE_COMMENT_SUFFIX = PREFIX + ".ratingCommentSuffix"; //$NON-NLS-1$
+    private static final String CONFLUENCE_COMMENT_SUFFIX = PREFIX + ".ratingCommentSuffix";
     private Properties properties;
 
     /**
@@ -49,8 +50,8 @@ public class ConfluenceProperties {
     private void validateProperties(String[] propertyNames) {
         for (String propertyName : propertyNames) {
             String propertyValue = properties.getProperty(propertyName);
-            if (propertyValue == null || propertyValue.equals("")) { //$NON-NLS-1$
-                throw new RuntimeException("missing required property: " + propertyName); //$NON-NLS-1$
+            if (propertyValue == null || propertyValue.equals("")) {
+                throw new RuntimeException("missing required property: " + propertyName);
             }
         }
     }

@@ -14,9 +14,9 @@ import com.martiansoftware.jsap.JSAP;
 
 /**
  * A subclass of ConfluenceClient that adds methods for adding and updating tool ratings.
- * 
+ *
  * @author hariolf
- * 
+ *
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
     private static final Logger LOG = Logger.getLogger(IPlantConfluenceClient.class);
@@ -24,8 +24,8 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     private final ConfluenceProperties properties;
 
     /**
-     * Creates a new instance and initializes address/user/password from a .properties file.
-     * 
+     * Creates a new instance and initializes address/user/password from a {@link Properties} instance.
+     *
      * @param properties
      * @param authToken a token for an active Confluence session, or null if not already logged in
      * @throws ClientException
@@ -40,7 +40,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
 
     /**
      * Creates a new page in the iPlant wiki as a child of the "List of Applications" page.
-     * 
+     *
      * @param title the page title
      * @param content the page content
      * @return
@@ -124,7 +124,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
     /**
      * Adds a comment to an existing Confluence page and returns an object containing the new comment's
      * ID, etc.
-     * 
+     *
      * @param space the Confluence space the page lives in
      * @param pageTitle the title of the page to add a comment to
      * @param text the comment text
@@ -154,7 +154,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
 
     /**
      * Changes an existing comment.
-     * 
+     *
      * @param commentId the comment's ID in Confluence
      * @param newText the new comment; must have the correct ID and service address set
      * @throws RemoteException
@@ -177,7 +177,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
 
     /**
      * Removes a comment
-     * 
+     *
      * @param commentId the comment's ID in Confluence
      * @throws RemoteException
      * @throws ClientException
@@ -194,7 +194,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
 
     /**
      * Retrieves a comment from a Confluence page.
-     * 
+     *
      * @param commentId the comment ID in Confluence
      * @return the comment text
      * @throws ClientException
@@ -211,7 +211,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
 
     /**
      * Logs a user into Confluence and sets the authentication token.
-     * 
+     *
      * @throws ClientException
      */
     private void iplantLogin() throws ClientException {
