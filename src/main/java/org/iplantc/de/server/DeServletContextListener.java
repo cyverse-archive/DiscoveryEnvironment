@@ -45,6 +45,11 @@ public class DeServletContextListener extends AbstractServletContextListener {
     private IplantEmailClient iplantEmailClient;
 
     /**
+     * An object that can be used to easily retrieve some configuration settings.
+     */
+    private DiscoveryEnvironmentProperties deProps;
+
+    /**
      * Servlet registration information.
      */
     private ServletRegistrationInfo[] regInfo = {
@@ -63,14 +68,14 @@ public class DeServletContextListener extends AbstractServletContextListener {
         // The servlet used to manage file uploads.
         new ServletRegistrationInfo(new ServletProvider() {
             @Override public Servlet getServlet() {
-                return new FileUploadServlet(serviceCallResolver);
+                return new FileUploadServlet(serviceCallResolver, deProps);
             }
         }, "fileUploadServlet", "*.gupld"),
 
         // The servlet used to manage file downloads.
         new ServletRegistrationInfo(new ServletProvider() {
             @Override public Servlet getServlet() {
-                return new FileDownloadServlet(serviceCallResolver);
+                return new FileDownloadServlet(serviceCallResolver, deProps);
             }
         }, "fileDownloadServlet", "*.gdwnld"),
 
@@ -117,7 +122,11 @@ public class DeServletContextListener extends AbstractServletContextListener {
         new ServletRegistrationInfo(new JUnitHostImpl(), "jUnitHostImpl", "/discoveryenvironment/junithost"),
 
         // A servlet to provide information about the application.
-        new ServletRegistrationInfo(new AboutApplicationServlet(), "aboutAppServlet", "/discoveryenvironment/about"),
+        new ServletRegistrationInfo(new ServletProvider() {
+            @Override public Servlet getServlet() {
+                return new AboutApplicationServlet(deProps);
+            }
+        }, "aboutAppServlet", "/discoveryenvironment/about"),
 
         // A servlet to provide an interface to Confluence.
         new ServletRegistrationInfo(new ServletProvider() {
@@ -172,5 +181,6 @@ public class DeServletContextListener extends AbstractServletContextListener {
     protected void initialize() {
         serviceCallResolver = new DefaultServiceCallResolver(deConfig);
         iplantEmailClient = new IplantEmailClient(deConfig.getProperty(EMAIL_BASE_PROPERTY));
+        deProps = new DiscoveryEnvironmentProperties(deConfig);
     }
 }

@@ -18,7 +18,7 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
  */
 @SuppressWarnings({"serial", "nls"})
 public class FileDownloadServlet extends HttpServlet {
-    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"}; //$NON-NLS-1$
+    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
     private static final Logger LOG = Logger.getLogger(FileDownloadServlet.class);
 
@@ -28,10 +28,17 @@ public class FileDownloadServlet extends HttpServlet {
     private final ServiceCallResolver serviceResolver;
 
     /**
-     * @param serviceResolver used to resolve aliased service calls.
+     * Used to obtain some configuration settings.
      */
-    public FileDownloadServlet(ServiceCallResolver serviceResolver) {
+    private final DiscoveryEnvironmentProperties deProps;
+
+    /**
+     * @param serviceResolver used to resolve aliased service calls.
+     * @param deProps used to obtain some configuration settings.
+     */
+    public FileDownloadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
         this.serviceResolver = serviceResolver;
+        this.deProps = deProps;
     }
 
     /**
@@ -92,7 +99,7 @@ public class FileDownloadServlet extends HttpServlet {
      */
     private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
         String contentType = fileContents.getContentType();
-        response.setContentType(contentType == null ? "" : contentType); //$NON-NLS-1$
+        response.setContentType(contentType == null ? "" : contentType);
 
         for (String fieldName : HEADER_FIELDS_TO_COPY) {
             response.setHeader(fieldName, fileContents.getHeaderField(fieldName));
@@ -125,22 +132,22 @@ public class FileDownloadServlet extends HttpServlet {
      * @throws UnsupportedEncodingException
      */
     private String buildRequestAddress(HttpServletRequest request) throws UnsupportedEncodingException {
-        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8");
 
-        String attachment = request.getParameter("attachment"); //$NON-NLS-1$
+        String attachment = request.getParameter("attachment");
         if (attachment == null) {
-            attachment = "1"; //$NON-NLS-1$
+            attachment = "1";
         }
-        attachment = URLEncoder.encode(attachment, "UTF-8"); //$NON-NLS-1$
+        attachment = URLEncoder.encode(attachment, "UTF-8");
 
-        String downloadUrl = request.getParameter("url"); //$NON-NLS-1$
+        String downloadUrl = request.getParameter("url");
         if (downloadUrl == null) {
-            downloadUrl = DiscoveryEnvironmentProperties.getDownloadFileServiceBaseUrl();
+            downloadUrl = deProps.getDownloadFileServiceBaseUrl();
         } else {
-            downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + downloadUrl;
+            downloadUrl = deProps.getDataMgmtServiceBaseUrl() + downloadUrl;
         }
 
-        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment); //$NON-NLS-1$
+        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment);
         LOG.debug(address);
 
         return address;

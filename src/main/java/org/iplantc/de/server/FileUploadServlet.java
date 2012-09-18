@@ -19,12 +19,11 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 /**
  * A class to accept files from the client.
- * 
+ *
  * This class extends the UploadAction class provided by the GWT Upload library. The executeAction method
  * must be overridden for custom behavior.
- * 
+ *
  * @author sriram
- * 
  */
 @SuppressWarnings("nls")
 public class FileUploadServlet extends UploadAction {
@@ -38,18 +37,25 @@ public class FileUploadServlet extends UploadAction {
     /**
      * Used to resolve aliased service calls.
      */
-    private ServiceCallResolver serviceResolver;
+    private final ServiceCallResolver serviceResolver;
+
+    /**
+     * Used to obtain some configuration settings.
+     */
+    private final DiscoveryEnvironmentProperties deProps;
 
     /**
      * @param serviceResolver used to resolve aliased service calls.
+     * @param deProps used to obtain some configuration settings.
      */
-    public FileUploadServlet(ServiceCallResolver serviceResolver) {
+    public FileUploadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
         this.serviceResolver = serviceResolver;
+        this.deProps = deProps;
     }
 
     /**
      * Performs the necessary operations for an upload action.
-     * 
+     *
      * @param request the HTTP request associated with the action.
      * @param sessionFiles the file associated with the action.
      * @return a string representing data in JSON format.
@@ -101,7 +107,7 @@ public class FileUploadServlet extends UploadAction {
 
     /**
      * Handles the invocation of the file upload service.
-     * 
+     *
      * @param request current HTTP request
      * @param idFolder the folder identifier for where the file will be related
      * @param user the name of the user account that is uploading the file
@@ -233,7 +239,7 @@ public class FileUploadServlet extends UploadAction {
 
     /**
      * Constructs and configures a multi-part service wrapper.
-     * 
+     *
      * @param idFolder the folder identifier for where the file will be related
      * @param user the name of the user account that is uploading the file
      * @param type the file type. It can be AUTO or CSVNAMELIST
@@ -247,7 +253,7 @@ public class FileUploadServlet extends UploadAction {
         // TODO: Should there be a FileServices class that is wrapping all of
         // this like
         // FolderServices/etc.???
-        String address = DiscoveryEnvironmentProperties.getUploadFileServiceBaseUrl();
+        String address = deProps.getUploadFileServiceBaseUrl();
 
         // build our wrapper
         MultiPartServiceWrapper wrapper = new MultiPartServiceWrapper(MultiPartServiceWrapper.Type.POST,
@@ -261,7 +267,7 @@ public class FileUploadServlet extends UploadAction {
 
     private ServiceCallWrapper createUrlServiceWrapper(String idFolder, String user, String type,
             String filename, String url) {
-        String address = DiscoveryEnvironmentProperties.getUrlImportServiceBaseUrl();
+        String address = deProps.getUrlImportServiceBaseUrl();
 
         JSONObject body = new JSONObject();
         body.put("dest", idFolder + "/" + filename);
@@ -272,7 +278,7 @@ public class FileUploadServlet extends UploadAction {
 
     /**
      * Determines if sufficient data is present to perform an action.
-     * 
+     *
      * @param user the name of the user account that is uploading the file
      * @param idFolder the folder identifier for where the file will be related
      * @param fileItems a list of files to be uploaded
