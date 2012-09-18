@@ -2,40 +2,8 @@
 <!DOCTYPE web-app
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
+
 <web-app>
-    <context-param>
-        <param-name>appPropertyFile</param-name>
-        <param-value>discoveryenvironment.properties</param-value>
-    </context-param>
-    <context-param>
-        <param-name>appPropertyPrefix</param-name>
-        <param-value>org.iplantc.discoveryenvironment</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.initial-page</param-name>
-        <param-value>#workspace</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.properties</param-name>
-        <param-value>/discoveryenvironment.properties</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.properties.confluence</param-name>
-        <param-value>/confluence.properties</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.logout-url</param-name>
-        <param-value>https://cas-server.iplantcollaborative.org/cas/logout</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.logout-forward</param-name>
-        <param-value>http://iplantcollaborative.org</param-value>
-    </context-param>
-    <context-param>
-        <!-- max size of the upload request -->
-        <param-name>maxSize</param-name>
-        <param-value>2040109465</param-value>
-    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -43,43 +11,18 @@
             /WEB-INF/classes/de-security.xml
         </param-value>
     </context-param>
+
     <!-- Filters -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <!-- Filter Mapping Definitions -->
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!-- Servlets -->
-    <servlet>
-        <servlet-name>emailServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>toolSubmitServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.NewToolRequestServlet</servlet-class>
-    </servlet>
-
-    <!-- Servlet Mapping Definitions -->
-    <servlet-mapping>
-        <servlet-name>emailServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/email</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/empty</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>toolSubmitServlet</servlet-name>
-        <url-pattern>/tito/new_tool_request</url-pattern>
-    </servlet-mapping>
 
     <session-config>
         <session-timeout>60</session-timeout>

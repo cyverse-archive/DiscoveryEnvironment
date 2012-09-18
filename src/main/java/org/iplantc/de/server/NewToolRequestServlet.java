@@ -2,9 +2,11 @@ package org.iplantc.de.server;
 
 import gwtupload.server.exceptions.UploadActionException;
 import java.util.List;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.iplantc.de.server.service.IplantEmailClient;
 
 /**
  * A class to accept files from the client.
@@ -24,8 +26,25 @@ public class NewToolRequestServlet extends UploadServlet {
      */
     private static Logger LOG = Logger.getLogger(NewToolRequestServlet.class);
 
-    public NewToolRequestServlet(ServiceCallResolver serviceResolver) {
+    /**
+     * The configuration settings for the application.
+     */
+    private final Properties props;
+
+    /**
+     * Used to communicate with the iPlant e-mail service.
+     */
+    private final IplantEmailClient emailClient;
+
+    /**
+     * @param serviceResolver used to resolve calls to aliased services.
+     * @param props the configuration settings for the application.
+     * @param emailClient the client used to communicate with the iPlant e-mail service.
+     */
+    public NewToolRequestServlet(ServiceCallResolver serviceResolver, Properties props, IplantEmailClient emailClient) {
         super(serviceResolver);
+        this.props = props;
+        this.emailClient = emailClient;
     }
 
     /**
@@ -42,7 +61,7 @@ public class NewToolRequestServlet extends UploadServlet {
 
         if (!jsonErrors.containsKey("error")) {
             try {
-                SimpleMessageSender msgSender = new SimpleMessageSender();
+                SimpleMessageSender msgSender = new SimpleMessageSender(props, emailClient);
                 LOG.debug("executeAction - Attempting to send email.");
                 msgSender.send(user, email, jsonInfo.toString(2));
 
@@ -51,7 +70,6 @@ public class NewToolRequestServlet extends UploadServlet {
                 LOG.error(
                         "executeAction - Exception while sending email to support about tool request.",
                         e);
-                e.printStackTrace();
                 jsonErrors.put("error", e.getMessage() == null ? e.toString() : e.getMessage());
             }
         }
@@ -63,5 +81,4 @@ public class NewToolRequestServlet extends UploadServlet {
 
         return jsonErrors.toString();
     }
-
 }

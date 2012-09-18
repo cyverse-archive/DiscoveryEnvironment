@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.servlet.Servlet;
 import org.iplantc.clavin.spring.AbstractServletContextListener;
 import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
+import org.iplantc.de.server.service.IplantEmailClient;
 
 /**
  * A Servlet context listener written specifically for the DE.
@@ -17,6 +18,11 @@ public class DeServletContextListener extends AbstractServletContextListener {
      * The prefix for property names in the application configuration settings.
      */
     private static final String PROPERTY_NAME_PREFIX = "org.iplantc.discoveryenvironment";
+
+    /**
+     * The name of the property used to store the base URL for the iPlant e-mail service.
+     */
+    private static final String EMAIL_BASE_PROPERTY = "org.iplantc.services.email-base";
 
     /**
      * The Discovery Environment configuration settings.
@@ -32,6 +38,11 @@ public class DeServletContextListener extends AbstractServletContextListener {
      * A service call resolver used in several dispatcher services.
      */
     private ServiceCallResolver serviceCallResolver;
+
+    /**
+     * A client used to communicate with the iPlant e-mail service.
+     */
+    private IplantEmailClient iplantEmailClient;
 
     /**
      * Servlet registration information.
@@ -113,7 +124,24 @@ public class DeServletContextListener extends AbstractServletContextListener {
             @Override public Servlet getServlet() {
                 return new ConfluenceServlet(confluenceConfig);
             }
-        }, "confluenceServlet", "/discoveryenvironment/confluence")
+        }, "confluenceServlet", "/discoveryenvironment/confluence"),
+
+        // A servlet used to send e-mail messages.
+        new ServletRegistrationInfo(new ServletProvider() {
+            @Override public Servlet getServlet() {
+                return new EmailServlet(iplantEmailClient);
+            }
+        }, "emailServlet", "/discoveryenvironment/email"),
+
+        // A servlet that always returns an empty response, which is useful for keepalive pings.
+        new ServletRegistrationInfo(new EmptyResponseServlet(), "emptyResponseServlet", "/discoveryenvironment/empty"),
+
+        // A servlet used to submit requests for new tools to be installed.
+        new ServletRegistrationInfo(new ServletProvider() {
+            @Override public Servlet getServlet() {
+                return new NewToolRequestServlet(serviceCallResolver, deConfig, iplantEmailClient);
+            }
+        }, "toolSubmitServlet", "/tito/new_tool_request")
     };
 
     /**
@@ -143,5 +171,6 @@ public class DeServletContextListener extends AbstractServletContextListener {
     @Override
     protected void initialize() {
         serviceCallResolver = new DefaultServiceCallResolver(deConfig);
+        iplantEmailClient = new IplantEmailClient(deConfig.getProperty(EMAIL_BASE_PROPERTY));
     }
 }
