@@ -9,6 +9,7 @@ import org.iplantc.de.server.CasServiceDispatcher;
 import org.iplantc.de.server.CasSessionInitializationServlet;
 import org.iplantc.de.server.ConfluenceServlet;
 import org.iplantc.de.server.DefaultServiceCallResolver;
+import org.iplantc.de.server.EmptyResponseServlet;
 import org.iplantc.de.server.PropertyServlet;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.SessionManagementServlet;
@@ -87,7 +88,10 @@ public class BelphegorServletContextListener extends AbstractServletContextListe
             @Override public Servlet getServlet() {
                 return new ConfluenceServlet(confluenceConfig);
             }
-        }, "confluenceServlet", "/discoveryenvironment/confluence", "/belphegor/confluence")
+        }, "confluenceServlet", "/discoveryenvironment/confluence", "/belphegor/confluence"),
+
+        // A servlet that always returns an empty response, which is useful for keepalive pings.
+        new ServletRegistrationInfo(new EmptyResponseServlet(), "emptyResponseServlet", "/belphegor/empty")
     };
 
     /**

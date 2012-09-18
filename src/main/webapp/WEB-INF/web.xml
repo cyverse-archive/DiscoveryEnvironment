@@ -5,22 +5,6 @@
 
 <web-app>
     <context-param>
-        <param-name>appPropertyFile</param-name>
-        <param-value>belphegor.properties</param-value>
-    </context-param>
-    <context-param>
-        <param-name>appPropertyPrefix</param-name>
-        <param-value>org.iplantc.belphegor</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.initial-page</param-name>
-        <param-value></param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.properties.confluence</param-name>
-        <param-value>/belphegor-confluence.properties</param-value>
-    </context-param>
-    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/classes/belphegor-base.xml
@@ -41,20 +25,8 @@
     </filter-mapping>
 
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
-
-    <servlet>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <url-pattern>/belphegor/empty</url-pattern>
-    </servlet-mapping>
 
     <listener>
         <listener-class>org.iplantc.belphegor.server.BelphegorServletContextListener</listener-class>
@@ -64,5 +36,4 @@
     <welcome-file-list>
         <welcome-file>belphegor.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>
