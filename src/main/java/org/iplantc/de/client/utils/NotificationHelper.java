@@ -63,10 +63,6 @@ public class NotificationHelper {
     }
 
     private static NotificationHelper instance = null;
-
-    private DataContextBuilder dataContextBuilder;
-    private AnalysisContextBuilder analysisContextBuilder;
-
     private DataViewContextExecutor dataContextExecutor;
     private AnalysisViewContextExecutor analysisContextExecutor;
 
@@ -116,9 +112,8 @@ public class NotificationHelper {
         return instance;
     }
 
-    private void doDelete(final List<Notification> notifications, final JSONObject json,
-            final Command callback) {
-        if (notifications != null && json != null) {
+    private void doDelete(final JSONObject json, final Command callback) {
+        if (json != null) {
             Services.MESSAGE_SERVICE.deleteMessages(json, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
@@ -141,18 +136,18 @@ public class NotificationHelper {
      * 
      * @param notifications notifications to be deleted.
      */
-    public void delete(final List<Notification> notifications, Command callback) {
+    public void delete(final List<NotificationMessage> notifications, Command callback) {
         // do we have any notifications to delete?
         if (notifications != null && !notifications.isEmpty()) {
             JSONObject obj = new JSONObject();
             JSONArray arr = new JSONArray();
             int i = 0;
-            for (Notification n : notifications) {
+            for (NotificationMessage n : notifications) {
                 arr.set(i++, new JSONString(n.getId()));
             }
             obj.put("uuids", arr);
 
-            doDelete(notifications, obj, callback);
+            doDelete(obj, callback);
         }
     }
 

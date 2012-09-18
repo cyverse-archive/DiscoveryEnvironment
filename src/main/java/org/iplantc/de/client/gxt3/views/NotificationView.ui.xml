@@ -1,10 +1,16 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar" 
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+	
+   <ui:with type="org.iplantc.core.uiapplications.client.images.Icons" field="icons"/>
+   <ui:with type="org.iplantc.core.uiapplications.client.CommonAppDisplayStrings" field="strings" />
 
 	<!-- Main Panel -->
 	<ui:with field="listStore" type="com.sencha.gxt.data.shared.ListStore" />
@@ -24,7 +30,9 @@
 	</ui:with>
 	<ui:with field="northData"
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-		<ui:attributes size="150" hidden="true" />
+		  <ui:attributes size="30"
+                     maxSize="30"
+                     hidden="false"/>
 	</ui:with>
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
@@ -48,14 +56,11 @@
 				ui:field="con" borders="true">
 				<!-- This is the tool bar -->
 				<container:north layoutData="{northData}">
-					<gxt:ContentPanel>
-						<!-- TODO Implement the upper toolbar -->
-					</gxt:ContentPanel>
 				</container:north>
 				<!-- This is the main panel -->
 				<container:center layoutData="{centerData}">
 					<gxt:FramedPanel ui:field="mainPanel"
-						pixelSize="600, 300" collapsible="true">
+						pixelSize="600, 300" collapsible="false" headerVisible="false">
 						<container:VerticalLayoutContainer borders="true">
 							<container:child layoutData="{middleData}">
 								<grid:Grid ui:field="grid" cm="{cm}" store="{listStore}"
