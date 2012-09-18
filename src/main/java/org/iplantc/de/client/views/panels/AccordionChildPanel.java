@@ -31,7 +31,6 @@ public class AccordionChildPanel extends ContentPanel {
      */
     public AccordionChildPanel(String id) {
         setId(id);
-        setAutoHeight(true);
         collapse = new ToolButton("x-tool-collapse"); //$NON-NLS-1$
         collapse.setToolTip(I18N.DISPLAY.hide());
         expand = new ToolButton("x-tool-expand"); //$NON-NLS-1$
@@ -95,12 +94,14 @@ public class AccordionChildPanel extends ContentPanel {
 
         // add listeners to this panel
         this.addListener(Events.Expand, new Listener<BaseEvent>() {
+            @Override
             public void handleEvent(BaseEvent be) {
                 handleExpandEvent();
             }
         });
 
         this.addListener(Events.Collapse, new Listener<BaseEvent>() {
+            @Override
             public void handleEvent(BaseEvent be) {
                 handleCollapseEvent();
             }
