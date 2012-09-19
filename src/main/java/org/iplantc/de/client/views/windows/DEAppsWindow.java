@@ -58,12 +58,12 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         CatalogWindowConfig configData = new CatalogWindowConfig(config);
         storeWindowViewState(configData);
 
-        if (presenter.getSelectedAnalysis() != null) {
-            configData.setAppId(presenter.getSelectedAnalysis().getId());
+        if (presenter.getSelectedApp() != null) {
+            configData.setAppId(presenter.getSelectedApp().getId());
         }
 
-        if (presenter.getSelectedAnalysisGroup() != null) {
-            configData.setCategoryId(presenter.getSelectedAnalysisGroup().getId());
+        if (presenter.getSelectedAppGroup() != null) {
+            configData.setCategoryId(presenter.getSelectedAppGroup().getId());
         }
 
         // Build window config
