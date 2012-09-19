@@ -57,10 +57,10 @@
     
     <!-- ui-applications deferred binding rules -->
     <replace-with class="org.iplantc.de.client.services.impl.TemplateServiceFacade">
-      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade"/>
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppUserServiceFacade"/>
    </replace-with>
    <replace-with class="org.iplantc.de.client.services.impl.TemplateServiceFacade">
-      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade"/>
+      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppServiceFacade"/>
    </replace-with>
 
 	<!-- Specify the app entry point class.                         -->

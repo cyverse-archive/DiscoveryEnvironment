@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.tito.client.TitoPanel;
-import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppDeleteEvent;
+import org.iplantc.core.uiapplications.client.events.handlers.AppDeleteEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
@@ -52,9 +52,9 @@ public class TitoWindow extends IPlantWindow {
 
         handlers = new ArrayList<HandlerRegistration>();
 
-        handlers.add(eventbus.addHandler(AnalysisDeleteEvent.TYPE, new AnalysisDeleteEventHandler() {
+        handlers.add(eventbus.addHandler(AppDeleteEvent.TYPE, new AppDeleteEventHandler() {
             @Override
-            public void onDelete(AnalysisDeleteEvent ade) {
+            public void onDelete(AppDeleteEvent ade) {
                 if (tito != null && ade.getId() != null && ade.getId().equals(tito.getId())) {
                     hide();
                 }

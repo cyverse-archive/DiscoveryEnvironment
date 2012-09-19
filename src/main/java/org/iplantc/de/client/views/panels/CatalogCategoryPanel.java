@@ -1,8 +1,8 @@
 package org.iplantc.de.client.views.panels;
 
-import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
-import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppGroupCountUpdateEvent;
+import org.iplantc.core.uiapplications.client.events.AppGroupCountUpdateEvent.AppGroupType;
+import org.iplantc.core.uiapplications.client.events.handlers.AppGroupCountUpdateEventHandler;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -40,10 +40,10 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
     @Override
     protected void initListeners() {
         super.initListeners();
-        EventBus.getInstance().addHandler(AnalysisGroupCountUpdateEvent.TYPE,
-                new AnalysisGroupCountUpdateEventHandler() {
+        EventBus.getInstance().addHandler(AppGroupCountUpdateEvent.TYPE,
+                new AppGroupCountUpdateEventHandler() {
                     @Override
-                    public void onGroupCountUpdate(AnalysisGroupCountUpdateEvent event) {
+                    public void onGroupCountUpdate(AppGroupCountUpdateEvent event) {
                         updadteGroupDisplayName(event);
                     }
                 });
@@ -56,11 +56,11 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
      * 
      * @param event
      */
-    private void updadteGroupDisplayName(AnalysisGroupCountUpdateEvent event) {
+    private void updadteGroupDisplayName(AppGroupCountUpdateEvent event) {
         AnalysisGroup groupCurrent = (AnalysisGroup)categoryPanel.getSelectionModel().getSelectedItem();
         AnalysisGroup groupDevelopment = getGroupBy(AnalysisGroup.NAME, getCategoryNameDev());
 
-        if (event.getAnalysisGroupType() == AnalysisGroupType.BETA) {
+        if (event.getAppGroupType() == AppGroupType.BETA) {
             // Increment the Beta category count
             AnalysisGroup groupBeta = getGroupBy(AnalysisGroup.ID, getBetaCategoryById());
             updateCountAndView(groupCurrent, groupBeta, true);
@@ -68,7 +68,7 @@ public class CatalogCategoryPanel extends AbstractCatalogCategoryPanel {
             // Always update the Dev category count here, since an App was moved from Dev to Beta.
             updateCountAndView(groupCurrent, groupDevelopment, event.isIncrement());
 
-        } else if (event.getAnalysisGroupType() == AnalysisGroupType.FAVORITES) {
+        } else if (event.getAppGroupType() == AppGroupType.FAVORITES) {
             // Update the Favorites category count
             AnalysisGroup groupFavorites = getGroupBy(AnalysisGroup.NAME, getCategoryNameFav());
             updateCountAndView(groupCurrent, groupFavorites, event.isIncrement());

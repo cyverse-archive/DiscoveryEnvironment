@@ -2,7 +2,7 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.client.pipelines.views.panels.PipelineEditorPanel;
 import org.iplantc.core.uiapplications.client.Services;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uiapplications.client.views.panels.AbstractCatalogCategoryPanel;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -26,7 +26,7 @@ public class PipelineEditorWindow extends IPlantWindow {
     private AbstractCatalogCategoryPanel categoryPanel;
     private WindowConfig config;
 
-    private final AppTemplateServiceFacade templateService = Services.TEMPLATE_SERVICE;
+    private final AppServiceFacade templateService = Services.APP_SERVICE;
 
     public PipelineEditorWindow(String tag) {
         super(tag);
@@ -48,7 +48,7 @@ public class PipelineEditorWindow extends IPlantWindow {
     }
 
     private void getData() {
-        templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        templateService.getAppGroups(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
