@@ -1,6 +1,5 @@
 package org.iplantc.de.server;
 
-import com.google.gwt.junit.server.JUnitHostImpl;
 import java.util.Properties;
 import javax.servlet.Servlet;
 import org.iplantc.clavin.spring.AbstractServletContextListener;
@@ -117,9 +116,6 @@ public class DeServletContextListener extends AbstractServletContextListener {
                 return new PropertyServlet(deConfig);
             }
         }, "propertyServlet", "/discoveryenvironment/properties"),
-
-        // A servlet to provide a mock host for unit testing.
-        new ServletRegistrationInfo(new JUnitHostImpl(), "jUnitHostImpl", "/discoveryenvironment/junithost"),
 
         // A servlet to provide information about the application.
         new ServletRegistrationInfo(new ServletProvider() {
