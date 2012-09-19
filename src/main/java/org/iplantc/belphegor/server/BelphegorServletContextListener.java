@@ -74,7 +74,7 @@ public class BelphegorServletContextListener extends AbstractServletContextListe
 
         // A servlet to manage user sessions.
         new ServletRegistrationInfo(new SessionManagementServlet(), "sessionManagementServlet",
-            "/discoveryenvironment/sessionmanagement"),
+            "/belphegor/sessionmanagement"),
 
         // A servlet to return configuration properties to the UI.
         new ServletRegistrationInfo(new ServletProvider() {
