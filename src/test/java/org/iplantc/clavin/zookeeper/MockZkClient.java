@@ -19,6 +19,16 @@ public class MockZkClient extends AbstractZkClient {
     private Map<String, String> nodes = new HashMap<String, String>();
 
     /**
+     * Establishes the connection.  In the mock implementation of this interface, this is a no-op.
+     */
+    public void connect() {}
+
+    /**
+     * Drops the connection.  In the mock implementation of this interface, this is a no-op.
+     */
+    public void disconnect() {}
+
+    /**
      * Adds a node to the mock Zookeeper instance.
      *
      * @param path the path to the node.

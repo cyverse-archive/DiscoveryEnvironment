@@ -84,9 +84,15 @@ public class ZkClientImplTest {
      */
     @Test
     public void testGetChildren() {
-        Set<String> actual = ImmutableSet.copyOf(client.getChildren("/foo/bar/baz/quux"));
-        Set<String> expected = ImmutableSet.copyOf(Arrays.asList("node1", "node2", "node3"));
-        assertEquals(expected, actual);
+        try {
+            client.connect();
+            Set<String> actual = ImmutableSet.copyOf(client.getChildren("/foo/bar/baz/quux"));
+            Set<String> expected = ImmutableSet.copyOf(Arrays.asList("node1", "node2", "node3"));
+            assertEquals(expected, actual);
+        }
+        finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -94,7 +100,13 @@ public class ZkClientImplTest {
      */
     @Test(expected = ChildListException.class)
     public void getChildrenShouldHandleMissingNode() {
-        client.getChildren("/i/dont/exist");
+        try {
+            client.connect();
+            client.getChildren("/i/dont/exist");
+        }
+        finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -102,12 +114,18 @@ public class ZkClientImplTest {
      */
     @Test
     public void testReadNode() {
-        assertEquals("node1-value", client.readNode("/foo/bar/baz/quux/node1"));
-        assertEquals("node2-value", client.readNode("/foo/bar/baz/quux/node2"));
-        assertEquals("node3-value", client.readNode("/foo/bar/baz/quux/node3"));
-        assertEquals("node1-value", client.readNode("/foo/bar/baz/quux", "node1"));
-        assertEquals("node2-value", client.readNode("/foo/bar/baz/quux", "node2"));
-        assertEquals("node3-value", client.readNode("/foo/bar/baz/quux", "node3"));
+        try {
+            client.connect();
+            assertEquals("node1-value", client.readNode("/foo/bar/baz/quux/node1"));
+            assertEquals("node2-value", client.readNode("/foo/bar/baz/quux/node2"));
+            assertEquals("node3-value", client.readNode("/foo/bar/baz/quux/node3"));
+            assertEquals("node1-value", client.readNode("/foo/bar/baz/quux", "node1"));
+            assertEquals("node2-value", client.readNode("/foo/bar/baz/quux", "node2"));
+            assertEquals("node3-value", client.readNode("/foo/bar/baz/quux", "node3"));
+        }
+        finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -115,6 +133,12 @@ public class ZkClientImplTest {
      */
     @Test(expected = ReadNodeException.class)
     public void readNodeShouldHandleMissingNode() {
-        client.readNode("/i/dont/exist");
+        try {
+            client.connect();
+            client.readNode("/i/dont/exist");
+        }
+        finally {
+            client.disconnect();
+        }
     }
 }

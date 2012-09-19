@@ -5,11 +5,11 @@ import java.net.UnknownHostException;
 
 /**
  * Utility methods used to obtain information about the local host.
- * 
+ *
  * @author Dennis Roberts
  */
 public class HostUtils {
-    
+
     /**
      * Prevent instantiation.
      */
@@ -21,7 +21,7 @@ public class HostUtils {
      */
     public static String getIpAddress() throws IpAddressNotFoundException {
         try {
-           return InetAddress.getLocalHost().toString();
+           return InetAddress.getLocalHost().getHostAddress();
         }
         catch (UnknownHostException e) {
             throw new IpAddressNotFoundException(e);

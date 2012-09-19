@@ -51,11 +51,12 @@ public class ZookeeperClavinClient implements ClavinClient {
 
     /**
      * Validates the given deployment by ensuring that it's not null.
+     *
      * @param serviceName the name of the service.
      * @param deployment the deployment to validate.
      * @throws ServiceNotPermittedException if the service is not permitted to run on the current host.
-    */
-    public void validateDeployment(String serviceName, String deployment) throws ServiceNotPermittedException {
+     */
+    private void validateDeployment(String serviceName, String deployment) throws ServiceNotPermittedException {
         if (getDeployment() == null) {
             throw new ServiceNotPermittedException(serviceName, HostUtils.getIpAddress());
         }
@@ -68,7 +69,13 @@ public class ZookeeperClavinClient implements ClavinClient {
      * @throws ServiceNotPermittedException if the service is not permitted to run on the current host.
      */
     public void validateService(String serviceName) throws ServiceNotPermittedException {
-        validateDeployment(serviceName, getDeployment());
+        try {
+            client.connect();
+            validateDeployment(serviceName, getDeployment());
+        }
+        finally {
+            client.disconnect();
+        }
     }
 
     /**
@@ -79,13 +86,19 @@ public class ZookeeperClavinClient implements ClavinClient {
      * @throws ClavinException if the properties can't be loaded.
      */
     public Properties loadProperties(String serviceName) throws ClavinException {
-        final String deployment = getDeployment();
-        validateDeployment(serviceName, deployment);
-        final String path = "/" + deployment.replace('.', '/') + "/" + serviceName;
-        Properties props = new Properties();
-        for (String key : client.getChildren(path)) {
-            props.setProperty(key, client.readNode(path, key));
+        try {
+            client.connect();
+            final String deployment = getDeployment();
+            validateDeployment(serviceName, deployment);
+            final String path = "/" + deployment.replace('.', '/') + "/" + serviceName;
+            Properties props = new Properties();
+            for (String key : client.getChildren(path)) {
+                props.setProperty(key, client.readNode(path, key));
+            }
+            return props;
         }
-        return props;
+        finally {
+            client.disconnect();
+        }
     }
 }

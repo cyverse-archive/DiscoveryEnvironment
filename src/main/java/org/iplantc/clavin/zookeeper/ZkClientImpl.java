@@ -7,7 +7,7 @@ import com.netflix.curator.retry.RetryNTimes;
 import java.io.IOException;
 
 /**
- * The primary implementation of the {@link ZkClient} interface.
+ * The primary implementation of the {@link ZkClient} interface. Note: this class is not thread safe.
  *
  * @author Dennis Roberts
  */
@@ -49,6 +49,11 @@ public class ZkClientImpl extends AbstractZkClient {
     private String encoding;
 
     /**
+     * The curator framework connection.
+     */
+    private CuratorFramework zk;
+
+    /**
      * @param connectionSpec the connection specification string.
      */
     public ZkClientImpl(String connectionSpec) {
@@ -83,15 +88,38 @@ public class ZkClientImpl extends AbstractZkClient {
      * @return the Zookeeper client connection.
      * @throws ZookeeperConnectionException if we can't connect to Zookeeper.
      */
-    private CuratorFramework connect() throws ZookeeperConnectionException {
+    @Override
+    public void connect() throws ZookeeperConnectionException {
         try {
             RetryPolicy retryPolicy = new RetryNTimes(retryCount, sleepBetweenTries);
-            CuratorFramework client = CuratorFrameworkFactory.newClient(connectionSpec, retryPolicy);
-            client.start();
-            return client;
+            zk = CuratorFrameworkFactory.newClient(connectionSpec, retryPolicy);
+            zk.getConnectionStateListenable().addListener(new LoggingConnectionStateListener());
+            zk.start();
         }
         catch (IOException e) {
             throw new ZookeeperConnectionException(connectionSpec, e);
+        }
+    }
+
+    /**
+     * Disconnects from Zookeeper.
+     */
+    @Override
+    public void disconnect() {
+        if (zk != null) {
+            zk.close();
+            zk = null;
+        }
+    }
+
+    /**
+     * Verifies that the connection to Zookeeper is active.
+     *
+     * @throws ZookeeperNotConnectedException if the connection isn't established.
+     */
+    private void validateConnection() throws ZookeeperNotConnectedException {
+        if (zk == null || !zk.isStarted()) {
+            throw new ZookeeperNotConnectedException();
         }
     }
 
@@ -102,16 +130,13 @@ public class ZkClientImpl extends AbstractZkClient {
      * @return the list of children.
      */
     public Iterable<String> getChildren(String path) {
+        validateConnection();
         validatePath(path);
-        CuratorFramework client = connect();
         try {
-            return client.getChildren().forPath(path);
+            return zk.getChildren().forPath(path);
         }
         catch (Exception e) {
             throw new ChildListException(path, e);
-        }
-        finally {
-            client.close();
         }
     }
 
@@ -122,16 +147,13 @@ public class ZkClientImpl extends AbstractZkClient {
      * @return the value of the node as a string.
      */
     public String readNode(String path) {
+        validateConnection();
         validatePath(path);
-        CuratorFramework client = connect();
         try {
-            return new String(client.getData().forPath(path), encoding);
+            return new String(zk.getData().forPath(path), encoding);
         }
         catch (Exception e) {
             throw new ReadNodeException(path, e);
-        }
-        finally {
-            client.close();
         }
     }
 }

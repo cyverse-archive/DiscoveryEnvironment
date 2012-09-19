@@ -8,6 +8,16 @@ package org.iplantc.clavin.zookeeper;
 public interface ZkClient {
 
     /**
+     * Establishes the connection to Zookeeper.
+     */
+    public void connect();
+
+    /**
+     * Drops the connection to Zookeeper.
+     */
+    public void disconnect();
+
+    /**
      * Gets the list of children for the node corresponding to a path.
      *
      * @param path the path to the node.
