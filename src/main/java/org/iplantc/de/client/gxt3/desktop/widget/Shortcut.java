@@ -7,13 +7,13 @@ package org.iplantc.de.client.gxt3.desktop.widget;
 
 import org.iplantc.de.client.models.ShortcutDesc;
 
-import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 /**
  * A desktop shortcut.
  */
-public class Shortcut extends TextButton {
+public class Shortcut extends IconButton {
 
     private String action;
     private String tag;
@@ -22,14 +22,14 @@ public class Shortcut extends TextButton {
      * Creates a new shortcut.
      */
     public Shortcut(ShortcutDesc desc, SelectHandler handler) {
+        super(desc.getId());
         setId(desc.getId());
-        setText(desc.getCaption());
+        setSize("64px", "64px");
 
         this.action = desc.getAction();
         this.tag = desc.getTag();
 
         this.addSelectHandler(handler);
-        setIcon(desc.getIcon());
         setBorders(false);
     }
 

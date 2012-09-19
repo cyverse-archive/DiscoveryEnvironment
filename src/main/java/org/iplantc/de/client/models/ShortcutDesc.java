@@ -11,7 +11,8 @@ import com.google.gwt.resources.client.ImageResource;
 public class ShortcutDesc extends ActionTagPair {
     private String id;
     private String caption;
-    private ImageResource icon;
+
+    // private ImageResource icon;
 
     /**
      * Instantiate from id, caption, action tag.
@@ -21,12 +22,12 @@ public class ShortcutDesc extends ActionTagPair {
      * @param action user action.
      * @param tag associated tag.
      */
-    public ShortcutDesc(String id, String caption, String action, String tag, ImageResource icon) {
+    public ShortcutDesc(String id, String caption, String action, String tag) {
         super(action, tag);
 
         this.id = id;
         this.caption = caption;
-        this.icon = icon;
+
     }
 
     /**
@@ -45,19 +46,5 @@ public class ShortcutDesc extends ActionTagPair {
      */
     public String getCaption() {
         return caption;
-    }
-
-    /**
-     * @param icon the icon to set
-     */
-    public void setIcon(ImageResource icon) {
-        this.icon = icon;
-    }
-
-    /**
-     * @return the icon
-     */
-    public ImageResource getIcon() {
-        return icon;
     }
 }

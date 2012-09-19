@@ -36,8 +36,8 @@ public abstract class DesktopBuilder {
      * @param action action to be fired on shortcut click.
      * @param tag associated tag.
      */
-    protected void addShortcut(String id, String caption, String action, String tag, ImageResource icon) {
-        shortcuts.add(new ShortcutDesc(id, caption, action, tag, icon));
+    protected void addShortcut(String id, String caption, String action, String tag) {
+        shortcuts.add(new ShortcutDesc(id, caption, action, tag));
     }
 
     /**
