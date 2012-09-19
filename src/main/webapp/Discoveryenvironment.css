@@ -39,15 +39,15 @@ div.iplantc-about-pad-text p {
 }
 
 .iplantc-mydata-shortcut {
-	background-image: url(./images/icon_data.png);
+	background-image: url(./images/shortcut_data.png);
 }
 
 .iplantc-myanalysis-shortcut {
-	background-image: url(./images/icon_analyses.png);
+	background-image: url(./images/shortcut_analyses.png);
 }
 
 .iplantc-catalog-shortcut {
-	background-image: url(./images/icon_apps.png);
+	background-image: url(./images/shortcut_apps.png);
 }
 
 .iplantc-background {

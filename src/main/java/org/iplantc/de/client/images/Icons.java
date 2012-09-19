@@ -366,27 +366,6 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
      * 
      * @return image.
      */
-    @Source("shortcut_analyses.png")
-    ImageResource shortcutAnalyses();
-
-    /**
-     * 
-     * @return image.
-     */
-    @Source("shortcut_apps.png")
-    ImageResource shortcutApps();
-
-    /**
-     * 
-     * @return image.
-     */
-    @Source("shortcut_data.png")
-    ImageResource shortcutData();
-
-    /**
-     * 
-     * @return image.
-     */
     @Source("arrow.gif")
     ImageResource menuAnchor();
 
