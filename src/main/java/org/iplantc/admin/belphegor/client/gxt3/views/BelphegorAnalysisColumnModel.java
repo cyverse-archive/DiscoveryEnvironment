@@ -9,7 +9,7 @@ import org.iplantc.core.uiapplications.client.I18N;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisFeedback;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisProperties;
-import org.iplantc.core.uiapplications.client.views.cells.HyperlinkCell;
+import org.iplantc.core.uiapplications.client.views.cells.AnalysisHyperlinkCell;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
 import com.google.gwt.core.client.GWT;
@@ -39,7 +39,7 @@ public class BelphegorAnalysisColumnModel extends ColumnModel<Analysis> {
         name.setResizable(true);
         rating.setResizable(false);
 
-        name.setCell(new HyperlinkCell());
+        name.setCell(new AnalysisHyperlinkCell());
         rating.setCell(new AvgAnalysisUserRatingCell());
 
         rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
