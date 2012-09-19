@@ -2,8 +2,8 @@ package org.iplantc.de.client.controllers;
 
 import org.iplantc.core.tito.client.events.NewProjectEvent;
 import org.iplantc.core.tito.client.events.NewProjectEventHandler;
-import org.iplantc.core.tito.client.events.TemplateLoadEvent;
-import org.iplantc.core.tito.client.events.TemplateLoadEventHandler;
+import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent;
+import org.iplantc.core.uiapplications.client.events.handlers.TemplateLoadEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.dispatchers.TitoWindowDispatcher;
 import org.iplantc.de.client.models.TitoWindowConfig;

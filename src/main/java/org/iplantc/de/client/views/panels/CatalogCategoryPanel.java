@@ -9,8 +9,8 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.views.windows.DECatalogWindow;
 
 /**
- * 
- * A panel that displays a list of categories
+ * FIXME JDS USe of this class should be an abstraction of the AppsViewClass to hide the center panel and
+ * only display the west/navigation panel. A panel that displays a list of categories
  * 
  * @author sriram
  * 
