@@ -4,19 +4,19 @@ import java.util.Collection;
 
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.tito.client.events.TemplateLoadEvent;
-import org.iplantc.core.tito.client.events.TemplateLoadEvent.MODE;
-import org.iplantc.core.tito.client.windows.NewToolRequestWindow;
 import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
 import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
 import org.iplantc.core.uiapplications.client.events.AppSelectedEvent;
+import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent;
+import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisFeedback;
 import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
 import org.iplantc.core.uiapplications.client.views.dialogs.AppCommentDialog;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
+import org.iplantc.core.uiapplications.client.views.windows.NewToolRequestWindow;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.events.UserEvent;
@@ -270,32 +270,26 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         final Window makePublicWin = new Window();
         makePublicWin.setModal(true);
 
-        SubmitAppForPublicUsePanel requestForm = new SubmitAppForPublicUsePanel(analysis,
-                new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String url) {
-                        makePublicWin.hide();
-
-                        MessageBox.info(I18N.DISPLAY.makePublicSuccessTitle(),
-                                I18N.DISPLAY.makePublicSuccessMessage(url), null);
-
-                        fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        makePublicWin.hide();
-                        if (caught != null) {
-                            ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
-                        }
-                    }
-                });
+        /*
+         * SubmitAppForPublicUsePanel requestForm = new SubmitAppForPublicUsePanel(analysis, new
+         * AsyncCallback<String>() {
+         * 
+         * @Override public void onSuccess(String url) { makePublicWin.hide();
+         * 
+         * MessageBox.info(I18N.DISPLAY.makePublicSuccessTitle(),
+         * I18N.DISPLAY.makePublicSuccessMessage(url), null);
+         * 
+         * fireAnalysisGroupCountUpdateEvent(false, AnalysisGroupType.BETA); }
+         * 
+         * @Override public void onFailure(Throwable caught) { makePublicWin.hide(); if (caught != null)
+         * { ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught); } } });
+         */
 
         makePublicWin.setHeading(analysis.getName() + " " + I18N.DISPLAY.publicSubmissionForm()); //$NON-NLS-1$
         makePublicWin.setLayout(new FitLayout());
         makePublicWin.setSize(615, 480);
         makePublicWin.setResizable(false);
-        makePublicWin.add(requestForm);
+        // makePublicWin.add(requestForm);
 
         makePublicWin.show();
     }

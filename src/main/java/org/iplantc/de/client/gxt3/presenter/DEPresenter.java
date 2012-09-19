@@ -9,6 +9,7 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.gxt3.desktop.widget.Desktop;
 import org.iplantc.de.client.gxt3.views.DEView;
 import org.iplantc.de.client.utils.MessagePoller;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class DEPresenter implements DEView.Presenter {
 
-    private DEView view;
+    private final DEView view;
 
     /**
      * Constructs a default instance of the object.
@@ -34,6 +35,8 @@ public class DEPresenter implements DEView.Presenter {
     public DEPresenter(DEView view) {
         this.view = view;
         initializeDEProperties();
+        // Initialize TitoController
+        TitoController.getInstance();
 
     }
 

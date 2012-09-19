@@ -424,14 +424,6 @@ public interface DEErrorStrings extends CommonUIErrorStrings {
     String metadataUpdateFailed();
 
     /**
-     * Error message displayed when a wiki page for a tool cannot be created.
-     * 
-     * @param toolName name of the tool to make a page for
-     * @return localized error string.
-     */
-    String cantCreateConfluencePage(String toolName);
-
-    /**
      * Error message displayed when a call to save parameters as file failed
      * 
      * @return localized error string.
