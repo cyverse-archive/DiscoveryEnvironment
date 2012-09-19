@@ -18,7 +18,7 @@ public interface ErrorStrings extends CommonUIErrorStrings {
      * @param name The name of the Category the user attempted to add.
      * @return localized error string.
      */
-    String addCategoryError(String name);
+    String addAppGroupError(String name);
 
     /**
      * Error message displayed when renaming a Category fails.
@@ -42,7 +42,7 @@ public interface ErrorStrings extends CommonUIErrorStrings {
      * @param name The name of the Category the user attempted to delete.
      * @return localized error string.
      */
-    String deleteCategoryError(String name);
+    String deleteAppGroupError(String name);
 
     /**
      * Error message displayed when updating an Application fails.

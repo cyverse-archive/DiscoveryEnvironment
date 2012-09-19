@@ -5,20 +5,22 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface BelphegorAppsToolbar extends IsWidget {
     public interface Presenter {
 
-        void onAddCategoryClicked();
+        void onAddAppGroupClicked();
 
-        void onRenameCategoryClicked();
+        void onRenameAppGroupClicked();
 
         void onDeleteClicked();
 
         void onRestoreAppClicked();
     }
 
-    void setAddCategoryButtonEnabled(boolean enabled);
+    void setAddAppGroupButtonEnabled(boolean enabled);
 
-    void setRenameCategoryButtonEnabled(boolean enabled);
+    void setRenameAppGroupButtonEnabled(boolean enabled);
 
     void setDeleteButtonEnabled(boolean enabled);
 
     void setRestoreButtonEnabled(boolean enabled);
+
+    void setPresenter(Presenter presenter);
 }

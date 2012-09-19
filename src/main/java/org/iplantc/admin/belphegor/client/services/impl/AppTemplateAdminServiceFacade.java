@@ -121,7 +121,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * @param categoryId
      * @param callback
      */
-    public void deleteCategory(String categoryId, AsyncCallback<String> callback) {
+    public void deleteAppGroup(String categoryId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getDeleteCategoryServiceUrl()
                 + "/" + categoryId; //$NON-NLS-1$
 

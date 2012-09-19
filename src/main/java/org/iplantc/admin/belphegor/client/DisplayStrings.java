@@ -47,7 +47,7 @@ public interface DisplayStrings extends CommonUIDisplayStrings {
      * @param appName the name of the category to be deleted
      * @return string representing the text
      */
-    String confirmDeleteCategory(String name);
+    String confirmDeleteAppGroup(String name);
 
     /**
      * Localized display text for an "Average User Rating" label.

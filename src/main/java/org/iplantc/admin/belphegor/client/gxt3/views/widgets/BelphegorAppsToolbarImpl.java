@@ -57,14 +57,19 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
         return widget;
     }
 
+    @Override
+    public void setPresenter(Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     @UiHandler("addCategory")
     public void addCategoryClicked(SelectEvent event) {
-        presenter.onAddCategoryClicked();
+        presenter.onAddAppGroupClicked();
     }
 
     @UiHandler("renameCategory")
     public void renameCategoryClicked(SelectEvent event) {
-        presenter.onRenameCategoryClicked();
+        presenter.onRenameAppGroupClicked();
     }
 
     @UiHandler("delete")
@@ -78,12 +83,12 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     }
 
     @Override
-    public void setAddCategoryButtonEnabled(boolean enabled) {
+    public void setAddAppGroupButtonEnabled(boolean enabled) {
         addCategory.setEnabled(enabled);
     }
 
     @Override
-    public void setRenameCategoryButtonEnabled(boolean enabled) {
+    public void setRenameAppGroupButtonEnabled(boolean enabled) {
         renameCategory.setEnabled(enabled);
     }
 

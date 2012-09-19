@@ -1,134 +1,197 @@
 package org.iplantc.admin.belphegor.client.gxt3.presenter;
 
-import java.util.List;
-
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
-import org.iplantc.admin.belphegor.client.gxt3.presenter.proxy.AnalysisGroupProxy;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
-import org.iplantc.core.uiapplications.client.I18N;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisList;
 import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
+import org.iplantc.core.uiapplications.client.presenter.proxy.AnalysisGroupProxy;
 import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.presenter.Presenter;
-import org.iplantc.de.client.CommonDisplayStrings;
+import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
+import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
+import org.iplantc.de.client.DeCommonI18N;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.event.HideEvent;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
 /**
  * Presenter class for the Belphegor <code>AppsView</code>.
  * 
- * This class is intentionally not a subclass of {@link AppsViewPresenter} in order to keep a clear
- * difference between the service facades utilized.
+ * The belphegor uses a different {@link AppTemplateServiceFacade} implementation than the one used in
+ * the Discovery Environment. Through the use of deferred binding, the different
+ * {@link AppTemplateServiceFacade} implementations are resolved, enabling the ability to reuse code.
+ * 
+ * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
+ * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the
+ * {@link AnalysisGroupProxy}.
  * 
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter,
+public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         BelphegorAppsToolbar.Presenter {
 
-    private final AppsView view;
-    private final AppTemplateServiceFacade templateService;
-    private final CommonDisplayStrings displayStrings;
-    private final AnalysisGroupProxy analysisGroupProxy;
     private final BelphegorAppsToolbar toolbar;
 
     public BelphegorAppsViewPresenter(final AppsView view) {
-        this.view = view;
-        this.templateService = Services.TEMPLATE_SERVICE;
-        this.displayStrings = I18N.DISPLAY;
+        super(view);
 
-        analysisGroupProxy = new AnalysisGroupProxy();
         toolbar = new BelphegorAppsToolbarImpl();
         view.setNorthWidget(toolbar);
-
-        this.view.setPresenter(this);
+        this.toolbar.setPresenter(this);
     }
 
     @Override
-    public void onAnalysisGroupSelected(final AnalysisGroup ag) {
+    protected void selectFirstApp() {
+        // Do nothing
+    }
+
+    @Override
+    public void onAppGroupSelected(final AnalysisGroup ag) {
         if (ag == null)
             return;
 
-        view.setMainPanelHeading(ag.getName());
-        toolbar.setAddCategoryButtonEnabled(true);
-        toolbar.setRenameCategoryButtonEnabled(true);
+        view.setCenterPanelHeading(ag.getName());
+        toolbar.setAddAppGroupButtonEnabled(true);
+        toolbar.setRenameAppGroupButtonEnabled(true);
         toolbar.setDeleteButtonEnabled(true);
         toolbar.setRestoreButtonEnabled(false);
         fetchApps(ag);
     }
 
     @Override
-    public void onAnalysisSelected(final Analysis analysis) {
-        if (analysis == null)
+    public void onAppSelected(final Analysis app) {
+        if (app == null)
             return;
 
-        toolbar.setAddCategoryButtonEnabled(false);
-        toolbar.setRenameCategoryButtonEnabled(false);
+        view.deSelectAllAppGroups();
+
+        toolbar.setAddAppGroupButtonEnabled(false);
+        toolbar.setRenameAppGroupButtonEnabled(false);
         toolbar.setDeleteButtonEnabled(true);
         toolbar.setRestoreButtonEnabled(true);
     }
 
-    /**
-     * Retrieves the apps for the given group by updating and executing the list loader
-     * 
-     * @param ag
-     */
-    private void fetchApps(final AnalysisGroup ag) {
-        view.maskMainPanel(displayStrings.loadingMask());
-        templateService.getAnalysis(ag.getId(), new AsyncCallback<String>() {
+    @Override
+    public void onAddAppGroupClicked() {
+        if (getSelectedAppGroup() == null) {
+            return;
+        }
+        final AnalysisGroup selectedAppGroup = getSelectedAppGroup();
 
+        // Check if a new AppGroup can be created in the target AppGroup.
+        if (selectedAppGroup.getAppCount() > 0) {
+            ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
+            return;
+        }
+
+        IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.add(), 340, new IPlantPromptPanel(
+                I18N.DISPLAY.addCategoryPrompt()) {
             @Override
-            public void onSuccess(String result) {
-                AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
-                AutoBean<AnalysisList> bean = AutoBeanCodex.decode(factory, AnalysisList.class, result);
+            public void handleOkClick() {
+                final String name = field.getValue();
 
-                view.setAnalyses(bean.as().getAnalyses());
-                view.unMaskMainPanel();
-            }
+                final AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
+                view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
+                Services.ADMIN_TEMPLATE_SERVICE.addCategory(name, selectedAppGroup.getId(),
+                        new AdminServiceCallback() {
+                            @Override
+                            protected void onSuccess(JSONObject jsonResult) {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
-                view.unMaskMainPanel();
+                                AutoBean<AnalysisGroup> group = AutoBeanCodex.decode(factory,
+                                        AnalysisGroup.class, jsonResult.get("category").toString());
+                                // Get result
+
+                                view.getTreeStore().add(selectedAppGroup, group.as());
+                                view.unMaskCenterPanel();
+                            }
+
+                            @Override
+                            protected String getErrorMessage() {
+                                view.unMaskCenterPanel();
+                                return I18N.ERROR.addAppGroupError(name);
+                            }
+                        });
+
             }
         });
-    }
-
-    @Override
-    public Analysis getSelectedAnalysis() {
-        return view.getSelectedAnalysis();
-    }
-
-    @Override
-    public AnalysisGroup getSelectedAnalysisGroup() {
-        return view.getSelectedAnalysisGroup();
-    }
-
-    @Override
-    public void onAddCategoryClicked() {
-        // TODO Auto-generated method stub
+        dlg.disableOkButton();
+        dlg.show();
 
     }
 
     @Override
-    public void onRenameCategoryClicked() {
+    public void onRenameAppGroupClicked() {
         // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onDeleteClicked() {
-        // TODO Auto-generated method stub
+        // Determine if the current selection is an AnalysisGroup
+        if(getSelectedAppGroup() != null){
+            final AnalysisGroup selectedAppGroup = getSelectedAppGroup();
+            
+            // Determine if the selected AnalysisGroup can be deleted.
+            if(selectedAppGroup.getAppCount() > 0){
+                ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
+                return; 
+            }
+            
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteAppGroup(selectedAppGroup.getName()));
+            msgBox.addHideHandler(new HideHandler() {
+                
+                @Override
+                public void onHide(HideEvent event) {
+                    Dialog btn = (Dialog)event.getSource();
+                    String text = btn.getHideButton().getItemId();
+                    if (text.equals(PredefinedButton.YES.name())) {
+                        view.maskWestPanel(DeCommonI18N.DISPLAY.loadingMask());
+                        Services.ADMIN_TEMPLATE_SERVICE.deleteAppGroup(selectedAppGroup.getId(),
+                                new AsyncCallback<String>() {
+
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        // Refresh the catalog, so that the proper category counts
+                                        // display.
+                                        // FIXME JDS These events need to be common to ui-applications.
+                                        EventBus.getInstance().fireEvent(
+                                                new CatalogCategoryRefreshEvent());
+                                        view.unMaskWestPanel();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        ErrorHandler.post(I18N.ERROR
+                                                .deleteAppGroupError(selectedAppGroup.getName()));
+                                        view.unMaskWestPanel();
+                                    }
+                                });
+                    }
+
+                }
+            });
+            msgBox.show();
+
+        } else if(getSelectedApp() != null){
+            
+        }
 
     }
 
@@ -137,40 +200,4 @@ public class BelphegorAppsViewPresenter implements Presenter, AppsView.Presenter
         // TODO Auto-generated method stub
 
     }
-
-    @Override
-    public void go(final HasOneWidget container) {
-        container.setWidget(view.asWidget());
-
-        // Fetch AnalysisGroups
-        analysisGroupProxy.load(null, new AsyncCallback<List<AnalysisGroup>>() {
-            @Override
-            public void onSuccess(List<AnalysisGroup> result) {
-                addAnalysisGroup(null, result);
-            }
-
-            private void addAnalysisGroup(AnalysisGroup parent, List<AnalysisGroup> children) {
-                if ((children == null) || children.isEmpty()) {
-                    return;
-                }
-                if (parent == null) {
-                    view.getTreeStore().add(children);
-                } else {
-                    view.getTreeStore().replaceChildren(parent, children);
-                }
-
-                for (AnalysisGroup ag : children) {
-                    addAnalysisGroup(ag, ag.getGroups());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
-        });
-
-    }
-
-
 }

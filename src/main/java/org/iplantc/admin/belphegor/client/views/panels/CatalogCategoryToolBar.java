@@ -115,7 +115,7 @@ public class CatalogCategoryToolBar extends ToolBar {
                         if (ce.getButtonClicked().getItemId().equals(Dialog.YES)) {
                             AppTemplateAdminServiceFacade facade = new AppTemplateAdminServiceFacade(
                                     maskingParent);
-                            facade.deleteCategory(selectedCategory.getId(), new AdminServiceCallback() {
+                            facade.deleteAppGroup(selectedCategory.getId(), new AdminServiceCallback() {
                                 @Override
                                 protected void onSuccess(JSONObject jsonResult) {
                                     // Refresh the catalog, so that the proper category counts display.
@@ -124,14 +124,14 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                                 @Override
                                 protected String getErrorMessage() {
-                                    return I18N.ERROR.deleteCategoryError(name);
+                                    return I18N.ERROR.deleteAppGroupError(name);
                                 }
                             });
                         }
                     }
                 };
 
-                MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteCategory(name),
+                MessageBox.confirm(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteAppGroup(name),
                         callback);
             }
         });
@@ -202,7 +202,7 @@ public class CatalogCategoryToolBar extends ToolBar {
 
                             @Override
                             protected String getErrorMessage() {
-                                return I18N.ERROR.addCategoryError(name);
+                                return I18N.ERROR.addAppGroupError(name);
                             }
                         });
 
