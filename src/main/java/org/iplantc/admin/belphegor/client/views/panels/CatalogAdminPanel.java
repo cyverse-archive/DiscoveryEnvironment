@@ -6,10 +6,10 @@ import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppGroupSelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
-import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.handlers.AppGroupSelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.handlers.AppSearchResultSelectedEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -62,7 +62,7 @@ public class CatalogAdminPanel extends ContentPanel {
         EventBus eventbus = EventBus.getInstance();
         handlers = new ArrayList<HandlerRegistration>();
 
-        handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
+        handlers.add(eventbus.addHandler(AppGroupSelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
 
         handlers.add(eventbus.addHandler(AppSearchResultSelectedEvent.TYPE,
@@ -137,10 +137,10 @@ public class CatalogAdminPanel extends ContentPanel {
     }
 
     private class AnalysisCategorySelectedEventHandlerImpl implements
-            AnalysisCategorySelectedEventHandler {
+            AppGroupSelectedEventHandler {
 
         @Override
-        public void onSelection(AnalysisCategorySelectedEvent event) {
+        public void onSelection(AppGroupSelectedEvent event) {
             if (event.getSourcePanel() == catPanel) {
                 mainPanel.setHeading(event.getGroup().getName());
                 updateAnalysesListing(event.getGroup());
@@ -152,7 +152,7 @@ public class CatalogAdminPanel extends ContentPanel {
     private void updateAnalysesListing(final AnalysisGroup group) {
         mask(I18N.DISPLAY.loadingMask());
 
-        Services.TEMPLATE_SERVICE.getAnalysis(group.getId(), new AsyncCallback<String>() {
+        Services.TEMPLATE_SERVICE.getApp(group.getId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ArrayList<Analysis> analyses = new ArrayList<Analysis>();

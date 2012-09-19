@@ -6,12 +6,12 @@ import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
-import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisAutoBeanFactory;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.models.autobeans.App;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppAutoBeanFactory;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
-import org.iplantc.core.uiapplications.client.presenter.proxy.AnalysisGroupProxy;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.core.uiapplications.client.presenter.proxy.AppGroupProxy;
+import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -33,13 +33,13 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 /**
  * Presenter class for the Belphegor <code>AppsView</code>.
  * 
- * The belphegor uses a different {@link AppTemplateServiceFacade} implementation than the one used in
+ * The belphegor uses a different {@link AppServiceFacade} implementation than the one used in
  * the Discovery Environment. Through the use of deferred binding, the different
- * {@link AppTemplateServiceFacade} implementations are resolved, enabling the ability to reuse code.
+ * {@link AppServiceFacade} implementations are resolved, enabling the ability to reuse code.
  * 
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the
- * {@link AnalysisGroupProxy}.
+ * {@link AppGroupProxy}.
  * 
  * @author jstroot
  * 
@@ -63,7 +63,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     }
 
     @Override
-    public void onAppGroupSelected(final AnalysisGroup ag) {
+    public void onAppGroupSelected(final AppGroup ag) {
         if (ag == null)
             return;
 
@@ -76,7 +76,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     }
 
     @Override
-    public void onAppSelected(final Analysis app) {
+    public void onAppSelected(final App app) {
         if (app == null)
             return;
 
@@ -93,7 +93,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         if (getSelectedAppGroup() == null) {
             return;
         }
-        final AnalysisGroup selectedAppGroup = getSelectedAppGroup();
+        final AppGroup selectedAppGroup = getSelectedAppGroup();
 
         // Check if a new AppGroup can be created in the target AppGroup.
         if (selectedAppGroup.getAppCount() > 0) {
@@ -107,15 +107,15 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             public void handleOkClick() {
                 final String name = field.getValue();
 
-                final AnalysisAutoBeanFactory factory = GWT.create(AnalysisAutoBeanFactory.class);
+                final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
                 view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
                 Services.ADMIN_TEMPLATE_SERVICE.addCategory(name, selectedAppGroup.getId(),
                         new AdminServiceCallback() {
                             @Override
                             protected void onSuccess(JSONObject jsonResult) {
 
-                                AutoBean<AnalysisGroup> group = AutoBeanCodex.decode(factory,
-                                        AnalysisGroup.class, jsonResult.get("category").toString());
+                                AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
+                                        AppGroup.class, jsonResult.get("category").toString());
                                 // Get result
 
                                 view.getTreeStore().add(selectedAppGroup, group.as());
@@ -146,7 +146,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     public void onDeleteClicked() {
         // Determine if the current selection is an AnalysisGroup
         if(getSelectedAppGroup() != null){
-            final AnalysisGroup selectedAppGroup = getSelectedAppGroup();
+            final AppGroup selectedAppGroup = getSelectedAppGroup();
             
             // Determine if the selected AnalysisGroup can be deleted.
             if(selectedAppGroup.getAppCount() > 0){

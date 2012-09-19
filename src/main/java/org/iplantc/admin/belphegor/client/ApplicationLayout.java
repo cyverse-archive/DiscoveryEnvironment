@@ -5,8 +5,8 @@ import org.iplantc.admin.belphegor.client.gxt3.views.BelphegorAnalysisColumnMode
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
-import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.models.autobeans.App;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.I18N;
@@ -182,9 +182,9 @@ public class ApplicationLayout extends Viewport {
         // CatalogAdminPanel panel = new CatalogAdminPanel();
 
         // --------->
-        TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
+        TreeStore<AppGroup> treeStore = new TreeStore<AppGroup>(
                 new AnalysisGroupModelKeyProvider());
-        ListStore<Analysis> listStore = new ListStore<Analysis>(new AnalysisModelKeyProvider());
+        ListStore<App> listStore = new ListStore<App>(new AnalysisModelKeyProvider());
         BelphegorAnalysisColumnModel cm = new BelphegorAnalysisColumnModel();
         AppsView view = new AppsViewImpl(treeStore, listStore, cm);
 
@@ -202,16 +202,16 @@ public class ApplicationLayout extends Viewport {
         replaceCenterPanel(tabPanel);
     }
 
-    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AnalysisGroup> {
+    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AppGroup> {
         @Override
-        public String getKey(AnalysisGroup item) {
+        public String getKey(AppGroup item) {
             return item.getId();
         }
     }
 
-    private final class AnalysisModelKeyProvider implements ModelKeyProvider<Analysis> {
+    private final class AnalysisModelKeyProvider implements ModelKeyProvider<App> {
         @Override
-        public String getKey(Analysis item) {
+        public String getKey(App item) {
             return item.getId();
         }
     }

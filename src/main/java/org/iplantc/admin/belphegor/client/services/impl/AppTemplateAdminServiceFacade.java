@@ -3,7 +3,7 @@ package org.iplantc.admin.belphegor.client.services.impl;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -14,7 +14,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
+public class AppTemplateAdminServiceFacade implements AppServiceFacade {
     private final Component maskingCaller;
 
     public AppTemplateAdminServiceFacade() {
@@ -29,7 +29,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysisCategories(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
@@ -39,7 +39,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl()
                 + "/" + analysisGroupId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
@@ -50,7 +50,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl()
                 + "?search=" + URL.encodeQueryString(search); //$NON-NLS-1$
 
@@ -209,7 +209,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
     }
 
     @Override
-    public void getPagedAnalysis(String analysisGroupId, int limit, String sortField, int offset,
+    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset,
             SortDir sortDir, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 

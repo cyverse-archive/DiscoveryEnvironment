@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.services.impl;
 
 import org.iplantc.admin.belphegor.client.Services;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.google.gwt.json.client.JSONObject;
@@ -9,43 +9,43 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * This class is a dummy class to satisfy GWT deferred-binding. By design, the Belphegor admin module
- * does not require the methods defined by {@link AppTemplateUserServiceFacade}. See {@link Services} for
+ * does not require the methods defined by {@link AppUserServiceFacade}. See {@link Services} for
  * available services within this module.
  * 
  * @author jstroot
  * 
  */
-public class AppTemplateAdminUserServiceFacade implements AppTemplateUserServiceFacade {
+public class AppTemplateAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
-    public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getPagedAnalysis(String analysisGroupId, int limit, String sortField, int offset,
+    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset,
             SortDir sortDir, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getAnalysisCategories(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void favoriteAnalysis(String workspaceId, String analysisId, boolean fav,
+    public void favoriteApp(String workspaceId, String analysisId, boolean fav,
             AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void rateAnalysis(String analysisId, int rating, String appName, String comment,
+    public void rateApp(String analysisId, int rating, String appName, String comment,
             String authorEmail, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
@@ -63,7 +63,7 @@ public class AppTemplateAdminUserServiceFacade implements AppTemplateUserService
     }
 
     @Override
-    public void getDataObjectsForAnalysis(String analysisId, AsyncCallback<String> callback) {
+    public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -83,22 +83,22 @@ public class AppTemplateAdminUserServiceFacade implements AppTemplateUserService
     }
 
     @Override
-    public void analysisExportable(String id, AsyncCallback<String> asyncCallback) {
+    public void appExportable(String id, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void editAnalysis(String id, AsyncCallback<String> asyncCallback) {
+    public void editApp(String id, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void copyAnalysis(String id, AsyncCallback<String> asyncCallback) {
+    public void copyApp(String id, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void deleteAnalysisFromWorkspace(String username, String fullUsername, String id,
+    public void deleteAppFromWorkspace(String username, String fullUsername, String id,
             AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }

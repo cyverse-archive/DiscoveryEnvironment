@@ -55,7 +55,7 @@ public class CatalogCategoryAdminPanel extends AbstractCatalogCategoryPanel {
     }
 
     private void loadCategories() {
-        Services.ADMIN_TEMPLATE_SERVICE.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        Services.ADMIN_TEMPLATE_SERVICE.getAppGroups(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {

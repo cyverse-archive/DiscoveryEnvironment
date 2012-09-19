@@ -6,10 +6,10 @@ import java.util.List;
 import org.iplantc.admin.belphegor.client.gxt3.views.cells.AvgAnalysisUserRatingCell;
 import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
 import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisFeedback;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisProperties;
-import org.iplantc.core.uiapplications.client.views.cells.AnalysisHyperlinkCell;
+import org.iplantc.core.uiapplications.client.models.autobeans.App;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppFeedback;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppProperties;
+import org.iplantc.core.uiapplications.client.views.cells.AppHyperlinkCell;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
 import com.google.gwt.core.client.GWT;
@@ -18,28 +18,28 @@ import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
-public class BelphegorAnalysisColumnModel extends ColumnModel<Analysis> {
+public class BelphegorAnalysisColumnModel extends ColumnModel<App> {
 
     public BelphegorAnalysisColumnModel() {
         super(createColumnConfigList(EventBus.getInstance(), I18N.DISPLAY));
     }
 
-    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(final EventBus eventBus,
+    public static List<ColumnConfig<App, ?>> createColumnConfigList(final EventBus eventBus,
             final CommonAppDisplayStrings displayStrings) {
-        AnalysisProperties props = GWT.create(AnalysisProperties.class);
-        List<ColumnConfig<Analysis, ?>> list = new ArrayList<ColumnConfig<Analysis, ?>>();
+        AppProperties props = GWT.create(AppProperties.class);
+        List<ColumnConfig<App, ?>> list = new ArrayList<ColumnConfig<App, ?>>();
 
-        ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(
-                new IdentityValueProvider<Analysis>(), 180, I18N.DISPLAY.name());
-        ColumnConfig<Analysis, String> integrator = new ColumnConfig<Analysis, String>(
+        ColumnConfig<App, App> name = new ColumnConfig<App, App>(
+                new IdentityValueProvider<App>(), 180, I18N.DISPLAY.name());
+        ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(
                 props.integratorName(), 130, I18N.DISPLAY.integratedby());
-        ColumnConfig<Analysis, AnalysisFeedback> rating = new ColumnConfig<Analysis, AnalysisFeedback>(
+        ColumnConfig<App, AppFeedback> rating = new ColumnConfig<App, AppFeedback>(
                 props.rating(), 40, "Average User Rating"); //$NON-NLS-1$
 
         name.setResizable(true);
         rating.setResizable(false);
 
-        name.setCell(new AnalysisHyperlinkCell());
+        name.setCell(new AppHyperlinkCell());
         rating.setCell(new AvgAnalysisUserRatingCell());
 
         rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
