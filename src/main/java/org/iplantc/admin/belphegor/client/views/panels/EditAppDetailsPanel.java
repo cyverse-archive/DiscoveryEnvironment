@@ -282,17 +282,17 @@ public class EditAppDetailsPanel extends LayoutContainer {
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught.getMessage());
-                            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
+                            Services.ADMIN_APP_SERVICE.updateApplication(toJson(), closeCallback);
                         }
 
                         @Override
                         public void onSuccess(String result) {
                             urlField.setValue(result);
-                            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
+                            Services.ADMIN_APP_SERVICE.updateApplication(toJson(), closeCallback);
                         }
                     });
         } else {
-            Services.ADMIN_TEMPLATE_SERVICE.updateApplication(toJson(), closeCallback);
+            Services.ADMIN_APP_SERVICE.updateApplication(toJson(), closeCallback);
         }
 
     }

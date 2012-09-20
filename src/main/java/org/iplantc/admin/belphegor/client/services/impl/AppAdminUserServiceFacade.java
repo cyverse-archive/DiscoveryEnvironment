@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author jstroot
  * 
  */
-public class AppTemplateAdminUserServiceFacade implements AppUserServiceFacade {
+public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
     public void getApp(String analysisGroupId, AsyncCallback<String> callback) {

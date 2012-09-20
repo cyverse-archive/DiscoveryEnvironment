@@ -5,7 +5,10 @@ import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.admin.belphegor.client.views.panels.EditAppDetailsPanel;
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;
 import org.iplantc.core.uiapplications.client.models.autobeans.AppAutoBeanFactory;
 import org.iplantc.core.uiapplications.client.models.autobeans.AppGroup;
@@ -20,26 +23,36 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.de.client.DeCommonI18N;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.box.PromptMessageBox;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  * Presenter class for the Belphegor <code>AppsView</code>.
  * 
- * The belphegor uses a different {@link AppServiceFacade} implementation than the one used in
- * the Discovery Environment. Through the use of deferred binding, the different
- * {@link AppServiceFacade} implementations are resolved, enabling the ability to reuse code.
+ * The belphegor uses a different {@link AppServiceFacade} implementation than the one used in the
+ * Discovery Environment. Through the use of deferred binding, the different {@link AppServiceFacade}
+ * implementations are resolved, enabling the ability to reuse code.
  * 
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
- * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the
- * {@link AppGroupProxy}.
+ * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
+ * 
+ * TODO JDS Deletion and restoration of apps needs to be tested. Arr!
+ * 
+ * TODO JDS Open dialog with {@link EditAppDetailsPanel} inside when app name is clicked. This can be
+ * done by firing a selection event from the cell when the name is clicked. Create AppSelectedEvent
  * 
  * @author jstroot
  * 
@@ -48,6 +61,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         BelphegorAppsToolbar.Presenter {
 
     private final BelphegorAppsToolbar toolbar;
+    private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
 
     public BelphegorAppsViewPresenter(final AppsView view) {
         super(view);
@@ -80,12 +94,20 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         if (app == null)
             return;
 
+        AppGroup currentAppGroup = getSelectedAppGroup();
         view.deSelectAllAppGroups();
 
         toolbar.setAddAppGroupButtonEnabled(false);
         toolbar.setRenameAppGroupButtonEnabled(false);
         toolbar.setDeleteButtonEnabled(true);
-        toolbar.setRestoreButtonEnabled(true);
+        // Determine if the app is in the trash. If so, enable restore button
+        if ((currentAppGroup != null)
+                && currentAppGroup.getId().equals(
+                        ToolIntegrationAdminProperties.getInstance().getDefaultTrashAnalysisGroupId())) {
+            toolbar.setRestoreButtonEnabled(true);
+        } else {
+            toolbar.setRestoreButtonEnabled(false);
+        }
     }
 
     @Override
@@ -107,16 +129,15 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             public void handleOkClick() {
                 final String name = field.getValue();
 
-                final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
                 view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
-                Services.ADMIN_TEMPLATE_SERVICE.addCategory(name, selectedAppGroup.getId(),
+                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(),
                         new AdminServiceCallback() {
                             @Override
                             protected void onSuccess(JSONObject jsonResult) {
 
+                                // Get result
                                 AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
                                         AppGroup.class, jsonResult.get("category").toString());
-                                // Get result
 
                                 view.getTreeStore().add(selectedAppGroup, group.as());
                                 view.unMaskCenterPanel();
@@ -138,7 +159,49 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     @Override
     public void onRenameAppGroupClicked() {
-        // TODO Auto-generated method stub
+        if (getSelectedAppGroup() == null) {
+            return;
+        }
+        final AppGroup selectedAppGroup = getSelectedAppGroup();
+
+        PromptMessageBox msgBox = new PromptMessageBox(I18N.DISPLAY.rename(),
+                I18N.DISPLAY.renamePrompt());
+        final TextField field = ((TextField)msgBox.getField());
+        field.setAutoValidate(true);
+        field.setAllowBlank(false);
+        field.setText(selectedAppGroup.getName());
+        msgBox.addHideHandler(new HideHandler() {
+
+            @Override
+            public void onHide(HideEvent event) {
+                Dialog btn = (Dialog)event.getSource();
+                String text = btn.getHideButton().getItemId();
+                if (text.equals(PredefinedButton.OK.name())) {
+                    view.maskWestPanel(DeCommonI18N.DISPLAY.loadingMask());
+                    Services.ADMIN_APP_SERVICE.renameAppGroup(selectedAppGroup.getId(),
+                            field.getText(), new AsyncCallback<String>() {
+
+                                @Override
+                                public void onSuccess(String result) {
+                                    AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
+                                            AppGroup.class, result);
+                                    selectedAppGroup.setName(group.as().getName());
+                                    view.getTreeStore().update(selectedAppGroup);
+                                    view.unMaskWestPanel();
+                                }
+
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    ErrorHandler.post(I18N.ERROR.renameCategoryError(selectedAppGroup
+                                            .getName()));
+                                    view.unMaskWestPanel();
+                                }
+                            });
+                }
+
+            }
+        });
+        msgBox.show();
 
     }
 
@@ -163,7 +226,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                     String text = btn.getHideButton().getItemId();
                     if (text.equals(PredefinedButton.YES.name())) {
                         view.maskWestPanel(DeCommonI18N.DISPLAY.loadingMask());
-                        Services.ADMIN_TEMPLATE_SERVICE.deleteAppGroup(selectedAppGroup.getId(),
+                        Services.ADMIN_APP_SERVICE.deleteAppGroup(selectedAppGroup.getId(),
                                 new AsyncCallback<String>() {
 
                                     @Override
@@ -190,14 +253,94 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             msgBox.show();
 
         } else if(getSelectedApp() != null){
-            
+            final App selectedApp = getSelectedApp();
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(),
+                    I18N.DISPLAY.confirmDeleteAppTitle());
+            msgBox.addHideHandler(new HideHandler() {
+
+                @Override
+                public void onHide(HideEvent event) {
+                    Dialog btn = (Dialog)event.getSource();
+                    String text = btn.getHideButton().getItemId();
+                    if (text.equals(PredefinedButton.YES.name())) {
+                        view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
+                        Services.ADMIN_APP_SERVICE.deleteApplication(selectedApp.getId(),
+                                new AsyncCallback<String>() {
+
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        EventBus.getInstance().fireEvent(
+                                                new CatalogCategoryRefreshEvent());
+                                        view.removeApp(selectedApp);
+                                        view.unMaskCenterPanel();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        ErrorHandler.post(I18N.ERROR.deleteApplicationError(selectedApp
+                                                .getName()));
+                                        view.unMaskCenterPanel();
+                                    }
+                                });
+                    }
+                }
+            });
+            msgBox.show();
         }
 
     }
 
     @Override
     public void onRestoreAppClicked() {
-        // TODO Auto-generated method stub
+        if (getSelectedApp() == null) {
+            return;
+        }
+        final App selectedApp = getSelectedApp();
 
+        Services.ADMIN_APP_SERVICE.restoreApplication(selectedApp.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONArray arr = obj.get("categories").isArray();
+                if (arr != null && arr.size() > 0) {
+                    StringBuilder names_display = new StringBuilder("");
+                    for (int i = 0; i < arr.size(); i++) {
+                        names_display.append(JsonUtil.trim(arr.get(0).isObject().get("name").toString()));
+                        if (i != arr.size() - 1) {
+                            names_display.append(",");
+                        }
+                    }
+
+                    MessageBox msgBox = new MessageBox(
+                            I18N.DISPLAY.restoreAppSucessMsgTitle(), I18N.DISPLAY.restoreAppSucessMsg(
+                                    selectedApp.getName(), names_display.toString()));
+                    msgBox.setIcon(MessageBox.ICONS.info());
+                    msgBox.setPredefinedButtons(PredefinedButton.OK);
+                    msgBox.show();
+                    // MessageBox.info(
+                    // I18N.DISPLAY.restoreAppSucessMsgTitle(),
+                    // I18N.DISPLAY.restoreAppSucessMsg(selectedApp.getName(),
+                    // names_display.toString()), null);
+                }
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
+                String reason = JsonUtil.trim(obj.get("reason").toString());
+                if (reason.contains("orphaned")) {
+                    AlertMessageBox alertBox = new AlertMessageBox(I18N.DISPLAY
+                            .restoreAppFailureMsgTitle(), I18N.DISPLAY.restoreAppFailureMsg(selectedApp
+                            .getName()));
+                    alertBox.show();
+                    // MessageBox.alert(I18N.DISPLAY.restoreAppFailureMsgTitle(),
+                    // I18N.DISPLAY.restoreAppFailureMsg(selectedApp.getName()), null);
+                } else {
+                    ErrorHandler.post(reason);
+                }
+            }
+        });
     }
 }

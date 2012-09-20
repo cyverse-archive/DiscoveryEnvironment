@@ -14,14 +14,14 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AppTemplateAdminServiceFacade implements AppServiceFacade {
+public class AppAdminServiceFacade implements AppServiceFacade {
     private final Component maskingCaller;
 
-    public AppTemplateAdminServiceFacade() {
+    public AppAdminServiceFacade() {
         this(null);
     }
 
-    public AppTemplateAdminServiceFacade(Component maskingCaller) {
+    public AppAdminServiceFacade(Component maskingCaller) {
         this.maskingCaller = maskingCaller;
     }
 
@@ -84,7 +84,7 @@ public class AppTemplateAdminServiceFacade implements AppServiceFacade {
      * @param name
      * @param callback
      */
-    public void renameCategory(String categoryId, String name, AsyncCallback<String> callback) {
+    public void renameAppGroup(String categoryId, String name, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getRenameCategoryServiceUrl();
 
         JSONObject body = new JSONObject();
