@@ -1,4 +1,4 @@
-package org.iplantc.admin.belphegor.client.gxt3.views.cells;
+package org.iplantc.admin.belphegor.client.views.cells;
 
 import org.iplantc.core.uiapplications.client.models.autobeans.AppFeedback;
 

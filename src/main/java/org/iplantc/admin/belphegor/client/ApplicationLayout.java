@@ -1,8 +1,8 @@
 package org.iplantc.admin.belphegor.client;
 
-import org.iplantc.admin.belphegor.client.gxt3.presenter.BelphegorAppsViewPresenter;
-import org.iplantc.admin.belphegor.client.gxt3.views.BelphegorAnalysisColumnModel;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
+import org.iplantc.admin.belphegor.client.presenters.BelphegorAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.views.BelphegorAnalysisColumnModel;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;

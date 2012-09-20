@@ -1,13 +1,13 @@
-package org.iplantc.admin.belphegor.client.gxt3.presenter;
+package org.iplantc.admin.belphegor.client.presenters;
 
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
-import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbar;
-import org.iplantc.admin.belphegor.client.gxt3.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.views.panels.EditAppDetailsPanel;
+import org.iplantc.admin.belphegor.client.views.widgets.BelphegorAppsToolbar;
+import org.iplantc.admin.belphegor.client.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;
 import org.iplantc.core.uiapplications.client.models.autobeans.AppAutoBeanFactory;

@@ -1,4 +1,4 @@
-package org.iplantc.admin.belphegor.client.gxt3.views.widgets;
+package org.iplantc.admin.belphegor.client.views.widgets;
 
 import org.iplantc.core.uiapplications.client.views.widgets.AppSearchField3;
 
