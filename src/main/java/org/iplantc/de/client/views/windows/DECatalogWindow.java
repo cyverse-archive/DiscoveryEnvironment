@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.Services;
-import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisCategorySelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppGroupSelectedEvent;
 import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEvent;
-import org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.handlers.AppGroupSelectedEventHandler;
+import org.iplantc.core.uiapplications.client.events.handlers.AppSearchResultSelectedEventHandler;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisGroup;
 import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.core.uiapplications.client.store.AnalysisToolGroupStoreWrapper;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -53,7 +53,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     public static String APPLICATIONS_UNDER_DEVLOPMENT;
     public static String BETA_GROUP_ID;
 
-    private final AppTemplateServiceFacade templateService = Services.TEMPLATE_SERVICE;
+    private final AppServiceFacade templateService = Services.APP_SERVICE;
 
     /**
      * 
@@ -85,7 +85,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
         EventBus eventbus = EventBus.getInstance();
         handlers = new ArrayList<HandlerRegistration>();
 
-        handlers.add(eventbus.addHandler(AnalysisCategorySelectedEvent.TYPE,
+        handlers.add(eventbus.addHandler(AppGroupSelectedEvent.TYPE,
                 new AnalysisCategorySelectedEventHandlerImpl()));
 
         handlers.add(eventbus.addHandler(AppSearchResultSelectedEvent.TYPE,
@@ -128,7 +128,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private void getData() {
-        templateService.getAnalysisCategories(UserInfo.getInstance().getWorkspaceId(),
+        templateService.getAppGroups(UserInfo.getInstance().getWorkspaceId(),
                 new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -228,10 +228,10 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
     }
 
     private class AnalysisCategorySelectedEventHandlerImpl implements
-            AnalysisCategorySelectedEventHandler {
+            AppGroupSelectedEventHandler {
 
         @Override
-        public void onSelection(AnalysisCategorySelectedEvent event) {
+        public void onSelection(AppGroupSelectedEvent event) {
             if (event.getSourcePanel() == catPanel) {
                 mainPanel.setHeading(event.getGroup().getName());
                 updateAnalysesListing(event.getGroup());
@@ -242,7 +242,7 @@ public class DECatalogWindow extends IPlantThreePanelWindow {
 
     private void updateAnalysesListing(final AnalysisGroup group) {
         mask(I18N.DISPLAY.loadingMask());
-        templateService.getAnalysis(group.getId(), new AsyncCallback<String>() {
+        templateService.getApp(group.getId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 ArrayList<Analysis> analyses = new ArrayList<Analysis>();

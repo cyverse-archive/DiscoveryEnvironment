@@ -7,7 +7,7 @@ import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.Services;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.DEProperties;
@@ -56,7 +56,7 @@ public class WizardWindow extends IPlantWindow {
     private WizardWindowConfig config;
     private Status status;
 
-    private final AppTemplateUserServiceFacade templateService = Services.USER_TEMPLATE_SERVICE;
+    private final AppUserServiceFacade templateService = Services.USER_APP_SERVICE;
 
     /**
      * Constructs an instance of the object given an identifier.

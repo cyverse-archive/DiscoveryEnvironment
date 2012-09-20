@@ -1,10 +1,10 @@
 package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.uiapplications.client.models.CatalogWindowConfig;
-import org.iplantc.core.uiapplications.client.models.autobeans.Analysis;
-import org.iplantc.core.uiapplications.client.models.autobeans.AnalysisGroup;
+import org.iplantc.core.uiapplications.client.models.autobeans.App;
+import org.iplantc.core.uiapplications.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter;
-import org.iplantc.core.uiapplications.client.views.AnalysisColumnModel;
+import org.iplantc.core.uiapplications.client.views.AppColumnModel;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
@@ -26,10 +26,10 @@ public class DEAppsWindow extends Gxt3IplantWindow {
     public DEAppsWindow(String tag, WindowConfig config) {
         super(tag, config);
 
-        TreeStore<AnalysisGroup> treeStore = new TreeStore<AnalysisGroup>(
+        TreeStore<AppGroup> treeStore = new TreeStore<AppGroup>(
                 new AnalysisGroupModelKeyProvider());
-        ListStore<Analysis> listStore = new ListStore<Analysis>(new AnalysisModelKeyProvider());
-        AnalysisColumnModel cm = new AnalysisColumnModel();
+        ListStore<App> listStore = new ListStore<App>(new AnalysisModelKeyProvider());
+        AppColumnModel cm = new AppColumnModel();
 
         AppsView view = new AppsViewImpl(treeStore, listStore, cm);
         presenter = new AppsViewPresenter(view, (CatalogWindowConfig)config);
@@ -39,16 +39,16 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         setHeadingText(I18N.DISPLAY.applications());
     }
 
-    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AnalysisGroup> {
+    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AppGroup> {
         @Override
-        public String getKey(AnalysisGroup item) {
+        public String getKey(AppGroup item) {
             return item.getId();
         }
     }
 
-    private final class AnalysisModelKeyProvider implements ModelKeyProvider<Analysis> {
+    private final class AnalysisModelKeyProvider implements ModelKeyProvider<App> {
         @Override
-        public String getKey(Analysis item) {
+        public String getKey(App item) {
             return item.getId();
         }
     }
@@ -58,12 +58,12 @@ public class DEAppsWindow extends Gxt3IplantWindow {
         CatalogWindowConfig configData = new CatalogWindowConfig(config);
         storeWindowViewState(configData);
 
-        if (presenter.getSelectedAnalysis() != null) {
-            configData.setAppId(presenter.getSelectedAnalysis().getId());
+        if (presenter.getSelectedApp() != null) {
+            configData.setAppId(presenter.getSelectedApp().getId());
         }
 
-        if (presenter.getSelectedAnalysisGroup() != null) {
-            configData.setCategoryId(presenter.getSelectedAnalysisGroup().getId());
+        if (presenter.getSelectedAppGroup() != null) {
+            configData.setCategoryId(presenter.getSelectedAppGroup().getId());
         }
 
         // Build window config

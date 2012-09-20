@@ -5,15 +5,15 @@ import java.util.Collection;
 import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.Services;
-import org.iplantc.core.uiapplications.client.events.AnalysisDeleteEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent;
-import org.iplantc.core.uiapplications.client.events.AnalysisGroupCountUpdateEvent.AnalysisGroupType;
+import org.iplantc.core.uiapplications.client.events.AppDeleteEvent;
+import org.iplantc.core.uiapplications.client.events.AppGroupCountUpdateEvent;
+import org.iplantc.core.uiapplications.client.events.AppGroupCountUpdateEvent.AppGroupType;
 import org.iplantc.core.uiapplications.client.events.AppSelectedEvent;
 import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent;
 import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent.MODE;
 import org.iplantc.core.uiapplications.client.models.Analysis;
 import org.iplantc.core.uiapplications.client.models.AnalysisFeedback;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 import org.iplantc.core.uiapplications.client.views.dialogs.AppCommentDialog;
 import org.iplantc.core.uiapplications.client.views.panels.BaseCatalogMainPanel;
 import org.iplantc.core.uiapplications.client.views.windows.NewToolRequestWindow;
@@ -89,7 +89,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private final FastMap<MenuItem> menuItems;
     private Analysis selectedItem;
 
-    private static AppTemplateUserServiceFacade templateService = Services.USER_TEMPLATE_SERVICE;
+    private static AppUserServiceFacade templateService = Services.USER_APP_SERVICE;
 
     /**
      * Creates a new CatalogMainPanel.
@@ -105,7 +105,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         addToolBarActions();
     }
 
-    private AppTemplateUserServiceFacade getTemplateService() {
+    private AppUserServiceFacade getTemplateService() {
         return templateService;
     }
 
@@ -197,7 +197,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 final String id = selectedItem.getId();
 
                 // first check if this app can be exported to TITo
-                getTemplateService().analysisExportable(id, new AsyncCallback<String>() {
+                getTemplateService().appExportable(id, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         JSONObject exportable = JsonUtil.getObject(result);
@@ -223,7 +223,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private void editAnalysis(final String id) {
-        getTemplateService().editAnalysis(id, new AsyncCallback<String>() {
+        getTemplateService().editApp(id, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 openTitoForEdit(id);
@@ -391,7 +391,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     private void markAsFav(String id, final boolean fav) {
         UserInfo info = UserInfo.getInstance();
         if (info != null) {
-            getTemplateService().favoriteAnalysis(info.getWorkspaceId(), id, fav,
+            getTemplateService().favoriteApp(info.getWorkspaceId(), id, fav,
                     new AsyncCallback<String>() {
 
                         @Override
@@ -403,7 +403,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                         public void onSuccess(String result) {
                             updateFavPreference(fav);
                             checkAndBuildFavMenu(fav);
-                            fireAnalysisGroupCountUpdateEvent(fav, AnalysisGroupType.FAVORITES);
+                            fireAnalysisGroupCountUpdateEvent(fav, AppGroupType.FAVORITES);
                         }
                     });
         } else {
@@ -418,8 +418,8 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
         analysisGrid.getStore().update(a);
     }
 
-    private void fireAnalysisGroupCountUpdateEvent(boolean inc, AnalysisGroupType eventGroupType) {
-        AnalysisGroupCountUpdateEvent event = new AnalysisGroupCountUpdateEvent(inc, eventGroupType);
+    private void fireAnalysisGroupCountUpdateEvent(boolean inc, AppGroupType eventGroupType) {
+        AppGroupCountUpdateEvent event = new AppGroupCountUpdateEvent(inc, eventGroupType);
         EventBus.getInstance().fireEvent(event);
     }
 
@@ -452,7 +452,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 final String id = selectedItem.getId();
 
                 // first check if this app can be exported to TITo
-                getTemplateService().analysisExportable(id, new AsyncCallback<String>() {
+                getTemplateService().appExportable(id, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         JSONObject exportable = JsonUtil.getObject(result);
@@ -460,7 +460,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                         if (JsonUtil.getBoolean(exportable, "can-export", false)) { //$NON-NLS-1$
                             copyAnalysis(id);
                             EventBus.getInstance().fireEvent(
-                                    new AnalysisGroupCountUpdateEvent(true, null));
+                                    new AppGroupCountUpdateEvent(true, null));
                         } else {
                             ErrorHandler.post(JsonUtil.getString(exportable, "cause")); //$NON-NLS-1$
                         }
@@ -481,7 +481,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
     }
 
     private void copyAnalysis(final String id) {
-        getTemplateService().copyAnalysis(id, new AsyncCallback<String>() {
+        getTemplateService().copyApp(id, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 String copiedAnalysisId = JsonUtil.getString(JsonUtil.getObject(result), "analysis_id"); //$NON-NLS-1$
@@ -598,7 +598,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 return;
             }
 
-            getTemplateService().deleteAnalysisFromWorkspace(user.getUsername(), user.getFullUsername(),
+            getTemplateService().deleteAppFromWorkspace(user.getUsername(), user.getFullUsername(),
                     app.getId(), new AsyncCallback<String>() {
 
                         @Override
@@ -608,7 +608,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
                         @Override
                         public void onSuccess(String result) {
-                            AnalysisDeleteEvent event = new AnalysisDeleteEvent(app.getId());
+                            AppDeleteEvent event = new AppDeleteEvent(app.getId());
                             EventBus.getInstance().fireEvent(event);
                             analysisGrid.getStore().remove(app);
                             fireAnalysisGroupCountUpdateEvent(false, null);
@@ -920,7 +920,7 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
 
             Long commentId = model.getFeedback().getComment_id();
             if (commentId == null) {
-                getTemplateService().rateAnalysis(model.getId(), score,
+                getTemplateService().rateApp(model.getId(), score,
                         parsePageName(model.getWikiUrl()), comment, model.getIntegratorsEmail(),
                         callback);
             } else {

@@ -2,7 +2,7 @@ package org.iplantc.de.client.services.impl;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.services.AppTemplateUserServiceFacade;
+import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.DEProperties;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  * @author Dennis Roberts
  */
-public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
+public class TemplateServiceFacade implements AppUserServiceFacade {
 
     /**
      * {@inheritDoc}
@@ -41,7 +41,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysisCategories(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
                 + "get-only-analysis-groups/" + workspaceId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
@@ -52,7 +52,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
                 + analysisGroupId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
@@ -60,7 +60,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void getPagedAnalysis(String analysisGroupId, int limit, String sortField, int offset,
+    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset,
             SortDir sortDir, AsyncCallback<String> asyncCallback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl()
                 + "get-analyses-in-group/" //$NON-NLS-1$
@@ -87,7 +87,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getDataObjectsForAnalysis(String analysisId, AsyncCallback<String> callback) {
+    public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
                 + "analysis-data-objects/" + analysisId;
 
@@ -109,7 +109,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void rateAnalysis(final String analysisId, final int rating, final String appName,
+    public void rateApp(final String analysisId, final int rating, final String appName,
             String comment, final String authorEmail, final AsyncCallback<String> callback) {
         // add comment to wiki page, then call rating service, then update avg on wiki page
         final ConfluenceServiceFacade confluenceService = ConfluenceServiceFacade.getInstance();
@@ -277,7 +277,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void favoriteAnalysis(String workspaceId, String analysisId, boolean fav,
+    public void favoriteApp(String workspaceId, String analysisId, boolean fav,
             AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "update-favorites";
 
@@ -292,7 +292,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void analysisExportable(String analysisId, AsyncCallback<String> callback) {
+    public void appExportable(String analysisId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
                 + "can-export-analysis";
 
@@ -305,7 +305,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void editAnalysis(String analysisId, AsyncCallback<String> callback) {
+    public void editApp(String analysisId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "edit-template/"
                 + analysisId;
 
@@ -314,7 +314,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void copyAnalysis(String analysisId, AsyncCallback<String> callback) {
+    public void copyApp(String analysisId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "copy-template/"
                 + analysisId;
 
@@ -323,7 +323,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
     }
 
     @Override
-    public void deleteAnalysisFromWorkspace(String user, String email, String analysisId,
+    public void deleteAppFromWorkspace(String user, String email, String analysisId,
             AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl() + "delete-workflow";
 
@@ -341,7 +341,7 @@ public class TemplateServiceFacade implements AppTemplateUserServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "search-analyses?search=" //$NON-NLS-1$
                 + URL.encodeQueryString(search);
 
