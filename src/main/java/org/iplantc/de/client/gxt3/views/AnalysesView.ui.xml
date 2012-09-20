@@ -67,11 +67,6 @@
 									view="{gridView}" loadMask="true" columnReordering="true"
 									borders="false">
 								</grid:Grid>
-
-							</container:child>
-							<container:child layoutData="{bottomData}">
-								<toolbar:PagingToolBar pageSize="10"
-									ui:field="toolBar"></toolbar:PagingToolBar>
 							</container:child>
 						</container:VerticalLayoutContainer>
 					</gxt:FramedPanel>

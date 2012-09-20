@@ -47,6 +47,8 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 /**
+ * New notifications as list
+ * 
  * @author sriram
  * 
  */

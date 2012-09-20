@@ -46,6 +46,8 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 
 /**
+ * Default DE View as Desktop
+ * 
  * @author sriram
  * 
  */

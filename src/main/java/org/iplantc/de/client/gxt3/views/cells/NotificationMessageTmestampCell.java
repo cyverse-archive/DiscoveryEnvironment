@@ -13,6 +13,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
+ * A cell to render notification timestamp formatted in a grid
+ * 
  * @author sriram
  * 
  */

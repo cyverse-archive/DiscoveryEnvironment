@@ -11,7 +11,7 @@ import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DEAppsWindow;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
-import org.iplantc.de.client.views.windows.MyAnalysesWindow;
+import org.iplantc.de.client.views.windows.MyAnalysesWindow3;
 import org.iplantc.de.client.views.windows.MyDataWindow;
 import org.iplantc.de.client.views.windows.NotificationWindow3;
 import org.iplantc.de.client.views.windows.PipelineEditorWindow;
@@ -47,7 +47,7 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAboutTag())) {
                 ret = new AboutApplicationWindow(type);
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
-                ret = new MyAnalysesWindow(type, config);
+                ret = new MyAnalysesWindow3(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new DEAppsWindow(type, config);
             } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {

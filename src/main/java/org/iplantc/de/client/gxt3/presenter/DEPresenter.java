@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Defines the default view of the workspace.
+ * 
+ * @author sriram
  */
 public class DEPresenter implements DEView.Presenter {
 

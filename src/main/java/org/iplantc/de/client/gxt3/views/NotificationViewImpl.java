@@ -30,6 +30,9 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 
 /**
+ * 
+ * Notification View as grid
+ * 
  * @author sriram
  * 
  */
@@ -71,7 +74,6 @@ public class NotificationViewImpl implements NotificationView {
         this.cm = cm;
         this.listStore = listStore;
         this.widget = uiBinder.createAndBindUi(this);
-        toolBar.setPageSize(10);
         toolBar.getElement().getStyle().setProperty("borderBottom", "none");
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         addGridSelectionHandler();
