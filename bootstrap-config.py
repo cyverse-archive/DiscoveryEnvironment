@@ -1,10 +1,11 @@
 #! /usr/bin/env python
 
-import argparse
 import glob
 import os
 import subprocess
 import sys
+
+from optparse import OptionParser
 
 def validate(f, value, msg):
     """Performs an arbitrary validation."""
@@ -64,12 +65,12 @@ validate_repo(clavin)
 validate_dir(prop_dest, '{0} does not exist'.format(prop_dest))
 
 # Parse the command-line arguments.
-parser = argparse.ArgumentParser(description='Generate test config files.')
-parser.add_argument('-f', '--envs-file', default = envs_file(configulon),
-                    help = 'the path to the environments file')
-parser.add_argument('-d', '--deployment', default = 'de-2',
-                    help = 'the name of the deployment to use')
-args = parser.parse_args()
+parser = OptionParser(description='Generate test config files.')
+parser.add_option('-f', '--envs-file', default = envs_file(configulon),
+                  help = 'the path to the environments file')
+parser.add_option('-d', '--deployment', default = 'de-2',
+                  help = 'the name of the deployment to use')
+(options, args) = parser.parse_args()
 
 # Attempt to find the Clavin JAR file.
 clavin_jar  = find_clavin_jar(clavin)
@@ -77,9 +78,9 @@ clavin_jar  = find_clavin_jar(clavin)
 # Generate the properties files.
 cmd = [
     'java', '-jar', clavin_jar, 'files',
-    '-f', args.envs_file,
+    '-f', options.envs_file,
     '-t', template_dir(configulon),
-    '-d', args.deployment,
+    '-d', options.deployment,
     '--dest', prop_dest,
     'discoveryenvironment', 'confluence'
 ]
