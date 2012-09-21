@@ -6,7 +6,8 @@ import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
-import org.iplantc.core.uiapplications.client.models.Analysis;
+import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uiapplications.client.models.autobeans.App;
 import org.iplantc.core.uiapplications.client.util.AnalysisUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
@@ -39,8 +40,11 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 public class EditAppDetailsPanel extends LayoutContainer {
+    private static final String NAME = "name";
     private static final String INTEGRATOR_NAME = "integName"; //$NON-NLS-1$
     private static final String EMAIL = "email"; //$NON-NLS-1$
     private static final String WIKI_URL = "wiki_url"; //$NON-NLS-1$
@@ -58,20 +62,20 @@ public class EditAppDetailsPanel extends LayoutContainer {
     private Button btnSubmit;
     private Button btnCancel;
     private FormPanel form;
-    private final Analysis analysis;
+    private final App app;
     private final AsyncCallback<String> closeCallback;
     private String oldAppName;
 
     /**
      * Creates a new instance of EditAppDetailsPanel
      * 
-     * @param analysis the analysis for editing
+     * @param app the analysis for editing
      * @param closeCallback a command to execute when one of the buttons is clicked. onSuccess is called
      *            when the publish form is successfully submitted, and onFailure is called when the
      *            publish fails, or the user cancels the form.
      */
-    public EditAppDetailsPanel(Analysis analysis, AsyncCallback<String> closeCallback) {
-        this.analysis = analysis;
+    public EditAppDetailsPanel(App app, AsyncCallback<String> closeCallback) {
+        this.app = app;
         this.closeCallback = closeCallback;
         setLayout(new FormLayout());
         initForm();
@@ -101,32 +105,34 @@ public class EditAppDetailsPanel extends LayoutContainer {
     }
 
     private void initFields() {
-        appNameField.setValue(analysis.getName());
-        descField.setValue(analysis.getDescription());
-        integratorNameField.setValue(analysis.getIntegratorsName());
-        if (analysis.get(Analysis.WIKI_URL) != null
-                && !analysis.get(Analysis.WIKI_URL).toString().isEmpty()) {
-            urlField.setValue(analysis.get(Analysis.WIKI_URL).toString());
+        appNameField.setValue(app.getName());
+        descField.setValue(app.getDescription());
+        integratorNameField.setValue(app.getIntegratorName());
+        if (app.getWikiUrl() != null && !app.getWikiUrl().isEmpty()) {
+            urlField.setValue(app.getWikiUrl());
         }
 
-        emailField.setValue(analysis.getIntegratorsEmail());
-        isDisabledField.setValue(analysis.isDisabled());
+        emailField.setValue(app.getIntegratorEmail());
+        isDisabledField.setValue(app.isDisabled());
 
         urlField.setEmptyText(Constants.CLIENT.appWikiUrl()
                 + ToolIntegrationAdminProperties.getInstance().getValidAppWikiUrlPath()
-                + analysis.getName());
+                + app.getName());
         addNameFieldListener();
 
     }
 
     private JSONObject toJson() {
-        analysis.setName(getNonNullString(appNameField.getValue()));
-        analysis.setIntegratorEmail(getNonNullString(emailField.getValue()));
-        analysis.setIntegratorName(getNonNullString(integratorNameField.getValue()));
-        analysis.setWikiUrl(getNonNullString(urlField.getValue()));
-        analysis.setDescription(getNonNullString(descField.getValue()));
-        analysis.setDisabled(isDisabledField.getValue());
-        return analysis.toJson();
+        app.setName(getNonNullString(appNameField.getValue()));
+        app.setIntegratorEmail(getNonNullString(emailField.getValue()));
+        app.setIntegratorName(getNonNullString(integratorNameField.getValue()));
+        app.setWikiUrl(getNonNullString(urlField.getValue()));
+        app.setDescription(getNonNullString(descField.getValue()));
+        app.setDisabled(isDisabledField.getValue());
+        String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(app)).getPayload();
+
+        // return analysis.toJson();
+        return JsonUtil.getObject(jsonString);
 
     }
 
@@ -204,7 +210,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
                 EMAIL, new BasicEmailValidator(), 256);
 
         descField = FormFieldBuilderUtil.buildTextArea(I18N.DISPLAY.analysisDesc(), true,
-                analysis.getDescription(), DESC, 255);
+                app.getDescription(), DESC, 255);
         isDisabledField = new CheckBox();
         isDisabledField.setBoxLabel(I18N.DISPLAY.appDisabled());
         chkGroup = new CheckBoxGroup();
@@ -214,7 +220,7 @@ public class EditAppDetailsPanel extends LayoutContainer {
 
     private TextField<String> buildAppNameField() {
         TextField<String> ret = FormFieldBuilderUtil.buildTextField(I18N.DISPLAY.name(), false, null,
-                Analysis.NAME, null, 255);
+                NAME, null, 255);
 
         // Set restricted characters in this field's regex validation.
         AnalysisUtil.setAppNameRegexValidation(ret);

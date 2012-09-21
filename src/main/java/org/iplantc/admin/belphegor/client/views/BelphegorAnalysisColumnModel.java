@@ -29,8 +29,8 @@ public class BelphegorAnalysisColumnModel extends ColumnModel<App> {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<ColumnConfig<App, ?>>();
 
-        ColumnConfig<App, App> name = new ColumnConfig<App, App>(
-                new IdentityValueProvider<App>(), 180, I18N.DISPLAY.name());
+        ColumnConfig<App, App> name = new ColumnConfig<App, App>(new IdentityValueProvider<App>(), 180,
+                I18N.DISPLAY.name());
         ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(
                 props.integratorName(), 130, I18N.DISPLAY.integratedby());
         ColumnConfig<App, AppFeedback> rating = new ColumnConfig<App, AppFeedback>(

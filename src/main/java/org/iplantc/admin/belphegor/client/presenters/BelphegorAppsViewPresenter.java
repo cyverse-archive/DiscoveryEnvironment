@@ -5,9 +5,9 @@ import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
-import org.iplantc.admin.belphegor.client.views.panels.EditAppDetailsPanel;
 import org.iplantc.admin.belphegor.client.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.views.widgets.EditAppDetailsWidget;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;
 import org.iplantc.core.uiapplications.client.models.autobeans.AppAutoBeanFactory;
@@ -21,6 +21,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.de.client.DeCommonI18N;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
@@ -29,6 +30,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
@@ -51,8 +53,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * 
  * TODO JDS Deletion and restoration of apps needs to be tested. Arr!
  * 
- * TODO JDS Open dialog with {@link EditAppDetailsPanel} inside when app name is clicked. This can be
- * done by firing a selection event from the cell when the name is clicked. Create AppSelectedEvent
  * 
  * @author jstroot
  * 
@@ -318,10 +318,6 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                     msgBox.setIcon(MessageBox.ICONS.info());
                     msgBox.setPredefinedButtons(PredefinedButton.OK);
                     msgBox.show();
-                    // MessageBox.info(
-                    // I18N.DISPLAY.restoreAppSucessMsgTitle(),
-                    // I18N.DISPLAY.restoreAppSucessMsg(selectedApp.getName(),
-                    // names_display.toString()), null);
                 }
                 EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
             }
@@ -335,12 +331,81 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                             .restoreAppFailureMsgTitle(), I18N.DISPLAY.restoreAppFailureMsg(selectedApp
                             .getName()));
                     alertBox.show();
-                    // MessageBox.alert(I18N.DISPLAY.restoreAppFailureMsgTitle(),
-                    // I18N.DISPLAY.restoreAppFailureMsg(selectedApp.getName()), null);
                 } else {
                     ErrorHandler.post(reason);
                 }
             }
         });
+    }
+
+    @Override
+    public void onAppNameSelected(final App app) {
+        final Store<App>.Record appRecord = view.getListStore().getRecord(app);
+        final AsyncCallback<String> tmpCallback = new AppEditCompleteCallback(appRecord);
+        final EditAppDetailsWidget appDetailsWidget = new EditAppDetailsWidget(appRecord);
+        appDetailsWidget.addHideHandler(new HideHandler() {
+
+            @Override
+            public void onHide(HideEvent event) {
+                Dialog btn = (Dialog)event.getSource();
+                String text = btn.getHideButton().getItemId();
+                if (text.equals(PredefinedButton.OK.name())) {
+                    if (app.getName() != null) {
+                        ConfluenceServiceFacade.getInstance().movePage(app.getName(),
+                                appDetailsWidget.getAppName(),
+                                new ConfluenceServiceMovePageCallback(tmpCallback, appDetailsWidget));
+                    } else {
+                        Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), tmpCallback);
+                    }
+                } else if (text.equals(PredefinedButton.CANCEL.name())) {
+                    appDetailsWidget.hide();
+                    view.getListStore().rejectChanges();
+                }
+            }
+        });
+        appDetailsWidget.show();
+
+    }
+
+    private class ConfluenceServiceMovePageCallback implements AsyncCallback<String> {
+
+        private final AsyncCallback<String> callback;
+        private final EditAppDetailsWidget appDetailsWidget;
+
+        public ConfluenceServiceMovePageCallback(AsyncCallback<String> callback,
+                EditAppDetailsWidget appDetailsWidget) {
+            this.callback = callback;
+            this.appDetailsWidget = appDetailsWidget;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught.getMessage());
+            Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), callback);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            appDetailsWidget.setWikiUrl(result);
+            Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), callback);
+        }
+    }
+
+    private class AppEditCompleteCallback implements AsyncCallback<String> {
+        private final Store<App>.Record appRecord;
+
+        public AppEditCompleteCallback(Store<App>.Record record) {
+            this.appRecord = record;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            appRecord.commit(true);
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(I18N.ERROR.updateApplicationError());
+        }
     }
 }
