@@ -1,5 +1,6 @@
-package org.iplantc.admin.belphegor.client;
+package org.iplantc.admin.belphegor.client.views;
 
+import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.apps.views.BelphegorAnalysisColumnModel;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;

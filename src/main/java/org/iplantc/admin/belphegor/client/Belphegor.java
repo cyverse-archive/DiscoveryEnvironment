@@ -5,6 +5,7 @@ import java.util.Map;
 import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
+import org.iplantc.admin.belphegor.client.views.ApplicationLayout;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.shared.services.PropertyServiceFacade;

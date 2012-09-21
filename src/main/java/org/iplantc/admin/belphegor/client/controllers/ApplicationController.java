@@ -1,6 +1,6 @@
 package org.iplantc.admin.belphegor.client.controllers;
 
-import org.iplantc.admin.belphegor.client.ApplicationLayout;
+import org.iplantc.admin.belphegor.client.views.ApplicationLayout;
 
 /**
  * A controller class that initializes the layout and event handlers
