@@ -1,9 +1,9 @@
-package org.iplantc.admin.belphegor.client.views;
+package org.iplantc.admin.belphegor.client.apps.views;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.admin.belphegor.client.views.cells.AvgAnalysisUserRatingCell;
+import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAnalysisUserRatingCell;
 import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
 import org.iplantc.core.uiapplications.client.I18N;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;

@@ -43,6 +43,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
+@Deprecated
 public class EditAppDetailsPanel extends LayoutContainer {
     private static final String NAME = "name";
     private static final String INTEGRATOR_NAME = "integName"; //$NON-NLS-1$

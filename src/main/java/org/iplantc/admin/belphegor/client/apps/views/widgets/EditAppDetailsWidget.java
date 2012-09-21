@@ -1,4 +1,4 @@
-package org.iplantc.admin.belphegor.client.views.widgets;
+package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.core.jsonutil.JsonUtil;
