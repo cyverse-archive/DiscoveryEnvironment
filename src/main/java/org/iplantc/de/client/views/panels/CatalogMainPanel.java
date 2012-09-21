@@ -644,8 +644,9 @@ public class CatalogMainPanel extends BaseCatalogMainPanel {
                 }
                 checkAndBuildFavMenu(selectedItem.isUser_favourite());
                 // Fire the item selection event.
-                EventBus.getInstance().fireEvent(
-                        new AppSelectedEvent(tag, selectedItem.getGroupId(), selectedItem.getId()));
+                // EventBus.getInstance().fireEvent(
+                // new AppSelectedEvent(tag, selectedItem.getGroupId(), selectedItem.getId()));
+                EventBus.getInstance().fireEvent(new AppSelectedEvent(selectedItem.getId(), this));
             } else {
                 for (Button b : items) {
                     b.disable();
