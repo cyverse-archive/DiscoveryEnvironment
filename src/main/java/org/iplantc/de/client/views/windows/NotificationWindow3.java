@@ -33,12 +33,14 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
  */
 public class NotificationWindow3 extends Gxt3IplantWindow {
 
+    private static CheckBoxSelectionModel<NotificationMessage> checkBoxModel;
+
     public NotificationWindow3(String tag, WindowConfig config) {
         super(tag, config);
         NotificationKeyProvider keyProvider = new NotificationKeyProvider();
         ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
-        NotificationView view = new NotificationViewImpl(store, cm);
+        NotificationView view = new NotificationViewImpl(store, cm, checkBoxModel);
         Presenter presenter = new NotificationPresenter(view);
         setSize("800", "410");
         presenter.go(this);
@@ -49,7 +51,7 @@ public class NotificationWindow3 extends Gxt3IplantWindow {
         NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
         List<ColumnConfig<NotificationMessage, ?>> configs = new LinkedList<ColumnConfig<NotificationMessage, ?>>();
 
-        CheckBoxSelectionModel<NotificationMessage> checkBoxModel = new CheckBoxSelectionModel<NotificationMessage>(
+        checkBoxModel = new CheckBoxSelectionModel<NotificationMessage>(
                 new IdentityValueProvider<NotificationMessage>());
         @SuppressWarnings("rawtypes")
         ColumnConfig colCheckBox = checkBoxModel.getColumn();

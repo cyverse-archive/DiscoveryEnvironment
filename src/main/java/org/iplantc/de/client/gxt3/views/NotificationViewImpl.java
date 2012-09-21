@@ -19,12 +19,13 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
@@ -48,8 +49,6 @@ public class NotificationViewImpl implements NotificationView {
     final ListStore<NotificationMessage> listStore;
     @UiField(provided = true)
     final ColumnModel<NotificationMessage> cm;
-    @UiField
-    GridView gridView;
 
     @UiField
     Grid<NotificationMessage> grid;
@@ -70,11 +69,12 @@ public class NotificationViewImpl implements NotificationView {
     private Presenter presenter;
 
     public NotificationViewImpl(ListStore<NotificationMessage> listStore,
-            ColumnModel<NotificationMessage> cm) {
+            ColumnModel<NotificationMessage> cm, GridSelectionModel<NotificationMessage> sm) {
         this.cm = cm;
         this.listStore = listStore;
         this.widget = uiBinder.createAndBindUi(this);
         toolBar.getElement().getStyle().setProperty("borderBottom", "none");
+        grid.setSelectionModel(sm);
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         addGridSelectionHandler();
     }
