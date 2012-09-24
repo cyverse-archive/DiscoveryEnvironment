@@ -20,7 +20,7 @@ public class AnalysesToolbarViewImpl implements AnalysesToolbarView {
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
 
-    @UiTemplate("AnalysesToobarView.ui.xml")
+    @UiTemplate("AnalysesToolbarView.ui.xml")
     interface AnalysesToolbarUiBinder extends UiBinder<Widget, AnalysesToolbarViewImpl> {
     }
 
@@ -73,12 +73,11 @@ public class AnalysesToolbarViewImpl implements AnalysesToolbarView {
 
     @UiHandler("btnCancel")
     public void cancelClicked(SelectEvent event) {
-        presenter.onDeleteClicked();
+        // TODO: implement cancel
     }
 
     @UiHandler("btnViewParam")
     public void viewParamClicked(SelectEvent event) {
-        presenter.onDeleteClicked();
+        presenter.onViewParamClicked();
     }
-
 }

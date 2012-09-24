@@ -37,7 +37,7 @@ public class MyAnalysesWindow3 extends Gxt3IplantWindow {
         setSize("800", "410");
         AnalysisKeyProvider provider = new AnalysisKeyProvider();
         ListStore<Analysis> listStore = new ListStore<Analysis>(provider);
-        AnalysesView view = new AnalysisViewImpl(listStore, buildColumnModel(), checkBoxModel);
+        AnalysesView view = new AnalysesViewImpl(listStore, buildColumnModel(), checkBoxModel);
         Presenter p = new AnalysesPresenter(view);
         p.go(this);
     }

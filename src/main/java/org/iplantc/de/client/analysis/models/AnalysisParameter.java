@@ -29,11 +29,21 @@ public interface AnalysisParameter {
     @PropertyName("param_type")
     String getType();
 
-    @PropertyName("property_value")
+    @PropertyName("param_value")
     void setValue(String value);
 
-    @PropertyName("property_value")
+    @PropertyName("param_value")
     String getValue();
 
-    // TODO: port info type and data formats
+    @PropertyName("info_type")
+    String getInfoType();
+
+    @PropertyName("info_type")
+    void setInfoType(String infoType);
+
+    @PropertyName("data_format")
+    String getDataFormat();
+
+    @PropertyName("data_format")
+    void setDataFormat(String format);
 }

@@ -29,12 +29,12 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
  * @author sriram
  * 
  */
-public class AnalysisViewImpl implements AnalysesView {
+public class AnalysesViewImpl implements AnalysesView {
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("AnalysesView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AnalysisViewImpl> {
+    interface MyUiBinder extends UiBinder<Widget, AnalysesViewImpl> {
     }
 
     @UiField(provided = true)
@@ -62,7 +62,7 @@ public class AnalysisViewImpl implements AnalysesView {
 
     private Presenter presenter;
 
-    public AnalysisViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm,
+    public AnalysesViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm,
             GridSelectionModel<Analysis> checkBoxModel) {
         this.listStore = listStore;
         this.cm = cm;

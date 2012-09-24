@@ -1,6 +1,7 @@
 package org.iplantc.de.client.analysis.presenter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.iplantc.core.uicommons.client.ErrorHandler;
@@ -10,10 +11,16 @@ import org.iplantc.de.client.Services;
 import org.iplantc.de.client.analysis.models.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.analysis.models.AnalysesList;
 import org.iplantc.de.client.analysis.models.Analysis;
+import org.iplantc.de.client.analysis.models.AnalysisParameter;
+import org.iplantc.de.client.analysis.models.AnalysisParameterProperties;
+import org.iplantc.de.client.analysis.models.AnalysisParametersList;
 import org.iplantc.de.client.analysis.views.AnalysesToolbarView;
 import org.iplantc.de.client.analysis.views.AnalysesToolbarViewImpl;
 import org.iplantc.de.client.analysis.views.AnalysesView;
 import org.iplantc.de.client.analysis.views.AnalysesView.Presenter;
+import org.iplantc.de.client.analysis.views.AnalysisParamView;
+import org.iplantc.de.client.analysis.views.cells.AnalysisParamNameCell;
+import org.iplantc.de.client.analysis.views.cells.AnalysisParamValueCell;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 
@@ -25,11 +32,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 /**
  * 
@@ -132,8 +144,39 @@ public class AnalysesPresenter implements Presenter,
 
     @Override
     public void onViewParamClicked() {
-        // TODO Auto-generated method stub
+        for (Analysis ana : view.getSelectedAnalyses()) {
+            ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>(
+                    new AnalysisParameterKeyProvider());
+            final AnalysisParamView apv = new AnalysisParamView(listStore, buildColumnModel());
+            retrieveParameterData(ana.getId(), new AsyncCallback<String>() {
 
+                @Override
+                public void onSuccess(String result) {
+                    AutoBean<AnalysisParametersList> bean = AutoBeanCodex.decode(factory,
+                            AnalysisParametersList.class, result);
+                    apv.loadParameters(bean.as().getParameterList());
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+
+                }
+            });
+            apv.show();
+        }
+    }
+
+    private class AnalysisParameterKeyProvider implements ModelKeyProvider<AnalysisParameter> {
+
+        @Override
+        public String getKey(AnalysisParameter item) {
+            return item.getId();
+        }
+
+    }
+
+    private void retrieveParameterData(final String analysisId, final AsyncCallback<String> callback) {
+        Services.ANALYSIS_SERVICE.getAnalysisParams(analysisId, callback);
     }
 
     @Override
@@ -164,6 +207,29 @@ public class AnalysesPresenter implements Presenter,
             toolbar.setCancelButtonEnabled(false);
         }
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private ColumnModel<AnalysisParameter> buildColumnModel() {
+        AnalysisParameterProperties props = GWT.create(AnalysisParameterProperties.class);
+        ColumnConfig<AnalysisParameter, AnalysisParameter> param_name = new ColumnConfig<AnalysisParameter, AnalysisParameter>(
+                new IdentityValueProvider<AnalysisParameter>(), 175); //$NON-NLS-1$
+        param_name.setHeader(I18N.DISPLAY.paramName());
+        param_name.setCell(new AnalysisParamNameCell());
+
+        ColumnConfig<AnalysisParameter, String> param_type = new ColumnConfig<AnalysisParameter, String>(
+                props.type(), 75); //$NON-NLS-1$
+        param_type.setHeader(I18N.DISPLAY.paramType());
+
+        ColumnConfig<AnalysisParameter, AnalysisParameter> param_value = new ColumnConfig<AnalysisParameter, AnalysisParameter>(
+                new IdentityValueProvider<AnalysisParameter>(), 325); //$NON-NLS-1$
+        param_value.setHeader(I18N.DISPLAY.paramValue());
+        param_value.setCell(new AnalysisParamValueCell());
+
+        List<ColumnConfig<AnalysisParameter, ?>> columns = new ArrayList<ColumnConfig<AnalysisParameter, ?>>();
+        columns.addAll(Arrays.asList(param_name, param_type, param_value));
+
+        return new ColumnModel<AnalysisParameter>(columns);
     }
 
     private void retrieveData() {

@@ -164,7 +164,7 @@ public class DEViewImpl implements DEView {
 
         final PushButton button = new PushButton(menuHeaderText, headerWidth);
         actionsMenu = new ViewNotificationMenu();
-        actionsMenu.setBorders(true);
+        actionsMenu.setBorders(false);
         actionsMenu.setStyleName("de_header_menu_body"); //$NON-NLS-1$
         actionsMenu.setShadow(false);
         actionsMenu.addShowHandler(new ShowHandler() {
@@ -204,7 +204,7 @@ public class DEViewImpl implements DEView {
     private HorizontalLayoutContainer buildActionsMenu(String menuHeaderText, int headerWidth,
             final Menu menu) {
         final HorizontalLayoutContainer ret = new HorizontalLayoutContainer();
-        ret.setBorders(true);
+        ret.setBorders(false);
 
         final PushButton button = new PushButton(menuHeaderText, headerWidth);
         button.addClickHandler(new ClickHandler() {
