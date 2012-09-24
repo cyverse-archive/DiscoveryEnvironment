@@ -2,19 +2,18 @@ package org.iplantc.de.client.factories;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.analysis.views.MyAnalysesWindow3;
+import org.iplantc.de.client.apps.views.DEAppsWindow;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
+import org.iplantc.de.client.notifications.views.NotificationWindow3;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
-import org.iplantc.de.client.views.windows.DEAppsWindow;
 import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
-import org.iplantc.de.client.views.windows.MyAnalysesWindow3;
 import org.iplantc.de.client.views.windows.MyDataWindow;
-import org.iplantc.de.client.views.windows.NotificationWindow3;
-import org.iplantc.de.client.views.windows.PipelineEditorWindow;
 import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
 import org.iplantc.de.client.views.windows.TitoWindow;
 import org.iplantc.de.client.views.windows.WizardWindow;
@@ -50,9 +49,9 @@ public class WindowFactory {
                 ret = new MyAnalysesWindow3(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new DEAppsWindow(type, config);
-            } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
-                ret = new PipelineEditorWindow(type);
-            } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
+                // } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
+                // ret = new PipelineEditorWindow(type);
+                // } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.titoTag())) {
                 ret = new TitoWindow(type, (TitoWindowConfig)config);

@@ -5,10 +5,7 @@ import java.util.List;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
-import org.iplantc.de.client.gxt3.model.NotificationMessage;
-import org.iplantc.de.client.models.Notification;
-import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
-import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.notifications.models.NotificationMessage;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;

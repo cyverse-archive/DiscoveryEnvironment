@@ -1,8 +1,5 @@
 package org.iplantc.de.client.utils;
 
-import org.iplantc.de.client.models.Notification;
-
-import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Params;
 
 /**

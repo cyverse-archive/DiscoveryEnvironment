@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.client.views.panels;
 
-import org.iplantc.de.client.gxt3.views.NotificationListView;
+import org.iplantc.de.client.notifications.views.NotificationListView;
 
 /**
  * @author sriram

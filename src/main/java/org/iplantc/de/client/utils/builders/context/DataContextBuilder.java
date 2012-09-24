@@ -2,7 +2,7 @@ package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
-import org.iplantc.de.client.gxt3.model.NotificationPayload;
+import org.iplantc.de.client.notifications.models.NotificationPayload;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
+import org.iplantc.de.client.notifications.models.Notification;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -84,7 +85,7 @@ public class NotificationWindowConfig extends WindowConfig {
         if (notifications != null) {
             selectedIds = new ArrayList<String>();
             for (Notification n : notifications) {
-                selectedIds.add(n.getId());
+                selectedIds.add(n.getMessage().getId());
             }
         }
 

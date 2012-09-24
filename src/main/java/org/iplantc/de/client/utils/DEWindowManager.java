@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
+import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.factories.WindowFactory;
-import org.iplantc.de.client.gxt3.desktop.widget.TaskButton;
 import org.iplantc.de.client.gxt3.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 

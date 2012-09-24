@@ -1,7 +1,7 @@
 package org.iplantc.de.client.utils.builders.context;
 
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.de.client.gxt3.model.NotificationPayload;
+import org.iplantc.de.client.notifications.models.NotificationPayload;
 
 /**
  * Build a JSON string to provide context when a user clicks on an item with an analysis context

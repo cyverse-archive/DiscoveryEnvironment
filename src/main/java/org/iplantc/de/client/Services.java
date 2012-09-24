@@ -1,7 +1,7 @@
 package org.iplantc.de.client;
 
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.analysis.services.AnalysisServiceFacade;
+import org.iplantc.de.client.notifications.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 public class Services {

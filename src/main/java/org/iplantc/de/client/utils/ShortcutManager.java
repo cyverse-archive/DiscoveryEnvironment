@@ -3,8 +3,8 @@ package org.iplantc.de.client.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iplantc.de.client.desktop.widget.Shortcut;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
-import org.iplantc.de.client.gxt3.desktop.widget.Shortcut;
 import org.iplantc.de.client.models.ShortcutDesc;
 import org.iplantc.de.client.utils.builders.DesktopBuilder;
 
