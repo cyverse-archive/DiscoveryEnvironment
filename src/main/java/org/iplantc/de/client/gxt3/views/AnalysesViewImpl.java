@@ -6,7 +6,6 @@ package org.iplantc.de.client.gxt3.views;
 import java.util.List;
 
 import org.iplantc.de.client.gxt3.model.Analysis;
-import org.iplantc.de.client.gxt3.model.NotificationMessage;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,13 +13,17 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 /**
  * A grid view for list of analyses
@@ -46,7 +49,7 @@ public class AnalysesViewImpl implements AnalysesView {
     GridView gridView;
 
     @UiField
-    Grid<NotificationMessage> grid;
+    Grid<Analysis> grid;
 
     @UiField
     FramedPanel mainPanel;
@@ -61,10 +64,20 @@ public class AnalysesViewImpl implements AnalysesView {
 
     private Presenter presenter;
 
-    public AnalysesViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm) {
+    public AnalysesViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm,
+            GridSelectionModel<Analysis> checkBoxModel) {
         this.listStore = listStore;
         this.cm = cm;
         widget = uiBinder.createAndBindUi(this);
+        grid.setSelectionModel(checkBoxModel);
+        grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
+        grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Analysis>() {
+
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
+                presenter.onAnalysesSelection(event.getSelection());
+            }
+        });
     }
 
     /*
@@ -106,4 +119,18 @@ public class AnalysesViewImpl implements AnalysesView {
         listStore.addAll(items);
     }
 
+    @Override
+    public List<Analysis> getSelectedAnalyses() {
+        return grid.getSelectionModel().getSelectedItems();
+    }
+
+    @Override
+    public void removeFromStore(List<Analysis> items) {
+        if (items != null & items.size() > 0) {
+            for (Analysis a : items) {
+                grid.getStore().remove(a);
+            }
+        }
+
+    }
 }

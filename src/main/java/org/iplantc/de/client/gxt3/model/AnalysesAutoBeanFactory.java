@@ -16,4 +16,7 @@ public interface AnalysesAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Analysis> getAnalyses();
 
+    AutoBean<AnalysisParameter> getAnalysisParam();
+
+    AutoBean<AnalysisParametersList> getAnalysisParamList();
 }

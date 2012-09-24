@@ -8,18 +8,28 @@
 
     <ui:with
         field="icons"
-        type="org.iplantc.core.uiapplications.client.images.Icons" />
+        type="org.iplantc.de.client.images.Icons" />
 
     <ui:with
         field="strings"
-        type="org.iplantc.core.uiapplications.client.CommonAppDisplayStrings" />
+        type="org.iplantc.de.client.DEDisplayStrings" />
 
     <container:SimpleContainer>
         <toolbar:ToolBar ui:field="menuToolBar" >
             <button:TextButton
-                icon="{icons.delete}"
+                icon="{icons.cancel}"
                 text="{strings.delete}"
                 ui:field="btnDelete" 
+                enabled="false"/>
+             <button:TextButton
+                icon="{icons.deleteIcon}"
+                text="{strings.cancelAnalysis}"
+                ui:field="btnCancel" 
+                enabled="false"/>
+              <button:TextButton
+                icon="{icons.fileView}"
+                text="{strings.viewParamLbl}"
+                ui:field="btnViewParam" 
                 enabled="false"/>
         </toolbar:ToolBar>
     </container:SimpleContainer>

@@ -24,4 +24,8 @@ public interface AnalysesView extends IsWidget {
 
     public void loadAnalyses(List<Analysis> items);
 
+    public List<Analysis> getSelectedAnalyses();
+
+    public void removeFromStore(List<Analysis> items);
+
 }

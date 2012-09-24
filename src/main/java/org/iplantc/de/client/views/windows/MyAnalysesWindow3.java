@@ -31,12 +31,14 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
  */
 public class MyAnalysesWindow3 extends Gxt3IplantWindow {
 
+    private CheckBoxSelectionModel<Analysis> checkBoxModel;
+
     public MyAnalysesWindow3(String tag, WindowConfig config) {
         super(tag, config);
         setSize("800", "410");
         AnalysisKeyProvider provider = new AnalysisKeyProvider();
         ListStore<Analysis> listStore = new ListStore<Analysis>(provider);
-        AnalysesView view = new AnalysesViewImpl(listStore, buildColumnModel());
+        AnalysesView view = new AnalysesViewImpl(listStore, buildColumnModel(), checkBoxModel);
         Presenter p = new AnalysesPresenter(view);
         p.go(this);
     }
@@ -47,8 +49,7 @@ public class MyAnalysesWindow3 extends Gxt3IplantWindow {
 
         List<ColumnConfig<Analysis, ?>> configs = new LinkedList<ColumnConfig<Analysis, ?>>();
 
-        CheckBoxSelectionModel<Analysis> checkBoxModel = new CheckBoxSelectionModel<Analysis>(
-                new IdentityValueProvider<Analysis>());
+        checkBoxModel = new CheckBoxSelectionModel<Analysis>(new IdentityValueProvider<Analysis>());
         @SuppressWarnings("rawtypes")
         ColumnConfig colCheckBox = checkBoxModel.getColumn();
         configs.add(colCheckBox);
