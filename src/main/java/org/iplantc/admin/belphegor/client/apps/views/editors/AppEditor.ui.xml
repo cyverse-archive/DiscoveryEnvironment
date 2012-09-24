@@ -1,0 +1,91 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:dialog="urn:import:com.sencha.gxt.widget.core.client">
+   <ui:with type="org.iplantc.admin.belphegor.client.DisplayStrings" field="strings"/>
+   <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
+            field="verticalLayoutData">
+    <ui:attributes width="1" height="-1" />
+  </ui:with>
+  <dialog:Dialog ui:field="dialog"
+                  hideOnButtonClick="true"
+                  width="595"
+                  height="495">
+      <g:VerticalPanel spacing="2">
+            <container:VerticalLayoutContainer>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="appNameFieldLabel" 
+                                   labelAlign="TOP"
+                                   text="{strings.name}">
+                     <form:widget>
+                        <form:TextField ui:field="name"
+                                        allowBlank="false">
+                        </form:TextField>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="integratorNameFieldLabel" 
+                                   labelAlign="TOP"
+                                   text="{strings.integratorName}">
+                     <form:widget>
+                        <form:TextField ui:field="integratorName"
+                                        allowBlank="false">
+                        </form:TextField>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="integratorEmailFieldLabel" 
+                                   labelAlign="TOP"
+                                   text="{strings.integratorEmail}">
+                     <form:widget>
+                        <form:TextField ui:field="integratorEmail"
+                                        allowBlank="false">
+                        </form:TextField>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="appDisabledCheckBoxLabel" 
+                                   labelAlign="TOP"
+                                   text="{strings.tempDisable}">
+                     <form:widget>
+                        <form:CheckBox ui:field="disabled"
+                                       boxLabel="{strings.appDisabled}">
+                        </form:CheckBox>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="appDescFieldLabel" 
+                                   labelAlign="TOP"
+                                   text="{strings.analysisDesc}">
+                     <form:widget>
+                        <form:TextArea ui:field="description">
+                        </form:TextArea>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+               
+               <container:child layoutData="{verticalLayoutData}">
+                  <form:FieldLabel ui:field="wikiUrlFieldLabel"
+                                   labelAlign="TOP">
+                     <form:widget>
+                        <form:TextField ui:field="wikiUrl"
+                                        allowBlank="false">
+                        </form:TextField>
+                     </form:widget>
+                  </form:FieldLabel>
+               </container:child>
+            </container:VerticalLayoutContainer>
+         </g:VerticalPanel>
+      </dialog:Dialog>
+</ui:UiBinder> 

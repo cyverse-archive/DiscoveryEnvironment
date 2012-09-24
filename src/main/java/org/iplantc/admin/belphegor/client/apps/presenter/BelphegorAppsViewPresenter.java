@@ -2,9 +2,9 @@ package org.iplantc.admin.belphegor.client.apps.presenter;
 
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
+import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
-import org.iplantc.admin.belphegor.client.apps.views.widgets.EditAppDetailsWidget;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
@@ -30,7 +30,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.sencha.gxt.data.shared.Store;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
@@ -54,11 +54,14 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * TODO JDS Deletion and restoration of apps needs to be tested. Arr!
  * 
  * 
+ * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
+ * 
+ * 
  * @author jstroot
  * 
  */
 public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
-        BelphegorAppsToolbar.Presenter {
+        BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
 
     private final BelphegorAppsToolbar toolbar;
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
@@ -338,69 +341,51 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         });
     }
 
+
+
     @Override
     public void onAppNameSelected(final App app) {
-        final Store<App>.Record appRecord = view.getListStore().getRecord(app);
-        final AsyncCallback<String> tmpCallback = new AppEditCompleteCallback(appRecord);
-        final EditAppDetailsWidget appDetailsWidget = new EditAppDetailsWidget(appRecord);
-        appDetailsWidget.addHideHandler(new HideHandler() {
-
-            @Override
-            public void onHide(HideEvent event) {
-                Dialog btn = (Dialog)event.getSource();
-                String text = btn.getHideButton().getItemId();
-                if (text.equals(PredefinedButton.OK.name())) {
-                    if (app.getName() != null) {
-                        ConfluenceServiceFacade.getInstance().movePage(app.getName(),
-                                appDetailsWidget.getAppName(),
-                                new ConfluenceServiceMovePageCallback(tmpCallback, appDetailsWidget));
-                    } else {
-                        Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), tmpCallback);
-                    }
-                } else if (text.equals(PredefinedButton.CANCEL.name())) {
-                    appDetailsWidget.hide();
-                    view.getListStore().rejectChanges();
-                }
-            }
-        });
-        appDetailsWidget.show();
-
+        new AppEditor(app, this).show();
     }
 
-    private class ConfluenceServiceMovePageCallback implements AsyncCallback<String> {
+    @Override
+    public void onAppEditorSave(App app) {
+        final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback();
 
-        private final AsyncCallback<String> callback;
-        private final EditAppDetailsWidget appDetailsWidget;
+        // Convert app to json
+        String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(app)).getPayload();
+        final JSONObject jsonObj = JsonUtil.getObject(jsonString);
 
-        public ConfluenceServiceMovePageCallback(AsyncCallback<String> callback,
-                EditAppDetailsWidget appDetailsWidget) {
-            this.callback = callback;
-            this.appDetailsWidget = appDetailsWidget;
+        if (app.getName() != null) {
+            ConfluenceServiceFacade.getInstance().movePage(app.getName(), app.getName(),
+                    new AsyncCallback<String>() {
+
+                        @Override
+                        public void onSuccess(String result) {
+                            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(caught.getMessage());
+                            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
+                        }
+                    });
+            // new ConfluenceServiceMovePageCallback(tmpCallback, jsonObj));
+        } else {
+            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
         }
 
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught.getMessage());
-            Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), callback);
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            appDetailsWidget.setWikiUrl(result);
-            Services.ADMIN_APP_SERVICE.updateApplication(appDetailsWidget.appAsJson(), callback);
-        }
     }
 
     private class AppEditCompleteCallback implements AsyncCallback<String> {
-        private final Store<App>.Record appRecord;
 
-        public AppEditCompleteCallback(Store<App>.Record record) {
-            this.appRecord = record;
+        public AppEditCompleteCallback() {
         }
 
         @Override
         public void onSuccess(String result) {
-            appRecord.commit(true);
+            // appRecord.commit(true);
         }
 
         @Override
@@ -408,4 +393,5 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             ErrorHandler.post(I18N.ERROR.updateApplicationError());
         }
     }
+
 }
