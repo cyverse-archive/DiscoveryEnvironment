@@ -196,11 +196,10 @@ public class NotificationListView implements IsWidget {
             view.getStore().add(nm);
             totalNotificationCount = totalNotificationCount + 1;
             fireEvents(category, payload);
+            NotifyInfo.display(header, nm.getMessage());
+
         }
 
-        if (nm != null) {
-            NotifyInfo.display(header, nm.getMessage());
-        }
     }
 
     /**
