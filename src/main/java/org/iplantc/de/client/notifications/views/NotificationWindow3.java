@@ -36,6 +36,7 @@ public class NotificationWindow3 extends Gxt3IplantWindow {
 
     public NotificationWindow3(String tag, WindowConfig config) {
         super(tag, config);
+        setTitle(I18N.DISPLAY.notifications());
         NotificationKeyProvider keyProvider = new NotificationKeyProvider();
         ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
