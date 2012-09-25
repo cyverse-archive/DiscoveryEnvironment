@@ -51,7 +51,7 @@ public class WindowFactory {
                 ret = new DEAppsWindow(type, config);
                 // } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
                 // ret = new PipelineEditorWindow(type);
-                // } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
+            } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
             } else if (type.equals(Constants.CLIENT.titoTag())) {
                 ret = new TitoWindow(type, (TitoWindowConfig)config);
