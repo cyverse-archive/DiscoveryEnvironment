@@ -39,7 +39,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl()
                 + "/" + analysisGroupId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);

@@ -18,7 +18,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
-    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
