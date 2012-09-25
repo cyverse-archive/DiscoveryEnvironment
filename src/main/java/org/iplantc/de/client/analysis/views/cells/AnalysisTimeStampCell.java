@@ -16,7 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * @author sriram
  * 
  */
-public class AnalysesTimeStampCell extends AbstractCell<Analysis> {
+public class AnalysisTimeStampCell extends AbstractCell<Analysis> {
 
     /*
      * (non-Javadoc)
@@ -28,6 +28,7 @@ public class AnalysesTimeStampCell extends AbstractCell<Analysis> {
     public void render(Context context, Analysis value, SafeHtmlBuilder sb) {
         String dateString = null;
         if (context.getColumn() == 3) {
+
             dateString = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)
                     .format(new Date(value.getStartDate()));
         } else {

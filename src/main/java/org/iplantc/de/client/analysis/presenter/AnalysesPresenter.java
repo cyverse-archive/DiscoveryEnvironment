@@ -11,6 +11,7 @@ import org.iplantc.de.client.Services;
 import org.iplantc.de.client.analysis.models.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.analysis.models.AnalysesList;
 import org.iplantc.de.client.analysis.models.Analysis;
+import org.iplantc.de.client.analysis.models.AnalysisExecutionStatus;
 import org.iplantc.de.client.analysis.models.AnalysisParameter;
 import org.iplantc.de.client.analysis.models.AnalysisParameterProperties;
 import org.iplantc.de.client.analysis.models.AnalysisParametersList;
@@ -56,64 +57,6 @@ public class AnalysesPresenter implements Presenter,
     private final AnalysesView view;
     private final AnalysesToolbarView toolbar;
     private AnalysesAutoBeanFactory factory = GWT.create(AnalysesAutoBeanFactory.class);
-
-    /**
-     * Indicates the status of an analysis.
-     */
-    public static enum EXECUTION_STATUS {
-        /** analysis status unknown */
-        UNKNOWN(I18N.CONSTANT.unknown()),
-        /** analysis is ready */
-        SUBMITTED(I18N.CONSTANT.submitted()),
-        /** analysis is running */
-        RUNNING(I18N.CONSTANT.running()),
-        /** analysis is complete */
-        COMPLETED(I18N.CONSTANT.completed()),
-        /** analysis timed out */
-        HELD(I18N.CONSTANT.held()),
-        /** analysis failed */
-        FAILED(I18N.CONSTANT.failed()),
-        /** analysis was stopped */
-        SUBMISSION_ERR(I18N.CONSTANT.subErr()),
-        /** analysis is idle */
-        IDLE(I18N.CONSTANT.idle()),
-        /** analysis is removed */
-        REMOVED(I18N.CONSTANT.removed());
-
-        private String displayText;
-
-        private EXECUTION_STATUS(String displaytext) {
-            this.displayText = displaytext;
-        }
-
-        /**
-         * Returns a string that identifies the EXECUTION_STATUS.
-         * 
-         * @return
-         */
-        public String getTypeString() {
-            return toString().toLowerCase();
-        }
-
-        /**
-         * Null-safe and case insensitive variant of valueOf(String)
-         * 
-         * @param typeString name of an EXECUTION_STATUS constant
-         * @return
-         */
-        public static EXECUTION_STATUS fromTypeString(String typeString) {
-            if (typeString == null || typeString.isEmpty()) {
-                return null;
-            }
-
-            return valueOf(typeString.toUpperCase());
-        }
-
-        @Override
-        public String toString() {
-            return displayText;
-        }
-    }
 
     public AnalysesPresenter(AnalysesView view) {
         this.view = view;
@@ -162,6 +105,7 @@ public class AnalysesPresenter implements Presenter,
 
                 }
             });
+            apv.setHeading(I18N.DISPLAY.viewParameters(ana.getName()));
             apv.show();
         }
     }
@@ -175,6 +119,47 @@ public class AnalysesPresenter implements Presenter,
 
     }
 
+    private void setButtonState() {
+        int selectionSize = 0;
+
+        selectionSize = view.getSelectedAnalyses().size();
+
+        switch (selectionSize) {
+            case 0:
+                toolbar.setCancelButtonEnabled(false);
+                toolbar.setDeleteButtonEnabled(false);
+                toolbar.setViewParamButtonEnabled(false);
+                break;
+
+            case 1:
+                enableCancelAnalysisButtonByStatus();
+                toolbar.setDeleteButtonEnabled(true);
+                toolbar.setViewParamButtonEnabled(true);
+                break;
+
+            default:
+                toolbar.setDeleteButtonEnabled(true);
+                toolbar.setViewParamButtonEnabled(false);
+                enableCancelAnalysisButtonByStatus();
+        }
+    }
+
+    private void enableCancelAnalysisButtonByStatus() {
+        List<Analysis> aes = view.getSelectedAnalyses();
+        boolean enable = false;
+        for (Analysis ae : aes) {
+            if (ae != null) {
+                if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.SUBMITTED.toString()))
+                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.IDLE.toString()))
+                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.RUNNING.toString()))) {
+                    enable = true;
+                    break;
+                }
+            }
+        }
+        toolbar.setCancelButtonEnabled(enable);
+    }
+
     private void retrieveParameterData(final String analysisId, final AsyncCallback<String> callback) {
         Services.ANALYSIS_SERVICE.getAnalysisParams(analysisId, callback);
     }
@@ -184,9 +169,9 @@ public class AnalysesPresenter implements Presenter,
         if (view.getSelectedAnalyses().size() > 0) {
             final List<Analysis> execs = view.getSelectedAnalyses();
             for (Analysis ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.SUBMITTED.toString()))
-                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.IDLE.toString()))
-                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
+                if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.SUBMITTED.toString()))
+                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.IDLE.toString()))
+                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.RUNNING.toString()))) {
                     Services.ANALYSIS_SERVICE.stopAnalysis(ae.getId(),
                             new CancelAnalysisServiceCallback(ae));
                 }
@@ -197,16 +182,7 @@ public class AnalysesPresenter implements Presenter,
 
     @Override
     public void onAnalysesSelection(List<Analysis> selectedItems) {
-        if (selectedItems.size() > 0) {
-            toolbar.setDeleteButtonEnabled(true);
-            toolbar.setViewParamButtonEnabled(true);
-            toolbar.setCancelButtonEnabled(true);
-        } else {
-            toolbar.setDeleteButtonEnabled(false);
-            toolbar.setViewParamButtonEnabled(false);
-            toolbar.setCancelButtonEnabled(false);
-        }
-
+        setButtonState();
     }
 
     @SuppressWarnings("unchecked")
@@ -319,8 +295,8 @@ public class AnalysesPresenter implements Presenter,
             JSONArray items = new JSONArray();
             int count = 0;
             for (Analysis ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.COMPLETED.toString()))
-                        || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.FAILED.toString()))) {
+                if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.COMPLETED.toString()))
+                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.FAILED.toString()))) {
                     items.set(count++, new JSONString(ae.getId()));
                     items_to_delete.add(ae);
                 }

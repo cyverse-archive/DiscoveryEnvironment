@@ -71,6 +71,7 @@ public class AnalysisParamView implements IsWidget {
         this.cm = cm;
         this.listStore = listStore;
         this.widget = uiBinder.createAndBindUi(this);
+        grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
     }
 
     @Override
@@ -90,6 +91,10 @@ public class AnalysisParamView implements IsWidget {
         dialog.show();
     }
 
+    public void setHeading(String heading) {
+        dialog.setHeadingText(heading);
+    }
+
     @UiHandler("btnSave")
     void onSaveClick(SelectEvent event) {
         final SaveAsDialog saveDialog = new SaveAsDialog(I18N.DISPLAY.saveAs(), I18N.DISPLAY.saveAs(),
@@ -103,6 +108,7 @@ public class AnalysisParamView implements IsWidget {
             }
         });
         saveDialog.show();
+        saveDialog.toFront();
     }
 
     private void saveFile(final String path, String fileContents) {

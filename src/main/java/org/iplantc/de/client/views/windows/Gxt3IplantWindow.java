@@ -430,12 +430,12 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
 
     @Override
     public void setTitle(String wintitle) {
-        getHeader().setTitle(wintitle);
+        setHeadingText(wintitle);
     }
 
     @Override
     public String getTitle() {
-        return getHeader().getTitle();
+        return getHeader().getText();
     }
 
     @Override

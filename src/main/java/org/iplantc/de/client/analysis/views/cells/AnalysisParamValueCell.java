@@ -12,6 +12,8 @@ import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -59,15 +61,25 @@ public class AnalysisParamValueCell extends AbstractCell<AnalysisParameter> {
             boolean valid_info_type = !info_type.equalsIgnoreCase("ReferenceGenome")
                     && !info_type.equalsIgnoreCase("ReferenceSequence")
                     && !info_type.equalsIgnoreCase("ReferenceAnnotation");
-            if (value.getInfoType().equalsIgnoreCase("Input") && valid_info_type) {
-                List<String> contexts = new ArrayList<String>();
-                DataContextBuilder builder = new DataContextBuilder();
-                contexts.add(builder.build(value.getValue()));
-                DataViewContextExecutor executor = new DataViewContextExecutor();
-                executor.execute(contexts);
+            if (value.getType().equalsIgnoreCase("Input") && valid_info_type) {
+                launchViewer(value);
+
             }
         }
 
+    }
+
+    private void launchViewer(AnalysisParameter value) {
+        final List<String> contexts = new ArrayList<String>();
+        final DataContextBuilder builder = new DataContextBuilder();
+        contexts.add(builder.build(value.getValue()));
+        final DataViewContextExecutor executor = new DataViewContextExecutor();
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                executor.execute(contexts);
+            }
+        });
     }
 
 }
