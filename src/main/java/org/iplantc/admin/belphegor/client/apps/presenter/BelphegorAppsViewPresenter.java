@@ -352,7 +352,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     public void onAppEditorSave(App app) {
         final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback();
 
-        // Convert app to json
+        // Serialize App to JSON object
         String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(app)).getPayload();
         final JSONObject jsonObj = JsonUtil.getObject(jsonString);
 

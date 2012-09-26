@@ -14,9 +14,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.widget.core.client.Dialog;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.event.BeforeHideEvent;
+import com.sencha.gxt.widget.core.client.Window;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextArea;
@@ -25,9 +25,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 public class AppEditor implements Editor<App>, IsWidget {
 
     public interface Presenter extends org.iplantc.core.uicommons.client.presenter.Presenter {
-
         void onAppEditorSave(App app);
-
     }
 
     private static BINDER uiBinder = GWT.create(BINDER.class);
@@ -44,7 +42,7 @@ public class AppEditor implements Editor<App>, IsWidget {
 
     @UiField
     @Ignore
-    Dialog dialog;
+    Window window;
 
     @UiField
     TextField name;
@@ -82,6 +80,14 @@ public class AppEditor implements Editor<App>, IsWidget {
     @UiField
     FieldLabel wikiUrlFieldLabel;
 
+    @UiField
+    @Ignore
+    TextButton saveButton;
+
+    @UiField
+    @Ignore
+    TextButton cancelButton;
+
     private final Widget widget;
 
     public AppEditor(App app, Presenter presenter) {
@@ -95,10 +101,7 @@ public class AppEditor implements Editor<App>, IsWidget {
         wikiUrlFieldLabel.setHTML(SafeHtmlUtils.fromTrustedString(I18N.DISPLAY
                 .wikiUrlLabel(Constants.CLIENT.publishDocumentationUrl())));
 
-        // dialog.setHeadingText(app.getName());
-        dialog.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        // Override "Ok" button and set text to "Save"
-        dialog.getButtonById(PredefinedButton.OK.name()).setText(I18N.DISPLAY.save());
+        window.setHeadingText(app.getName());
 
         driver.initialize(this);
         driver.edit(app);
@@ -109,21 +112,23 @@ public class AppEditor implements Editor<App>, IsWidget {
         return widget;
     }
 
-
     public void show() {
-        dialog.show();
+        window.show();
     }
 
-    @UiHandler("dialog")
-    void onHide(BeforeHideEvent event) {
-        Dialog btn = (Dialog)event.getSource();
-        String text = btn.getHideButton().getItemId();
-        if (text.equals(PredefinedButton.OK.name())) {
-            event.setCancelled(true);
-            presenter.onAppEditorSave(driver.flush());
-        } else if (text.equals(PredefinedButton.CANCEL.name())) {
-
+    @UiHandler("saveButton")
+    void onSaveClick(SelectEvent event) {
+        App app = driver.flush();
+        if (!driver.hasErrors()) {
+            window.hide();
+            presenter.onAppEditorSave(app);
         }
     }
+
+    @UiHandler("cancelButton")
+    void onCancelClick(SelectEvent event) {
+        window.hide();
+    }
+
 
 }

@@ -7,25 +7,51 @@
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
              xmlns:MyWidgets="urn:import:org.iplantc.core.uiapplications.client.views.widgets">
              
-   <ui:with type="org.iplantc.core.uiapplications.client.images.Icons" field="icons"/>
-   <ui:with type="org.iplantc.admin.belphegor.client.DisplayStrings" field="strings"/>
-   
-   <container:SimpleContainer>
-     <toolbar:ToolBar ui:field="toolBar">
-       <button:TextButton ui:field="addCategory"
-                          text="{strings.add}"
-                          icon="{icons.add}"/>
-       <button:TextButton ui:field="renameCategory"
-                          text="{strings.rename}"
-                          icon="{icons.requestTool}"/>
-       <button:TextButton ui:field="delete"
-                          text="{strings.delete}"
-                          icon="{icons.delete}"/>
-       <menu:SeparatorMenuItem/>
-       <button:TextButton ui:field="restoreApp"
-                          text="{strings.restoreApp}"
-                          icon="{icons.submitForPublic}"/>
-       <MyWidgets:AppSearchField3 ui:field="appSearch"/>
-     </toolbar:ToolBar>
-   </container:SimpleContainer>
+   <ui:with field="icons"
+            type="org.iplantc.core.uiapplications.client.images.Icons"/>
+   <ui:with field="strings" 
+            type="org.iplantc.admin.belphegor.client.DisplayStrings"/>
+   <ui:with field="margins0"
+            type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="0"
+                     bottom="0"
+                     left="0" />
+   </ui:with>
+   <ui:with field="boxData"
+            type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+      <ui:attributes margins="{margins0}"
+                     flex="3" />
+   </ui:with>
+   <ui:with field="boxDataNoFlex"
+            type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+      <ui:attributes margins="{margins0}" />
+   </ui:with>
+  
+  <toolbar:ToolBar ui:field="toolBar">
+      <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="addCategory"
+                             text="{strings.add}"
+                             icon="{icons.add}"/>
+      </toolbar:child>   
+      <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="renameCategory"
+                             text="{strings.rename}"
+                             icon="{icons.requestTool}"/>
+      </toolbar:child>   
+      <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="delete"
+                             text="{strings.delete}"
+                             icon="{icons.delete}"/>
+      </toolbar:child>   
+      <menu:SeparatorMenuItem/>
+      <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="restoreApp"
+                             text="{strings.restoreApp}"
+                             icon="{icons.submitForPublic}"/>
+      </toolbar:child>   
+      <toolbar:child layoutData="{boxData}">
+          <MyWidgets:AppSearchField3 ui:field="appSearch"/>
+      </toolbar:child>   
+  </toolbar:ToolBar>
 </ui:UiBinder> 

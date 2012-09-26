@@ -3,19 +3,23 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-             xmlns:dialog="urn:import:com.sencha.gxt.widget.core.client">
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button">
    <ui:with type="org.iplantc.admin.belphegor.client.DisplayStrings" field="strings"/>
    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
             field="verticalLayoutData">
     <ui:attributes width="1" height="-1" />
   </ui:with>
-  <dialog:Dialog ui:field="dialog"
-                  hideOnButtonClick="true"
-                  width="595"
-                  height="495">
+  <ui:with type="com.sencha.gxt.core.client.util.Margins" field="margins0">
+    <ui:attributes top="0" right="0" bottom="0" left="0" />
+  </ui:with>
+  <ui:with type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData" field="boxLayoutData">
+    <ui:attributes margins="{margins0}" flex="1" />
+  </ui:with>
+  <gxt:Window ui:field="window"
+              width="595">
       <g:VerticalPanel spacing="2">
             <container:VerticalLayoutContainer>
-               
                <container:child layoutData="{verticalLayoutData}">
                   <form:FieldLabel ui:field="appNameFieldLabel" 
                                    labelAlign="TOP"
@@ -85,7 +89,14 @@
                      </form:widget>
                   </form:FieldLabel>
                </container:child>
+               <container:HBoxLayoutContainer hBoxLayoutAlign="MIDDLE"
+                                              pack="END">
+                  <gxtButton:TextButton ui:field="saveButton"
+                                        text="Save"/>
+                  <gxtButton:TextButton ui:field="cancelButton"
+                                        text="Cancel"/>
+               </container:HBoxLayoutContainer>
             </container:VerticalLayoutContainer>
          </g:VerticalPanel>
-      </dialog:Dialog>
+      </gxt:Window>
 </ui:UiBinder> 
