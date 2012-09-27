@@ -297,14 +297,8 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * 
      * @return a string representing the text.
      */
+    @Override
     String create();
-
-    /**
-     * Display text for Run
-     * 
-     * @return a string representing the text.
-     */
-    String run();
 
     /**
      * Display tooltip text for opening an executed analysis' output(s).
