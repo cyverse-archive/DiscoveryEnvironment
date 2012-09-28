@@ -1,4 +1,4 @@
-package org.iplantc.de.client.utils;
+package org.iplantc.de.client.idroplite.util;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.Constants;
@@ -6,8 +6,10 @@ import org.iplantc.de.client.I18N;
 
 import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.util.Format;
-import com.extjs.gxt.ui.client.widget.Html;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.sencha.gxt.core.client.XTemplates;
+import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 
 /**
  * Utility class for building an iDrop Lite applet tag with the given JSON parameters for the applet.
@@ -15,11 +17,12 @@ import com.google.gwt.json.client.JSONObject;
  * @author psarando
  * 
  */
-public class IDropLite {
+public class IDropLiteUtil {
     public static int DISPLAY_MODE_UPLOAD = 2;
     public static int DISPLAY_MODE_DOWNLOAD = 3;
 
-    public static Html getAppletForUpload(JSONObject jsonAppletParams, int width, int height) {
+    public static HtmlLayoutContainer getAppletForUpload(JSONObject jsonAppletParams, int width,
+            int height) {
         StringBuilder htmlAppletTag = buildAppletTagCommon(jsonAppletParams, width, height);
 
         htmlAppletTag.append(buildAppletParam("absPath", JsonUtil.getString(jsonAppletParams, "home")));
@@ -36,10 +39,13 @@ public class IDropLite {
 
         System.out.println("tag-->" + htmlAppletTag.toString());
 
-        return new Html(htmlAppletTag.toString());
+        HtmlLayoutContainer htmlApplet = new HtmlLayoutContainer((htmlAppletTag.toString()));
+
+        return htmlApplet;
     }
 
-    public static Html getAppletForDownload(JSONObject jsonAppletParams, int width, int height) {
+    public static HtmlLayoutContainer getAppletForDownload(JSONObject jsonAppletParams, int width,
+            int height) {
         StringBuilder htmlAppletTag = buildAppletTagCommon(jsonAppletParams, width, height);
         htmlAppletTag.append(buildAppletParam("displayMode", String.valueOf(DISPLAY_MODE_DOWNLOAD)));
         htmlAppletTag.append(I18N.DISPLAY.javaError());
@@ -49,7 +55,11 @@ public class IDropLite {
             htmlAppletTag.append(I18N.DISPLAY.javaError());
             htmlAppletTag.append("</APPLET>");
         }
-        return new Html(htmlAppletTag.toString());
+        System.out.println("tag-->" + htmlAppletTag.toString());
+
+        HtmlLayoutContainer htmlApplet = new HtmlLayoutContainer((htmlAppletTag.toString()));
+
+        return htmlApplet;
     }
 
     private static StringBuilder buildAppletTagCommon(JSONObject jsonAppletParams, int width, int height) {
@@ -99,6 +109,11 @@ public class IDropLite {
 
     private static String buildAppletParam(String name, String value) {
         return Format.substitute("<param name=\"{0}\" value=\"{1}\"/>", name, value);
+    }
+
+    public interface HtmlLayoutContainerTemplate extends XTemplates {
+        @XTemplate("<div><div class='cell1'></div></div>")
+        SafeHtml getTemplate();
     }
 
 }

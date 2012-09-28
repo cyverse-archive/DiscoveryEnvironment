@@ -33,12 +33,12 @@ import com.sencha.gxt.widget.core.client.grid.RowExpander;
  * @author sriram
  * 
  */
-public class MyAnalysesWindow3 extends Gxt3IplantWindow {
+public class MyAnalysesWindow extends Gxt3IplantWindow {
 
     private CheckBoxSelectionModel<Analysis> checkBoxModel;
     private RowExpander<Analysis> expander;
 
-    public MyAnalysesWindow3(String tag, WindowConfig config) {
+    public MyAnalysesWindow(String tag, WindowConfig config) {
         super(tag, config);
         setTitle(I18N.DISPLAY.analyses());
         setSize("800", "410");

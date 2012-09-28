@@ -73,7 +73,7 @@ public class AnalysesToolbarViewImpl implements AnalysesToolbarView {
 
     @UiHandler("btnCancel")
     public void cancelClicked(SelectEvent event) {
-        // TODO: implement cancel
+        presenter.onCancelClicked();
     }
 
     @UiHandler("btnViewParam")

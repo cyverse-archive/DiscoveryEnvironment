@@ -8,7 +8,7 @@ import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
-import org.iplantc.de.client.utils.IDropLite;
+import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
@@ -66,9 +66,9 @@ public class IDropLiteWindowConfig extends WindowConfig {
     public void setDisplayMode(int mode) {
         put(DISPLAY_MODE, new JSONNumber(mode));
 
-        if (mode == IDropLite.DISPLAY_MODE_UPLOAD) {
+        if (mode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
             setString(TAG_SUFFIX, TAG_SUFFIX_UPLOAD);
-        } else if (mode == IDropLite.DISPLAY_MODE_DOWNLOAD) {
+        } else if (mode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
             setString(TAG_SUFFIX, TAG_SUFFIX_DOWNLOAD);
         }
     }
