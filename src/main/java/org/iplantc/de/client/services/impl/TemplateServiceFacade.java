@@ -52,7 +52,7 @@ public class TemplateServiceFacade implements AppUserServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getApp(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
                 + analysisGroupId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
