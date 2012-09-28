@@ -2,8 +2,9 @@ package org.iplantc.de.client.factories;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.analysis.views.MyAnalysesWindow3;
+import org.iplantc.de.client.analysis.views.MyAnalysesWindow;
 import org.iplantc.de.client.apps.views.DEAppsWindow;
+import org.iplantc.de.client.idroplite.views.IDropLiteAppletWindow;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
@@ -11,7 +12,6 @@ import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.notifications.views.NotificationWindow3;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
-import org.iplantc.de.client.views.windows.IDropLiteAppletWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.MyDataWindow;
 import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
@@ -46,7 +46,7 @@ public class WindowFactory {
             } else if (type.equals(Constants.CLIENT.myAboutTag())) {
                 ret = new AboutApplicationWindow(type);
             } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
-                ret = new MyAnalysesWindow3(type, config);
+                ret = new MyAnalysesWindow(type, config);
             } else if (type.equals(Constants.CLIENT.deCatalog())) {
                 ret = new DEAppsWindow(type, config);
                 // } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {

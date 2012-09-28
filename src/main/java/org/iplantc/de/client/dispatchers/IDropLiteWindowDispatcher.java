@@ -5,8 +5,8 @@ import java.util.List;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
-import org.iplantc.de.client.utils.IDropLite;
 
 import com.google.gwt.json.client.JSONObject;
 
@@ -28,10 +28,9 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
     public void launchUploadWindow(String uploadDest, String currentPath) {
         // Build window config
         IDropLiteWindowConfig configData = new IDropLiteWindowConfig();
-        configData.setDisplayMode(IDropLite.DISPLAY_MODE_UPLOAD);
+        configData.setDisplayMode(IDropLiteUtil.DISPLAY_MODE_UPLOAD);
         configData.setUploadDest(uploadDest);
         configData.setCurrentPath(currentPath);
-
         WindowConfigFactory configFactory = new WindowConfigFactory();
         JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
                 configData);
@@ -49,7 +48,7 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
     public void launchDownloadWindow(List<DiskResource> resources) {
         // Build window config
         IDropLiteWindowConfig configData = new IDropLiteWindowConfig();
-        configData.setDisplayMode(IDropLite.DISPLAY_MODE_DOWNLOAD);
+        configData.setDisplayMode(IDropLiteUtil.DISPLAY_MODE_DOWNLOAD);
         configData.setDownloadPaths(resources);
 
         WindowConfigFactory configFactory = new WindowConfigFactory();

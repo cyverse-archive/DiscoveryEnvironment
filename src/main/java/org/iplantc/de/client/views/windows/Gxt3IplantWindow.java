@@ -150,6 +150,10 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
         });
     }
 
+    protected void doHide() {
+        hide();
+    }
+
     private ToolButton createMaximizeButton() {
         final ToolButton newMaxBtn = new ToolButton(BUTTON_STYLE_MAXIMIZE);
         newMaxBtn.setId("idmaximize-" + tag); //$NON-NLS-1$
@@ -270,7 +274,7 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
         newCloseBtn.addSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
-                hide();
+                doHide();
             }
         });
 
