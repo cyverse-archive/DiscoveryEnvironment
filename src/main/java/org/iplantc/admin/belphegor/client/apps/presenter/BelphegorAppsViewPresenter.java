@@ -51,9 +51,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
  * 
- * TODO JDS Deletion and restoration of apps needs to be tested. Arr!
- * 
- * 
  * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
  * 
  * 

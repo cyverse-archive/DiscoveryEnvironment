@@ -13,8 +13,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
- * TODO JDS Need to update ui.xml to use the I18N resource display strings
- * 
  * @author jstroot
  * 
  */
