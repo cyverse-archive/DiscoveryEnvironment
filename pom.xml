@@ -74,6 +74,11 @@
             <artifactId>confluence-client</artifactId>
             <version>dev-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.iplantc.core</groupId>
+            <artifactId>clavin-java</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 		<!-- Other dependencies -->
 		<dependency>
 			<groupId>org.json</groupId>
@@ -125,17 +130,17 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.1.0.RELEASE</version>
+			<version>3.1.2.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>3.1.0.RELEASE</version>
+			<version>3.1.2.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>3.1.0.RELEASE</version>
+			<version>3.1.2.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -182,7 +187,7 @@
 
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>2.2</version>
 				<configuration>
 					<webappDirectory>${basedir}/war</webappDirectory>
 					<manifest>
@@ -217,7 +222,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5.1</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -226,7 +231,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>2.5</version>
 				<configuration>
 					<filesets>
 						<fileset>

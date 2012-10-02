@@ -1,25 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-<web-app>
-    <context-param>
-        <param-name>appPropertyFile</param-name>
-        <param-value>belphegor.properties</param-value>
-    </context-param>
-    <context-param>
-        <param-name>appPropertyPrefix</param-name>
-        <param-value>org.iplantc.belphegor</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.iplantc.initial-page</param-name>
-        <param-value></param-value>
-    </context-param>
-       <context-param>
-        <param-name>org.iplantc.properties.confluence</param-name>
-        <param-value>/belphegor-confluence.properties</param-value>
-    </context-param>
+<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee'
+         xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -28,7 +12,84 @@
         </param-value>
     </context-param>
 
-	<!-- Filters -->
+    <!-- Servlets -->
+    <servlet>
+        <servlet-name>sessionInitializationServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
+        <init-param>
+            <param-name>initialPage</param-name>
+            <param-value>#workspace</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>logoutSuccessServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
+        <init-param>
+            <param-name>propertyNamePrefix</param-name>
+            <param-value>org.iplantc.belphegor</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>deServiceDispatcher</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+        <servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>sessionManagementServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>propertyServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>confluenceServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
+    </servlet>
+
+    <!-- Servlet Mappings -->
+    <servlet-mapping>
+        <servlet-name>sessionInitializationServlet</servlet-name>
+        <url-pattern>/belphegor/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>logoutSuccessServlet</servlet-name>
+        <url-pattern>/belphegor/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deServiceDispatcher</servlet-name>
+        <url-pattern>/belphegor/deservice</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>unsecuredDeServiceDispatcher</servlet-name>
+        <url-pattern>/belphegor/unsecureddeservice</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>sessionManagementServlet</servlet-name>
+        <url-pattern>/belphegor/sessionmanagement</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>propertyServlet</servlet-name>
+        <url-pattern>/belphegor/properties</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>confluenceServlet</servlet-name>
+        <url-pattern>/belphegor/confluence</url-pattern>
+        <url-pattern>/discoveryenvironment/confluence</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>emptyResponseServlet</servlet-name>
+        <url-pattern>/belphegor/empty</url-pattern>
+    </servlet-mapping>
+
+    <!-- Filters -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -41,96 +102,8 @@
     </filter-mapping>
 
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
-
-    <servlet>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
-    </servlet>
-	
-    <servlet>
-        <servlet-name>propertyServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
-    </servlet>
-	
-    <servlet>
-        <servlet-name>sessionInitializationServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
-    </servlet>
-	
-	<servlet>
-		<servlet-name>logoutSuccessServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
-	</servlet>
-
-    <servlet>
-        <servlet-name>deServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
-    </servlet>
-	
-    <servlet>
-        <servlet-name>unsecuredDeServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.UnsecuredDEServiceDispatcher</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>casDeServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
-    </servlet>
-    
-    <servlet>
-		<servlet-name>confluenceServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
-	</servlet>
-
-    <servlet-mapping>
-        <servlet-name>deServiceDispatcher</servlet-name>
-        <url-pattern>/belphegor/deservice</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>unsecuredDeServiceDispatcher</servlet-name>
-        <url-pattern>/belphegor/unsecureddeservice</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>casDeServiceDispatcher</servlet-name>
-        <url-pattern>/belphegor/casdeservice</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>sessionInitializationServlet</servlet-name>
-        <url-pattern>/belphegor/login</url-pattern>
-    </servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>logoutSuccessServlet</servlet-name>
-		<url-pattern>/belphegor/logout</url-pattern>
-	</servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>propertyServlet</servlet-name>
-        <url-pattern>/belphegor/properties</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <url-pattern>/belphegor/sessionmanagement</url-pattern>
-    </servlet-mapping>
-    	<servlet-mapping>
-		<servlet-name>confluenceServlet</servlet-name>
-		<url-pattern>/discoveryenvironment/confluence</url-pattern>
-	</servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>emptyResponseServlet</servlet-name>
-        <url-pattern>/belphegor/empty</url-pattern>
-    </servlet-mapping>
-    	<servlet-mapping>
-		<servlet-name>confluenceServlet</servlet-name>
-		<url-pattern>/belphegor/confluence</url-pattern>
-	</servlet-mapping>
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -140,5 +113,4 @@
     <welcome-file-list>
         <welcome-file>belphegor.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>
