@@ -17,7 +17,7 @@
         </property>
     </bean>
 
-    <bean id="ConfigAliasRsolver" class="org.iplantc.clavin.spring.ConfigAliasResolver">
+    <bean id="configAliasResolver" class="org.iplantc.clavin.spring.ConfigAliasResolver">
         <property name="configurer" ref="propertyPlaceholderConfigurer" />
         <property name="aliases">
             <map>
@@ -25,6 +25,10 @@
                 <entry key="confluence" value="belphegor-confluence" />
             </map>
         </property>
+    </bean>
+
+    <bean id="serviceCallResolver" class="org.iplantc.de.server.DefaultServiceCallResolver">
+        <constructor-arg index='0' ref="configAliasResolver" />
     </bean>
 
     <bean id="casService" class="org.springframework.security.cas.ServiceProperties">
