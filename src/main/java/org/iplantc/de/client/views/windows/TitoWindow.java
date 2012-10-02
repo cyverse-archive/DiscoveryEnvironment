@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.iplantc.core.tito.client.TitoPanel;
 import org.iplantc.core.uiapplications.client.events.AppDeleteEvent;
-import org.iplantc.core.uiapplications.client.events.handlers.AppDeleteEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppDeleteEvent.AppDeleteEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;

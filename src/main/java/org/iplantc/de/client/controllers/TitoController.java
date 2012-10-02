@@ -1,9 +1,9 @@
 package org.iplantc.de.client.controllers;
 
-import org.iplantc.core.tito.client.events.NewProjectEvent;
-import org.iplantc.core.tito.client.events.NewProjectEventHandler;
-import org.iplantc.core.uiapplications.client.events.TemplateLoadEvent;
-import org.iplantc.core.uiapplications.client.events.handlers.TemplateLoadEventHandler;
+import org.iplantc.core.uiapplications.client.events.AppLoadEvent;
+import org.iplantc.core.uiapplications.client.events.AppLoadEvent.AppLoadEventHandler;
+import org.iplantc.core.uiapplications.client.events.CreateNewAppEvent;
+import org.iplantc.core.uiapplications.client.events.handlers.CreateNewAppEventHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.dispatchers.TitoWindowDispatcher;
 import org.iplantc.de.client.models.TitoWindowConfig;
@@ -16,7 +16,7 @@ import org.iplantc.de.client.models.TitoWindowConfig;
  */
 public class TitoController {
     private static TitoController instance;
-    private TitoWindowDispatcher dispatcher;
+    private final TitoWindowDispatcher dispatcher;
 
     private TitoController() {
         dispatcher = new TitoWindowDispatcher();
@@ -34,23 +34,23 @@ public class TitoController {
     private void initListeners() {
         EventBus eventbus = EventBus.getInstance();
 
-        eventbus.addHandler(NewProjectEvent.TYPE, new NewProjectEventHandlerImpl());
-        eventbus.addHandler(TemplateLoadEvent.TYPE, new TemplateLoadEventHandlerImpl());
+        eventbus.addHandler(AppLoadEvent.TYPE, new AppLoadEventHandlerImpl());
+
+        eventbus.addHandler(CreateNewAppEvent.TYPE, new CreateNewAppEventHandlerImpl());
     }
 
-    private class NewProjectEventHandlerImpl implements NewProjectEventHandler {
+    private final class CreateNewAppEventHandlerImpl implements CreateNewAppEventHandler {
         @Override
-        public void newTool() {
+        public void createNewApp() {
             dispatcher.launchTitoWindow(TitoWindowConfig.VIEW_NEW_TOOL, null);
         }
-
     }
 
-    private class TemplateLoadEventHandlerImpl implements TemplateLoadEventHandler {
+    private class AppLoadEventHandlerImpl implements AppLoadEventHandler {
         @Override
-        public void onLoad(TemplateLoadEvent event) {
+        public void onLoad(AppLoadEvent event) {
             String viewMode = null;
-            if (event.getMode() == TemplateLoadEvent.MODE.EDIT) {
+            if (event.getMode() == AppLoadEvent.MODE.EDIT) {
                 viewMode = TitoWindowConfig.VIEW_APP_EDIT;
             }
             dispatcher.launchTitoWindow(viewMode, event.getIdTemplate());
