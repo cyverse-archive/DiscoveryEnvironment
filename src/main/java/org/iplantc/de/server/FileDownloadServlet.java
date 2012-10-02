@@ -5,12 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -20,9 +18,48 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
  */
 @SuppressWarnings({"serial", "nls"})
 public class FileDownloadServlet extends HttpServlet {
-    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"}; //$NON-NLS-1$
+    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
     private static final Logger LOG = Logger.getLogger(FileDownloadServlet.class);
+
+    /**
+     * Used to resolve aliased service calls.
+     */
+    private ServiceCallResolver serviceResolver;
+
+    /**
+     * Used to obtain some configuration settings.
+     */
+    private DiscoveryEnvironmentProperties deProps;
+
+    /**
+     * The default constructor.
+     */
+    public FileDownloadServlet() {}
+
+    /**
+     * @param serviceResolver used to resolve aliased service calls.
+     * @param deProps used to obtain some configuration settings.
+     */
+    public FileDownloadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
+        this.serviceResolver = serviceResolver;
+        this.deProps = deProps;
+    }
+
+    /**
+     * Initializes the servlet if it hasn't already been initialized.
+     *
+     * @throws ServletException if the servlet can't be initialized.
+     * @throws IllegalStateException if any required dependency can't be found.
+     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (serviceResolver == null && deProps == null) {
+            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
+            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -54,7 +91,7 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * Copies the file contents from the given input stream to the output stream controlled by the given
      * response object.
-     * 
+     *
      * @param response the HTTP servlet response object.
      * @param fileContents the input stream used to retrieve the file contents.
      * @throws IOException if an I/O error occurs.
@@ -76,13 +113,13 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * Copies the content type along with any other HTTP header fields that are supposed to be copied
      * from the original HTTP response to our HTTP servlet response.
-     * 
+     *
      * @param response our HTTP servlet response.
      * @param fileContents the file contents along with the HTTP headers and content type.
      */
     private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
         String contentType = fileContents.getContentType();
-        response.setContentType(contentType == null ? "" : contentType); //$NON-NLS-1$
+        response.setContentType(contentType == null ? "" : contentType);
 
         for (String fieldName : HEADER_FIELDS_TO_COPY) {
             response.setHeader(fieldName, fileContents.getHeaderField(fieldName));
@@ -91,16 +128,16 @@ public class FileDownloadServlet extends HttpServlet {
 
     /**
      * Creates the service dispatcher that will be used to fetch the file contents.
-     * 
+     *
      * @param request our HTTP servlet request.
      * @return the service dispatcher.
      */
     private DataApiServiceDispatcher createServiceDispatcher(HttpServletRequest request) {
-        DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher();
+        DataApiServiceDispatcher dispatcher = new DataApiServiceDispatcher(serviceResolver);
         try {
             dispatcher.init(getServletConfig());
         } catch (ServletException e) {
-            e.printStackTrace();
+            LOG.warn("service dispatcher initialization failed", e);
         }
         dispatcher.setContext(getServletContext());
         dispatcher.setRequest(request);
@@ -109,28 +146,28 @@ public class FileDownloadServlet extends HttpServlet {
 
     /**
      * Builds the URL used to fetch the file contents.
-     * 
+     *
      * @param request out HTTP servlet request.
      * @return the URL.
      * @throws UnsupportedEncodingException
      */
     private String buildRequestAddress(HttpServletRequest request) throws UnsupportedEncodingException {
-        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8");
 
-        String attachment = request.getParameter("attachment"); //$NON-NLS-1$
+        String attachment = request.getParameter("attachment");
         if (attachment == null) {
-            attachment = "1"; //$NON-NLS-1$
+            attachment = "1";
         }
-        attachment = URLEncoder.encode(attachment, "UTF-8"); //$NON-NLS-1$
+        attachment = URLEncoder.encode(attachment, "UTF-8");
 
-        String downloadUrl = request.getParameter("url"); //$NON-NLS-1$
+        String downloadUrl = request.getParameter("url");
         if (downloadUrl == null) {
-            downloadUrl = DiscoveryEnvironmentProperties.getDownloadFileServiceBaseUrl();
+            downloadUrl = deProps.getDownloadFileServiceBaseUrl();
         } else {
-            downloadUrl = DiscoveryEnvironmentProperties.getDataMgmtServiceBaseUrl() + downloadUrl;
+            downloadUrl = deProps.getDataMgmtServiceBaseUrl() + downloadUrl;
         }
 
-        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment); //$NON-NLS-1$
+        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment);
         LOG.debug(address);
 
         return address;
