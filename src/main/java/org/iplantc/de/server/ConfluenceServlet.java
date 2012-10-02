@@ -16,6 +16,8 @@ import org.swift.common.soap.confluence.RemotePage;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import java.util.Properties;
+import javax.servlet.ServletException;
+import org.iplantc.clavin.spring.ConfigAliasResolver;
 
 /**
  * A service for interfacing with Confluence via SOAP.
@@ -52,10 +54,29 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     private ConfluenceProperties properties;
 
     /**
+     * The default constructor.
+     */
+    public ConfluenceServlet() {}
+
+    /**
      * @param properties the configuration settings used to initialize the ConfluenceProperties instance.
      */
     public ConfluenceServlet(Properties properties) {
         this.properties = new ConfluenceProperties(properties);
+    }
+
+    /**
+     * Initializes the servlet.
+     *
+     * @throws ServletException if the servlet can't be initialzied.
+     * @throws IllegalStateException if the Confluence client configuration settings can't be loaded.
+     */
+    @Override public void init() throws ServletException {
+        super.init();
+        if (properties == null) {
+            Properties props = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "confluence");
+            properties = new ConfluenceProperties(props);
+        }
     }
 
     /**

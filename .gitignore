@@ -16,3 +16,5 @@ war
 # ignore directories related to GWT Unit Tests
 tomcat
 www-test
+# ignore NetBeans configuration files
+nb-configuration.xml
