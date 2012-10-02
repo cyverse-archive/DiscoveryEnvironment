@@ -25,12 +25,17 @@ public class FileDownloadServlet extends HttpServlet {
     /**
      * Used to resolve aliased service calls.
      */
-    private final ServiceCallResolver serviceResolver;
+    private ServiceCallResolver serviceResolver;
 
     /**
      * Used to obtain some configuration settings.
      */
-    private final DiscoveryEnvironmentProperties deProps;
+    private DiscoveryEnvironmentProperties deProps;
+
+    /**
+     * The default constructor.
+     */
+    public FileDownloadServlet() {}
 
     /**
      * @param serviceResolver used to resolve aliased service calls.
@@ -39,6 +44,21 @@ public class FileDownloadServlet extends HttpServlet {
     public FileDownloadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
         this.serviceResolver = serviceResolver;
         this.deProps = deProps;
+    }
+
+    /**
+     * Initializes the servlet if it hasn't already been initialized.
+     *
+     * @throws ServletException if the servlet can't be initialized.
+     * @throws IllegalStateException if any required dependency can't be found.
+     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (serviceResolver == null && deProps == null) {
+            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
+            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+        }
     }
 
     /**

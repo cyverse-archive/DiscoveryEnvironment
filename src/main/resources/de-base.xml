@@ -27,6 +27,18 @@
         </property>
     </bean>
 
+    <bean id="serviceCallResolver" class="org.iplantc.de.server.DefaultServiceCallResolver">
+        <constructor-arg index="0" ref="configAliasResolver" />
+    </bean>
+
+    <bean id="deProps" class="org.iplantc.de.server.DiscoveryEnvironmentProperties">
+        <constructor-arg index="0" ref="propertyPlaceholderConfigurer" />
+    </bean>
+
+    <bean id="iplantEmailClient" class="org.iplantc.de.server.service.IplantEmailClient">
+        <constructor-arg index="0" ref="configAliasResolver" />
+    </bean>
+
     <bean id="casService" class="org.springframework.security.cas.ServiceProperties">
         <property name="service" value="${org.iplantc.discoveryenvironment.cas.server-name}${org.iplantc.discoveryenvironment.cas.validation}" />
     </bean>

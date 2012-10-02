@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -20,13 +21,14 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 /**
  * A class to accept files from the client.
  *
- * This class extends the UploadAction class provided by the GWT Upload library. The executeAction method
- * must be overridden for custom behavior.
+ * This class extends the UploadAction class provided by the GWT Upload library. The executeAction method must be
+ * overridden for custom behavior.
  *
  * @author sriram
  */
 @SuppressWarnings("nls")
 public class FileUploadServlet extends UploadAction {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -37,12 +39,17 @@ public class FileUploadServlet extends UploadAction {
     /**
      * Used to resolve aliased service calls.
      */
-    private final ServiceCallResolver serviceResolver;
+    private ServiceCallResolver serviceResolver;
 
     /**
      * Used to obtain some configuration settings.
      */
-    private final DiscoveryEnvironmentProperties deProps;
+    private DiscoveryEnvironmentProperties deProps;
+
+    /**
+     * The default constructor.
+     */
+    public FileUploadServlet() {}
 
     /**
      * @param serviceResolver used to resolve aliased service calls.
@@ -51,6 +58,21 @@ public class FileUploadServlet extends UploadAction {
     public FileUploadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
         this.serviceResolver = serviceResolver;
         this.deProps = deProps;
+    }
+
+    /**
+     * Initializes the servlet.
+     *
+     * @throws ServletException if the servlet can't be initialized.
+     * @throws IllegalStateException if any required dependency can't be found.
+     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (serviceResolver == null && deProps == null) {
+            this.serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
+            this.deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+        }
     }
 
     /**
@@ -81,14 +103,18 @@ public class FileUploadServlet extends UploadAction {
 
                 if (name.equals(FileUploadDialogPanel.HDN_PARENT_ID_KEY)) {
                     idFolder = contents;
-                } else if (name.equals(FileUploadDialogPanel.HDN_USER_ID_KEY)) {
+                }
+                else if (name.equals(FileUploadDialogPanel.HDN_USER_ID_KEY)) {
                     user = contents;
-                } else if (name.equals(FileUploadDialogPanel.FILE_TYPE)) {
+                }
+                else if (name.equals(FileUploadDialogPanel.FILE_TYPE)) {
                     type = contents;
-                } else if (name.equals(FileUploadDialogPanel.URL_FIELD)) {
+                }
+                else if (name.equals(FileUploadDialogPanel.URL_FIELD)) {
                     urlItems.add(contents);
                 }
-            } else if (validFileInfo(item)) {
+            }
+            else if (validFileInfo(item)) {
                 fileItems.add(item);
             }
         }
@@ -134,7 +160,8 @@ public class FileUploadServlet extends UploadAction {
 
         try {
             dispatcherDataApi.init(servletConfig);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("DEServiceDispatcher::init - unable to init from getServletConfig()", e);
 
             jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
@@ -152,7 +179,8 @@ public class FileUploadServlet extends UploadAction {
 
             try {
                 fileContents = item.getInputStream();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOG.error("invokeService - Exception while getting file input stream.", e);
                 // add the error to the results array, in case some files successfully uploaded already.
                 jsonResultsArray.add(buildJsonError(idFolder, type, filename, e));
@@ -171,7 +199,8 @@ public class FileUploadServlet extends UploadAction {
 
                 LOG.debug(repsonse);
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOG.error("invokeService - unable to upload file", e);
 
                 // add the error to the results array, in case some files successfully uploaded already.
@@ -185,7 +214,8 @@ public class FileUploadServlet extends UploadAction {
         // Call the URL import service for each URL.
         try {
             dispatcherDataApi.init(servletConfig);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("DataApiServiceDispatcher::init - unable to init from getServletConfig()", e);
 
             jsonResultsArray.add(buildJsonError(idFolder, type, "", e));
@@ -208,7 +238,8 @@ public class FileUploadServlet extends UploadAction {
                 String repsonse = dispatcherDataApi.getServiceData(wrapper);
 
                 jsonResultsArray.add(JSONObject.fromObject(repsonse));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 LOG.error("invokeService - unable to import URL", e);
 
                 // add the error to the results array, in case some files successfully uploaded already.

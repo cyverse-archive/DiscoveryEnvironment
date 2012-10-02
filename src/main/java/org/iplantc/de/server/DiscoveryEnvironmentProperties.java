@@ -1,6 +1,10 @@
 package org.iplantc.de.server;
 
 import java.util.Properties;
+import javax.servlet.ServletContext;
+import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
 /**
@@ -34,14 +38,44 @@ public class DiscoveryEnvironmentProperties {
     private Properties props;
 
     /**
+     * @param configurer the configurer that was used to load the properties.
+     */
+    public DiscoveryEnvironmentProperties(ClavinPropertyPlaceholderConfigurer configurer) {
+        if (configurer == null) {
+            throw new IllegalArgumentException("the configurer may not be null");
+        }
+        props = configurer.getConfig("discoveryenvironment");
+        if (props == null) {
+            throw new IllegalArgumentException("discovery environment configuration not found");
+        }
+        validateProperties();
+    }
+
+    /**
      * @param props the configuration properties.
      */
     public DiscoveryEnvironmentProperties(Properties props) {
         if (props == null) {
-            throw new ExceptionInInitializerError("the properties may not be null");
+            throw new IllegalArgumentException("the properties may not be null");
         }
         this.props = props;
         validateProperties();
+    }
+
+    /**
+     * Gets the discovery environment properties to use for the given servlet context.
+     *
+     * @param context the servlet context.
+     * @return the discovery environment properties.
+     * @throws IllegalStateException if the discovery environment properties aren't defined.
+     */
+    public static DiscoveryEnvironmentProperties getDiscoveryEnvironmentProperties(ServletContext context) {
+        WebApplicationContext appContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
+        DiscoveryEnvironmentProperties result = appContext.getBean(DiscoveryEnvironmentProperties.class);
+        if (result == null) {
+            throw new IllegalStateException("discovery environment properties bean not defined");
+        }
+        return result;
     }
 
     /**

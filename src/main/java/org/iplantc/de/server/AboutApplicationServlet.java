@@ -3,6 +3,7 @@ package org.iplantc.de.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import javax.servlet.ServletException;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,13 +33,32 @@ public class AboutApplicationServlet extends RemoteServiceServlet implements Abo
     /**
      * The DE configuration properties.
      */
-    private final DiscoveryEnvironmentProperties deProps;
+    private DiscoveryEnvironmentProperties deProps;
+
+    /**
+     * The default constructor.
+     */
+    public AboutApplicationServlet() {}
 
     /**
      * @param deProps the DE configuration properties.
      */
     public AboutApplicationServlet(DiscoveryEnvironmentProperties deProps) {
         this.deProps = deProps;
+    }
+
+    /**
+     * Initializes the servlet.
+     *
+     * @throws ServletException if the servlet can't be initialized.
+     * @throws IllegalStateException if the discovery environment properties can't be loaded.
+     */
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (deProps == null) {
+            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+        }
     }
 
     /**
