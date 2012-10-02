@@ -37,6 +37,7 @@ public class TitoController {
         eventbus.addHandler(AppLoadEvent.TYPE, new AppLoadEventHandlerImpl());
 
         eventbus.addHandler(CreateNewAppEvent.TYPE, new CreateNewAppEventHandlerImpl());
+
     }
 
     private final class CreateNewAppEventHandlerImpl implements CreateNewAppEventHandler {
