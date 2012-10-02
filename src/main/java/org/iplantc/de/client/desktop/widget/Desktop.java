@@ -30,8 +30,7 @@ import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
-import org.iplantc.de.client.views.windows.FileViewerWindow;
-import org.iplantc.de.client.views.windows.FileWindow;
+import org.iplantc.de.client.viewer.views.FileViewerWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.desktop.client.StartMenu;
@@ -634,15 +633,13 @@ public class Desktop implements IsWidget {
         private void buildNewWindow(final String tag, final FileIdentifier file, final String json,
                 boolean addTreeTab, WindowConfig config) {
             if (json != null) {
-                FileWindow window;
-                FileViewerWindow editorWindow = new FileViewerWindow(tag, file, json);
+                FileViewerWindow editorWindow = new FileViewerWindow(tag, file, json, false);
 
-                if (addTreeTab) {
-                    editorWindow.loadTreeTab();
-                }
+                // if (addTreeTab) {
+                // editorWindow.loadTreeTab();
+                // }
                 editorWindow.setWindowConfig(config);
-                window = editorWindow;
-                getWindowManager().add(window);
+                getWindowManager().add(editorWindow);
                 getWindowManager().show(tag);
 
             }

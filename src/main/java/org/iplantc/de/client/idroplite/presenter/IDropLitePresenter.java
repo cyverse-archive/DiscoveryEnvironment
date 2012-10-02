@@ -58,8 +58,8 @@ public class IDropLitePresenter implements Presenter {
 
                 appletData.put("uploadDest", new JSONString(config.getUploadDest())); //$NON-NLS-1$
 
-                return IDropLiteUtil.getAppletForUpload(appletData, view.getViewWidth() - CONTENT_PADDING,
-                        view.getViewHeight() - adjustSize);
+                return IDropLiteUtil.getAppletForUpload(appletData, view.getViewWidth()
+                        - CONTENT_PADDING, view.getViewHeight() - adjustSize);
             }
         });
 
@@ -79,8 +79,8 @@ public class IDropLitePresenter implements Presenter {
             protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
                 int adjustSize = CONTENT_PADDING * 2;
 
-                return IDropLiteUtil.getAppletForDownload(appletData, view.getViewWidth() - CONTENT_PADDING,
-                        view.getViewHeight() - adjustSize);
+                return IDropLiteUtil.getAppletForDownload(appletData, view.getViewWidth()
+                        - CONTENT_PADDING, view.getViewHeight() - adjustSize);
             }
         });
 
