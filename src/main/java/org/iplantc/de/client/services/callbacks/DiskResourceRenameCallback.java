@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services.callbacks;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
@@ -19,7 +20,8 @@ public abstract class DiskResourceRenameCallback extends DiskResourceActionCallb
      * @param id id of resource to rename.
      * @param name new disk resource name.
      */
-    public DiskResourceRenameCallback(String id, String name) {
+    public DiskResourceRenameCallback(String id, String name, Component maskedCaller) {
+        super(maskedCaller);
         this.id = id;
         this.name = name;
     }

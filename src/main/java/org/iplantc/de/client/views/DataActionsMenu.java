@@ -12,12 +12,12 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEventHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.callbacks.FileDeleteCallback;
 import org.iplantc.de.client.services.callbacks.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
@@ -397,16 +397,17 @@ public final class DataActionsMenu extends Menu {
                 }
 
                 // call the appropriate delete services
-                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
-
                 if (idFiles.size() > 0) {
-                    facade.deleteFiles(JsonUtil.buildJsonArrayString(idFiles), new FileDeleteCallback(
-                            idFiles));
+                    maskingParent.mask(I18N.DISPLAY.loadingMask());
+                    Services.DISK_RESOURCE_SERVICE.deleteFiles(JsonUtil.buildJsonArrayString(idFiles),
+                            new FileDeleteCallback(idFiles, maskingParent));
                 }
 
                 if (idFolders.size() > 0) {
-                    facade.deleteFolders(JsonUtil.buildJsonArrayString(idFolders),
-                            new FolderDeleteCallback(idFolders));
+                    maskingParent.mask(I18N.DISPLAY.loadingMask());
+                    Services.DISK_RESOURCE_SERVICE.deleteFolders(JsonUtil
+                            .buildJsonArrayString(idFolders), new FolderDeleteCallback(idFolders,
+                            maskingParent));
                 }
             } else {
                 showErrorMsg();
@@ -467,8 +468,7 @@ public final class DataActionsMenu extends Menu {
         }
 
         private void downloadNow(String path) {
-            DiskResourceServiceFacade service = new DiskResourceServiceFacade();
-            service.simpleDownload(path);
+            Services.DISK_RESOURCE_SERVICE.simpleDownload(path);
         }
 
         private void launchDownloadWindow() {

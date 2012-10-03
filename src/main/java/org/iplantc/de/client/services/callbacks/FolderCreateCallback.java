@@ -4,6 +4,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
@@ -14,13 +15,15 @@ public class FolderCreateCallback extends DiskResourceActionCallback {
     private final String idParentFolder;
     private final String name;
 
+
     /**
      * Instantiate from a parent id and name.
      * 
      * @param idParentFolder unique id of parent folder.
      * @param name name of created folder.
      */
-    public FolderCreateCallback(final String idParentFolder, final String name) {
+    public FolderCreateCallback(final String idParentFolder, final String name, Component maskedCaller) {
+        super(maskedCaller);
         this.idParentFolder = idParentFolder;
         this.name = name;
     }

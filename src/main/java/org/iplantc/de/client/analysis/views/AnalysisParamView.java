@@ -6,12 +6,11 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog.DialogOkClickHandler;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.analysis.models.AnalysisParameter;
-import org.iplantc.de.client.analysis.views.AnalysesView.Presenter;
 import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.UploadCompleteHandler;
 import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.views.dialogs.SaveAsDialog;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -65,7 +64,6 @@ public class AnalysisParamView implements IsWidget {
     TextButton btnSave;
 
     private final Widget widget;
-    private Presenter presenter;
 
     public AnalysisParamView(ListStore<AnalysisParameter> listStore, ColumnModel<AnalysisParameter> cm) {
         this.cm = cm;
@@ -77,10 +75,6 @@ public class AnalysisParamView implements IsWidget {
     @Override
     public Widget asWidget() {
         return widget;
-    }
-
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
     }
 
     public void loadParameters(List<AnalysisParameter> items) {
@@ -112,8 +106,8 @@ public class AnalysisParamView implements IsWidget {
     }
 
     private void saveFile(final String path, String fileContents) {
-        FileEditorServiceFacade facade = new FileEditorServiceFacade();
-        facade.uploadTextAsFile(path, fileContents, new SaveasServiceCallbackHandler(path));
+        Services.FILE_EDITOR_SERVICE.uploadTextAsFile(path, fileContents,
+                new SaveasServiceCallbackHandler(path));
     }
 
     private String writeTabFile() {
@@ -134,6 +128,7 @@ public class AnalysisParamView implements IsWidget {
         private final String fileName;
 
         public SaveasServiceCallbackHandler(String path) {
+            super(null);
             this.fileName = DiskResourceUtil.parseNameFromPath(path);
             this.parentFolder = DiskResourceUtil.parseParent(path);
         }

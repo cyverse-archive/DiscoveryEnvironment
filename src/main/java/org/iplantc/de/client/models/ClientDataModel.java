@@ -12,7 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.FolderData;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.Services;
 
 import com.extjs.gxt.ui.client.data.BaseTreeLoader;
 import com.extjs.gxt.ui.client.data.LoadEvent;
@@ -40,14 +40,14 @@ public class ClientDataModel {
 
     private void initHeirarchy() {
         // create a custom RPC Folder loader for the TreeStore heirarchy
-        final DiskResourceServiceFacade service = new DiskResourceServiceFacade();
         RpcProxy<List<Folder>> proxy = new RpcProxy<List<Folder>>() {
             @Override
             protected void load(Object loadConfig, final AsyncCallback<List<Folder>> callback) {
                 final Folder parentFolder = (Folder)loadConfig;
 
                 // load the folder contents of the given folder, without the files
-                service.getFolderContents(parentFolder.getId(), false, new AsyncCallback<String>() {
+                Services.DISK_RESOURCE_SERVICE.getFolderContents(parentFolder.getId(), false,
+                        new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         // build a folder list to pass to the callback given to the proxy's load method.

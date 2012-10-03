@@ -13,7 +13,6 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.AnalysisLaunchedEvent;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.WizardExportHelper;
 import org.iplantc.de.client.views.FolderSelector;
@@ -217,7 +216,7 @@ public class AnalysisLaunchDialog extends Dialog {
         if (folder == null || defaultFolderId.equals(folder.getId())) {
             onConfirm.execute();
         } else {
-            new DiskResourceServiceFacade().getFolderContents(folder.getId(),
+            Services.DISK_RESOURCE_SERVICE.getFolderContents(folder.getId(),
                     new AsyncCallback<String>() {
                         @Override
                         public void onSuccess(String result) {

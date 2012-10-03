@@ -15,9 +15,9 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.DiskResourceMetadata;
 import org.iplantc.core.uidiskresource.client.models.JsDiskResourceMetaData;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.services.callbacks.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -59,11 +59,11 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     private static final String ID_DELETE = "idDelete";
     private static final String ID_ADD = "idAdd";
-    private DiskResource resource;
+    private final DiskResource resource;
     private EditorGrid<DiskResourceMetadata> grid;
     private ToolBar toolbar;
     private CheckBoxSelectionModel<DiskResourceMetadata> sm;
-    private Set<String> toDelete;
+    private final Set<String> toDelete;
     private int initial_count;
     private boolean isError;
 
@@ -76,8 +76,7 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     protected void retrieveMetaData() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getMetaData(resource, new RetrieveMetadataCallback());
+        Services.DISK_RESOURCE_SERVICE.getMetaData(resource, new RetrieveMetadataCallback());
     }
 
     private void initToolbar() {
@@ -234,11 +233,11 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     public void UpdateMetadata() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         JSONObject obj = new JSONObject();
         obj.put("add", buildToAddArray());
         obj.put("delete", buildToDeleteArray());
-        facade.setMetaData(resource, obj.toString(), new DiskResourceMetadataUpdateCallback());
+        Services.DISK_RESOURCE_SERVICE.setMetaData(resource, obj.toString(),
+                new DiskResourceMetadataUpdateCallback(null));
 
     }
 

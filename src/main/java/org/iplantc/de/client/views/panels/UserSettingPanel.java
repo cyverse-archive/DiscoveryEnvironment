@@ -11,7 +11,6 @@ import org.iplantc.core.uidiskresource.client.models.Permissions;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DEInfo;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.FolderSelector;
@@ -195,8 +194,7 @@ public class UserSettingPanel extends LayoutContainer {
         chkEnableEmailNotifications.setValue(true);
         chkRememberLastFileSelectorPath.setValue(true);
         radioGrp.setValue((Radio)radioGrp.get(0));
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.putDefaultOutput(new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.putDefaultOutput(new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {

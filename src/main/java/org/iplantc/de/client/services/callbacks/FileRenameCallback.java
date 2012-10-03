@@ -5,6 +5,7 @@ import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -15,8 +16,8 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class FileRenameCallback extends DiskResourceRenameCallback {
 
-    public FileRenameCallback(String id, String name) {
-        super(id, name);
+    public FileRenameCallback(String id, String name, Component maskingParent) {
+        super(id, name, maskingParent);
     }
 
     /**

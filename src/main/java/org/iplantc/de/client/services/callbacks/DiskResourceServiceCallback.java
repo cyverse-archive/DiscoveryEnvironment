@@ -27,20 +27,26 @@ public abstract class DiskResourceServiceCallback implements AsyncCallback<Strin
     public static final String PATH = "path"; //$NON-NLS-1$
     public static final String ERROR_CODE = "error_code"; //$NON-NLS-1$
 
-    protected Component maskedCaller;
+    private Component maskedCaller;
 
     protected enum ErrorCode {
         ERR_DOES_NOT_EXIST, ERR_EXISTS, ERR_NOT_WRITEABLE, ERR_NOT_READABLE, ERR_WRITEABLE, ERR_READABLE, ERR_NOT_A_USER, ERR_NOT_A_FILE, ERR_NOT_A_FOLDER, ERR_IS_A_FILE, ERR_IS_A_FOLDER, ERR_INVALID_JSON, ERR_BAD_OR_MISSING_FIELD, ERR_NOT_AUTHORIZED, ERR_MISSING_QUERY_PARAMETER, ERR_INCOMPLETE_DELETION, ERR_INCOMPLETE_MOVE, ERR_INCOMPLETE_RENAME
     }
 
-    public void setMaskedCaller(Component maskedCaller) {
+    public DiskResourceServiceCallback(Component maskedCaller) {
+        setMaskedCaller(maskedCaller);
+    }
+
+    private void setMaskedCaller(Component maskedCaller) {
         this.maskedCaller = maskedCaller;
     }
 
     protected void unmaskCaller() {
-        if (maskedCaller != null) {
-            maskedCaller.unmask();
+        if (maskedCaller == null) {
+            return;
         }
+
+        maskedCaller.unmask();
     }
 
     /**

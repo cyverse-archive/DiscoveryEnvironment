@@ -12,11 +12,11 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.Permissions;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.client.events.CollaboratorsLoadedEventHandler;
 import org.iplantc.de.client.models.Collaborator;
 import org.iplantc.de.client.models.Sharing;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel;
 import org.iplantc.de.client.views.panels.ManageCollaboratorsPanel.MODE;
 import org.iplantc.de.client.views.panels.SharePanel;
@@ -134,8 +134,8 @@ public class SharingDialog extends Dialog {
     }
 
     private void getUserPermissionsInfo() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getPermissions(buildPermissionsRequestBody(), new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.getPermissions(buildPermissionsRequestBody(),
+                new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -194,8 +194,7 @@ public class SharingDialog extends Dialog {
     }
 
     private void callSharingService(JSONObject obj) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.shareDiskResource(obj, new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.shareDiskResource(obj, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -212,8 +211,7 @@ public class SharingDialog extends Dialog {
     }
 
     private void callUnshareService(JSONObject obj) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.unshareDiskResource(obj, new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.unshareDiskResource(obj, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {

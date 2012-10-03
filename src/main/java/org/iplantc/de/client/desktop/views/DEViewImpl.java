@@ -69,6 +69,7 @@ public class DEViewImpl implements DEView {
     private NotificationIndicator lblNotifications;
     private ViewNotificationMenu actionsMenu;
 
+    // TODO JDS Reimplement these styles in CssResource
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
 
@@ -80,6 +81,7 @@ public class DEViewImpl implements DEView {
 
     public DEViewImpl() {
         widget = uiBinder.createAndBindUi(this);
+        // TODO JDS Reimplement with CssResource
         con.setStyleName("iplantc-background"); //$NON-NLS-1$)
         initEventHandlers();
     }

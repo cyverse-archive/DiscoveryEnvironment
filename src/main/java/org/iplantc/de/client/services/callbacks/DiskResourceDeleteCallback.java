@@ -5,6 +5,7 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -21,7 +22,8 @@ public abstract class DiskResourceDeleteCallback extends DiskResourceActionCallb
      * 
      * @param listDiskResources list of folders to delete.
      */
-    public DiskResourceDeleteCallback(List<String> listDiskResources) {
+    public DiskResourceDeleteCallback(List<String> listDiskResources, Component maskedCaller) {
+        super(maskedCaller);
         this.listDiskResources = listDiskResources;
     }
 

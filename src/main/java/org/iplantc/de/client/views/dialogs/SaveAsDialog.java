@@ -11,7 +11,7 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.views.panels.FolderSelectDialogPanel;
 import org.iplantc.de.client.views.panels.ResourceSelectDialogPanel;
 import org.iplantc.de.client.views.panels.SaveAsFolderSelectDialogPanel;
@@ -101,8 +101,7 @@ public class SaveAsDialog extends IPlantDialog {
     protected void retrieveData(final AsyncCallback<String> callback) {
         mask(I18N.DISPLAY.loadingMask());
 
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getHomeFolder(callback);
+        Services.DISK_RESOURCE_SERVICE.getHomeFolder(callback);
     }
 
     /**

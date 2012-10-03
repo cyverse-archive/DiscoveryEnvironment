@@ -1,5 +1,6 @@
 package org.iplantc.de.client.views.panels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -9,15 +10,18 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.ManageDataRefreshEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.FileMoveCallback;
+import org.iplantc.de.client.services.callbacks.FolderMoveCallback;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -423,9 +427,36 @@ public class DataNavigationPanel extends AbstractDataPanel {
                 DiskResource res = (DiskResource)node.getModel();
                 String idDestFolder = res.getId();
 
+                // Separate DNDEvent data into lists of folders and files
+                ArrayList<String> srcFolders = new ArrayList<String>();
+                ArrayList<String> srcFiles = new ArrayList<String>();
+
+                for (DiskResource src : (List<DiskResource>)event.getData()) {
+                    String srcId = src.getId();
+                    if (!srcId.equals(idDestFolder)) {
+                        if (src instanceof Folder) {
+                            srcFolders.add(srcId);
+                        } else if (src instanceof File) {
+                            srcFiles.add(srcId);
+                        }
+                    }
+                }
+
                 // call service to move files and folders
-                DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
-                facade.moveDiskResources((List<DiskResource>)event.getData(), idDestFolder);
+                if (srcFolders.size() > 0) {
+                    maskingParent.mask(I18N.DISPLAY.loadingMask());
+                    // call service to move folders
+                    Services.DISK_RESOURCE_SERVICE.moveFolder(srcFolders, idDestFolder,
+                            new FolderMoveCallback(maskingParent));
+                }
+
+                if (srcFiles.size() > 0) {
+                    maskingParent.mask(I18N.DISPLAY.loadingMask());
+                    // call service to move files
+                    Services.DISK_RESOURCE_SERVICE.moveFile(srcFiles, idDestFolder,
+                            new FileMoveCallback(maskingParent));
+                }
+
             }
         }
 
@@ -622,8 +653,8 @@ public class DataNavigationPanel extends AbstractDataPanel {
      */
     private void reloadFolderThenExpand(final Folder target, final String path,
             final AsyncTreeLoaderCallBack callback) {
-        new DiskResourceServiceFacade().getFolderContents(target.getId(), false,
-                new DiskResourceServiceCallback() {
+        Services.DISK_RESOURCE_SERVICE.getFolderContents(target.getId(), false,
+                new DiskResourceServiceCallback(null) {
                     @Override
                     public void onSuccess(String result) {
                         JSONObject jsonTarget = JsonUtil.getObject(result);

@@ -16,17 +16,17 @@ import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.desktop.layout.CascadeDesktopLayout;
 import org.iplantc.de.client.desktop.layout.CenterDesktopLayout;
 import org.iplantc.de.client.desktop.layout.DesktopLayout;
+import org.iplantc.de.client.desktop.layout.DesktopLayout.RequestType;
 import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.desktop.layout.TileDesktopLayout;
-import org.iplantc.de.client.desktop.layout.DesktopLayout.RequestType;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.ShortcutManager;
 import org.iplantc.de.client.utils.builders.DefaultDesktopBuilder;
@@ -650,9 +650,9 @@ public class Desktop implements IsWidget {
 
         private void retrieveFileManifest(final String tag, final FileIdentifier file,
                 final boolean addTreeTab, final WindowConfig config) {
-            FileEditorServiceFacade facade = new FileEditorServiceFacade();
 
-            facade.getManifest(file.getFileId(), new DiskResourceServiceCallback() {
+            Services.FILE_EDITOR_SERVICE.getManifest(file.getFileId(), new DiskResourceServiceCallback(
+                    null) {
                 @Override
                 public void onSuccess(String result) {
                     if (result != null) {

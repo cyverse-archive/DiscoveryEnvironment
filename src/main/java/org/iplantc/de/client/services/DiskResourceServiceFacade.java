@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services.callbacks;
+package org.iplantc.de.client.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,12 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.services.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.util.Format;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
@@ -33,21 +32,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class DiskResourceServiceFacade {
     private final String serviceNamePrefix = "org.iplantc.services.de-data-mgmt"; //$NON-NLS-1$
-    private final Component maskingCaller;
-
-    public DiskResourceServiceFacade() {
-        this(null);
-    }
-
-    public DiskResourceServiceFacade(Component maskingCaller) {
-        this.maskingCaller = maskingCaller;
-    }
-
-    private void maskCaller() {
-        if (maskingCaller != null) {
-            maskingCaller.mask(I18N.DISPLAY.loadingMask());
-        }
-    }
 
     /**
      * Call service to retrieve the root folder info for the current user
@@ -171,7 +155,8 @@ public class DiskResourceServiceFacade {
      * @param diskResources list of file and folder ids to move.
      * @param idDestFolder id of the destination folder.
      */
-    public void moveDiskResources(final List<DiskResource> diskResources, final String idDestFolder) {
+    public void moveDiskResources(final List<DiskResource> diskResources, final String idDestFolder,
+            AsyncCallback<String> callback) {
         ArrayList<String> srcFolders = new ArrayList<String>();
         ArrayList<String> srcFiles = new ArrayList<String>();
 
@@ -188,12 +173,12 @@ public class DiskResourceServiceFacade {
 
         if (srcFolders.size() > 0) {
             // call service to move folders
-            moveFolder(srcFolders, idDestFolder, new FolderMoveCallback());
+            moveFolder(srcFolders, idDestFolder, callback);
         }
 
         if (srcFiles.size() > 0) {
             // call service to move files
-            moveFile(srcFiles, idDestFolder, new FileMoveCallback());
+            moveFile(srcFiles, idDestFolder, callback);
         }
     }
 
@@ -504,11 +489,6 @@ public class DiskResourceServiceFacade {
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      */
     private void callService(AsyncCallback<String> callback, ServiceCallWrapper wrapper) {
-        if (callback instanceof DiskResourceServiceCallback) {
-            ((DiskResourceServiceCallback)callback).setMaskedCaller(maskingCaller);
-        }
-
-        maskCaller();
 
         SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
     }

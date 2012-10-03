@@ -8,7 +8,7 @@ import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.utils.DataUtils;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -71,7 +71,7 @@ public class DataDetailListPanel extends ContentPanel {
      */
     private void addDetails(final DiskResource resource) {
         addDateLabel(I18N.DISPLAY.lastModified(), resource.getLastModified());
-        addDateLabel(I18N.DISPLAY.createdDate(), resource.getDateCreated()); //$NON-NLS-1$
+        addDateLabel(I18N.DISPLAY.createdDate(), resource.getDateCreated()); 
         addPermissionsLabel(I18N.DISPLAY.permissions(), resource.getPermissions().isReadable(), resource
                 .getPermissions().isWritable(), resource.getPermissions().isOwner());
 
@@ -157,8 +157,7 @@ public class DataDetailListPanel extends ContentPanel {
      * @param path
      */
     private void getFolderDetails(final String path) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getFolderContents(path, new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.getFolderContents(path, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 JSONObject jsonFolder = JsonUtil.getObject(result);

@@ -11,6 +11,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.commands.RPCSuccessCommand;
 import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
@@ -20,7 +21,6 @@ import org.iplantc.de.client.events.FileEditorWindowDirtyEvent;
 import org.iplantc.de.client.events.FileEditorWindowDirtyEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.TreeViewContextExecutor;
@@ -174,8 +174,8 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     private void getImage(String fileId) {
         if (fileId != null && !fileId.isEmpty() && panel != null) {
             // we got the url of an image... lets add a tab
-            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
-            ImagePanel pnlImage = new ImagePanel(file, fesf.getServletDownloadUrl(fileId));
+            ImagePanel pnlImage = new ImagePanel(file,
+                    Services.FILE_EDITOR_SERVICE.getServletDownloadUrl(fileId));
 
             panel.addTab(pnlImage);
         }
@@ -184,8 +184,8 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     private void getPdfFile(String fileId) {
         if (fileId != null && !fileId.isEmpty()) {
             // we got the url of the PDF file, so open it in a new window
-            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
-            WindowUtil.open(fesf.getServletDownloadUrl(fileId) + "&attachment=0");
+            WindowUtil
+                    .open(Services.FILE_EDITOR_SERVICE.getServletDownloadUrl(fileId) + "&attachment=0");
 
             isPdfPanel = true;
         }
@@ -316,11 +316,10 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
 
         @Override
         public void execute(String fileId) {
-            FileEditorServiceFacade facade = new FileEditorServiceFacade();
             String url = "file/preview?user="
                     + URL.encodeQueryString(UserInfo.getInstance().getUsername()) + "&path="
                     + URL.encodeQueryString(fileId);
-            facade.getData(url, new DiskResourceServiceCallback() {
+            Services.FILE_EDITOR_SERVICE.getData(url, new DiskResourceServiceCallback(null) {
                 @Override
                 public void onFailure(Throwable caught) {
                     updateStatus(-1);
@@ -367,8 +366,8 @@ public class FileViewerWindow extends FileWindow implements DataMonitor {
     class HtmlDataSuccessCommand implements RPCSuccessCommand {
         @Override
         public void execute(String result) {
-            FileEditorServiceFacade fesf = new FileEditorServiceFacade();
-            WindowUtil.open(fesf.getServletDownloadUrl(file.getFileId()) + "&attachment=0");
+            WindowUtil.open(Services.FILE_EDITOR_SERVICE.getServletDownloadUrl(file.getFileId())
+                    + "&attachment=0");
             isHtmlPanel = true;
 
         }

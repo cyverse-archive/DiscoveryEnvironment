@@ -4,6 +4,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -13,6 +14,10 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallback {
+
+    public DiskResourceMetadataUpdateCallback(Component maskedCaller) {
+        super(maskedCaller);
+    }
 
     public static enum TYPE {
         FILE, FOLDER

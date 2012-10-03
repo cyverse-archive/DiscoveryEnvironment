@@ -15,6 +15,7 @@ import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.controllers.DataController;
 import org.iplantc.de.client.controllers.DataMonitor;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -27,7 +28,6 @@ import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.models.DataWindowConfig;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.DataDetailsPanel;
 import org.iplantc.de.client.views.panels.DataMainPanel;
 import org.iplantc.de.client.views.panels.DataNavigationPanel;
@@ -156,11 +156,9 @@ public class MyDataWindow extends IPlantThreePanelWindow implements DataMonitor 
      * 
      */
     protected void retrieveData(AsyncCallback<String> callback) {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-
         mask(I18N.DISPLAY.loadingMask());
 
-        facade.getHomeFolder(callback);
+        Services.DISK_RESOURCE_SERVICE.getHomeFolder(callback);
     }
 
     private class RetrieveDataCallback implements AsyncCallback<String> {

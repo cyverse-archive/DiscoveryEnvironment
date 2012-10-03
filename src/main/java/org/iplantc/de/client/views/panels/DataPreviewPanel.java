@@ -2,9 +2,10 @@ package org.iplantc.de.client.views.panels;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.google.gwt.json.client.JSONObject;
 
@@ -30,8 +31,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
         final String fileName = file.getName();
         waitIcon.show();
 
-        FileEditorServiceFacade facade = new FileEditorServiceFacade();
-        facade.getManifest(idFile, new DiskResourceServiceCallback() {
+        Services.FILE_EDITOR_SERVICE.getManifest(idFile, new DiskResourceServiceCallback(null) {
             @Override
             public void onSuccess(String result) {
                 waitIcon.clearStatus(""); //$NON-NLS-1$
@@ -102,8 +102,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
      * @param callback
      */
     private void displayPreviewData(final String url, DiskResourceServiceCallback callback) {
-        FileEditorServiceFacade facade = new FileEditorServiceFacade();
-        facade.getData(url, callback);
+        Services.FILE_EDITOR_SERVICE.getData(url, callback);
     }
 
     @Override
@@ -140,7 +139,8 @@ public class DataPreviewPanel extends DataTextAreaPanel {
         private final String idFile;
         private final String fileName;
 
-        public PreviewManifestCallback(String idFile, String fileName) {
+        public PreviewManifestCallback(String idFile, String fileName, Component maskedCaller) {
+            super(maskedCaller);
             this.idFile = idFile;
             this.fileName = fileName;
         }
@@ -184,7 +184,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
     private class GetPreviewDataCallback extends PreviewManifestCallback {
 
         public GetPreviewDataCallback(String idFile, String fileName) {
-            super(idFile, fileName);
+            super(idFile, fileName, null);
         }
 
         @Override
@@ -202,7 +202,7 @@ public class DataPreviewPanel extends DataTextAreaPanel {
     private class GetRawDataCallback extends PreviewManifestCallback {
 
         public GetRawDataCallback(String idFile, String fileName) {
-            super(idFile, fileName);
+            super(idFile, fileName, null);
         }
     }
 }

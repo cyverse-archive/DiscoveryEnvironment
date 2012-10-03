@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.iplantc.de.client.I18N;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -14,8 +15,8 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class FileDeleteCallback extends DiskResourceDeleteCallback {
 
-    public FileDeleteCallback(List<String> listFolders) {
-        super(listFolders);
+    public FileDeleteCallback(List<String> listFolders, Component maskingParent) {
+        super(listFolders, maskingParent);
     }
 
     /**

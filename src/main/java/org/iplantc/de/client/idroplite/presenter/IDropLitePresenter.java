@@ -9,13 +9,13 @@ import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantSubmittableDialog;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
 import org.iplantc.de.client.idroplite.views.IDropLiteView;
 import org.iplantc.de.client.idroplite.views.IDropLiteView.Presenter;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.views.panels.FileUploadDialogPanel;
 
 import com.extjs.gxt.ui.client.core.FastMap;
@@ -32,7 +32,7 @@ import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
  */
 public class IDropLitePresenter implements Presenter {
 
-    private IDropLiteView view;
+    private final IDropLiteView view;
     private Dialog dlgUpload;
     private final int CONTENT_PADDING = 12;
     final private IDropLiteWindowConfig config;
@@ -50,8 +50,7 @@ public class IDropLitePresenter implements Presenter {
     @Override
     public void buildUploadApplet() {
         view.mask();
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.upload(new IDropLiteServiceCallback() {
+        Services.DISK_RESOURCE_SERVICE.upload(new IDropLiteServiceCallback() {
             @Override
             protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
                 int adjustSize = CONTENT_PADDING * 2;
@@ -72,9 +71,9 @@ public class IDropLitePresenter implements Presenter {
      */
     @Override
     public void buildDownloadApplet() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
         view.mask();
-        facade.download(config.getDownloadPaths(), new IDropLiteServiceCallback() {
+        Services.DISK_RESOURCE_SERVICE.download(config.getDownloadPaths(),
+                new IDropLiteServiceCallback() {
             @Override
             protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
                 int adjustSize = CONTENT_PADDING * 2;

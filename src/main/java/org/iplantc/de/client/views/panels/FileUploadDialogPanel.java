@@ -397,7 +397,7 @@ public class FileUploadDialogPanel extends IPlantDialogPanel {
 
         public CheckDuplicatesCallback(List<String> diskResourceIds,
                 FastMap<TextField<String>> destResourceMap) {
-            super(diskResourceIds);
+            super(diskResourceIds, null);
             this.destResourceMap = destResourceMap;
         }
 

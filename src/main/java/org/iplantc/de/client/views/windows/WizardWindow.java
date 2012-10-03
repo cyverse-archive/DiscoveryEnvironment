@@ -6,7 +6,6 @@ import java.util.List;
 import org.iplantc.core.client.widgets.metadata.WizardPropertyGroupContainer;
 import org.iplantc.core.client.widgets.utils.ComponentValueTable;
 import org.iplantc.core.jsonutil.JsonUtil;
-import org.iplantc.core.uiapplications.client.Services;
 import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
@@ -14,6 +13,7 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.AnalysisLaunchedEvent;
 import org.iplantc.de.client.events.AnalysisLaunchedEventHandler;
@@ -22,7 +22,6 @@ import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.WizardWindowConfig;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 import org.iplantc.de.client.strategies.WizardValidationBroadcastStrategy;
 import org.iplantc.de.client.utils.builders.WizardBuilder;
 import org.iplantc.de.client.views.dialogs.AnalysisLaunchDialog;
@@ -59,7 +58,7 @@ public class WizardWindow extends IPlantWindow {
     private WizardWindowConfig config;
     private Status status;
 
-    private final AppUserServiceFacade templateService = Services.USER_APP_SERVICE;
+    private final AppUserServiceFacade templateService = org.iplantc.core.uiapplications.client.Services.USER_APP_SERVICE;
 
     /**
      * Constructs an instance of the object given an identifier.
@@ -295,8 +294,8 @@ public class WizardWindow extends IPlantWindow {
     }
 
     protected void createOutputFolderByDefault() {
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getDefaultOutput(DEProperties.getInstance().getDefaultOutputFolderName(),
+        Services.DISK_RESOURCE_SERVICE.getDefaultOutput(DEProperties.getInstance()
+                .getDefaultOutputFolderName(),
                 new OutputFolderCreateCallback());
     }
 

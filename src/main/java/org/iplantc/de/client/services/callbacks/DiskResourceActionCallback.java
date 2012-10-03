@@ -3,6 +3,7 @@ package org.iplantc.de.client.services.callbacks;
 import org.iplantc.de.client.factories.EventJSONFactory;
 import org.iplantc.de.client.utils.MessageDispatcher;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -13,6 +14,11 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public abstract class DiskResourceActionCallback extends DiskResourceServiceCallback {
+
+    public DiskResourceActionCallback(Component maskedCaller) {
+        super(maskedCaller);
+    }
+
     /**
      * @return The ActionType for this callback, used to build MessageDispatcher event JSON.
      */

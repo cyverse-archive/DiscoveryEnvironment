@@ -1,8 +1,9 @@
-package org.iplantc.de.client.services.callbacks;
+package org.iplantc.de.client.services;
 
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.SharedServiceFacade;
 import org.iplantc.de.shared.SharedUnsecuredServiceFacade;

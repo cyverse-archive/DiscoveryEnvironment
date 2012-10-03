@@ -6,15 +6,18 @@ import java.util.List;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
+import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.FolderData;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.callbacks.FileMoveCallback;
+import org.iplantc.de.client.services.callbacks.FolderMoveCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.MyDataGrid;
 
@@ -240,8 +243,7 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
             maskingParent.mask(I18N.DISPLAY.loadingMask());
         }
 
-        DiskResourceServiceFacade facade = new DiskResourceServiceFacade();
-        facade.getFolderContents(path, new AsyncCallback<String>() {
+        Services.DISK_RESOURCE_SERVICE.getFolderContents(path, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
                 if (maskingParent != null) {
@@ -575,9 +577,36 @@ public class DataMainPanel extends AbstractDataPanel implements DataContainer {
             DiskResource res = (DiskResource)(grid.getStore().getAt(dropIndex));
             String idDestFolder = res.getId();
 
+
+            // Separate DNDEvent data into lists of folders and files
+            ArrayList<String> srcFolders = new ArrayList<String>();
+            ArrayList<String> srcFiles = new ArrayList<String>();
+
+            for (DiskResource src : (List<DiskResource>)event.getData()) {
+                String srcId = src.getId();
+                if (!srcId.equals(idDestFolder)) {
+                    if (src instanceof Folder) {
+                        srcFolders.add(srcId);
+                    } else if (src instanceof File) {
+                        srcFiles.add(srcId);
+                    }
+                }
+            }
+
             // call service to move files and folders
-            DiskResourceServiceFacade facade = new DiskResourceServiceFacade(maskingParent);
-            facade.moveDiskResources((List<DiskResource>)event.getData(), idDestFolder);
+            if (srcFolders.size() > 0) {
+                maskingParent.mask(I18N.DISPLAY.loadingMask());
+                // call service to move folders
+                Services.DISK_RESOURCE_SERVICE.moveFolder(srcFolders, idDestFolder,
+                        new FolderMoveCallback(maskingParent));
+            }
+
+            if (srcFiles.size() > 0) {
+                maskingParent.mask(I18N.DISPLAY.loadingMask());
+                // call service to move files
+                Services.DISK_RESOURCE_SERVICE.moveFile(srcFiles, idDestFolder, new FileMoveCallback(
+                        maskingParent));
+            }
 
             dropIndex = -1;
         }

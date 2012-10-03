@@ -7,11 +7,11 @@ import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.factories.EventJSONFactory.ActionType;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
-import org.iplantc.de.client.services.callbacks.DiskResourceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
@@ -93,8 +93,7 @@ public class SimpleDownloadWindow extends IPlantWindow {
             link.addClickListener(new Listener<ComponentEvent>() {
                 @Override
                 public void handleEvent(ComponentEvent be) {
-                    DiskResourceServiceFacade service = new DiskResourceServiceFacade();
-                    service.simpleDownload(path);
+                    Services.DISK_RESOURCE_SERVICE.simpleDownload(path);
                 }
             });
 

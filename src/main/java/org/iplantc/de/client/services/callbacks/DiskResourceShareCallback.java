@@ -2,6 +2,7 @@ package org.iplantc.de.client.services.callbacks;
 
 import org.iplantc.de.client.I18N;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.google.gwt.json.client.JSONObject;
 
@@ -12,6 +13,10 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public class DiskResourceShareCallback extends DiskResourceServiceCallback {
+
+    public DiskResourceShareCallback(Component maskedCaller) {
+        super(maskedCaller);
+    }
 
     @Override
     public void onSuccess(String result) {

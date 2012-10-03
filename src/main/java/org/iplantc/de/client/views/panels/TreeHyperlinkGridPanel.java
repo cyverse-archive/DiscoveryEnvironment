@@ -9,7 +9,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.util.WindowUtil;
 
 import com.extjs.gxt.ui.client.Style.Scroll;
@@ -126,9 +126,7 @@ public class TreeHyperlinkGridPanel extends ViewerContentPanel {
     public void callTreeCreateService() {
         mask(I18N.DISPLAY.loadingMask());
 
-        FileEditorServiceFacade facade = new FileEditorServiceFacade();
-
-        facade.getTreeUrl(fileIdentifier.getFileId(), new AsyncCallback<String>() {
+        Services.FILE_EDITOR_SERVICE.getTreeUrl(fileIdentifier.getFileId(), new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 if (result != null && !result.isEmpty()) {

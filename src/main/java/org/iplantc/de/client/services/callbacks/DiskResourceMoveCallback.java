@@ -5,6 +5,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.DataPayloadEvent;
 
+import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -17,6 +18,10 @@ import com.google.gwt.json.client.JSONString;
  * 
  */
 public abstract class DiskResourceMoveCallback extends DiskResourceServiceCallback {
+
+    public DiskResourceMoveCallback(Component maskedCaller) {
+        super(maskedCaller);
+    }
 
     protected JSONObject buildPayload(JSONObject response) {
         JSONObject payload = new JSONObject();
