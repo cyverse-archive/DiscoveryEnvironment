@@ -1,11 +1,18 @@
 #! /usr/bin/env python
 
 import glob
+import json
 import os
+import re
 import subprocess
 import sys
+import urllib
 
 from optparse import OptionParser
+
+# The base URLs for Jenkins and the last successful Clavin build.
+jenkins_base = 'http://projects.iplantcollaborative.org/hudson'
+clavin_build = '{0}/job/Clavin/lastSuccessfulBuild'.format(jenkins_base)
 
 def validate(f, value, msg):
     """Performs an arbitrary validation."""
@@ -43,25 +50,40 @@ def validate_configulon(path):
     validate_dir(template_dir(path), msg)
     validate_file(envs_file(path), msg)
 
-def find_clavin_jar(clavin):
-    """Finds the JAR file to use when running Clavin."""
-    jars = []
-    for path in [ clavin, os.path.join(clavin, 'target' ) ]:
-        jars.extend(glob.glob(os.path.join(path, '*-standalone.jar')))
-    if not jars:
-        print >> sys.stderr, "Clavin must be built before running this script"
-        sys.exit(1)
-    jars.sort()
-    return jars[-1]
+def get_clavin_jar_name():
+    """
+    Gets the name of most recent Clavin uberjar file.  This function assumes
+    that the files are lexically sortable, which may not be the case when we
+    get to multi-digit version numbers.  The Jenkins job should only retain
+    the latest uberjar file, however, so this shouldn't be a problem.
+    """
+    url = '{0}/api/json'.format(clavin_build)
+    artifacts = json.loads(urllib.urlopen(url).read())['artifacts']
+    names = [
+        artifact['fileName'] for artifact in artifacts
+           if re.match('^clavin-.*?-standalone.jar$', artifact['fileName'])
+    ]
+    names.sort()
+    return names[-1]
+
+def fetch_clavin_jar(name):
+    """Retrieves the Clavin jar file from Jenkins."""
+    url = '{0}/artifact/target/{1}'.format(clavin_build, name)
+    instream = urllib.urlopen(url)
+    with open(name, 'w') as f:
+        while True:
+            chunk = instream.read(4096)
+            if chunk == '':
+                break
+            f.write(chunk)
+    instream.close()
 
 # Paths that we need.
 configulon = os.path.join('..', 'configulon')
-clavin     = os.path.join('..', 'Clavin')
 prop_dest  = os.path.join('src', 'main', 'resources')
 
 # Do some preliminary validation to ensure that everything looks okay.
 validate_configulon(configulon)
-validate_repo(clavin)
 validate_dir(prop_dest, '{0} does not exist'.format(prop_dest))
 
 # Parse the command-line arguments.
@@ -72,8 +94,10 @@ parser.add_option('-d', '--deployment', default = 'de-2',
                   help = 'the name of the deployment to use')
 (options, args) = parser.parse_args()
 
-# Attempt to find the Clavin JAR file.
-clavin_jar  = find_clavin_jar(clavin)
+# Get the name of the Clavin jar file and fetch it if necessary.
+clavin_jar = get_clavin_jar_name()
+if not os.path.exists(clavin_jar):
+    fetch_clavin_jar(clavin_jar)
 
 # Generate the properties files.
 cmd = [
