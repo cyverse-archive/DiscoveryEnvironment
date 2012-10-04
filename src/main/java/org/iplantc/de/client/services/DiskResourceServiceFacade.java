@@ -29,7 +29,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author amuir
  * 
  */
-public class DiskResourceServiceFacadeImpl {
+public class DiskResourceServiceFacade {
     private final String serviceNamePrefix = "org.iplantc.services.de-data-mgmt"; //$NON-NLS-1$
 
     /**
