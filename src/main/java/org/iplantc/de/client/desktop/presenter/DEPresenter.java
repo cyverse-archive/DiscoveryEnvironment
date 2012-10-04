@@ -9,6 +9,7 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.controllers.PipelineController;
 import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.desktop.widget.Desktop;
@@ -37,8 +38,9 @@ public class DEPresenter implements DEView.Presenter {
     public DEPresenter(DEView view) {
         this.view = view;
         initializeDEProperties();
-        // Initialize TitoController
+        // Initialize Controllers
         TitoController.getInstance();
+        PipelineController.getInstance();
 
     }
 
