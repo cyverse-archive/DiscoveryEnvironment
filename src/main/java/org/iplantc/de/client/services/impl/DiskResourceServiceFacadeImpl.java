@@ -1,4 +1,4 @@
-package org.iplantc.de.client.services;
+package org.iplantc.de.client.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;

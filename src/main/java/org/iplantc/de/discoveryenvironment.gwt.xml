@@ -62,6 +62,10 @@
    <replace-with class="org.iplantc.de.client.services.impl.TemplateServiceFacade">
       <when-type-is class="org.iplantc.core.uiapplications.client.services.AppServiceFacade"/>
    </replace-with>
+   
+   <replace-with class="org.iplantc.de.client.services.impl.DiskResourceServiceFacadeImpl">
+      <when-type-is class="org.iplantc.core.uidiskresource.client.services.DiskResourceServiceFacade"/>
+   </replace-with>
 
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />
