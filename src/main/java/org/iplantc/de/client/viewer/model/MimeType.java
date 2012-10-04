@@ -25,7 +25,9 @@ public enum MimeType {
 
     PREVIEW("preview"),
 
-    X_SH("x-sh");
+    X_SH("x-sh"),
+
+    TREE("tree");
 
     private String type;
 
@@ -48,7 +50,12 @@ public enum MimeType {
             return null;
         }
 
-        return valueOf(typeString.split("/")[1].toUpperCase().replaceAll("[-.+]", "_"));
+        String[] tokens = typeString.split("/");
+        if (tokens.length > 1) {
+            return valueOf(tokens[1].toUpperCase().replaceAll("[-.+]", "_"));
+        } else {
+            return valueOf(tokens[0].toUpperCase().replaceAll("[-.+]", "_"));
+        }
     }
 
     @Override

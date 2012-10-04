@@ -87,7 +87,7 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
     }
 
     protected Gxt3IplantWindow(final String tag, final WindowConfig config) {
-        this(tag, false, true, true, true);
+        this(tag, false, true, true, true, config);
     }
 
     protected Gxt3IplantWindow(String tag, boolean haveStatus, boolean isMinimizable,

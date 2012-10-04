@@ -7,14 +7,17 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.models.FileIdentifier;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.FileEditorWindowClosedEvent;
+import org.iplantc.de.client.models.ViewerWindowConfig;
+import org.iplantc.de.client.services.callbacks.DiskResourceServiceCallback;
+import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.viewer.presenter.FileViewerPresenter;
 import org.iplantc.de.client.viewer.views.FileViewer.Presenter;
 import org.iplantc.de.client.views.windows.Gxt3IplantWindow;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
 
 /**
@@ -27,9 +30,9 @@ public class FileViewerWindow extends Gxt3IplantWindow {
     protected JSONObject manifest;
     protected FileIdentifier file;
 
-    public FileViewerWindow(String tag, FileIdentifier file, String manifest, boolean isMaximizable) {
-        super(tag, true, true, isMaximizable, true);
-        init(file, JsonUtil.getObject(manifest));
+    public FileViewerWindow(String tag, ViewerWindowConfig config) {
+        super(tag, config);
+        init();
     }
 
     /**
@@ -42,14 +45,13 @@ public class FileViewerWindow extends Gxt3IplantWindow {
         this.config = config;
     }
 
-    private void init(FileIdentifier file, JSONObject manifest) {
+    private void init() {
         setSize("640px", "438px");
-        this.manifest = manifest;
-        this.file = file;
-        tabPanel = new ViewerTabPanel();
+        this.file = ((ViewerWindowConfig)config).getFileIdentifier();
+        getFileManifest();
+        setTitle(file.getFilename());
+        tabPanel = new PlainTabPanel();
         add(tabPanel);
-        Presenter p = new FileViewerPresenter(file, manifest);
-        p.go(this);
     }
 
     /**
@@ -74,6 +76,11 @@ public class FileViewerWindow extends Gxt3IplantWindow {
         eventbus.fireEvent(event);
     }
 
+    @Override
+    public PlainTabPanel getWidget() {
+        return tabPanel;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -85,18 +92,32 @@ public class FileViewerWindow extends Gxt3IplantWindow {
         return null;
     }
 
-    @Override
-    public Widget getWidget() {
-        return tabPanel;
-    }
+    private void getFileManifest() {
+        FileEditorServiceFacade facade = new FileEditorServiceFacade();
 
-    private class ViewerTabPanel extends PlainTabPanel {
+        facade.getManifest(file.getFileId(), new DiskResourceServiceCallback() {
+            @Override
+            public void onSuccess(String result) {
+                if (result != null) {
+                    manifest = JsonUtil.getObject(result);
+                    Presenter p = new FileViewerPresenter(file, manifest, ((ViewerWindowConfig)config)
+                            .isShowTreeTab());
+                    p.go(FileViewerWindow.this);
+                } else {
+                    onFailure(null);
+                }
+            }
 
-        // we want to hide the whole window
-        @Override
-        public void hide() {
-            FileViewerWindow.this.hide();
-        }
+            @Override
+            protected String getErrorMessageDefault() {
+                return I18N.ERROR.unableToRetrieveFileManifest(file.getFilename());
+            }
+
+            @Override
+            protected String getErrorMessageByCode(ErrorCode code, JSONObject jsonError) {
+                return getErrorMessageForFiles(code, file.getFilename());
+            }
+        });
     }
 
 }

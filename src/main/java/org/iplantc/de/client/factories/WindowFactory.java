@@ -9,8 +9,10 @@ import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
+import org.iplantc.de.client.models.ViewerWindowConfig;
 import org.iplantc.de.client.notifications.views.NotificationWindow3;
 import org.iplantc.de.client.util.WindowUtil;
+import org.iplantc.de.client.viewer.views.FileViewerWindow;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.MyDataWindow;
@@ -33,30 +35,32 @@ public class WindowFactory {
      */
     public static IPlantWindowInterface build(String type, WindowConfig config) {
         IPlantWindowInterface ret = null;
-
+        // type format is type#tagSuffix. so split on tag to just get the type
         if (type != null) {
-            if (type.equals(Constants.CLIENT.myDataTag())) {
+            if (type.startsWith(Constants.CLIENT.myDataTag())) {
                 ret = new MyDataWindow(type, config);
-            } else if (type.equals(Constants.CLIENT.myNotifyTag())) {
+            } else if (type.startsWith(Constants.CLIENT.myNotifyTag())) {
                 ret = new NotificationWindow3(type, (NotificationWindowConfig)config);
-            } else if (type.equals(Constants.CLIENT.myHelpTag())) {
+            } else if (type.startsWith(Constants.CLIENT.myHelpTag())) {
                 // since the help page is now a wiki page, open it in a new window so that the user may
                 // login to the Wiki.
                 WindowUtil.open(Constants.CLIENT.deHelpFile());
-            } else if (type.equals(Constants.CLIENT.myAboutTag())) {
+            } else if (type.startsWith(Constants.CLIENT.myAboutTag())) {
                 ret = new AboutApplicationWindow(type);
-            } else if (type.equals(Constants.CLIENT.myAnalysisTag())) {
+            } else if (type.startsWith(Constants.CLIENT.myAnalysisTag())) {
                 ret = new MyAnalysesWindow(type, config);
-            } else if (type.equals(Constants.CLIENT.deCatalog())) {
+            } else if (type.startsWith(Constants.CLIENT.deCatalog())) {
                 ret = new DEAppsWindow(type, config);
-                // } else if (type.equals(Constants.CLIENT.pipelineEditorTag())) {
+                // } else if (type.startsWith(Constants.CLIENT.pipelineEditorTag())) {
                 // ret = new PipelineEditorWindow(type);
             } else if (type.startsWith(Constants.CLIENT.iDropLiteTag())) {
                 ret = new IDropLiteAppletWindow(type, (IDropLiteWindowConfig)config);
-            } else if (type.equals(Constants.CLIENT.titoTag())) {
+            } else if (type.startsWith(Constants.CLIENT.titoTag())) {
                 ret = new TitoWindow(type, (TitoWindowConfig)config);
-            } else if (type.equals(Constants.CLIENT.simpleDownloadTag())) {
+            } else if (type.startsWith(Constants.CLIENT.simpleDownloadTag())) {
                 ret = new SimpleDownloadWindow(type, (SimpleDownloadWindowConfig)config);
+            } else if (type.startsWith(Constants.CLIENT.dataViewerTag())) {
+                ret = new FileViewerWindow(type, (ViewerWindowConfig)config);
             } else {
                 ret = new WizardWindow(type, config);
             }
