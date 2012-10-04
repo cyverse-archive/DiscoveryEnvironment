@@ -216,6 +216,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
+                    <packagingExcludes>**/log4j.properties</packagingExcludes>
                     <webappDirectory>${basedir}/war</webappDirectory>
                     <manifest>
                         <addDefaultImplementationEntries>true

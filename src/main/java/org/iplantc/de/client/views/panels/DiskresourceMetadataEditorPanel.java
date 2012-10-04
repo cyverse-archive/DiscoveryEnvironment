@@ -13,6 +13,8 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.core.uidiskresource.client.models.DiskResourceMetadata;
+import org.iplantc.core.uidiskresource.client.models.File;
+import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.core.uidiskresource.client.models.JsDiskResourceMetaData;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
@@ -76,7 +78,13 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     protected void retrieveMetaData() {
-        Services.DISK_RESOURCE_SERVICE.getMetaData(resource, new RetrieveMetadataCallback());
+        if (resource instanceof Folder) {
+            Services.DISK_RESOURCE_SERVICE.getFolderMetaData(resource.getId(),
+                    new RetrieveMetadataCallback());
+        } else if (resource instanceof File) {
+            Services.DISK_RESOURCE_SERVICE.getFileMetaData(resource.getId(),
+                    new RetrieveMetadataCallback());
+        }
     }
 
     private void initToolbar() {
@@ -236,8 +244,14 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
         JSONObject obj = new JSONObject();
         obj.put("add", buildToAddArray());
         obj.put("delete", buildToDeleteArray());
-        Services.DISK_RESOURCE_SERVICE.setMetaData(resource, obj.toString(),
-                new DiskResourceMetadataUpdateCallback(null));
+        DiskResourceMetadataUpdateCallback callback = new DiskResourceMetadataUpdateCallback(null);
+        if (resource instanceof Folder) {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FOLDER);
+            Services.DISK_RESOURCE_SERVICE.setFolderMetaData(resource.getId(), obj.toString(), callback);
+        } else if (resource instanceof File) {
+            callback.setType(DiskResourceMetadataUpdateCallback.TYPE.FILE);
+            Services.DISK_RESOURCE_SERVICE.setFileMetaData(resource.getId(), obj.toString(), callback);
+        }
 
     }
 
