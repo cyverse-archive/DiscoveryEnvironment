@@ -33,3 +33,6 @@ src/main/webapp/META-INF/context.xml
 # ignore the actual configuration files
 discoveryenvironment.properties
 confluence.properties
+
+# ignore any Clavin jar files downloaded by the bootstrap script
+clavin-*-standalone.jar
