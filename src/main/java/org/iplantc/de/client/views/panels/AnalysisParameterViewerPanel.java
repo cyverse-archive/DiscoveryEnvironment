@@ -27,6 +27,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Text;
+import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -214,6 +215,24 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         return new ColumnModel(columns);
     }
 
+    private final class InputFieldValueClickListener implements Listener<ComponentEvent> {
+        private final String full_text;
+
+        private InputFieldValueClickListener(String full_text) {
+            this.full_text = full_text;
+        }
+
+        @Override
+        public void handleEvent(ComponentEvent be) {
+            List<String> contexts = new ArrayList<String>();
+            DataContextBuilder builder = new DataContextBuilder();
+            contexts.add(builder.build(full_text));
+            DataViewContextExecutor executor = new DataViewContextExecutor();
+            executor.execute(contexts);
+
+        }
+    }
+
     private class ParamValueCellRenderer implements GridCellRenderer<AnalysisParameter> {
 
         @Override
@@ -227,30 +246,37 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             boolean valid_info_type = !info_type.equalsIgnoreCase("ReferenceGenome")
                     && !info_type.equalsIgnoreCase("ReferenceSequence")
                     && !info_type.equalsIgnoreCase("ReferenceAnnotation");
+            VerticalPanel pnl = new VerticalPanel();
+            pnl.setSpacing(2);
             if (model.get(AnalysisParameter.PARAMETER_TYPE).equals("Input") && valid_info_type) {
-                Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
-                link.addClickListener(new Listener<ComponentEvent>() {
-
-                    @Override
-                    public void handleEvent(ComponentEvent be) {
-                        List<String> contexts = new ArrayList<String>();
-                        DataContextBuilder builder = new DataContextBuilder();
-                        contexts.add(builder.build(full_text));
-                        DataViewContextExecutor executor = new DataViewContextExecutor();
-                        executor.execute(contexts);
-
+                JSONArray arr = JSONParser.parseStrict(full_text).isArray();
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        final String val = JsonUtil.trim(arr.get(i).toString());
+                        Hyperlink link = new Hyperlink(val, "analysis-param-value");
+                        link.addClickListener(new InputFieldValueClickListener(val));
+                        link.setToolTip(val);
+                        pnl.add(link);
                     }
-                });
-                link.setToolTip(full_text);
-                return link;
+                    return pnl;
+                } else {
+                    Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
+                    link.addClickListener(new InputFieldValueClickListener(full_text));
+                    link.setToolTip(full_text);
+                    return link;
+                }
             } else {
-                Text text = new Text(full_text);
-                text.setToolTip(full_text);
-                text.setTagName("span");
-                text.getToolTip().setMaxWidth(Integer.MAX_VALUE);
-
+                Text text = buildValueTextField(full_text);
                 return text;
             }
+        }
+
+        private Text buildValueTextField(final String full_text) {
+            Text text = new Text(full_text);
+            text.setToolTip(full_text);
+            text.setTagName("span");
+            text.getToolTip().setMaxWidth(Integer.MAX_VALUE);
+            return text;
         }
     }
 
