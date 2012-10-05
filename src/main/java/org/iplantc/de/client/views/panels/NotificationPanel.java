@@ -159,7 +159,7 @@ public class NotificationPanel extends ContentPanel {
                 MessageServiceFacade facade = new MessageServiceFacade();
                 facade.getNotifications(config.getLimit(), config.getOffset(),
                         config.get("filter") != null ? config.get("filter").toString() : "", config
-                                .getSortDir().toString(), new NotificationServiceCallback(config,
+                                .getSortDir().toString(), null, new NotificationServiceCallback(config,
                                 callback));
             }
         };

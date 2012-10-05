@@ -83,18 +83,4 @@ public class EventFactory {
 
         return ret;
     }
-
-    // /**
-    // * Build a message payload event from a JSON string.
-    // *
-    // * @param json object representing the event JSON.
-    // * @return A new event that descends from MessagePayloadEvent. null on failure.
-    // */
-    // public MessagePayloadEvent<?> build(final JSONObject json) {
-    // MessagePayloadEvent<?> ret = null; // assume failure
-    // if (json != null) {
-    // ret = build(json);
-    // }
-    // return ret;
-    // }
 }

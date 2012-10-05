@@ -1,9 +1,13 @@
 package org.iplantc.de.client.utils;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.services.MessageServiceFacade;
-
+import org.iplantc.core.uicommons.client.events.EventBus;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -16,6 +20,9 @@ public class MessagePoller {
     private static MessagePoller instance;
 
     private final int DEFAULT_INTERVAL = 60;
+
+    // total # of unseen messages
+    private int total_unseen;
 
     private MessagePoller() {
         // get interval in seconds and convert to milliseconds
@@ -73,7 +80,7 @@ public class MessagePoller {
         public void run() {
             MessageServiceFacade facade = new MessageServiceFacade();
 
-            facade.getMessages(new AsyncCallback<String>() {
+            facade.getUnSeenMessageCount(new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     // currently we do nothing on failure
@@ -81,10 +88,13 @@ public class MessagePoller {
 
                 @Override
                 public void onSuccess(String result) {
-                    MessageDispatcher dispatcher = MessageDispatcher.getInstance();
-                    dispatcher.processMessages(result);
+                    JSONObject obj = JSONParser.parseStrict(result).isObject();
+                    total_unseen = Integer.parseInt(JsonUtil.getString(obj, "total"));
+                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(total_unseen);
+                    EventBus.getInstance().fireEvent(event);
                 }
             });
         }
     }
+
 }
