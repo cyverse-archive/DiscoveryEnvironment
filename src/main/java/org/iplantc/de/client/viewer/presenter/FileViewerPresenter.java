@@ -16,7 +16,7 @@ import org.iplantc.de.client.controllers.DataMonitor;
 import org.iplantc.de.client.services.callbacks.FileEditorServiceFacade;
 import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
-import org.iplantc.de.client.viewer.model.MimeType;
+import org.iplantc.de.client.viewer.models.MimeType;
 import org.iplantc.de.client.viewer.models.TreeUrl;
 import org.iplantc.de.client.viewer.models.TreeUrlAutoBeanFactory;
 import org.iplantc.de.client.viewer.models.TreeUrlList;

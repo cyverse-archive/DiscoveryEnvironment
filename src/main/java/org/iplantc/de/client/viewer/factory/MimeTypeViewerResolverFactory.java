@@ -9,7 +9,7 @@ import org.iplantc.de.client.viewer.commands.PdfDataViewCommand;
 import org.iplantc.de.client.viewer.commands.TextDataViewCommand;
 import org.iplantc.de.client.viewer.commands.TreeViewerCommand;
 import org.iplantc.de.client.viewer.commands.ViewCommand;
-import org.iplantc.de.client.viewer.model.MimeType;
+import org.iplantc.de.client.viewer.models.MimeType;
 
 /**
  * @author sriram

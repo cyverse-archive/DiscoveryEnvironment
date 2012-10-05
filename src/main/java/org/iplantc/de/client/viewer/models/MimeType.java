@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.client.viewer.model;
+package org.iplantc.de.client.viewer.models;
 
 /**
  * @author sriram
