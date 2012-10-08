@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.Notification;
@@ -58,6 +59,9 @@ import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -83,12 +87,13 @@ public class NotificationPanel extends ContentPanel {
     private List<String> selectedIds;
 
     private PagingLoader<PagingLoadResult<Notification>> loader;
+    private List<Notification> storeAll;
 
-    private ListStore<Notification> store;
     private ToolBar toolBar;
     private int currentOffSet;
     private Category currentCategory;
     private SortDir currSortDir;
+    private int total;
 
     /**
      * Creates a new NotificationPanel with config.
@@ -99,6 +104,7 @@ public class NotificationPanel extends ContentPanel {
         this.selectedIds = currentSelection;
         this.currentCategory = curr_category;
         this.currSortDir = dir;
+        storeAll = new ArrayList<Notification>();
         init();
     }
 
@@ -129,6 +135,8 @@ public class NotificationPanel extends ContentPanel {
     private void buildNotificationGrid() {
         initProxyLoader();
         buildColumnModel();
+
+        ListStore<Notification> store = new ListStore<Notification>(loader);
 
         grdNotifications = new Grid<Notification>(store, columnModel);
         // enable multi select of checkboxes and select all / unselect all
@@ -165,8 +173,6 @@ public class NotificationPanel extends ContentPanel {
         };
         loader = new BasePagingLoader<PagingLoadResult<Notification>>(proxy);
         loader.setRemoteSort(true);
-
-        store = new ListStore<Notification>(loader);
 
         final PagingToolBar toolBar = new PagingToolBar(10);
         toolBar.bind(loader);
@@ -383,25 +389,22 @@ public class NotificationPanel extends ContentPanel {
 
         @Override
         public void onSuccess(String result) {
-            final NotificationHelper instance = NotificationHelper.getInstance();
-            instance.addInitialNotificationsToStore(result);
-            callback.onSuccess(new NotificationPagingLoadResult(config, instance));
+            addInitialNotificationsToStore(result);
+            callback.onSuccess(new NotificationPagingLoadResult(config));
             select();
         }
     }
 
     private final class NotificationPagingLoadResult implements PagingLoadResult<Notification> {
         private final PagingLoadConfig config;
-        private final NotificationHelper instance;
 
-        private NotificationPagingLoadResult(PagingLoadConfig config, NotificationHelper instance) {
+        private NotificationPagingLoadResult(PagingLoadConfig config) {
             this.config = config;
-            this.instance = instance;
         }
 
         @Override
         public List<Notification> getData() {
-            return instance.getStoreAll();
+            return storeAll;
         }
 
         @Override
@@ -411,7 +414,7 @@ public class NotificationPanel extends ContentPanel {
 
         @Override
         public int getTotalLength() {
-            return instance.getTotal();
+            return getTotal();
         }
 
         @Override
@@ -421,8 +424,8 @@ public class NotificationPanel extends ContentPanel {
         }
 
         @Override
-        public void setTotalLength(int totalLength) {
-            instance.setTotal(totalLength);
+        public void setTotalLength(int total) {
+            setTotal(total);
 
         }
     }
@@ -522,4 +525,52 @@ public class NotificationPanel extends ContentPanel {
     public int getCurrentOffset() {
         return loader.getOffset();
     }
+
+    private void addInitialNotificationsToStore(final String json) {
+        storeAll.clear();
+        JSONObject objMessages = JSONParser.parseStrict(json).isObject();
+
+        if (objMessages != null) {
+            JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
+            setTotal(Integer.parseInt(JsonUtil.getString(objMessages, "total")));
+            if (arr != null) {
+                String type;
+                JSONObject objItem;
+
+                for (int i = 0,len = arr.size(); i < len; i++) {
+                    objItem = arr.get(i).isObject();
+
+                    if (objItem != null) {
+                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
+                        Notification n = NotificationHelper.getInstance().buildNotification(type,
+                                objItem);
+                        if (n != null) {
+                            storeAll.add(n);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * @return the total
+     */
+    public int getTotal() {
+        return total;
+    }
+
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public void cleanUp() {
+        storeAll.clear();
+
+    }
+
 }

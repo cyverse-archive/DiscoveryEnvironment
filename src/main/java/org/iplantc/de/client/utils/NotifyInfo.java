@@ -1,8 +1,5 @@
 package org.iplantc.de.client.utils;
 
-import org.iplantc.de.client.models.Notification;
-
-import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Params;
 
 /**
@@ -41,8 +38,6 @@ public class NotifyInfo {
         doDisplay(title, text, null);
     }
 
-
-
     private static void doDisplay(final String title, final String text, Params parameters) {
         makeInfoCall(title, text, parameters);
     }
@@ -51,19 +46,6 @@ public class NotifyInfo {
             final String text, Params parameters) {
         makeInfoCall(title, text, parameters);
 
-        includeAsNotification(category, text, parameters);
-    }
-
-    private static void includeAsNotification(NotificationHelper.Category category, final String text,
-            Params parameters) {
-        NotificationHelper mgr = NotificationHelper.getInstance();
-
-        // only add to the notification manager when we want inclusion
-        if (parameters == null) {
-            mgr.add(category, new Notification(text));
-        } else {
-            mgr.add(category, new Notification(Format.substitute(text, parameters)));
-        }
     }
 
     private static void makeInfoCall(final String title, final String text, Params parameters) {

@@ -71,37 +71,6 @@ public class MessageDispatcher {
     }
 
     /**
-     * Process method takes in a JSON String, breaks out the individual messages, transforms them into
-     * events, finally the event is fired.
-     * 
-     * @param json string to be processed.
-     */
-    public void processMessages(final String json) {
-        // did we get a JSON string?
-        if (json != null) {
-            JSONObject jsonObj = JsonUtil.getObject(json);
-
-            // did our string parse?
-            if (jsonObj != null) {
-                // get our notifications
-                JSONArray messages = getMessages(jsonObj);
-
-                // do we have any notifications?
-                if (messages != null) {
-                    // loop through our notifications
-                    for (int i = 0,len = messages.size(); i < len; i++) {
-                        // build an event
-                        EventFactory factory = EventFactory.getInstance();
-                        MessagePayloadEvent<?> event = factory.build(JsonUtil.getObjectAt(messages, i));
-
-                        dispatch(event);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Process a single message.
      * 
      * @param json message JSON.

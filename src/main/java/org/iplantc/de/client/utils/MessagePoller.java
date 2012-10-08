@@ -21,9 +21,6 @@ public class MessagePoller {
 
     private final int DEFAULT_INTERVAL = 60;
 
-    // total # of unseen messages
-    private int total_unseen;
-
     private MessagePoller() {
         // get interval in seconds and convert to milliseconds
         int millsec = DEProperties.getInstance().getNotificationPollInterval() * 1000;
@@ -89,8 +86,8 @@ public class MessagePoller {
                 @Override
                 public void onSuccess(String result) {
                     JSONObject obj = JSONParser.parseStrict(result).isObject();
-                    total_unseen = Integer.parseInt(JsonUtil.getString(obj, "total"));
-                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(total_unseen);
+                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(Integer
+                            .parseInt(JsonUtil.getString(obj, "total")));
                     EventBus.getInstance().fireEvent(event);
                 }
             });

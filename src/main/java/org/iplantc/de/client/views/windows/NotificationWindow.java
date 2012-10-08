@@ -92,7 +92,7 @@ public class NotificationWindow extends IPlantWindow {
     @Override
     public void cleanup() {
         super.cleanup();
-        NotificationHelper.getInstance().cleanup();
+        panel.cleanUp();
 
     }
 

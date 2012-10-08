@@ -5,14 +5,10 @@ package org.iplantc.de.client.views.panels;
 
 import java.util.List;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.AnalysisPayloadEvent;
-import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
-import org.iplantc.de.client.events.AnalysisUpdateEvent;
-import org.iplantc.de.client.events.DataPayloadEvent;
-import org.iplantc.de.client.events.DataPayloadEventHandler;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
@@ -34,6 +30,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -46,15 +43,14 @@ public class ViewNotificationMenu extends Menu {
 
     private ListStore<Notification> store;
 
-    public static final String TOTAL_NOTIFI_COUNT = "totalNotificationCount";
-
-    private int totalNotificationCount;
-
     private CustomListView<Notification> view;
+
+    public static final int NEW_NOTIFICATIONS_LIMIT = 10;
+
+    private int total_unseen;
 
     public ViewNotificationMenu() {
         setLayout(new FitLayout());
-        registerEventHandlers();
         view = initList();
         LayoutContainer lc = buildPanel();
         lc.add(view);
@@ -93,36 +89,18 @@ public class ViewNotificationMenu extends Menu {
         return view;
     }
 
-    private void registerEventHandlers() {
-        final EventBus eventbus = EventBus.getInstance();
-
-        // handle data events
-        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
-            @Override
-            public void onFire(DataPayloadEvent event) {
-                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(),
-                        NotificationHelper.getInstance().buildDataContext(event.getPayload()),
-                        event.getPayload());
-                highlightNewNotifications();
-            }
-        });
-
-        // handle analysis events
-        eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
-            @Override
-            public void onFire(AnalysisPayloadEvent event) {
-                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        NotificationHelper.getInstance().buildAnalysisContext(event.getPayload()),
-                        event.getPayload());
-                highlightNewNotifications();
-            }
-        });
-    }
-
     @Override
     public void showAt(int x, int y) {
         super.showAt(x, y);
         highlightNewNotifications();
+        NotificationCountUpdateEvent evnCountUpdateEvent = null;
+        if (total_unseen > NEW_NOTIFICATIONS_LIMIT) {
+            evnCountUpdateEvent = new NotificationCountUpdateEvent(total_unseen
+                    - NEW_NOTIFICATIONS_LIMIT);
+        } else {
+            evnCountUpdateEvent = new NotificationCountUpdateEvent(0);
+        }
+        EventBus.getInstance().fireEvent(evnCountUpdateEvent);
         markAsSeen();
     }
 
@@ -156,82 +134,6 @@ public class ViewNotificationMenu extends Menu {
 
     }
 
-    /**
-     * 
-     * persist total notification count
-     * 
-     * @param total
-     */
-    public void setTotalNotificationCount(int total) {
-        totalNotificationCount = total;
-    }
-
-    /**
-     * get total notification count
-     * 
-     * @return
-     */
-    public int getTotalNotificationCount() {
-        return totalNotificationCount;
-    }
-
-    private Notification addItemToStore(final Category category, final JSONObject objMessage,
-            final String context, JSONObject payload) {
-        Notification ret = null; // assume failure
-
-        if (objMessage != null) {
-            ret = new Notification(objMessage, context);
-
-            Notification model = store.findModel("id", ret.get("id"));
-
-            if (model == null) {
-                add(category, ret);
-                totalNotificationCount = totalNotificationCount + 1;
-                fireEvents(category, payload);
-            } else {
-                ret = null;
-            }
-        }
-        return ret;
-    }
-
-    private void fireEvents(final Category category, JSONObject payload) {
-        NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getTotalNotificationCount());
-        EventBus instance = EventBus.getInstance();
-        instance.fireEvent(ncue);
-        if (category.equals(NotificationHelper.Category.ANALYSIS)) {
-            AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
-            instance.fireEvent(aue);
-        }
-    }
-
-    /**
-     * reset all notification count
-     * 
-     */
-    public void resetCount() {
-        totalNotificationCount = 0;
-    }
-
-    private void addFromEventHandler(final Category category, final String header,
-            final JSONObject objMessage, final String context, final JSONObject payload) {
-        Notification notification = addItemToStore(category, objMessage, context, payload);
-
-        if (notification != null) {
-            NotifyInfo.display(header, notification.getMessage());
-        }
-    }
-
-    public void add(final Category category, final Notification notification) {
-        // did we get a valid notification?
-        if (category != Category.ALL && notification != null) {
-            notification.setCategory(category);
-            store.add(notification);
-        }
-
-        store.sort(Notification.PROP_TIMESTAMP, SortDir.DESC);
-    }
-
     private String getTemplate() {
         StringBuilder template = new StringBuilder();
         template.append("<tpl for=\".\"><div class=\"search-item\">"); //$NON-NLS-1$
@@ -250,6 +152,89 @@ public class ViewNotificationMenu extends Menu {
                 view.highlight(view.getStore().indexOf(n), false);
             }
 
+        }
+    }
+
+    public void fetchUnseenNotifications(final int count) {
+        this.total_unseen = count;
+        MessageServiceFacade facadeMessageService = new MessageServiceFacade();
+        facadeMessageService.getNotifications(total_unseen, 0, null, null, false,
+                new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        processMessages(result);
+                    }
+                });
+    }
+
+    /**
+     * Process method takes in a JSON String, breaks out the individual messages, transforms them into
+     * events, finally the event is fired.
+     * 
+     * @param json string to be processed.
+     */
+    public void processMessages(final String json) {
+        boolean display_popup = false;
+        JSONObject objMessages = JSONParser.parseStrict(json).isObject();
+
+        if (objMessages != null) {
+            JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
+            if (arr != null) {
+                String type;
+                JSONObject objItem;
+
+                for (int i = 0,len = arr.size(); i < len; i++) {
+                    objItem = arr.get(i).isObject();
+
+                    if (objItem != null) {
+                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
+                        Notification n = NotificationHelper.getInstance().buildNotification(type,
+                                objItem);
+                        if (n != null && !isExists(n)) {
+                            store.add(n);
+                            if (i < NEW_NOTIFICATIONS_LIMIT) {
+                                displayNotificationPopup(n);
+                            } else {
+                                display_popup = true;
+                            }
+
+                            if (display_popup) {
+                                display_popup = false;
+                                NotifyInfo.display(I18N.DISPLAY.newNotifications(),
+                                        I18N.DISPLAY.newNotificationsAlert());
+                            }
+                        }
+                    }
+                }
+                store.sort(Notification.PROP_TIMESTAMP, SortDir.DESC);
+                highlightNewNotifications();
+            }
+
+        }
+    }
+
+    private boolean isExists(Notification n) {
+        Notification temp = store.findModel("id", n.getId());
+        if (temp == null) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    private void displayNotificationPopup(Notification n) {
+        if (n.getCategory().equals(Category.DATA)) {
+            NotifyInfo.display(Category.DATA.toString(), n.getMessage());
+        } else if (n.getCategory().equals(Category.ANALYSIS)) {
+            NotifyInfo.display(Category.ANALYSIS.toString(), n.getMessage());
         }
     }
 

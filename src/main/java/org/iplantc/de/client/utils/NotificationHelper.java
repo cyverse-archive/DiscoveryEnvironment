@@ -1,9 +1,7 @@
 package org.iplantc.de.client.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.models.Notification;
@@ -13,7 +11,6 @@ import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -66,8 +63,6 @@ public class NotificationHelper {
 
     private static NotificationHelper instance = null;
 
-    private final List<Notification> storeAll;
-
     private DataContextBuilder dataContextBuilder;
     private AnalysisContextBuilder analysisContextBuilder;
 
@@ -76,11 +71,8 @@ public class NotificationHelper {
 
     private final MessageServiceFacade facadeMessageService;
 
-    private int total;
-
     private NotificationHelper() {
         facadeMessageService = new MessageServiceFacade();
-        storeAll = new ArrayList<Notification>();
 
         initContextBuilders();
         initContextExecuters();
@@ -98,16 +90,12 @@ public class NotificationHelper {
         analysisContextExecutor = new AnalysisViewContextExecutor();
     }
 
-    private Notification addItemToStore(final Category category, final JSONObject objMessage,
-            final String context) {
-        Notification ret = null; // assume failure
+    public String buildAnalysisContext(JSONObject objPayload) {
+        return analysisContextBuilder.build(objPayload);
+    }
 
-        if (objMessage != null) {
-            ret = new Notification(objMessage, context);
-            add(category, ret);
-        }
-
-        return ret;
+    public String buildDataContext(JSONObject objPayload) {
+        return dataContextBuilder.build(objPayload);
     }
 
     /** View a notification */
@@ -143,71 +131,6 @@ public class NotificationHelper {
         }
 
         return instance;
-    }
-
-    /**
-     * Add a new notification.
-     * 
-     * @param category category for this notification.
-     * @param notification notification to add.
-     */
-    public void add(final Category category, final Notification notification) {
-        // did we get a valid notification?
-        if (category != Category.ALL && notification != null) {
-            notification.setCategory(category);
-
-            getStoreAll().add(notification);
-        }
-    }
-
-    public void addInitialNotificationsToStore(final String json) {
-        storeAll.clear();
-        JSONObject objMessages = JSONParser.parseStrict(json).isObject();
-        setTotal(JsonUtil.getNumber(objMessages, "total").intValue());
-
-        if (objMessages != null) {
-            JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
-
-            if (arr != null) {
-                String type;
-                JSONObject objItem;
-
-                for (int i = 0,len = arr.size(); i < len; i++) {
-                    objItem = arr.get(i).isObject();
-
-                    if (objItem != null) {
-                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
-
-                        addItemToStore(type, objItem);
-                    }
-                }
-            }
-
-        }
-    }
-
-    public String buildAnalysisContext(JSONObject objPayload) {
-        return analysisContextBuilder.build(objPayload);
-    }
-
-    public String buildDataContext(JSONObject objPayload) {
-        return dataContextBuilder.build(objPayload);
-    }
-
-    private Notification addItemToStore(final String type, final JSONObject objItem) {
-        if (type != null && objItem != null) {
-            JSONObject objMessage = objItem.get("message").isObject(); //$NON-NLS-1$
-            JSONObject objPayload = objItem.get("payload").isObject(); //$NON-NLS-1$
-
-            if (type.equals("data")) { //$NON-NLS-1$
-                return addItemToStore(Category.DATA, objMessage, dataContextBuilder.build(objPayload));
-            } else if (type.equals("analysis")) { //$NON-NLS-1$
-                return addItemToStore(Category.ANALYSIS, objMessage,
-                        analysisContextBuilder.build(objPayload));
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -262,28 +185,33 @@ public class NotificationHelper {
         poller.start();
     }
 
-    public void cleanup() {
-        getStoreAll().clear();
+    public Notification buildNotification(final String type, final JSONObject objItem) {
+        if (type != null && objItem != null) {
+            JSONObject objMessage = objItem.get("message").isObject(); //$NON-NLS-1$
+            JSONObject objPayload = objItem.get("payload").isObject(); //$NON-NLS-1$
+
+            if (type.equals("data")) { //$NON-NLS-1$
+                return addItemToStore(Category.DATA, objMessage, NotificationHelper.getInstance()
+                        .buildDataContext(objPayload));
+            } else if (type.equals("analysis")) { //$NON-NLS-1$
+                return addItemToStore(Category.ANALYSIS, objMessage, NotificationHelper.getInstance()
+                        .buildAnalysisContext(objPayload));
+            }
+        }
+
+        return null;
     }
 
-    /**
-     * @return the storeAll
-     */
-    public List<Notification> getStoreAll() {
-        return storeAll;
+    private Notification addItemToStore(final Category category, final JSONObject objMessage,
+            final String context) {
+        Notification ret = null; // assume failure
+
+        if (objMessage != null) {
+            ret = new Notification(objMessage, context);
+            ret.setCategory(category);
+        }
+
+        return ret;
     }
 
-    /**
-     * @param total the total to set
-     */
-    public void setTotal(int total) {
-        this.total = total;
-    }
-
-    /**
-     * @return the total
-     */
-    public int getTotal() {
-        return total;
-    }
 }

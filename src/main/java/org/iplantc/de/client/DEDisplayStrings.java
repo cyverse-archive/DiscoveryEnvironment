@@ -1121,4 +1121,18 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return the localized display text
      */
     String saveSettings();
+
+    /**
+     * new notifications
+     * 
+     * @return the localized display text
+     */
+    String newNotifications();
+
+    /**
+     * new notifications-generalized alert
+     * 
+     * @return the localized display text
+     */
+    String newNotificationsAlert();
 }

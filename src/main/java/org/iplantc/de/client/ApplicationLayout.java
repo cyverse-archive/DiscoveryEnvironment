@@ -105,7 +105,12 @@ public class ApplicationLayout extends Viewport {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        lblNotifications.setCount(ncue.getTotal());
+                        int new_count = ncue.getTotal();
+                        if (new_count > 0 && new_count > lblNotifications.getCount()) {
+                            view.fetchUnseenNotifications(new_count);
+                        }
+
+                        lblNotifications.setCount(new_count);
 
                     }
                 });
@@ -433,9 +438,8 @@ public class ApplicationLayout extends Viewport {
                 ret.removeStyleName("de_header_menu_selected"); //$NON-NLS-1$
             }
         });
-        lblNotifications.setCount(0);
         view.showAt(point.x, point.y);
-        view.resetCount();
+        lblNotifications.setCount(0);
     }
 
     private void initViewNotification() {
@@ -465,15 +469,19 @@ public class ApplicationLayout extends Viewport {
      * 
      */
     private class NotificationIndicator extends Label {
+
+        private int count;
+
         public NotificationIndicator(int initialCount) {
             super();
-
+            this.count = initialCount;
             setStyleName("de_notification_indicator"); //$NON-NLS-1$
             setCount(initialCount);
         }
 
         public void setCount(int count) {
             if (count > 0) {
+                this.count = count;
                 setText(String.valueOf(count));
                 addStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
                 Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
@@ -482,6 +490,10 @@ public class ApplicationLayout extends Viewport {
                 removeStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
                 Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
             }
+        }
+
+        public int getCount() {
+            return this.count;
         }
     }
 
