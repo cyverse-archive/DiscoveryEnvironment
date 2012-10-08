@@ -3,6 +3,7 @@
  */
 package org.iplantc.de.client.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
@@ -65,6 +66,22 @@ public class DataWindowConfig extends WindowConfig {
     public void setDiskResourceIds(List<DiskResource> resources) {
         put(DISK_RESOURCE_IDS,
                 JsonUtil.buildArrayFromStrings(DataUtils.getDiskResourceIdList(resources)));
+    }
+
+    /**
+     * TODO JDS Remove the {@link #setDiskResourceIds(List)} method and replace with this method when
+     * DiskResource refactor is complete.
+     * 
+     * @param resources
+     */
+    public void setDiskResourceIdsAlt(
+            List<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> resources) {
+        List<String> stringIdList = new ArrayList<String>();
+        for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource dr : resources) {
+            stringIdList.add(dr.getId());
+        }
+
+        put(DISK_RESOURCE_IDS, JsonUtil.buildArrayFromStrings(stringIdList));
     }
 
 }

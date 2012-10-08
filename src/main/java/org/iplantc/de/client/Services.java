@@ -10,14 +10,14 @@ import com.google.gwt.core.shared.GWT;
 
 public class Services {
 
-    public static AnalysisServiceFacade ANALYSIS_SERVICE = new AnalysisServiceFacade();
+    public static final AnalysisServiceFacade ANALYSIS_SERVICE = new AnalysisServiceFacade();
 
-    public static MessageServiceFacade MESSAGE_SERVICE = new MessageServiceFacade();
+    public static final MessageServiceFacade MESSAGE_SERVICE = new MessageServiceFacade();
 
-    public static UserSessionServiceFacade USER_SESSION_SERVICE = new UserSessionServiceFacade();
+    public static final UserSessionServiceFacade USER_SESSION_SERVICE = new UserSessionServiceFacade();
 
-    public static DiskResourceServiceFacade DISK_RESOURCE_SERVICE = GWT
+    public static final DiskResourceServiceFacade DISK_RESOURCE_SERVICE = GWT
             .create(DiskResourceServiceFacade.class);
 
-    public static FileEditorServiceFacade FILE_EDITOR_SERVICE = new FileEditorServiceFacade();
+    public static final FileEditorServiceFacade FILE_EDITOR_SERVICE = new FileEditorServiceFacade();
 }
