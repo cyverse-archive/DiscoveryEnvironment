@@ -12,6 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.File;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.dispatchers.ViewerWindowDispatcher;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
@@ -30,6 +31,7 @@ import com.extjs.gxt.ui.client.store.Store;
 import com.extjs.gxt.ui.client.store.StoreSorter;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.grid.CheckBoxSelectionModel;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -66,8 +68,6 @@ public class MyDataGrid extends Grid<DiskResource> {
 
     private final DataActionsMenu menuActions;
 
-    private final DataViewContextExecutor executor;
-
     /**
      * Create a new MyDataGrid
      * 
@@ -75,17 +75,15 @@ public class MyDataGrid extends Grid<DiskResource> {
      * @param store store to be used by the grid
      * @param colModel column model describing the columns in the grid
      * @param currentFolderId id of the current folder to be displayed
-     * @param executor data view context executor called when appropriate grid row is clicked
      * @param callertag the caller tag
      */
     private MyDataGrid(ListStore<DiskResource> store, ColumnModel colModel, String currentFolderId,
-            DataViewContextExecutor executor, final String callertag) {
+            final String callertag) {
         super(store, colModel);
 
         menuActions = new DataActionsMenu(callertag);
         this.callertag = callertag;
         this.currentFolderId = currentFolderId;
-        this.executor = executor;
 
         init();
         registerHandlers();
@@ -112,12 +110,23 @@ public class MyDataGrid extends Grid<DiskResource> {
      * @param tag caller tag
      */
     protected void handleRowClick(final DiskResource dr, final String tag) {
-        if (executor != null && dr instanceof File && this.callertag.equals(tag)) {
-            DataContextBuilder builder = new DataContextBuilder();
 
-            executor.execute(builder.build(dr.getId()));
+        if (dr instanceof File && this.callertag.equals(tag)) {
+            List<DiskResource> resources = new ArrayList<DiskResource>();
+            resources.add(dr);
+            if (DataUtils.isViewable(resources)) {
+                List<String> contexts = new ArrayList<String>();
+                contexts.add(dr.getId());
+
+                ViewerWindowDispatcher dispatcher = new ViewerWindowDispatcher();
+                dispatcher.launchViewerWindow(contexts, false);
+            } else {
+                MessageBox.alert(I18N.DISPLAY.permissionErrorTitle(),
+                        I18N.DISPLAY.permissionErrorMessage(), null);
+            }
         }
     }
+
     /**
      * Show the Actions menu at the given absolute x, y position. The items displayed in the menu will
      * depend on the resources selected in the grid, according to DataUtils.getSupportedActions.
@@ -179,13 +188,8 @@ public class MyDataGrid extends Grid<DiskResource> {
 
         MyDataGrid ret;
 
-        DataViewContextExecutor executor = null;
-        if (isMyDataWindow) {
-            executor = new DataViewContextExecutor();
-        }
-
         store.setStoreSorter(new DataGridStoreSorter());
-        ret = new MyDataGrid(store, colModel, currentFolderId, executor, tag);
+        ret = new MyDataGrid(store, colModel, currentFolderId, tag);
 
         if (isMyDataWindow) {
             ret.setSelectionModel(sm);

@@ -83,7 +83,8 @@ public class DEWindowManager extends IplantWindowManager {
      * @return newly added window.
      */
     public IPlantWindowInterface add(String tag, WindowConfig config) {
-        IPlantWindowInterface ret = WindowFactory.build(tag, config);
+        IPlantWindowInterface ret = WindowFactory.build(tag
+                + ((config != null) ? config.getTagSuffix() : ""), config);
         add(ret);
         return ret;
     }

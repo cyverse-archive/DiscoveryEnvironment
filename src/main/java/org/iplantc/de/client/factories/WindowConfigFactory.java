@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.models.PipelineEditorWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
+import org.iplantc.de.client.models.ViewerWindowConfig;
 import org.iplantc.de.client.models.WizardWindowConfig;
 
 import com.google.gwt.json.client.JSONObject;
@@ -54,7 +55,7 @@ public class WindowConfigFactory {
             } else if (type.equals(Constants.CLIENT.wizardTag())) {
                 ret = new WizardWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.dataViewerTag())) {
-                ret = new WindowConfig(objData);
+                ret = new ViewerWindowConfig(objData);
             } else if (type.equals(Constants.CLIENT.simpleDownloadTag())) {
                 ret = new SimpleDownloadWindowConfig(objData);
             }

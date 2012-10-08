@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container" 
+    xmlns:form = "urn:import:com.sencha.gxt.widget.core.client.form"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+     xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+
+  <ui:with
+        field="strings"
+        type="org.iplantc.de.client.DEDisplayStrings" />
+<container:VerticalLayoutContainer ui:field="con" height="380px">
+<toolbar:ToolBar>
+<toolbar:LabelToolItem label="{strings.filePreviewNotice}"></toolbar:LabelToolItem>
+<form:CheckBox ui:field="cbxwrap" boxLabel="{strings.wrap}"></form:CheckBox>
+</toolbar:ToolBar>
+<g:HTML ui:field="textArea"></g:HTML>
+</container:VerticalLayoutContainer>
+</ui:UiBinder> 

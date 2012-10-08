@@ -45,7 +45,7 @@ public class IDropLiteWindowConfig extends WindowConfig {
      */
     @Override
     public String getTagSuffix() {
-        return JsonUtil.getString(this, TAG_SUFFIX);
+        return "#" + JsonUtil.getString(this, TAG_SUFFIX);
     }
 
     public int getDisplayMode() {

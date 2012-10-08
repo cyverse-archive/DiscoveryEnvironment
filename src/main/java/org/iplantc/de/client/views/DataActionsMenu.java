@@ -15,6 +15,7 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.dispatchers.SimpleDownloadWindowDispatcher;
+import org.iplantc.de.client.dispatchers.ViewerWindowDispatcher;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEventHandler;
 import org.iplantc.de.client.images.Resources;
@@ -22,9 +23,6 @@ import org.iplantc.de.client.services.callbacks.FileDeleteCallback;
 import org.iplantc.de.client.services.callbacks.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataUtils.Action;
-import org.iplantc.de.client.utils.DataViewContextExecutor;
-import org.iplantc.de.client.utils.TreeViewContextExecutor;
-import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
 import org.iplantc.de.client.views.dialogs.SharingDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
@@ -103,8 +101,8 @@ public final class DataActionsMenu extends Menu {
                 Resources.ICONS.fileView(), itemViewRawResource, itemViewTree);
 
         itemSimpleDownloadResource = buildLeafMenuItem(MI_SIMPLE_DOWNLOAD_ID,
-                I18N.DISPLAY.simpleDownload(),
-                Resources.ICONS.download(), new SimpleDownloadListenerImpl());
+                I18N.DISPLAY.simpleDownload(), Resources.ICONS.download(),
+                new SimpleDownloadListenerImpl());
         itemBulkDownloadResource = buildLeafMenuItem(MI_BULK_DOWNLOAD_ID, I18N.DISPLAY.bulkDownload(),
                 Resources.ICONS.download(), new BulkDownloadListenerImpl());
         itemDownloadResource = buildMenuMenuItem(MI_DOWNLOAD_RESOURCE_ID, I18N.DISPLAY.download(),
@@ -422,14 +420,12 @@ public final class DataActionsMenu extends Menu {
             if (DataUtils.isViewable(resources)) {
                 List<String> contexts = new ArrayList<String>();
 
-                DataContextBuilder builder = new DataContextBuilder();
-
                 for (DiskResource resource : resources) {
-                    contexts.add(builder.build(resource.getId()));
+                    contexts.add(resource.getId());
                 }
 
-                DataViewContextExecutor executor = new DataViewContextExecutor();
-                executor.execute(contexts);
+                ViewerWindowDispatcher dispatcher = new ViewerWindowDispatcher();
+                dispatcher.launchViewerWindow(contexts, false);
             } else {
                 showErrorMsg();
             }
@@ -440,13 +436,14 @@ public final class DataActionsMenu extends Menu {
         @Override
         public void componentSelected(MenuEvent ce) {
             if (DataUtils.isViewable(resources)) {
-                DataContextBuilder builder = new DataContextBuilder();
-
-                TreeViewContextExecutor executor = new TreeViewContextExecutor();
+                List<String> contexts = new ArrayList<String>();
 
                 for (DiskResource resource : resources) {
-                    executor.execute(builder.build(resource.getId()));
+                    contexts.add(resource.getId());
                 }
+
+                ViewerWindowDispatcher dispatcher = new ViewerWindowDispatcher();
+                dispatcher.launchViewerWindow(contexts, true);
             } else {
                 showErrorMsg();
             }

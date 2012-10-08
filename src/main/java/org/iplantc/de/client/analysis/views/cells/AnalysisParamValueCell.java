@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.de.client.analysis.models.AnalysisParameter;
-import org.iplantc.de.client.utils.DataViewContextExecutor;
-import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
+import org.iplantc.de.client.dispatchers.ViewerWindowDispatcher;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -71,13 +70,12 @@ public class AnalysisParamValueCell extends AbstractCell<AnalysisParameter> {
 
     private void launchViewer(AnalysisParameter value) {
         final List<String> contexts = new ArrayList<String>();
-        final DataContextBuilder builder = new DataContextBuilder();
-        contexts.add(builder.build(value.getValue()));
-        final DataViewContextExecutor executor = new DataViewContextExecutor();
+        contexts.add(value.getValue());
+        final ViewerWindowDispatcher dispatcher = new ViewerWindowDispatcher();
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
             public void execute() {
-                executor.execute(contexts);
+                dispatcher.launchViewerWindow(contexts, false);
             }
         });
     }
