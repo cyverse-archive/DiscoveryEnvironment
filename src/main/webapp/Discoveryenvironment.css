@@ -774,3 +774,8 @@ img.analysis_remove {
 	width: 16px;
 	vertical-align:top;
 	}
+	
+.unseen_notification {
+	background-color: #EFEFEF;
+	}
+}

@@ -3,7 +3,6 @@ package org.iplantc.de.client.utils;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.core.XDOM;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Params;
@@ -13,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.InfoConfig;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Accessibility;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -24,6 +22,8 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class DEInfo extends ContentPanel {
     private static Queue<DEInfo> infoQueue = new LinkedList<DEInfo>();
+    private final int HEIGHT = 100;
+    private final int WIDTH = 250;
 
     /**
      * Displays a message using the specified config.
@@ -62,8 +62,6 @@ public class DEInfo extends ContentPanel {
         InfoConfig config = new InfoConfig(title, text, params);
         display(config);
     }
-
-
 
     private static DEInfo peek() {
         return infoQueue.peek();
@@ -141,10 +139,6 @@ public class DEInfo extends ContentPanel {
     @Override
     protected void onRender(Element parent, int pos) {
         super.onRender(parent, pos);
-
-        if (GXT.isAriaEnabled()) {
-            Accessibility.setRole(getElement(), "alert"); //$NON-NLS-1$
-        }
     }
 
     private void onShowInfo() {
@@ -156,15 +150,15 @@ public class DEInfo extends ContentPanel {
 
         Point p = position();
         el().setLeftTop(p.x, p.y);
-        setSize(config.width, config.height);
+        setSize(WIDTH, HEIGHT);
 
         afterShow();
     }
 
     private Point position() {
         Size s = XDOM.getViewportSize();
-        int left = s.width - config.width - 10 + XDOM.getBodyScrollLeft();
-        int top = s.height - config.height - 10 + XDOM.getBodyScrollTop();
+        int left = s.width - WIDTH - 10 + XDOM.getBodyScrollLeft();
+        int top = s.height - HEIGHT - 10 + XDOM.getBodyScrollTop();
 
         return new Point(left, top);
     }

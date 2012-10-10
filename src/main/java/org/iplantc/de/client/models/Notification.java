@@ -54,7 +54,7 @@ public class Notification extends DEBaseModelData {
      * @param message message JSON object containing message data.
      * @param context client command to execute when clicked.
      */
-    public Notification(final JSONObject message, final String context) {
+    public Notification(final JSONObject message, final boolean seen, final String context) {
         if (message == null) {
             clear();
         } else {
@@ -66,8 +66,10 @@ public class Notification extends DEBaseModelData {
                 timestamp = JsonUtil.trim(timestamp);
                 setTimeStamp(timestamp);
             }
+
         }
 
+        set(SEEN, seen);
         set(CONTEXT, context); //$NON-NLS-1$
     }
 
@@ -95,7 +97,7 @@ public class Notification extends DEBaseModelData {
      * 
      */
     public Notification(final JSONObject message) {
-        this(message, null);
+        this(message, false, null);
     }
 
     private void clear() {
@@ -146,6 +148,10 @@ public class Notification extends DEBaseModelData {
         }
     }
 
+    public void setSeen(boolean seen) {
+        set(SEEN, seen);
+    }
+
     /**
      * Set the category associated with this notificiation.
      * 
@@ -171,6 +177,10 @@ public class Notification extends DEBaseModelData {
      */
     public String getContext() {
         return get(CONTEXT); //$NON-NLS-1$
+    }
+
+    public Boolean isSeen() {
+        return get(SEEN);
     }
 
     /**

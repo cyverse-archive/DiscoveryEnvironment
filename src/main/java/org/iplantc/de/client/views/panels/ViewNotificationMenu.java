@@ -31,7 +31,6 @@ import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -48,6 +47,8 @@ public class ViewNotificationMenu extends Menu {
     public static final int NEW_NOTIFICATIONS_LIMIT = 10;
 
     private int total_unseen;
+
+    private NotificationHelper helper = NotificationHelper.getInstance();
 
     public ViewNotificationMenu() {
         setLayout(new FitLayout());
@@ -101,37 +102,7 @@ public class ViewNotificationMenu extends Menu {
             evnCountUpdateEvent = new NotificationCountUpdateEvent(0);
         }
         EventBus.getInstance().fireEvent(evnCountUpdateEvent);
-        markAsSeen();
-    }
-
-    private void markAsSeen() {
-        List<Notification> new_notifications = store.getModels();
-        JSONArray arr = new JSONArray();
-        int i = 0;
-        if (new_notifications.size() > 0) {
-            for (Notification n : new_notifications) {
-                arr.set(i++, new JSONString(n.get("id").toString()));
-                n.set(Notification.SEEN, true);
-            }
-
-            JSONObject obj = new JSONObject();
-            obj.put("uuids", arr);
-
-            MessageServiceFacade facade = new MessageServiceFacade();
-            facade.markAsSeen(obj, new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    // Do nothing intentionally
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-                }
-            });
-        }
-
+        helper.markAsSeen(store.getModels());
     }
 
     private String getTemplate() {
@@ -158,13 +129,12 @@ public class ViewNotificationMenu extends Menu {
     public void fetchUnseenNotifications(final int count) {
         this.total_unseen = count;
         MessageServiceFacade facadeMessageService = new MessageServiceFacade();
-        facadeMessageService.getNotifications(total_unseen, 0, null, null, false,
+        facadeMessageService.getNotifications(NEW_NOTIFICATIONS_LIMIT, 0, null, null, null,
                 new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        // TODO Auto-generated method stub
-
+                        ErrorHandler.post(caught);
                     }
 
                     @Override
@@ -181,43 +151,54 @@ public class ViewNotificationMenu extends Menu {
      * @param json string to be processed.
      */
     public void processMessages(final String json) {
-        boolean display_popup = false;
+
         JSONObject objMessages = JSONParser.parseStrict(json).isObject();
+        int size = 0;
+        store.removeAll();
 
         if (objMessages != null) {
             JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
             if (arr != null) {
-                String type;
                 JSONObject objItem;
-
-                for (int i = 0,len = arr.size(); i < len; i++) {
+                size = arr.size();
+                trimStore(size);
+                for (int i = 0; i < size; i++) {
+                    if (isVisible() && !isMasked()) {
+                        mask(I18N.DISPLAY.loadingMask());
+                    }
                     objItem = arr.get(i).isObject();
-
                     if (objItem != null) {
-                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
-                        Notification n = NotificationHelper.getInstance().buildNotification(type,
-                                objItem);
+                        Notification n = buildNotification(objItem);
                         if (n != null && !isExists(n)) {
                             store.add(n);
-                            if (i < NEW_NOTIFICATIONS_LIMIT) {
-                                displayNotificationPopup(n);
-                            } else {
-                                display_popup = true;
-                            }
+                            displayNotificationPopup(n);
 
-                            if (display_popup) {
-                                display_popup = false;
-                                NotifyInfo.display(I18N.DISPLAY.newNotifications(),
-                                        I18N.DISPLAY.newNotificationsAlert());
-                            }
                         }
                     }
                 }
+                if (total_unseen > NEW_NOTIFICATIONS_LIMIT) {
+                    NotifyInfo.display(I18N.DISPLAY.newNotifications(),
+                            I18N.DISPLAY.newNotificationsAlert());
+                }
                 store.sort(Notification.PROP_TIMESTAMP, SortDir.DESC);
                 highlightNewNotifications();
+                unmask();
             }
-
         }
+
+    }
+
+    private void trimStore(int size) {
+
+    }
+
+    private Notification buildNotification(JSONObject objItem) {
+        String type;
+        boolean seen;
+        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
+        seen = JsonUtil.getBoolean(objItem, "seen", false);
+        Notification n = helper.buildNotification(type, seen, objItem);
+        return n;
     }
 
     private boolean isExists(Notification n) {
@@ -259,7 +240,7 @@ public class ViewNotificationMenu extends Menu {
             if (emptyText == null) {
                 emptyText = "&nbsp;";
             }
-            if (store.getModels().size() == 0) {
+            if (store.getModels().size() == 0 && isRendered()) {
                 el().setInnerHtml("<div class='x-grid-empty'>" + emptyText + "</div>");
             }
         }

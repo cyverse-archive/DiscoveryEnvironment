@@ -67,6 +67,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.extjs.gxt.ui.client.data.ModelData;
 
 /**
  * Displays user notifications.
@@ -95,6 +96,8 @@ public class NotificationPanel extends ContentPanel {
     private SortDir currSortDir;
     private int total;
 
+    private NotificationHelper helper = NotificationHelper.getInstance();
+
     /**
      * Creates a new NotificationPanel with config.
      */
@@ -109,7 +112,7 @@ public class NotificationPanel extends ContentPanel {
     }
 
     public NotificationPanel() {
-        this(1, null, Category.ALL, SortDir.DESC);
+        this(1, null, Category.NEW, SortDir.DESC);
     }
 
     /**
@@ -139,6 +142,7 @@ public class NotificationPanel extends ContentPanel {
         ListStore<Notification> store = new ListStore<Notification>(loader);
 
         grdNotifications = new Grid<Notification>(store, columnModel);
+
         // enable multi select of checkboxes and select all / unselect all
         grdNotifications.addPlugin(checkBoxModel);
         grdNotifications.setSelectionModel(checkBoxModel);
@@ -148,14 +152,28 @@ public class NotificationPanel extends ContentPanel {
         grdNotifications.setAutoExpandColumn(PROP_MESSAGE);
         grdNotifications.setAutoExpandMax(2048);
 
-        grdNotifications.setStripeRows(true);
+        grdNotifications.setStripeRows(false);
         grdNotifications.setLoadMask(true);
 
         GridView view = new GridView();
+        view.setViewConfig(new NotificationGridViewConfig());
         view.setForceFit(true);
         view.setEmptyText(I18N.DISPLAY.noNotifications());
         grdNotifications.setView(view);
 
+    }
+
+    private class NotificationGridViewConfig extends com.extjs.gxt.ui.client.widget.grid.GridViewConfig {
+        @Override
+        public String getRowStyle(ModelData model, int rowIndex, ListStore<ModelData> ds) {
+            Notification n = (Notification)model;
+            if (!n.isSeen()) {
+                return "unseen_notification";
+            } else {
+                return "";
+            }
+
+        }
     }
 
     private void initProxyLoader() {
@@ -167,8 +185,9 @@ public class NotificationPanel extends ContentPanel {
                 MessageServiceFacade facade = new MessageServiceFacade();
                 facade.getNotifications(config.getLimit(), config.getOffset(),
                         config.get("filter") != null ? config.get("filter").toString() : "", config
-                                .getSortDir().toString(), null, new NotificationServiceCallback(config,
-                                callback));
+                                .getSortDir().toString(),
+                        config.get("seen") != null ? Boolean.valueOf(config.get("seen").toString())
+                                : null, new NotificationServiceCallback(config, callback));
             }
         };
         loader = new BasePagingLoader<PagingLoadResult<Notification>>(proxy);
@@ -268,18 +287,18 @@ public class NotificationPanel extends ContentPanel {
      * Remove selected notifications.
      */
     private void deleteSelected(final Command callback) {
-        NotificationHelper notiMgr = NotificationHelper.getInstance();
         List<Notification> notifications = new ArrayList<Notification>();
 
         for (Notification notification : checkBoxModel.getSelectedItems()) {
             notifications.add(notification);
         }
 
-        notiMgr.delete(notifications, callback);
+        helper.delete(notifications, callback);
     }
 
     private SimpleComboBox<Category> buildFilterDropdown() {
         dropdown = new SimpleComboBox<Category>();
+        dropdown.add((Category.NEW));
         dropdown.add(Category.ALL);
         dropdown.add(Category.DATA);
         dropdown.add(Category.ANALYSIS);
@@ -392,6 +411,7 @@ public class NotificationPanel extends ContentPanel {
             addInitialNotificationsToStore(result);
             callback.onSuccess(new NotificationPagingLoadResult(config));
             select();
+            helper.markAsSeen(grdNotifications.getStore().getModels());
         }
     }
 
@@ -456,7 +476,7 @@ public class NotificationPanel extends ContentPanel {
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        NotificationHelper.getInstance().view(notification);
+                        helper.view(notification);
                     }
                 });
             }
@@ -492,8 +512,13 @@ public class NotificationPanel extends ContentPanel {
             config.setSortDir(dir);
         }
 
-        if (filter != null && !filter.isEmpty() && !filter.equalsIgnoreCase("ALL")) {
-            config.set("filter", filter.toLowerCase());
+        if (!filter.equalsIgnoreCase(Category.ALL.toString())
+                && !filter.equalsIgnoreCase(Category.NEW.toString())) {
+            config.set("filter", filter.toString().toLowerCase());
+        }
+
+        if (filter.toString().equalsIgnoreCase(Category.NEW.toString())) {
+            config.set("seen", false);
         }
 
         return config;
@@ -506,8 +531,12 @@ public class NotificationPanel extends ContentPanel {
         config.setSortField(Notification.PROP_TIMESTAMP);
         config.setSortDir(currSortDir);
 
-        if (!currentCategory.toString().equalsIgnoreCase("ALL")) {
+        if (!currentCategory.toString().equalsIgnoreCase(Category.ALL.toString())
+                && !currentCategory.toString().equalsIgnoreCase(Category.NEW.toString())) {
             config.set("filter", currentCategory.toString().toLowerCase());
+        }
+        if (currentCategory.toString().equalsIgnoreCase(Category.NEW.toString())) {
+            config.set("seen", false);
         }
 
         return config;
@@ -534,16 +563,12 @@ public class NotificationPanel extends ContentPanel {
             JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
             setTotal(Integer.parseInt(JsonUtil.getString(objMessages, "total")));
             if (arr != null) {
-                String type;
                 JSONObject objItem;
-
                 for (int i = 0,len = arr.size(); i < len; i++) {
                     objItem = arr.get(i).isObject();
 
                     if (objItem != null) {
-                        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
-                        Notification n = NotificationHelper.getInstance().buildNotification(type,
-                                objItem);
+                        Notification n = buildNotification(objItem);
                         if (n != null) {
                             storeAll.add(n);
                         }
@@ -552,6 +577,15 @@ public class NotificationPanel extends ContentPanel {
             }
 
         }
+    }
+
+    private Notification buildNotification(JSONObject objItem) {
+        String type;
+        boolean seen;
+        type = JsonUtil.getString(objItem, "type"); //$NON-NLS-1$
+        seen = JsonUtil.getBoolean(objItem, "seen", false);
+        Notification n = helper.buildNotification(type, seen, objItem);
+        return n;
     }
 
     /**

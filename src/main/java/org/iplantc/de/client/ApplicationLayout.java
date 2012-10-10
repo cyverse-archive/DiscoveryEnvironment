@@ -106,8 +106,10 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
                         int new_count = ncue.getTotal();
+                        System.out.println("new-count->" + new_count + ":label-count->"
+                                + lblNotifications.getCount());
                         if (new_count > 0 && new_count > lblNotifications.getCount()) {
-                            view.fetchUnseenNotifications(new_count);
+                            view.fetchUnseenNotifications(new_count - lblNotifications.getCount());
                         }
 
                         lblNotifications.setCount(new_count);
@@ -439,7 +441,6 @@ public class ApplicationLayout extends Viewport {
             }
         });
         view.showAt(point.x, point.y);
-        lblNotifications.setCount(0);
     }
 
     private void initViewNotification() {
@@ -454,7 +455,11 @@ public class ApplicationLayout extends Viewport {
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {
-                        showNotificationWindow(NotificationHelper.Category.ALL);
+                        if (lblNotifications.getCount() > 0) {
+                            showNotificationWindow(NotificationHelper.Category.NEW);
+                        } else {
+                            showNotificationWindow(NotificationHelper.Category.ALL);
+                        }
                         view.hide();
                     }
                 }));
@@ -480,8 +485,8 @@ public class ApplicationLayout extends Viewport {
         }
 
         public void setCount(int count) {
-            if (count > 0) {
-                this.count = count;
+            this.count = count;
+            if (this.count > 0) {
                 setText(String.valueOf(count));
                 addStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$
                 Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());

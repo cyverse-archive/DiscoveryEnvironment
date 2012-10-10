@@ -2,8 +2,11 @@ package org.iplantc.de.client.utils;
 
 import java.util.List;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
@@ -11,6 +14,7 @@ import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,7 +38,10 @@ public class NotificationHelper {
         /** Data notifications */
         DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
-        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis());
+        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis()),
+
+        /** unseen notifications */
+        NEW(I18N.CONSTANT.notificationCategoryUnseen());
 
         private String displayText;
 
@@ -134,6 +141,43 @@ public class NotificationHelper {
     }
 
     /**
+     * Mark notifications as seen
+     * 
+     */
+    public void markAsSeen(List<Notification> list) {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+        if (list != null && list.size() > 0) {
+            for (Notification n : list) {
+                arr.set(i++, new JSONString(n.get("id").toString()));
+                n.set(Notification.SEEN, true);
+            }
+
+            JSONObject obj = new JSONObject();
+            obj.put("uuids", arr);
+
+            MessageServiceFacade facade = new MessageServiceFacade();
+            facade.markAsSeen(obj, new AsyncCallback<String>() {
+
+                @Override
+                public void onSuccess(String result) {
+                    JSONObject obj = JSONParser.parseStrict(result).isObject();
+                    int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
+                    // fire update of the new unseen count;
+                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(new_count);
+                    EventBus.getInstance().fireEvent(event);
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                }
+            });
+        }
+
+    }
+
+    /**
      * Initialize the notification manager.
      */
     public void init() {
@@ -185,17 +229,17 @@ public class NotificationHelper {
         poller.start();
     }
 
-    public Notification buildNotification(final String type, final JSONObject objItem) {
+    public Notification buildNotification(final String type, final boolean seen, final JSONObject objItem) {
         if (type != null && objItem != null) {
             JSONObject objMessage = objItem.get("message").isObject(); //$NON-NLS-1$
             JSONObject objPayload = objItem.get("payload").isObject(); //$NON-NLS-1$
 
             if (type.equals("data")) { //$NON-NLS-1$
-                return addItemToStore(Category.DATA, objMessage, NotificationHelper.getInstance()
+                return addItemToStore(Category.DATA, objMessage, seen, NotificationHelper.getInstance()
                         .buildDataContext(objPayload));
             } else if (type.equals("analysis")) { //$NON-NLS-1$
-                return addItemToStore(Category.ANALYSIS, objMessage, NotificationHelper.getInstance()
-                        .buildAnalysisContext(objPayload));
+                return addItemToStore(Category.ANALYSIS, objMessage, seen, NotificationHelper
+                        .getInstance().buildAnalysisContext(objPayload));
             }
         }
 
@@ -203,11 +247,11 @@ public class NotificationHelper {
     }
 
     private Notification addItemToStore(final Category category, final JSONObject objMessage,
-            final String context) {
+            final boolean seen, final String context) {
         Notification ret = null; // assume failure
 
         if (objMessage != null) {
-            ret = new Notification(objMessage, context);
+            ret = new Notification(objMessage, seen, context);
             ret.setCategory(category);
         }
 
