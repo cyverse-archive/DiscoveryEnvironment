@@ -6,6 +6,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
@@ -145,36 +146,45 @@ public class NotificationHelper {
      * 
      */
     public void markAsSeen(List<Notification> list) {
+        if (list != null && list.size() > 0) {
+            JSONArray arr = buildSeenServiceRequestBody(list);
+
+            if (arr.size() > 0) {
+                JSONObject obj = new JSONObject();
+                obj.put("uuids", arr);
+
+                MessageServiceFacade facade = new MessageServiceFacade();
+                facade.markAsSeen(obj, new AsyncCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String result) {
+                        JSONObject obj = JSONParser.parseStrict(result).isObject();
+                        int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
+                        // fire update of the new unseen count;
+                        NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(new_count);
+                        EventBus.getInstance().fireEvent(event);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(caught);
+                    }
+                });
+            }
+        }
+    }
+
+    private JSONArray buildSeenServiceRequestBody(List<Notification> list) {
         JSONArray arr = new JSONArray();
         int i = 0;
-        if (list != null && list.size() > 0) {
-            for (Notification n : list) {
+
+        for (Notification n : list) {
+            if (!n.isSeen()) {
                 arr.set(i++, new JSONString(n.get("id").toString()));
                 n.set(Notification.SEEN, true);
             }
-
-            JSONObject obj = new JSONObject();
-            obj.put("uuids", arr);
-
-            MessageServiceFacade facade = new MessageServiceFacade();
-            facade.markAsSeen(obj, new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    JSONObject obj = JSONParser.parseStrict(result).isObject();
-                    int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
-                    // fire update of the new unseen count;
-                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(new_count);
-                    EventBus.getInstance().fireEvent(event);
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-                }
-            });
         }
-
+        return arr;
     }
 
     /**
@@ -199,6 +209,9 @@ public class NotificationHelper {
                     if (callback != null) {
                         callback.execute();
                     }
+                    DeleteNotificationsUpdateEvent event = new DeleteNotificationsUpdateEvent(
+                            notifications);
+                    EventBus.getInstance().fireEvent(event);
                 }
             });
         }

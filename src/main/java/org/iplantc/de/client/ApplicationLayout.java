@@ -9,11 +9,8 @@ import org.iplantc.de.client.dispatchers.DefaultActionDispatcher;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
-import org.iplantc.de.client.factories.WindowConfigFactory;
-import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.utils.NotificationHelper;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.views.dialogs.UserPreferencesDialog;
 import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
@@ -41,7 +38,6 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 
@@ -61,8 +57,8 @@ public class ApplicationLayout extends Viewport {
 
     private NotificationHelper notifyMgr;
 
-    private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private final String hoverStyle = "de_header_menu_hyperlink_hover"; //$NON-NLS-1$
+    private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
     private ViewNotificationMenu view;
 
     /**
@@ -109,9 +105,9 @@ public class ApplicationLayout extends Viewport {
                         System.out.println("new-count->" + new_count + ":label-count->"
                                 + lblNotifications.getCount());
                         if (new_count > 0 && new_count > lblNotifications.getCount()) {
-                            view.fetchUnseenNotifications(new_count - lblNotifications.getCount());
+                            view.fetchUnseenNotifications();
                         }
-
+                        view.setUnseenCount(new_count);
                         lblNotifications.setCount(new_count);
 
                     }
@@ -407,19 +403,6 @@ public class ApplicationLayout extends Viewport {
         actionsMenu.showAt(point.x + anchor.getWidth() - 110, point.y + anchor.getHeight());
     }
 
-    /** Makes the notification window visible and filters by a category */
-    private void showNotificationWindow(final Category category) {
-        NotificationWindowConfig config = new NotificationWindowConfig();
-        config.setCategory(category);
-
-        // Build window config
-        WindowConfigFactory configFactory = new WindowConfigFactory();
-        JSONObject windowConfig = configFactory
-                .buildWindowConfig(Constants.CLIENT.myNotifyTag(), config);
-        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
-        dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
-    }
-
     private void showNotificationView(final HorizontalPanel ret) {
         Point point = ret.getPosition(false);
         point.x = point.x - 142;
@@ -450,20 +433,6 @@ public class ApplicationLayout extends Viewport {
 
         view.setStyleName("de_header_menu_body");
         view.setShadow(false);
-        HorizontalPanel hp = new HorizontalPanel();
-        hp.add(new MenuHyperlink(I18N.DISPLAY.allNotifications(), linkStyle, "",
-                new Listener<BaseEvent>() {
-                    @Override
-                    public void handleEvent(BaseEvent be) {
-                        if (lblNotifications.getCount() > 0) {
-                            showNotificationWindow(NotificationHelper.Category.NEW);
-                        } else {
-                            showNotificationWindow(NotificationHelper.Category.ALL);
-                        }
-                        view.hide();
-                    }
-                }));
-        view.add(hp);
     }
 
     /**

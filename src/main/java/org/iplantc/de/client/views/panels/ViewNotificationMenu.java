@@ -5,12 +5,18 @@ package org.iplantc.de.client.views.panels;
 
 import java.util.List;
 
+import org.iplantc.core.client.widgets.MenuHyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.events.DeleteNotificationsUpdateEvent;
+import org.iplantc.de.client.events.DeleteNotificationsUpdateEventHandler;
+import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.models.Notification;
+import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.utils.NotificationHelper;
 import org.iplantc.de.client.utils.NotificationHelper.Category;
@@ -19,10 +25,13 @@ import org.iplantc.de.client.utils.NotifyInfo;
 import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ListViewEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.HorizontalPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.ListViewSelectionModel;
@@ -50,12 +59,19 @@ public class ViewNotificationMenu extends Menu {
 
     private NotificationHelper helper = NotificationHelper.getInstance();
 
+    private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
+
+    private HorizontalPanel hyperlinkPanel;
+
     public ViewNotificationMenu() {
         setLayout(new FitLayout());
+        initListeners();
         view = initList();
         LayoutContainer lc = buildPanel();
+        hyperlinkPanel = new HorizontalPanel();
         lc.add(view);
         add(lc);
+        add(hyperlinkPanel);
     }
 
     private LayoutContainer buildPanel() {
@@ -64,6 +80,24 @@ public class ViewNotificationMenu extends Menu {
         lc.setSize(250, 270);
         lc.setBorders(false);
         return lc;
+    }
+
+    private void initListeners() {
+        EventBus.getInstance().addHandler(DeleteNotificationsUpdateEvent.TYPE,
+                new DeleteNotificationsUpdateEventHandler() {
+
+                    @Override
+                    public void onDelete(DeleteNotificationsUpdateEvent event) {
+                        for (Notification n : store.getModels()) {
+                            for (Notification deleted : event.getIds()) {
+                                if (n.getId().equals(deleted.getId())) {
+                                    store.remove(n);
+                                }
+                            }
+                        }
+
+                    }
+                });
     }
 
     private CustomListView<Notification> initList() {
@@ -92,17 +126,11 @@ public class ViewNotificationMenu extends Menu {
 
     @Override
     public void showAt(int x, int y) {
-        super.showAt(x, y);
         highlightNewNotifications();
-        NotificationCountUpdateEvent evnCountUpdateEvent = null;
-        if (total_unseen > NEW_NOTIFICATIONS_LIMIT) {
-            evnCountUpdateEvent = new NotificationCountUpdateEvent(total_unseen
-                    - NEW_NOTIFICATIONS_LIMIT);
-        } else {
-            evnCountUpdateEvent = new NotificationCountUpdateEvent(0);
-        }
-        EventBus.getInstance().fireEvent(evnCountUpdateEvent);
+        int remaining_count = total_unseen - NEW_NOTIFICATIONS_LIMIT;
         helper.markAsSeen(store.getModels());
+        addNotifictionsLink(remaining_count);
+        super.showAt(x, y);
     }
 
     private String getTemplate() {
@@ -126,8 +154,11 @@ public class ViewNotificationMenu extends Menu {
         }
     }
 
-    public void fetchUnseenNotifications(final int count) {
+    public void setUnseenCount(int count) {
         this.total_unseen = count;
+    }
+
+    public void fetchUnseenNotifications() {
         MessageServiceFacade facadeMessageService = new MessageServiceFacade();
         facadeMessageService.getRecentMessages(new AsyncCallback<String>() {
 
@@ -143,6 +174,45 @@ public class ViewNotificationMenu extends Menu {
         });
     }
 
+    private void addNotifictionsLink(int remaining_count) {
+        hyperlinkPanel.removeAll();
+        hyperlinkPanel.add(buildNotificationHyerlink(remaining_count));
+        hyperlinkPanel.layout(true);
+    }
+
+    private MenuHyperlink buildNotificationHyerlink(final int remaining_count) {
+        String displayText;
+        if (remaining_count > 0) {
+            displayText = I18N.DISPLAY.newNotifications() + " (" + remaining_count + " )";
+        } else {
+            displayText = I18N.DISPLAY.allNotifications();
+        }
+        return new MenuHyperlink(displayText, linkStyle, "", new Listener<BaseEvent>() {
+            @Override
+            public void handleEvent(BaseEvent be) {
+                if (remaining_count > 0) {
+                    showNotificationWindow(NotificationHelper.Category.NEW);
+                } else {
+                    showNotificationWindow(NotificationHelper.Category.ALL);
+                }
+                hide();
+            }
+        });
+    }
+
+    /** Makes the notification window visible and filters by a category */
+    private void showNotificationWindow(final Category category) {
+        NotificationWindowConfig config = new NotificationWindowConfig();
+        config.setCategory(category);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory
+                .buildWindowConfig(Constants.CLIENT.myNotifyTag(), config);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
+    }
+
     /**
      * Process method takes in a JSON String, breaks out the individual messages, transforms them into
      * events, finally the event is fired.
@@ -156,6 +226,7 @@ public class ViewNotificationMenu extends Menu {
         // cache before removing
         List<Notification> temp = store.getModels();
         store.removeAll();
+        boolean displayInfo = false;
 
         if (objMessages != null) {
             JSONArray arr = objMessages.get("messages").isArray(); //$NON-NLS-1$
@@ -173,12 +244,13 @@ public class ViewNotificationMenu extends Menu {
                             store.add(n);
                             if (!isExist(temp, n)) {
                                 displayNotificationPopup(n);
+                                displayInfo = true;
                             }
 
                         }
                     }
                 }
-                if (total_unseen > NEW_NOTIFICATIONS_LIMIT) {
+                if (total_unseen > NEW_NOTIFICATIONS_LIMIT && displayInfo) {
                     NotifyInfo.display(I18N.DISPLAY.newNotifications(),
                             I18N.DISPLAY.newNotificationsAlert());
                 }

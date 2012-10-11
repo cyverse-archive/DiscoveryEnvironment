@@ -9,11 +9,11 @@ import com.google.gwt.event.shared.EventHandler;
  * @author sriram
  * 
  */
-public interface UnseenNotificationsUpdateEventHandler extends EventHandler {
+public interface DeleteNotificationsUpdateEventHandler extends EventHandler {
 
     /**
      * 
      */
-    public void update(UnseenNotificationsUpdateEvent event);
+    public void onDelete(DeleteNotificationsUpdateEvent event);
 
 }
