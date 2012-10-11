@@ -129,19 +129,18 @@ public class ViewNotificationMenu extends Menu {
     public void fetchUnseenNotifications(final int count) {
         this.total_unseen = count;
         MessageServiceFacade facadeMessageService = new MessageServiceFacade();
-        facadeMessageService.getNotifications(NEW_NOTIFICATIONS_LIMIT, 0, null, null, null,
-                new AsyncCallback<String>() {
+        facadeMessageService.getRecentMessages(new AsyncCallback<String>() {
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(caught);
-                    }
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
 
-                    @Override
-                    public void onSuccess(String result) {
-                        processMessages(result);
-                    }
-                });
+            @Override
+            public void onSuccess(String result) {
+                processMessages(result);
+            }
+        });
     }
 
     /**
@@ -154,6 +153,8 @@ public class ViewNotificationMenu extends Menu {
 
         JSONObject objMessages = JSONParser.parseStrict(json).isObject();
         int size = 0;
+        // cache before removing
+        List<Notification> temp = store.getModels();
         store.removeAll();
 
         if (objMessages != null) {
@@ -161,7 +162,6 @@ public class ViewNotificationMenu extends Menu {
             if (arr != null) {
                 JSONObject objItem;
                 size = arr.size();
-                trimStore(size);
                 for (int i = 0; i < size; i++) {
                     if (isVisible() && !isMasked()) {
                         mask(I18N.DISPLAY.loadingMask());
@@ -171,7 +171,9 @@ public class ViewNotificationMenu extends Menu {
                         Notification n = buildNotification(objItem);
                         if (n != null && !isExists(n)) {
                             store.add(n);
-                            displayNotificationPopup(n);
+                            if (!isExist(temp, n)) {
+                                displayNotificationPopup(n);
+                            }
 
                         }
                     }
@@ -188,7 +190,14 @@ public class ViewNotificationMenu extends Menu {
 
     }
 
-    private void trimStore(int size) {
+    private boolean isExist(List<Notification> list, Notification n) {
+        for (Notification noti : list) {
+            if (noti.getId().equals(n.getId())) {
+                return true;
+            }
+        }
+
+        return false;
 
     }
 
@@ -212,10 +221,12 @@ public class ViewNotificationMenu extends Menu {
     }
 
     private void displayNotificationPopup(Notification n) {
-        if (n.getCategory().equals(Category.DATA)) {
-            NotifyInfo.display(Category.DATA.toString(), n.getMessage());
-        } else if (n.getCategory().equals(Category.ANALYSIS)) {
-            NotifyInfo.display(Category.ANALYSIS.toString(), n.getMessage());
+        if (!n.isSeen()) {
+            if (n.getCategory().equals(Category.DATA)) {
+                NotifyInfo.display(Category.DATA.toString(), n.getMessage());
+            } else if (n.getCategory().equals(Category.ANALYSIS)) {
+                NotifyInfo.display(Category.ANALYSIS.toString(), n.getMessage());
+            }
         }
     }
 

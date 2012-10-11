@@ -23,6 +23,7 @@ import org.iplantc.de.client.models.JsAnalysisExecution;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.MyDataViewContextExecutor;
 import org.iplantc.de.client.views.panels.MyAnalysesPanel;
+import org.iplantc.de.client.views.panels.MyAnalysesPanel.EXECUTION_STATUS;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.core.XTemplate;
@@ -96,9 +97,7 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
     }
 
     private void handleMessage(JSONObject payload) {
-        if ("job_status_change".equals(JsonUtil.getString(payload, "action"))) { //$NON-NLS-1$ //$NON-NLS-2$
-            updateStore(payload);
-        }
+        updateStore(payload);
     }
 
     private void updateStore(JSONObject payload) {
@@ -110,23 +109,23 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
                 case COMPLETED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
                             JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getNumber(payload, "enddate").longValue())); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "enddate").toString())); //$NON-NLS-1$
                     break;
 
                 case FAILED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
                             JsonUtil.getString(payload, "resultfolderid"), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getNumber(payload, "enddate").longValue())); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "enddate").toString())); //$NON-NLS-1$
                     break;
 
                 case RUNNING:
                     updateRunExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "startdate").toString())); //$NON-NLS-1$
                     break;
 
                 case SUBMITTED:
                     updateRunExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
-                            DateParser.parseDate(JsonUtil.getString(payload, "startdate"))); //$NON-NLS-1$
+                            DateParser.parseDate(JsonUtil.getString(payload, "startdate").toString())); //$NON-NLS-1$
                     break;
 
                 default:
@@ -286,6 +285,23 @@ public class MyAnalysesGrid extends Grid<AnalysisExecution> {
                 unmask();
             }
         });
+    }
+
+    // get a list of analyses for which status needs to be updated
+    public List<AnalysisExecution> getUpdateList() {
+
+        List<AnalysisExecution> list = new ArrayList<AnalysisExecution>();
+        for (AnalysisExecution ae : store.getModels()) {
+            if (ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.RUNNING.toString())
+                    || ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.SUBMITTED.toString())
+                    || ae.getStatus().equalsIgnoreCase(EXECUTION_STATUS.IDLE.toString())) {
+                list.add(ae);
+
+            }
+        }
+
+        return list;
+
     }
 
     /**

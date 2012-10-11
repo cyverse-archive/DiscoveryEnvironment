@@ -48,9 +48,9 @@ public class MessageServiceFacade {
      * 
      * @param callback called on RPC completion.
      */
-    public void getMessages(AsyncCallback<String> callback) {
+    public void getRecentMessages(AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl()
-                + "notifications/unseen-messages"; //$NON-NLS-1$
+                + "notifications/last-ten-messages"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);

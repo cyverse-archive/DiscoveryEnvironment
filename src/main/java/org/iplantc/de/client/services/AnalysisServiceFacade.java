@@ -46,7 +46,8 @@ public class AnalysisServiceFacade {
      * @param callback executed when RPC call completes.
      */
     public void stopAnalysis(String analysisId, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/" + analysisId;
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/"
+                + analysisId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
@@ -72,6 +73,22 @@ public class AnalysisServiceFacade {
                 + workspaceId + "/newexperiment"; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, json);
+
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    /**
+     * get status updates for all running/submitted/ idle analyses
+     * 
+     * @param jsonBody
+     * @param callback
+     */
+    public void getAnalysesStatus(String workspaceId, String jsonBody, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
+                + workspaceId + "/executions/list"; //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                jsonBody);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }

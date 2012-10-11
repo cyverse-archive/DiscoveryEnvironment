@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.AnalysisExecution;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
@@ -39,8 +41,10 @@ import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -73,6 +77,10 @@ public class MyAnalysesPanel extends ContentPanel {
 
     protected static CheckBoxSelectionModel<AnalysisExecution> sm;
     private TextField<String> filter;
+
+    private Timer statusChkTimer;
+
+    private int ANALYSIS_STATUS_CHECK_INTERVAL = 15000;
 
     /**
      * Indicates the status of an analysis.
@@ -147,6 +155,61 @@ public class MyAnalysesPanel extends ContentPanel {
         initWorkspaceId();
 
         facadeAnalysisService = new AnalysisServiceFacade();
+        statusChkTimer = new Timer() {
+
+            @Override
+            public void run() {
+                checkStatus();
+
+            }
+        };
+        statusChkTimer.scheduleRepeating(ANALYSIS_STATUS_CHECK_INTERVAL);
+    }
+
+    private void checkStatus() {
+        if (analysisGrid != null) {
+            List<AnalysisExecution> list = analysisGrid.getUpdateList();
+            JSONArray arr = new JSONArray();
+            int i = 0;
+            if (list != null && list.size() > 0) {
+                for (AnalysisExecution ae : list) {
+                    arr.set(i++, new JSONString(ae.getId()));
+                }
+                JSONObject obj = new JSONObject();
+                obj.put("executions", arr);
+
+                getStatus(obj);
+            }
+
+        }
+    }
+
+    private void getStatus(JSONObject obj) {
+        AnalysisServiceFacade facade = new AnalysisServiceFacade();
+        facade.getAnalysesStatus(idWorkspace, obj.toString(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // do nothing intentionally for now
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                JSONObject resultObj = JSONParser.parseStrict(result).isObject();
+                if (resultObj != null) {
+                    JSONArray arr = JsonUtil.getArray(resultObj, "analyses");
+
+                    if (arr != null && arr.size() > 0) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            AnalysisUpdateEvent event = new AnalysisUpdateEvent(arr.get(i).isObject());
+                            EventBus.getInstance().fireEvent(event);
+                        }
+                    }
+
+                }
+
+            }
+        });
     }
 
     private void initWorkspaceId() {
@@ -332,7 +395,8 @@ public class MyAnalysesPanel extends ContentPanel {
                 if (ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.SUBMITTED.toString()))
                         || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.IDLE.toString()))
                         || ae.getStatus().equalsIgnoreCase((EXECUTION_STATUS.RUNNING.toString()))) {
-                    facadeAnalysisService.stopAnalysis(ae.getId(), new CancelAnalysisServiceCallback(ae));
+                    facadeAnalysisService
+                            .stopAnalysis(ae.getId(), new CancelAnalysisServiceCallback(ae));
                 }
             }
         }

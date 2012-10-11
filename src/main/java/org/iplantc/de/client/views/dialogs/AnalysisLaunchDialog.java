@@ -12,6 +12,7 @@ import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.events.AnalysisLaunchedEvent;
+import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.utils.DataUtils;
@@ -42,6 +43,7 @@ import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -302,12 +304,16 @@ public class AnalysisLaunchDialog extends Dialog {
         hide();
     }
 
-    private void handleAnalysisLaunchSuccess() {
+    private void handleAnalysisLaunchSuccess(String result) {
         // notify the world that we have successfully launched an analysis
         EventBus eventbus = EventBus.getInstance();
 
         AnalysisLaunchedEvent event = new AnalysisLaunchedEvent(tagCaller, fieldName.getValue(), true);
         eventbus.fireEvent(event);
+
+        JSONObject payload = JSONParser.parseStrict(result).isObject();
+        AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
+        eventbus.fireEvent(aue);
 
         // close dialog now that the analysis has launched
         closeDialog();
@@ -336,7 +342,7 @@ public class AnalysisLaunchDialog extends Dialog {
             @Override
             public void onSuccess(String result) {
                 if (result != null) {
-                    handleAnalysisLaunchSuccess();
+                    handleAnalysisLaunchSuccess(result);
                 } else { // service is currently not reporting failure correctly, says successful
                          // when not
                          // TODO: get service to report failure correctly
