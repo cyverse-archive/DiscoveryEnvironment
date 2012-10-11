@@ -2,8 +2,11 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.presenters.DiskResourcePresenter;
+import org.iplantc.core.uidiskresource.client.presenters.proxy.FolderRpcProxy;
 import org.iplantc.core.uidiskresource.client.views.DiskResourceView;
 import org.iplantc.core.uidiskresource.client.views.DiskResourceViewImpl;
+import org.iplantc.core.uidiskresource.client.views.widgets.DiskResourceViewToolbar;
+import org.iplantc.core.uidiskresource.client.views.widgets.DiskResourceViewToolbarImpl;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
@@ -21,7 +24,9 @@ public class DeDiskResourceWindow extends Gxt3IplantWindow {
         super(tag, config);
 
         DiskResourceView view = new DiskResourceViewImpl();
-        presenter = new DiskResourcePresenter(view);
+        DiskResourceView.Proxy proxy = new FolderRpcProxy();
+        DiskResourceViewToolbar toolbar = new DiskResourceViewToolbarImpl();
+        presenter = new DiskResourcePresenter(view, toolbar, proxy);
 
         setSize("800", "410");
         presenter.go(this);
