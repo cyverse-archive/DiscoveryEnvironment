@@ -127,9 +127,8 @@ public class ViewNotificationMenu extends Menu {
     @Override
     public void showAt(int x, int y) {
         highlightNewNotifications();
-        int remaining_count = total_unseen - NEW_NOTIFICATIONS_LIMIT;
         helper.markAsSeen(store.getModels());
-        addNotifictionsLink(remaining_count);
+        updateNotificationLink();
         super.showAt(x, y);
     }
 
@@ -156,6 +155,7 @@ public class ViewNotificationMenu extends Menu {
 
     public void setUnseenCount(int count) {
         this.total_unseen = count;
+        updateNotificationLink();
     }
 
     public void fetchUnseenNotifications() {
@@ -174,23 +174,23 @@ public class ViewNotificationMenu extends Menu {
         });
     }
 
-    private void addNotifictionsLink(int remaining_count) {
+    private void updateNotificationLink() {
         hyperlinkPanel.removeAll();
-        hyperlinkPanel.add(buildNotificationHyerlink(remaining_count));
+        hyperlinkPanel.add(buildNotificationHyerlink());
         hyperlinkPanel.layout(true);
     }
 
-    private MenuHyperlink buildNotificationHyerlink(final int remaining_count) {
+    private MenuHyperlink buildNotificationHyerlink() {
         String displayText;
-        if (remaining_count > 0) {
-            displayText = I18N.DISPLAY.newNotifications() + " (" + remaining_count + " )";
+        if (total_unseen > 0) {
+            displayText = I18N.DISPLAY.newNotifications() + " (" + total_unseen + " )";
         } else {
             displayText = I18N.DISPLAY.allNotifications();
         }
         return new MenuHyperlink(displayText, linkStyle, "", new Listener<BaseEvent>() {
             @Override
             public void handleEvent(BaseEvent be) {
-                if (remaining_count > 0) {
+                if (total_unseen > 0) {
                     showNotificationWindow(NotificationHelper.Category.NEW);
                 } else {
                     showNotificationWindow(NotificationHelper.Category.ALL);
