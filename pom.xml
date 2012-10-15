@@ -5,7 +5,7 @@
     <groupId>org.iplantc.de</groupId>
     <artifactId>de-web</artifactId>
     <packaging>war</packaging>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.4-SNAPSHOT</version>
     <name>Discovery Environment Web Application</name>
     <url>http://iplantcollaborative.org</url>
 	<!-- convenience to define GWT version in one place -->
@@ -56,22 +56,22 @@
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>widgets</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>applications</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>pipelines</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>diskresource</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -134,17 +134,17 @@
         <dependency>
             <groupId>org.iplantc.de</groupId>
             <artifactId>de-common</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.de</groupId>
             <artifactId>confluence-client</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>metadata</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -161,17 +161,17 @@
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>jsonutil</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>ui-commons</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>tito</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.santuario</groupId>
