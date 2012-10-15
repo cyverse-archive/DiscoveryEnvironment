@@ -5,7 +5,7 @@
 	<groupId>org.iplantc.de</groupId>
 	<artifactId>confluence-client</artifactId>
 	<packaging>jar</packaging>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.4-SNAPSHOT</version>
 	<name>Confluence Interface For The Discovery Environment</name>
 	<url>http://iplantcollaborative.org</url>
 	<properties>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.iplantc.de</groupId>
             <artifactId>de-common</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
