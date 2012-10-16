@@ -5,6 +5,7 @@ import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.analysis.views.MyAnalysesWindow;
 import org.iplantc.de.client.apps.views.DEAppsWindow;
 import org.iplantc.de.client.idroplite.views.IDropLiteAppletWindow;
+import org.iplantc.de.client.models.DataWindowConfig;
 import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
@@ -38,7 +39,7 @@ public class WindowFactory {
         if (type != null) {
             if (type.startsWith(Constants.CLIENT.myDataTag())) {
                 // ret = new MyDataWindow(type, config);
-                ret = new DeDiskResourceWindow(type, config);
+                ret = new DeDiskResourceWindow(type, (DataWindowConfig)config);
             } else if (type.startsWith(Constants.CLIENT.myNotifyTag())) {
                 ret = new NotificationWindow3(type, config);
             } else if (type.startsWith(Constants.CLIENT.myHelpTag())) {
