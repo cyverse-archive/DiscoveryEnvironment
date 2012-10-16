@@ -102,8 +102,6 @@ public class ApplicationLayout extends Viewport {
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
                         int new_count = ncue.getTotal();
-                        System.out.println("new-count->" + new_count + ":label-count->"
-                                + lblNotifications.getCount());
                         if (new_count > 0 && new_count > lblNotifications.getCount()) {
                             view.fetchUnseenNotifications();
                         }
