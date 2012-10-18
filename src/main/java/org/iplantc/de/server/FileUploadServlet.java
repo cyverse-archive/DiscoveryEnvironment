@@ -85,7 +85,7 @@ public class FileUploadServlet extends UploadAction {
         }
 
         // remove files from session. this avoids duplicate submissions
-        removeSessionFileItems(request, false);
+        removeSessionFileItems(request, true);
 
         LOG.debug("executeAction - JSON returned: " + json);
         return json;
