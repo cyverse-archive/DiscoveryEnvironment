@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
@@ -256,7 +257,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
                     if (arr != null) {
                         for (int i = 0; i < arr.size(); i++) {
                             final String val = JsonUtil.trim(arr.get(i).toString());
-                            Hyperlink link = new Hyperlink(val, "analysis-param-value");
+                            Hyperlink link = new Hyperlink(trimValue(val), "analysis-param-value");
                             link.addClickListener(new InputFieldValueClickListener(val));
                             link.setToolTip(val);
                             pnl.add(link);
@@ -264,16 +265,10 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
                         return pnl;
 
                     } else {
-                        Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
-                        link.addClickListener(new InputFieldValueClickListener(full_text));
-                        link.setToolTip(full_text);
-                        return link;
+                        return buildHyperLink(full_text);
                     }
                 } catch (Exception e) {
-                    Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
-                    link.addClickListener(new InputFieldValueClickListener(full_text));
-                    link.setToolTip(full_text);
-                    return link;
+                    return buildHyperLink(full_text);
                 }
 
             } else {
@@ -282,12 +277,24 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             }
         }
 
+        private Object buildHyperLink(final String full_text) {
+            Hyperlink link = new Hyperlink(trimValue(full_text), "analysis-param-value");
+            link.addClickListener(new InputFieldValueClickListener(full_text));
+            link.setToolTip(full_text);
+            return link;
+        }
+
         private Text buildValueTextField(final String full_text) {
             Text text = new Text(full_text);
             text.setToolTip(full_text);
             text.setTagName("span");
             text.getToolTip().setMaxWidth(Integer.MAX_VALUE);
             return text;
+        }
+
+        private String trimValue(final String full_text) {
+            return (full_text.length() < 50) ? full_text : Format.ellipse(full_text, 50);
+
         }
     }
 
