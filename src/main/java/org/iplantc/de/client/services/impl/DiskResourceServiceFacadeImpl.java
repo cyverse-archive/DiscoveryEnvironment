@@ -2,14 +2,15 @@ package org.iplantc.de.client.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.models.DiskResource;
-import org.iplantc.core.uidiskresource.client.models.File;
-import org.iplantc.core.uidiskresource.client.models.Folder;
+import org.iplantc.core.uidiskresource.client.models.autobeans.DiskResourceMetaData;
+import org.iplantc.core.uidiskresource.client.models.autobeans.File;
+import org.iplantc.core.uidiskresource.client.models.autobeans.Folder;
 import org.iplantc.core.uidiskresource.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.util.WindowUtil;
@@ -17,6 +18,7 @@ import org.iplantc.de.shared.SharedDataApiServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.util.Format;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
@@ -33,9 +35,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade {
     private final String serviceNamePrefix = "org.iplantc.services.de-data-mgmt"; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getHomeFolder(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getHomeFolder(AsyncCallback<String> callback) {
         String address = serviceNamePrefix + ".root-folders"; //$NON-NLS-1$
@@ -44,9 +43,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getDefaultOutput(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getDefaultOutput(final String folderName, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "default-output-dir?name="
@@ -55,9 +51,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#putDefaultOutput(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void putDefaultOutput(AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "default-output-dir?name="
@@ -67,17 +60,11 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getFolderContents(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getFolderContents(final String path, AsyncCallback<String> callback) {
         getFolderContents(path, true, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getFolderContents(java.lang.String, boolean, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getFolderContents(final String path, boolean includeFiles, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".directory?includefiles=" + (includeFiles ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -90,9 +77,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#createFolder(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void createFolder(String folderpath, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".directory-create"; //$NON-NLS-1$
@@ -104,9 +88,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#diskResourcesExist(java.util.List, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void diskResourcesExist(List<String> diskResourceIds, AsyncCallback<String> callback) {
         String address = serviceNamePrefix + ".exists"; //$NON-NLS-1$
@@ -119,9 +100,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#previewFile(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void previewFile(final String path, AsyncCallback<String> callback) {
         String address = serviceNamePrefix + ".file-preview"; //$NON-NLS-1$
@@ -133,16 +111,16 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#moveDiskResources(java.util.List, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void moveDiskResources(final List<DiskResource> diskResources, final String idDestFolder,
+    public void moveDiskResources(
+            final Set<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> diskResources,
+            final Folder idDestFolder,
             AsyncCallback<String> callback) {
+        // TODO JDS Mock then implement this new endpoint
         ArrayList<String> srcFolders = new ArrayList<String>();
         ArrayList<String> srcFiles = new ArrayList<String>();
 
-        for (DiskResource src : diskResources) {
+        for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource src : diskResources) {
             String srcId = src.getId();
             if (!srcId.equals(idDestFolder)) {
                 if (src instanceof Folder) {
@@ -155,18 +133,15 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
 
         if (srcFolders.size() > 0) {
             // call service to move folders
-            moveFolder(srcFolders, idDestFolder, callback);
+            moveFolder(srcFolders, idDestFolder.getId(), callback);
         }
 
         if (srcFiles.size() > 0) {
             // call service to move files
-            moveFile(srcFiles, idDestFolder, callback);
+            moveFile(srcFiles, idDestFolder.getId(), callback);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#moveFile(java.util.List, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void moveFile(final List<String> idSrcFiles, final String idDestFolder,
             final AsyncCallback<String> callback) {
@@ -182,9 +157,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#moveFolder(java.util.List, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void moveFolder(final List<String> idSrcFolders, final String idDestFolder,
             AsyncCallback<String> callback) {
@@ -195,9 +167,13 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#renameFolder(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
+    @Override
+    public void renameDiskResource(
+            org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource src, String newName,
+            AsyncCallback<String> callback) {
+        // TODO JDS mockup then Implement
+    }
+
     @Override
     public void renameFolder(final String srcName, final String destName, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".directory-rename"; //$NON-NLS-1$
@@ -210,9 +186,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#renameFile(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void renameFile(String srcId, String destId, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".file-rename"; //$NON-NLS-1$
@@ -227,9 +200,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#importFromUrl(java.lang.String, java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void importFromUrl(final String url, final String dest, final String description,
             AsyncCallback<String> callback) {
@@ -244,9 +214,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#upload(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void upload(AsyncCallback<String> callback) {
         String address = serviceNamePrefix + ".idrop-upload"; //$NON-NLS-1$
@@ -255,9 +222,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#download(com.google.gwt.json.client.JSONArray, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void download(JSONArray paths, AsyncCallback<String> callback) {
         String address = serviceNamePrefix + ".idrop-download"; //$NON-NLS-1$
@@ -270,9 +234,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#simpleDownload(java.lang.String)
-     */
     @Override
     public void simpleDownload(String path) {
         // We must proxy the download requests through a servlet, since the actual download service may
@@ -283,35 +244,49 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         WindowUtil.open(URL.encode(address), "width=100,height=100"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#deleteFolders(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void deleteFolders(String pathsAsJsonArray, AsyncCallback<String> callback) {
+    public <T extends org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> void deleteDiskResources(
+            Set<T> diskResources, AsyncCallback<String> callback) {
+        // TODO JDS mock then implement this service call.
+    }
+
+    @Override
+    public void deleteFolders(List<Folder> folders, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".directory-delete"; //$NON-NLS-1$
-        String body = "{\"paths\": " + pathsAsJsonArray + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+        List<String> paths = toStringIdList(folders);
+        String body = "{\"paths\": " + JsonUtil.buildJsonArrayString(paths) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 body);
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#deleteFiles(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void deleteFiles(String pathsAsJsonArray, AsyncCallback<String> callback) {
+    public void deleteFiles(List<File> files, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".file-delete"; //$NON-NLS-1$
-        String body = "{\"paths\": " + pathsAsJsonArray + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-
+        List<String> paths = toStringIdList(files);
+        String body = "{\"paths\": " + JsonUtil.buildJsonArrayString(paths) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 body);
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getFileMetaData(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
+    private <D extends org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> List<String> toStringIdList(
+            List<D> resources) {
+        List<String> stringIdList = Lists.newArrayList();
+        for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource dr : resources) {
+            stringIdList.add(dr.getId());
+        }
+        return stringIdList;
+    }
+
+    @Override
+    public void getDiskResourceMetaData(
+            org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
+            AsyncCallback<String> callback) {
+        // TODO JDS mock then implement this interface
+    }
+
     @Override
     public void getFileMetaData(String path, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
@@ -320,9 +295,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getFolderMetaData(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getFolderMetaData(String path, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
@@ -331,9 +303,14 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#setFolderMetaData(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
+    @Override
+    public void setDiskResourceMetaData(
+            org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
+            Set<DiskResourceMetaData> mdToUpdate, Set<DiskResourceMetaData> mdToDelete,
+            AsyncCallback<String> callback) {
+        // TODO JDS mock then implement this service call.
+    }
+
     @Override
     public void setFolderMetaData(String folderId, String body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
@@ -343,9 +320,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#setFileMetaData(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void setFileMetaData(String fileId, String body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix
@@ -355,9 +329,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#shareDiskResource(com.google.gwt.json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "share"; //$NON-NLS-1$
@@ -368,9 +339,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#unshareDiskResource(com.google.gwt.json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void unshareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "unshare"; //$NON-NLS-1$
@@ -381,9 +349,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.IDiskResourceServiceFacade#getPermissions(com.google.gwt.json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getPermissions(JSONObject body, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".permissions"; //$NON-NLS-1$
@@ -402,4 +367,5 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
 
         SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
+
 }

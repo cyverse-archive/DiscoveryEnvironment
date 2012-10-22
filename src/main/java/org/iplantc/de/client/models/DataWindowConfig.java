@@ -5,6 +5,7 @@ package org.iplantc.de.client.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
@@ -75,7 +76,7 @@ public class DataWindowConfig extends WindowConfig {
      * @param resources
      */
     public void setDiskResourceIdsAlt(
-            List<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> resources) {
+            Set<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> resources) {
         List<String> stringIdList = new ArrayList<String>();
         for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource dr : resources) {
             stringIdList.add(dr.getId());

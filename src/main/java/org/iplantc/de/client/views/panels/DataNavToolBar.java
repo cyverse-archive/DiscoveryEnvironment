@@ -3,7 +3,6 @@ package org.iplantc.de.client.views.panels;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantSubmittableDialog;
@@ -11,11 +10,9 @@ import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
 import org.iplantc.core.uidiskresource.client.models.Folder;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.Services;
 import org.iplantc.de.client.dispatchers.IDropLiteWindowDispatcher;
 import org.iplantc.de.client.events.AsyncUploadCompleteHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.callbacks.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.views.panels.DataNavigationPanel.Mode;
 
@@ -285,9 +282,8 @@ public class DataNavToolBar extends ToolBar {
 
                             if (idFolders.size() > 0) {
                                 maskingParent.mask(I18N.DISPLAY.loadingMask());
-                                Services.DISK_RESOURCE_SERVICE.deleteFolders(
-                                        JsonUtil.buildJsonArrayString(idFolders),
-                                        new FolderDeleteCallback(idFolders, maskingParent));
+                                // Services.DISK_RESOURCE_SERVICE.deleteFolders(idFolders,
+                                // new FolderDeleteCallback(idFolders, maskingParent));
                             }
                         }
                     }

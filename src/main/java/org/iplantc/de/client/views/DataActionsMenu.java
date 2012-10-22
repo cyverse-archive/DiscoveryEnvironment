@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.panels.IPlantDialogPanel;
@@ -19,8 +18,6 @@ import org.iplantc.de.client.dispatchers.ViewerWindowDispatcher;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.client.events.DiskResourceSelectionChangedEventHandler;
 import org.iplantc.de.client.images.Resources;
-import org.iplantc.de.client.services.callbacks.FileDeleteCallback;
-import org.iplantc.de.client.services.callbacks.FolderDeleteCallback;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataUtils.Action;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
@@ -397,15 +394,14 @@ public final class DataActionsMenu extends Menu {
                 // call the appropriate delete services
                 if (idFiles.size() > 0) {
                     maskingParent.mask(I18N.DISPLAY.loadingMask());
-                    Services.DISK_RESOURCE_SERVICE.deleteFiles(JsonUtil.buildJsonArrayString(idFiles),
-                            new FileDeleteCallback(idFiles, maskingParent));
+                    // Services.DISK_RESOURCE_SERVICE.deleteFiles(idFiles,
+                    // new FileDeleteCallback(idFiles, maskingParent));
                 }
 
                 if (idFolders.size() > 0) {
                     maskingParent.mask(I18N.DISPLAY.loadingMask());
-                    Services.DISK_RESOURCE_SERVICE.deleteFolders(JsonUtil
-                            .buildJsonArrayString(idFolders), new FolderDeleteCallback(idFolders,
-                            maskingParent));
+                    // Services.DISK_RESOURCE_SERVICE.deleteFolders(idFolders, new FolderDeleteCallback(
+                    // idFolders, maskingParent));
                 }
             } else {
                 showErrorMsg();
