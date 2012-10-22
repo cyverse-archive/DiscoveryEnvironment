@@ -20,6 +20,7 @@ import org.iplantc.de.client.utils.DataViewContextExecutor;
 import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.dialogs.SaveAsDialog;
 
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -65,6 +66,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
     private void init(String analysisId) {
         setLayout(new FitLayout());
+        setScrollMode(Scroll.AUTO);
         setHeaderVisible(false);
         retrieveData(analysisId);
         initToolbar();
@@ -203,7 +205,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 175); //$NON-NLS-1$
+        ColumnConfig param_name = new ColumnConfig("param_name", I18N.DISPLAY.paramName(), 100); //$NON-NLS-1$
         param_name.setRenderer(new ParamNameCellRenderer());
         ColumnConfig param_type = new ColumnConfig("param_type", I18N.DISPLAY.paramType(), 75); //$NON-NLS-1$
         ColumnConfig param_value = new ColumnConfig("param_value", I18N.DISPLAY.paramValue(), 325); //$NON-NLS-1$
@@ -249,22 +251,31 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             VerticalPanel pnl = new VerticalPanel();
             pnl.setSpacing(2);
             if (model.get(AnalysisParameter.PARAMETER_TYPE).equals("Input") && valid_info_type) {
-                JSONArray arr = JSONParser.parseStrict(full_text).isArray();
-                if (arr != null) {
-                    for (int i = 0; i < arr.size(); i++) {
-                        final String val = JsonUtil.trim(arr.get(i).toString());
-                        Hyperlink link = new Hyperlink(val, "analysis-param-value");
-                        link.addClickListener(new InputFieldValueClickListener(val));
-                        link.setToolTip(val);
-                        pnl.add(link);
+                try {
+                    JSONArray arr = JSONParser.parseStrict(full_text).isArray();
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            final String val = JsonUtil.trim(arr.get(i).toString());
+                            Hyperlink link = new Hyperlink(val, "analysis-param-value");
+                            link.addClickListener(new InputFieldValueClickListener(val));
+                            link.setToolTip(val);
+                            pnl.add(link);
+                        }
+                        return pnl;
+
+                    } else {
+                        Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
+                        link.addClickListener(new InputFieldValueClickListener(full_text));
+                        link.setToolTip(full_text);
+                        return link;
                     }
-                    return pnl;
-                } else {
+                } catch (Exception e) {
                     Hyperlink link = new Hyperlink(full_text, "analysis-param-value");
                     link.addClickListener(new InputFieldValueClickListener(full_text));
                     link.setToolTip(full_text);
                     return link;
                 }
+
             } else {
                 Text text = buildValueTextField(full_text);
                 return text;
