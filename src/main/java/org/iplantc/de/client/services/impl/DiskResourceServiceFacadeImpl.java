@@ -12,6 +12,7 @@ import org.iplantc.core.uidiskresource.client.models.autobeans.DiskResourceMetaD
 import org.iplantc.core.uidiskresource.client.models.autobeans.File;
 import org.iplantc.core.uidiskresource.client.models.autobeans.Folder;
 import org.iplantc.core.uidiskresource.client.services.DiskResourceServiceFacade;
+import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.shared.SharedDataApiServiceFacade;
@@ -169,9 +170,16 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
 
     @Override
     public void renameDiskResource(
-            org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource src, String newName,
+            org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource src, String destName,
             AsyncCallback<String> callback) {
-        // TODO JDS mockup then Implement
+        String fullAddress = serviceNamePrefix + ".rename"; //$NON-NLS-1$
+        JSONObject body = new JSONObject();
+        body.put("source", new JSONString(src.getId())); //$NON-NLS-1$
+        body.put("dest", new JSONString(DiskResourceUtil.parseParent(src.getId()) + "/" + destName)); //$NON-NLS-1$
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
     }
 
     @Override

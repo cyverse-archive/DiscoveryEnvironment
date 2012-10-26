@@ -111,21 +111,6 @@
          <artifactId>ui-commons</artifactId>
          <version>dev-SNAPSHOT</version>
       </dependency>
-        <!-- Testing dependencies -->
-      <dependency>
-         <groupId>org.iplantc.core</groupId>
-         <artifactId>diskresource</artifactId>
-         <version>dev-SNAPSHOT</version>
-         <type>test-jar</type>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.iplantc.core</groupId>
-         <artifactId>widgets</artifactId>
-         <version>dev-SNAPSHOT</version>
-         <type>test-jar</type>
-         <scope>test</scope>
-      </dependency>
         
         <dependency>
             <groupId>org.springframework.security</groupId>
