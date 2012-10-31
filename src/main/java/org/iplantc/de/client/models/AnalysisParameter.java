@@ -26,20 +26,16 @@ public class AnalysisParameter extends BaseModelData {
             set(PARAMETER_TYPE, JsonUtil.getString(obj, PARAMETER_TYPE));
             set(INFO_TYPE, JsonUtil.getString(obj, INFO_TYPE));
             set(DATA_FORMAT, JsonUtil.getString(obj, DATA_FORMAT));
-            setParameter(obj.get(PARAMETER_VALUE).toString());
+            setParameter(obj);
         }
     }
 
-    public void setParameter(String value) {
-        if (value != null && !value.isEmpty()) {
-            JSONObject obj = JSONParser.parseStrict(value).isObject();
-            if (obj != null) {
-                set(PARAMETER_VALUE, JsonUtil.trim(obj.get("display").toString()));
-            } else {
-                set(PARAMETER_VALUE, JsonUtil.trim(value));
-            }
+    private void setParameter(JSONObject obj) {
+        JSONObject jsonValue = JsonUtil.getObject(obj, PARAMETER_VALUE);
+        if (jsonValue != null) {
+            set(PARAMETER_VALUE, JsonUtil.getString(jsonValue, "display"));
         } else {
-            set(PARAMETER_VALUE, "");
+            set(PARAMETER_VALUE, JsonUtil.getString(obj, PARAMETER_VALUE));
         }
     }
 

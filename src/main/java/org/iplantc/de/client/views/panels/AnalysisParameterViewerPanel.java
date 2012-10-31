@@ -29,7 +29,6 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Text;
-import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnData;
@@ -41,7 +40,6 @@ import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -123,7 +121,7 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
         @Override
         public void onSuccess(String result) {
-            JSONObject obj = JSONParser.parseStrict(result).isObject();
+            JSONObject obj = JsonUtil.getObject(result);
             UploadCompleteHandler uch = new DefaultUploadCompleteHandler(parentFolder);
             uch.onCompletion(fileName, JsonUtil.getObject(obj, "file").toString());
 
@@ -158,18 +156,42 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
 
             @Override
             public void onSuccess(String result) {
-                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONObject obj = JsonUtil.getObject(result);
                 JSONArray arr = JsonUtil.getArray(obj, "parameters");
                 List<AnalysisParameter> parameters = new ArrayList<AnalysisParameter>();
                 for (int i = 0; i < arr.size(); i++) {
-                    AnalysisParameter param = new AnalysisParameter(arr.get(i).isObject());
-                    parameters.add(param);
+
+                    JSONObject param = JsonUtil.getObjectAt(arr, i);
+
+                    // At present,reference genome info types are not supported by DE viewers
+                    String infoType = JsonUtil.getString(param, AnalysisParameter.INFO_TYPE);
+                    String paramType = JsonUtil.getString(param, AnalysisParameter.PARAMETER_TYPE);
+
+                    if (paramType.equals("TreeSelection")
+                            || (paramType.equals("Input") && isValidInputInfoType(infoType))) {
+                        addParamsArray(parameters, param);
+                    } else {
+                        parameters.add(new AnalysisParameter(param));
+                    }
                 }
 
                 grid.getStore().removeAll();
                 grid.getStore().add(parameters);
                 setSaveButtonState();
                 setGridViewMsg();
+            }
+
+            private void addParamsArray(List<AnalysisParameter> parameters, JSONObject param) {
+                JSONArray values = JsonUtil.getArray(param, AnalysisParameter.PARAMETER_VALUE);
+
+                if (values != null) {
+                    for (int i = 0; i < values.size(); i++) {
+                        param.put(AnalysisParameter.PARAMETER_VALUE, values.get(i));
+                        parameters.add(new AnalysisParameter(param));
+                    }
+                } else {
+                    parameters.add(new AnalysisParameter(param));
+                }
             }
 
             @Override
@@ -218,6 +240,12 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         return new ColumnModel(columns);
     }
 
+    private boolean isValidInputInfoType(String infoType) {
+        return !infoType.equalsIgnoreCase("ReferenceGenome")
+                && !infoType.equalsIgnoreCase("ReferenceSequence")
+                && !infoType.equalsIgnoreCase("ReferenceAnnotation");
+    }
+
     private final class InputFieldValueClickListener implements Listener<ComponentEvent> {
         private final String full_text;
 
@@ -242,43 +270,18 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
         public Object render(final AnalysisParameter model, String property, ColumnData config,
                 int rowIndex, int colIndex, ListStore<AnalysisParameter> store,
                 Grid<AnalysisParameter> grid) {
-            final String full_text = model.get(AnalysisParameter.PARAMETER_VALUE).toString();
+            String full_text = model.getParamValue();
 
-            String info_type = model.getInfoType();
             // At present,reference genome info types are not supported by DE viewers
-            boolean valid_info_type = !info_type.equalsIgnoreCase("ReferenceGenome")
-                    && !info_type.equalsIgnoreCase("ReferenceSequence")
-                    && !info_type.equalsIgnoreCase("ReferenceAnnotation");
-            VerticalPanel pnl = new VerticalPanel();
-            pnl.setSpacing(2);
-            if (model.get(AnalysisParameter.PARAMETER_TYPE).equals("Input") && valid_info_type) {
-                try {
-                    JSONArray arr = JSONParser.parseStrict(full_text).isArray();
-                    if (arr != null) {
-                        for (int i = 0; i < arr.size(); i++) {
-                            final String val = JsonUtil.trim(arr.get(i).toString());
-                            Hyperlink link = new Hyperlink(trimValue(val), "analysis-param-value");
-                            link.addClickListener(new InputFieldValueClickListener(val));
-                            link.setToolTip(val);
-                            pnl.add(link);
-                        }
-                        return pnl;
-
-                    } else {
-                        return buildHyperLink(full_text);
-                    }
-                } catch (Exception e) {
-                    return buildHyperLink(full_text);
-                }
-
-            } else {
-                Text text = buildValueTextField(full_text);
-                return text;
+            if (model.getParamType().equals("Input") && isValidInputInfoType(model.getInfoType())) {
+                return buildHyperLink(full_text);
             }
+
+            return buildValueTextField(full_text);
         }
 
-        private Object buildHyperLink(final String full_text) {
-            Hyperlink link = new Hyperlink(trimValue(full_text), "analysis-param-value");
+        private Hyperlink buildHyperLink(final String full_text) {
+            Hyperlink link = new Hyperlink(Format.ellipse(full_text, 50), "analysis-param-value");
             link.addClickListener(new InputFieldValueClickListener(full_text));
             link.setToolTip(full_text);
             return link;
@@ -290,11 +293,6 @@ public class AnalysisParameterViewerPanel extends ContentPanel {
             text.setTagName("span");
             text.getToolTip().setMaxWidth(Integer.MAX_VALUE);
             return text;
-        }
-
-        private String trimValue(final String full_text) {
-            return (full_text.length() < 50) ? full_text : Format.ellipse(full_text, 50);
-
         }
     }
 
