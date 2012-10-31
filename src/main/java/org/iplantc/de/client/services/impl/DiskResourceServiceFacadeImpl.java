@@ -117,7 +117,7 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
             final Set<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> diskResources,
             final Folder idDestFolder,
             AsyncCallback<String> callback) {
-        // TODO JDS Mock then implement this new endpoint
+        // TODO JDS Mock then implement; moveDiskResources
         ArrayList<String> srcFolders = new ArrayList<String>();
         ArrayList<String> srcFiles = new ArrayList<String>();
 
@@ -255,7 +255,7 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     @Override
     public <T extends org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> void deleteDiskResources(
             Set<T> diskResources, AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this service call.
+        // TODO JDS mock then implement this service call; deleteDiskResources
     }
 
     @Override
@@ -292,7 +292,7 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     public void getDiskResourceMetaData(
             org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
             AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this interface
+        // TODO JDS mock then implement this interface; getDiskResourceMetadata
     }
 
     @Override
@@ -316,7 +316,7 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
             org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
             Set<DiskResourceMetaData> mdToUpdate, Set<DiskResourceMetaData> mdToDelete,
             AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this service call.
+        // TODO JDS mock then implement this service call; setDiskResourceMetadata
     }
 
     @Override

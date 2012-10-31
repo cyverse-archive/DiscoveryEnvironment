@@ -13,6 +13,18 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.events.UserEvent;
 import org.iplantc.core.uicommons.client.events.UserEventHandler;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
+import org.iplantc.core.uidiskresource.client.events.RequestBulkDownloadEvent;
+import org.iplantc.core.uidiskresource.client.events.RequestBulkDownloadEvent.RequestBulkDownloadEventHandler;
+import org.iplantc.core.uidiskresource.client.events.RequestBulkUploadEvent;
+import org.iplantc.core.uidiskresource.client.events.RequestBulkUploadEvent.RequestBulkUploadEventHandler;
+import org.iplantc.core.uidiskresource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.core.uidiskresource.client.events.RequestImportFromUrlEvent.RequestImportFromUrlEventHandler;
+import org.iplantc.core.uidiskresource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.core.uidiskresource.client.events.RequestSimpleDownloadEvent.RequestSimpleDownloadEventHandler;
+import org.iplantc.core.uidiskresource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.core.uidiskresource.client.events.RequestSimpleUploadEvent.RequestSimpleUploadEventHandler;
+import org.iplantc.core.uidiskresource.client.events.ShowFilePreviewEvent;
+import org.iplantc.core.uidiskresource.client.events.ShowFilePreviewEvent.ShowFilePreviewEventHandler;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.desktop.layout.CascadeDesktopLayout;
@@ -21,6 +33,7 @@ import org.iplantc.de.client.desktop.layout.DesktopLayout;
 import org.iplantc.de.client.desktop.layout.DesktopLayout.RequestType;
 import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.desktop.layout.TileDesktopLayout;
+import org.iplantc.de.client.dispatchers.ViewerWindowDispatcher;
 import org.iplantc.de.client.events.WindowPayloadEvent;
 import org.iplantc.de.client.events.WindowPayloadEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
@@ -31,6 +44,7 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.extjs.gxt.desktop.client.StartMenu;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -152,6 +166,53 @@ public class Desktop implements IsWidget {
 
         // window payload events
         eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandlerImpl());
+
+        eventbus.addHandler(ShowFilePreviewEvent.TYPE, new ShowFilePreviewEventHandler() {
+
+            @Override
+            public void showFilePreview(ShowFilePreviewEvent event) {
+                ViewerWindowDispatcher dispatcher = new ViewerWindowDispatcher();
+                dispatcher.launchViewerWindow(Lists.newArrayList(event.getFile().getId()), false);
+            }
+        });
+        eventbus.addHandler(RequestBulkDownloadEvent.TYPE, new RequestBulkDownloadEventHandler() {
+            @Override
+            public void onRequestBulkDownload(RequestBulkDownloadEvent event) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        eventbus.addHandler(RequestBulkUploadEvent.TYPE, new RequestBulkUploadEventHandler() {
+
+            @Override
+            public void onRequestBulkUpload(RequestBulkUploadEvent event) {
+                        // TODO Auto-generated method stub
+            }
+        });
+
+        eventbus.addHandler(RequestImportFromUrlEvent.TYPE, new RequestImportFromUrlEventHandler() {
+
+            @Override
+            public void onRequestUploadFromUrl(RequestImportFromUrlEvent event) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        eventbus.addHandler(RequestSimpleDownloadEvent.TYPE, new RequestSimpleDownloadEventHandler() {
+
+            @Override
+            public void onRequestSimpleDownload(RequestSimpleDownloadEvent event) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        eventbus.addHandler(RequestSimpleUploadEvent.TYPE, new RequestSimpleUploadEventHandler() {
+
+            @Override
+            public void onRequestSimpleUpload(RequestSimpleUploadEvent event) {
+                // TODO Auto-generated method stub
+            }
+        });
 
         // window payload events
         // eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandlerImpl());
