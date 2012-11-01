@@ -1,5 +1,6 @@
 package org.iplantc.de.client.dispatchers;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
@@ -58,5 +59,22 @@ public class IDropLiteWindowDispatcher extends WindowDispatcher {
         // Dispatch window display action with this config
         setConfig(windowConfig);
         dispatchAction(Constants.CLIENT.iDropLiteTag());
+    }
+
+    public void launchDownloadWindow(
+            Collection<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> resources) {
+        // Build window config
+        IDropLiteWindowConfig configData = new IDropLiteWindowConfig();
+        configData.setDisplayMode(IDropLiteUtil.DISPLAY_MODE_DOWNLOAD);
+        configData.setDownloadPaths(resources);
+
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory.buildWindowConfig(Constants.CLIENT.iDropLiteTag(),
+                configData);
+
+        // Dispatch window display action with this config
+        setConfig(windowConfig);
+        dispatchAction(Constants.CLIENT.iDropLiteTag());
+
     }
 }

@@ -174,6 +174,14 @@ public class DataUtils {
 
     }
 
+    public static boolean canUploadToThisFolder(
+            org.iplantc.core.uidiskresource.client.models.autobeans.Folder destination) {
+        if (destination != null) {
+            return destination.getPermissions().isWritable();
+        }
+        return false;
+    }
+
     public static boolean canCreateFolderInThisFolder(Folder destination) {
         // for now same logic as canUploadToThisFolder
         return canUploadToThisFolder(destination);

@@ -1,6 +1,7 @@
 package org.iplantc.de.client.models;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
@@ -21,7 +22,6 @@ import com.google.gwt.json.client.JSONObject;
  * 
  */
 public class IDropLiteWindowConfig extends WindowConfig {
-    private static final long serialVersionUID = 2774828059117261221L;
 
     public static String DISPLAY_MODE = "displayMode"; //$NON-NLS-1$
     public static String UPLOAD_DEST = "uploadDest"; //$NON-NLS-1$
@@ -162,5 +162,30 @@ public class IDropLiteWindowConfig extends WindowConfig {
 
         setFolderDownloadPaths(folderPaths);
         setFileDownloadPaths(filePaths);
+    }
+
+    public void setDownloadPaths(
+            Collection<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> resources) {
+        List<String> folderPaths = null;
+        List<String> filePaths = null;
+
+        if (resources != null) {
+            folderPaths = new ArrayList<String>();
+            filePaths = new ArrayList<String>();
+
+            for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource : resources) {
+                if (resource instanceof org.iplantc.core.uidiskresource.client.models.autobeans.Folder) {
+                    folderPaths.add(resource.getId());
+                }
+                if (resource instanceof org.iplantc.core.uidiskresource.client.models.autobeans.File) {
+                    filePaths.add(resource.getId());
+                }
+            }
+
+        }
+
+        setFolderDownloadPaths(folderPaths);
+        setFileDownloadPaths(filePaths);
+
     }
 }

@@ -14,15 +14,10 @@ import org.iplantc.core.uicommons.client.events.UserEvent;
 import org.iplantc.core.uicommons.client.events.UserEventHandler;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.core.uidiskresource.client.events.RequestBulkDownloadEvent;
-import org.iplantc.core.uidiskresource.client.events.RequestBulkDownloadEvent.RequestBulkDownloadEventHandler;
 import org.iplantc.core.uidiskresource.client.events.RequestBulkUploadEvent;
-import org.iplantc.core.uidiskresource.client.events.RequestBulkUploadEvent.RequestBulkUploadEventHandler;
 import org.iplantc.core.uidiskresource.client.events.RequestImportFromUrlEvent;
-import org.iplantc.core.uidiskresource.client.events.RequestImportFromUrlEvent.RequestImportFromUrlEventHandler;
 import org.iplantc.core.uidiskresource.client.events.RequestSimpleDownloadEvent;
-import org.iplantc.core.uidiskresource.client.events.RequestSimpleDownloadEvent.RequestSimpleDownloadEventHandler;
 import org.iplantc.core.uidiskresource.client.events.RequestSimpleUploadEvent;
-import org.iplantc.core.uidiskresource.client.events.RequestSimpleUploadEvent.RequestSimpleUploadEventHandler;
 import org.iplantc.core.uidiskresource.client.events.ShowFilePreviewEvent;
 import org.iplantc.core.uidiskresource.client.events.ShowFilePreviewEvent.ShowFilePreviewEventHandler;
 import org.iplantc.de.client.Constants;
@@ -175,62 +170,12 @@ public class Desktop implements IsWidget {
                 dispatcher.launchViewerWindow(Lists.newArrayList(event.getFile().getId()), false);
             }
         });
-        eventbus.addHandler(RequestBulkDownloadEvent.TYPE, new RequestBulkDownloadEventHandler() {
-            @Override
-            public void onRequestBulkDownload(RequestBulkDownloadEvent event) {
-                // TODO Auto-generated method stub
-            }
-        });
+        eventbus.addHandler(RequestBulkDownloadEvent.TYPE, new DesktopFileTransferEventHandler());
+        eventbus.addHandler(RequestBulkUploadEvent.TYPE, new DesktopFileTransferEventHandler());
+        eventbus.addHandler(RequestImportFromUrlEvent.TYPE, new DesktopFileTransferEventHandler());
+        eventbus.addHandler(RequestSimpleDownloadEvent.TYPE, new DesktopFileTransferEventHandler());
+        eventbus.addHandler(RequestSimpleUploadEvent.TYPE, new DesktopFileTransferEventHandler());
 
-        eventbus.addHandler(RequestBulkUploadEvent.TYPE, new RequestBulkUploadEventHandler() {
-
-            @Override
-            public void onRequestBulkUpload(RequestBulkUploadEvent event) {
-                        // TODO Auto-generated method stub
-            }
-        });
-
-        eventbus.addHandler(RequestImportFromUrlEvent.TYPE, new RequestImportFromUrlEventHandler() {
-
-            @Override
-            public void onRequestUploadFromUrl(RequestImportFromUrlEvent event) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        eventbus.addHandler(RequestSimpleDownloadEvent.TYPE, new RequestSimpleDownloadEventHandler() {
-
-            @Override
-            public void onRequestSimpleDownload(RequestSimpleDownloadEvent event) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        eventbus.addHandler(RequestSimpleUploadEvent.TYPE, new RequestSimpleUploadEventHandler() {
-
-            @Override
-            public void onRequestSimpleUpload(RequestSimpleUploadEvent event) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        // window payload events
-        // eventbus.addHandler(WindowPayloadEvent.TYPE, new WindowPayloadEventHandlerImpl());
-        //
-        // // save session to database on logout
-        // eventbus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
-        // @Override
-        // public void onLogout(LogoutEvent event) {
-        // MonitorSessionPersistance();
-        // mgrState.saveUserSession();
-        // mgrState.persistUserSession(false, new Command() {
-        // @Override
-        // public void execute() {
-        // session_save_completed = true;
-        // }
-        // });
-        // }
-        // });
     }
 
     private void showWindow(final String type, final WindowConfig config) {
