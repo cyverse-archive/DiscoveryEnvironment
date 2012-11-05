@@ -8,7 +8,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uidiskresource.client.models.autobeans.DiskResourceMetaData;
+import org.iplantc.core.uidiskresource.client.models.autobeans.DiskResourceMetadata;
 import org.iplantc.core.uidiskresource.client.models.autobeans.File;
 import org.iplantc.core.uidiskresource.client.models.autobeans.Folder;
 import org.iplantc.core.uidiskresource.client.services.DiskResourceServiceFacade;
@@ -24,8 +24,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 /**
  * Provides access to remote services for folder operations.
@@ -314,27 +319,50 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     @Override
     public void setDiskResourceMetaData(
             org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
-            Set<DiskResourceMetaData> mdToUpdate, Set<DiskResourceMetaData> mdToDelete,
+            Set<DiskResourceMetadata> mdToUpdate, Set<DiskResourceMetadata> mdToDelete,
             AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this service call; setDiskResourceMetadata
+        String fullAddress = serviceNamePrefix
+                + ".metadata-batch" + "?path=" + URL.encodePathSegment(resource.getId()); //$NON-NLS-1$
+
+        // Create json body consisting of md to updata and md to delete.
+        JSONObject obj = new JSONObject();
+        obj.put("add", buildMetadataJsonArray(mdToUpdate));
+        obj.put("delete", buildMetadataJsonArray(mdToDelete));
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                obj.toString());
+        callService(callback, wrapper);
+    }
+
+    private JSONValue buildMetadataJsonArray(Set<DiskResourceMetadata> metadata) {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+        for (DiskResourceMetadata md : metadata) {
+            AutoBean<DiskResourceMetadata> bean = AutoBeanUtils.getAutoBean(md);
+            JSONValue jsonValue = JSONParser.parseStrict(AutoBeanCodex.encode(bean).getPayload());
+            // Delete the "id" key
+            jsonValue.isObject().put("id", null);
+            arr.set(i++, jsonValue);
+        }
+        return arr;
     }
 
     @Override
     public void setFolderMetaData(String folderId, String body, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix
-                + ".folder-metadata-batch" + "?path=" + URL.encodePathSegment(folderId); //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-                body);
-        callService(callback, wrapper);
+        // String fullAddress = serviceNamePrefix
+        //                + ".folder-metadata-batch" + "?path=" + URL.encodePathSegment(folderId); //$NON-NLS-1$
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+        // body);
+        // callService(callback, wrapper);
     }
 
     @Override
     public void setFileMetaData(String fileId, String body, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix
-                + ".file-metadata-batch" + "?path=" + URL.encodePathSegment(fileId); //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-                body);
-        callService(callback, wrapper);
+        // String fullAddress = serviceNamePrefix
+        //                + ".file-metadata-batch" + "?path=" + URL.encodePathSegment(fileId); //$NON-NLS-1$
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+        // body);
+        // callService(callback, wrapper);
     }
 
     @Override
