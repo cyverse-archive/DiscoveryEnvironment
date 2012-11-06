@@ -3,8 +3,6 @@ package org.iplantc.de.client.views.panels;
 import org.iplantc.core.client.widgets.validator.AnalysisNameValidator;
 import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.Services;
-import org.iplantc.de.client.services.callbacks.FolderCreateCallback;
 
 import com.extjs.gxt.ui.client.widget.Component;
 
@@ -37,9 +35,9 @@ public class AddFolderDialogPanel extends IPlantPromptPanel {
             name = name.trim();
 
             if (name.length() > 0) {
-                maskingParent.mask(I18N.DISPLAY.loadingMask());
-                Services.DISK_RESOURCE_SERVICE.createFolder(
-                        idParent + "/" + name, new FolderCreateCallback(idParent, name, maskingParent)); //$NON-NLS-1$
+                // maskingParent.mask(I18N.DISPLAY.loadingMask());
+                // Services.DISK_RESOURCE_SERVICE.createFolder(
+                //                        idParent + "/" + name, new FolderCreateCallback(idParent, name, maskingParent)); //$NON-NLS-1$
             }
         }
     }

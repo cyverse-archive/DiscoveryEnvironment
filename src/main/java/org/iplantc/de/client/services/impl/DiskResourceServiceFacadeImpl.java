@@ -84,10 +84,10 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void createFolder(String folderpath, AsyncCallback<String> callback) {
+    public void createFolder(Folder parentFolder, String newFolderName, AsyncCallback<String> callback) {
         String fullAddress = serviceNamePrefix + ".directory-create"; //$NON-NLS-1$
         JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(folderpath)); //$NON-NLS-1$
+        obj.put("path", new JSONString(parentFolder.getId() + "/" + newFolderName)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 obj.toString());
@@ -297,23 +297,27 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     public void getDiskResourceMetaData(
             org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource resource,
             AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this interface; getDiskResourceMetadata
+        String fullAddress = serviceNamePrefix + ".metadata" + "?path="
+                + URL.encodePathSegment(resource.getId());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        callService(callback, wrapper);
+
     }
 
     @Override
     public void getFileMetaData(String path, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix
-                + ".file-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
-        callService(callback, wrapper);
+        // String fullAddress = serviceNamePrefix
+        //                + ".file-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        // callService(callback, wrapper);
     }
 
     @Override
     public void getFolderMetaData(String path, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix
-                + ".folder-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
-        callService(callback, wrapper);
+        // String fullAddress = serviceNamePrefix
+        //                + ".folder-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        // callService(callback, wrapper);
     }
 
     @Override
@@ -326,23 +330,30 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
 
         // Create json body consisting of md to updata and md to delete.
         JSONObject obj = new JSONObject();
-        obj.put("add", buildMetadataJsonArray(mdToUpdate));
-        obj.put("delete", buildMetadataJsonArray(mdToDelete));
+        obj.put("add", buildMetadataToAddJsonArray(mdToUpdate));
+        obj.put("delete", buildMetadataToDeleteJsonArray(mdToDelete));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 obj.toString());
         callService(callback, wrapper);
     }
 
-    private JSONValue buildMetadataJsonArray(Set<DiskResourceMetadata> metadata) {
+    private JSONValue buildMetadataToAddJsonArray(Set<DiskResourceMetadata> metadata) {
         JSONArray arr = new JSONArray();
         int i = 0;
         for (DiskResourceMetadata md : metadata) {
             AutoBean<DiskResourceMetadata> bean = AutoBeanUtils.getAutoBean(md);
             JSONValue jsonValue = JSONParser.parseStrict(AutoBeanCodex.encode(bean).getPayload());
-            // Delete the "id" key
-            jsonValue.isObject().put("id", null);
             arr.set(i++, jsonValue);
+        }
+        return arr;
+    }
+
+    private JSONValue buildMetadataToDeleteJsonArray(Set<DiskResourceMetadata> metadataToDelete) {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+        for (DiskResourceMetadata md : metadataToDelete) {
+            arr.set(i++, new JSONString(md.getAttribute()));
         }
         return arr;
     }
