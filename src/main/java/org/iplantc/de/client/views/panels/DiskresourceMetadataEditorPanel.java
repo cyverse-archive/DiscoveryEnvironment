@@ -78,13 +78,13 @@ public class DiskresourceMetadataEditorPanel extends MetadataEditorPanel {
 
     @Override
     protected void retrieveMetaData() {
-        if (resource instanceof Folder) {
-            Services.DISK_RESOURCE_SERVICE.getFolderMetaData(resource.getId(),
-                    new RetrieveMetadataCallback());
-        } else if (resource instanceof File) {
-            Services.DISK_RESOURCE_SERVICE.getFileMetaData(resource.getId(),
-                    new RetrieveMetadataCallback());
-        }
+        // if (resource instanceof Folder) {
+        // Services.DISK_RESOURCE_SERVICE.getFolderMetaData(resource.getId(),
+        // new RetrieveMetadataCallback());
+        // } else if (resource instanceof File) {
+        // Services.DISK_RESOURCE_SERVICE.getFileMetaData(resource.getId(),
+        // new RetrieveMetadataCallback());
+        // }
     }
 
     private void initToolbar() {

@@ -1,6 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +9,6 @@ import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uidiskresource.client.models.autobeans.DiskResourceMetadata;
-import org.iplantc.core.uidiskresource.client.models.autobeans.File;
 import org.iplantc.core.uidiskresource.client.models.autobeans.Folder;
 import org.iplantc.core.uidiskresource.client.services.DiskResourceServiceFacade;
 import org.iplantc.core.uidiskresource.client.util.DiskResourceUtil;
@@ -122,30 +121,19 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
             final Set<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> diskResources,
             final Folder idDestFolder,
             AsyncCallback<String> callback) {
+
         // TODO JDS Mock then implement; moveDiskResources
-        ArrayList<String> srcFolders = new ArrayList<String>();
-        ArrayList<String> srcFiles = new ArrayList<String>();
+        String address = serviceNamePrefix + ".move"; //$NON-NLS-1$
 
-        for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource src : diskResources) {
-            String srcId = src.getId();
-            if (!srcId.equals(idDestFolder)) {
-                if (src instanceof Folder) {
-                    srcFolders.add(srcId);
-                } else if (src instanceof File) {
-                    srcFiles.add(srcId);
-                }
-            }
-        }
+        List<String> idSrcFiles = toStringIdList(diskResources);
+        JSONObject body = new JSONObject();
+        body.put("dest", new JSONString(idDestFolder.getId())); //$NON-NLS-1$
+        body.put("sources", JsonUtil.buildArrayFromStrings(idSrcFiles)); //$NON-NLS-1$
 
-        if (srcFolders.size() > 0) {
-            // call service to move folders
-            moveFolder(srcFolders, idDestFolder.getId(), callback);
-        }
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
+                body.toString());
 
-        if (srcFiles.size() > 0) {
-            // call service to move files
-            moveFile(srcFiles, idDestFolder.getId(), callback);
-        }
+        callService(callback, wrapper);
     }
 
     @Override
@@ -260,32 +248,17 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     @Override
     public <T extends org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> void deleteDiskResources(
             Set<T> diskResources, AsyncCallback<String> callback) {
-        // TODO JDS mock then implement this service call; deleteDiskResources
-    }
-
-    @Override
-    public void deleteFolders(List<Folder> folders, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix + ".directory-delete"; //$NON-NLS-1$
-        List<String> paths = toStringIdList(folders);
-        String body = "{\"paths\": " + JsonUtil.buildJsonArrayString(paths) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-
+        String fullAddress = serviceNamePrefix + ".delete"; //$NON-NLS-1$
+        List<String> drIds = toStringIdList(diskResources);
+        String body = "{\"paths\": " + JsonUtil.buildJsonArrayString(drIds) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 body);
         callService(callback, wrapper);
-    }
 
-    @Override
-    public void deleteFiles(List<File> files, AsyncCallback<String> callback) {
-        String fullAddress = serviceNamePrefix + ".file-delete"; //$NON-NLS-1$
-        List<String> paths = toStringIdList(files);
-        String body = "{\"paths\": " + JsonUtil.buildJsonArrayString(paths) + "}"; //$NON-NLS-1$ //$NON-NLS-2$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-                body);
-        callService(callback, wrapper);
     }
 
     private <D extends org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> List<String> toStringIdList(
-            List<D> resources) {
+            Collection<D> resources) {
         List<String> stringIdList = Lists.newArrayList();
         for (org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource dr : resources) {
             stringIdList.add(dr.getId());
@@ -302,22 +275,6 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
         callService(callback, wrapper);
 
-    }
-
-    @Override
-    public void getFileMetaData(String path, AsyncCallback<String> callback) {
-        // String fullAddress = serviceNamePrefix
-        //                + ".file-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
-        // callService(callback, wrapper);
-    }
-
-    @Override
-    public void getFolderMetaData(String path, AsyncCallback<String> callback) {
-        // String fullAddress = serviceNamePrefix
-        //                + ".folder-metadata" + "?path=" + URL.encodePathSegment(path); //$NON-NLS-1$
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
-        // callService(callback, wrapper);
     }
 
     @Override
