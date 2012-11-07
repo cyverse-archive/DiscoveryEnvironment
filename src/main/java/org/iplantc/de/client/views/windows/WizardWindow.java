@@ -32,6 +32,7 @@ import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -53,6 +54,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class WizardWindow extends IPlantWindow {
     private Button btnLaunchAnalysis;
     private final ComponentValueTable tblComponentVals;
+    private LayoutContainer contents;
 
     private List<HandlerRegistration> handlers;
     private WizardWindowConfig config;
@@ -73,9 +75,11 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void init() {
-        setLayout(new BorderLayout());
-        setBorders(false);
+        setLayout(new FitLayout());
         setSize(640, 410);
+
+        contents = new LayoutContainer(new BorderLayout());
+        contents.setBorders(false);
     }
 
     private void enableValidation() {
@@ -139,23 +143,28 @@ public class WizardWindow extends IPlantWindow {
     }
 
     private void build() {
+        add(contents);
+
         if (config != null) {
             initWizard(config.getWizardConfig().toString());
         } else {
+            contents.mask(I18N.DISPLAY.loadingMask());
+
             TemplateServiceFacade facade = new TemplateServiceFacade();
             facade.getTemplate(tag, new AsyncCallback<String>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
+                    contents.unmask();
                 }
 
                 @Override
                 public void onSuccess(String json) {
                     initWizard(json);
+                    contents.unmask();
                 }
             });
         }
-
     }
 
     private void handleAnalysisLaunch(final boolean success) {
@@ -283,8 +292,8 @@ public class WizardWindow extends IPlantWindow {
         final ContentPanel pnlGroupContainer = builder.build(container, tblComponentVals);
         final ContentPanel pnlLaunchButton = buildButtonPanel();
 
-        add(pnlGroupContainer, new BorderLayoutData(LayoutRegion.CENTER));
-        add(pnlLaunchButton, new BorderLayoutData(LayoutRegion.SOUTH, 30));
+        contents.add(pnlGroupContainer, new BorderLayoutData(LayoutRegion.CENTER));
+        contents.add(pnlLaunchButton, new BorderLayoutData(LayoutRegion.SOUTH, 30));
 
         layout();
 
