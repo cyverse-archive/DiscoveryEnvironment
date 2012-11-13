@@ -2,12 +2,9 @@ package org.iplantc.admin.belphegor.client.views;
 
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
-import org.iplantc.admin.belphegor.client.apps.views.BelphegorAnalysisColumnModel;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.client.widgets.Hyperlink;
-import org.iplantc.core.uiapplications.client.models.autobeans.App;
-import org.iplantc.core.uiapplications.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.I18N;
@@ -38,9 +35,6 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
 /**
@@ -183,11 +177,7 @@ public class ApplicationLayout extends Viewport {
         // CatalogAdminPanel panel = new CatalogAdminPanel();
 
         // --------->
-        TreeStore<AppGroup> treeStore = new TreeStore<AppGroup>(
-                new AnalysisGroupModelKeyProvider());
-        ListStore<App> listStore = new ListStore<App>(new AnalysisModelKeyProvider());
-        BelphegorAnalysisColumnModel cm = new BelphegorAnalysisColumnModel();
-        AppsView view = new AppsViewImpl(treeStore, listStore, cm);
+        AppsView view = new AppsViewImpl();
 
         BelphegorAppsViewPresenter presenter = new BelphegorAppsViewPresenter(view);
         // Create view and presenter and add it here.
@@ -201,20 +191,6 @@ public class ApplicationLayout extends Viewport {
         tabPanel.add(refItem);
 
         replaceCenterPanel(tabPanel);
-    }
-
-    private final class AnalysisGroupModelKeyProvider implements ModelKeyProvider<AppGroup> {
-        @Override
-        public String getKey(AppGroup item) {
-            return item.getId();
-        }
-    }
-
-    private final class AnalysisModelKeyProvider implements ModelKeyProvider<App> {
-        @Override
-        public String getKey(App item) {
-            return item.getId();
-        }
     }
 
     private class HeaderPanel extends HorizontalPanel {
