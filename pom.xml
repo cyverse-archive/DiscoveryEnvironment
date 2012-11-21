@@ -7,7 +7,7 @@
    <groupId>org.iplantc.de</groupId>
    <artifactId>de-web</artifactId>
    <packaging>war</packaging>
-   <version>dev-SNAPSHOT</version>
+   <version>gxt3Sandbox-SNAPSHOT</version>
    <name>Discovery Environment Web Application</name>
    <url>http://iplantcollaborative.org</url>
 	<!-- convenience to define GWT version in one place -->
@@ -64,52 +64,52 @@
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>widgets</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>applications</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>pipelines</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>diskresource</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.de</groupId>
          <artifactId>de-common</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.de</groupId>
          <artifactId>confluence-client</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>metadata</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>jsonutil</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>tito</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.iplantc.core</groupId>
          <artifactId>ui-commons</artifactId>
-         <version>dev-SNAPSHOT</version>
+         <version>gxt3Sandbox-SNAPSHOT</version>
       </dependency>
         
         <dependency>
