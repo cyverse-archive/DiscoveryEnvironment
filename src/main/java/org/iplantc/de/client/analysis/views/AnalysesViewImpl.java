@@ -9,13 +9,12 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.util.DateParser;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.analysis.models.Analysis;
 import org.iplantc.de.client.analysis.models.AnalysisExecutionStatus;
-import org.iplantc.de.client.analysis.models.AnalysisProperties;
 import org.iplantc.de.client.events.AnalysisUpdateEvent;
 import org.iplantc.de.client.events.AnalysisUpdateEventHandler;
-import org.iplantc.core.uicommons.client.util.DateParser;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -25,10 +24,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
@@ -59,7 +56,7 @@ public class AnalysesViewImpl implements AnalysesView {
     final ColumnModel<Analysis> cm;
 
     @UiField
-    GridView gridView;
+    GridView<Analysis> gridView;
 
     @UiField
     Grid<Analysis> grid;
@@ -176,7 +173,7 @@ public class AnalysesViewImpl implements AnalysesView {
         AnalysisExecutionStatus enumStatus = AnalysisExecutionStatus.fromTypeString(JsonUtil.getString(
                 payload, "status")); //$NON-NLS-1$
 
-        if (listStore.findModelWithKey((JsonUtil.getString(payload, "id"))) != null) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (listStore.findModelWithKey((JsonUtil.getString(payload, "id"))) != null) { //$NON-NLS-1$ 
             switch (enumStatus) {
                 case COMPLETED:
                     updateEndExecStatus(JsonUtil.getString(payload, "id"), enumStatus.toString(), //$NON-NLS-1$
@@ -222,7 +219,7 @@ public class AnalysesViewImpl implements AnalysesView {
     }
 
     private void updateEndExecStatus(String id, String status, String resultfolderid, Date enddate) {
-        Analysis ae = listStore.findModelWithKey(id); //$NON-NLS-1$
+        Analysis ae = listStore.findModelWithKey(id); 
 
         if (ae != null) {
             ae.setStatus(status);
@@ -235,7 +232,7 @@ public class AnalysesViewImpl implements AnalysesView {
     }
 
     private void updateRunExecStatus(String id, String status, Date startdate) {
-        Analysis ae = listStore.findModelWithKey(id); //$NON-NLS-1$
+        Analysis ae = listStore.findModelWithKey(id); 
 
         if (ae != null) {
             ae.setStatus(status);

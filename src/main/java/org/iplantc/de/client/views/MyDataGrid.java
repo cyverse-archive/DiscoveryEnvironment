@@ -17,8 +17,6 @@ import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEvent;
 import org.iplantc.de.client.events.disk.mgmt.DiskResourceSelectedEventHandler;
 import org.iplantc.de.client.models.ClientDataModel;
 import org.iplantc.de.client.utils.DataUtils;
-import org.iplantc.de.client.utils.DataViewContextExecutor;
-import org.iplantc.de.client.utils.builders.context.DataContextBuilder;
 import org.iplantc.de.client.views.panels.DataPreviewPanel;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;

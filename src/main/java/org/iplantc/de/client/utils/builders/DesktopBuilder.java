@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.iplantc.de.client.models.ShortcutDesc;
 
-import com.google.gwt.resources.client.ImageResource;
-
 /**
  * Abstract class for managing desktop shortcuts.
  * 

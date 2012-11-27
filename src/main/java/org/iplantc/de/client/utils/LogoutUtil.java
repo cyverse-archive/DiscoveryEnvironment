@@ -1,8 +1,9 @@
 package org.iplantc.de.client.utils;
 
-import com.google.gwt.user.client.Window;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+
+import com.google.gwt.user.client.Window;
 
 /**
  * Utilities to facilitate logging out of the discovery environment.

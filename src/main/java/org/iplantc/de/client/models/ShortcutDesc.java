@@ -1,6 +1,5 @@
 package org.iplantc.de.client.models;
 
-import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Models the data associated to a desktop shortcut.

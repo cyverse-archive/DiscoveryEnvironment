@@ -1,7 +1,9 @@
 package org.iplantc.de.server;
 
 import java.util.Properties;
+
 import javax.servlet.ServletContext;
+
 import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;

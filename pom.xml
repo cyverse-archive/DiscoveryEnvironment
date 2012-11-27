@@ -279,12 +279,9 @@
                     <webappDirectory>${basedir}/war</webappDirectory>
                     <mode>htmlunit</mode> 
                     <module>org.iplantc.de.discoveryenvironment</module>
-		            <compileReport>true</compileReport>
-                  <compileSourceArtifacts>
-                     <compileSourceArtifact>org.iplantc.core:diskresource</compileSourceArtifact>
-                     <compileSourceArtifact>org.iplantc.core:widgets</compileSourceArtifact>
-                  </compileSourceArtifacts>
-                    <!-- <includes>**/GwtTestSuite*.java</includes> -->
+		            <!-- compileReport>true</compileReport>
+                    <compilerMetrics>true</compilerMetrics>
+                    <XsoycDetailed>true</XsoycDetailed -->
                 </configuration>
             </plugin>
             <plugin>
@@ -362,13 +359,6 @@
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-surefire-plugin</artifactId>
                <version>2.12.4</version>
-               <configuration>
-                  <!-- <excludes> -->
-                     <!-- Exclude all GWT tests from regular JUnit tests. -->
-                     <!-- <exclude>**/GwtTest*.java</exclude>
-                     <exclude>**/GwtTestSuite*.java</exclude> -->
-                  <!-- </excludes> -->
-               </configuration>
                <dependencies>
                   <dependency>
                      <!-- Specify Junit Provider -->
@@ -443,7 +433,6 @@
     <repositories>
       	<repository>
       		<id>gwt-maven</id>
-      		<!-- <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url> -->
             <url>https://github.com/gwt-maven-plugin/gwt-maven-plugin</url>
       	</repository>
       	<repository>
