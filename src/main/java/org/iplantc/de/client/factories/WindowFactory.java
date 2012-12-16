@@ -10,15 +10,16 @@ import org.iplantc.de.client.models.IDropLiteWindowConfig;
 import org.iplantc.de.client.models.SimpleDownloadWindowConfig;
 import org.iplantc.de.client.models.TitoWindowConfig;
 import org.iplantc.de.client.models.ViewerWindowConfig;
+import org.iplantc.de.client.models.WizardWindowConfig;
 import org.iplantc.de.client.notifications.views.NotificationWindow3;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.viewer.views.FileViewerWindow;
 import org.iplantc.de.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.client.views.windows.DeDiskResourceWindow;
+import org.iplantc.de.client.views.windows.Gxt3WizardWindow;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
 import org.iplantc.de.client.views.windows.TitoWindow;
-import org.iplantc.de.client.views.windows.WizardWindow;
 
 /**
  * Defines a factory for the creation of windows.
@@ -63,7 +64,8 @@ public class WindowFactory {
             } else if (type.startsWith(Constants.CLIENT.dataViewerTag())) {
                 ret = new FileViewerWindow(type, (ViewerWindowConfig)config);
             } else {
-                ret = new WizardWindow(type, config);
+//                ret = new WizardWindow(type, config);
+                ret = new Gxt3WizardWindow(type, (WizardWindowConfig)config);
             }
         }
 

@@ -432,23 +432,13 @@
     </reporting>
     <repositories>
       	<repository>
-      		<id>gwt-maven</id>
-            <url>https://github.com/gwt-maven-plugin/gwt-maven-plugin</url>
-      	</repository>
-      	<repository>
       		<id>jboss-public-repository</id>
       		<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
       	</repository>
       	<repository>
       		<id>iplantCollaborative</id>
       		<name>iPlant Collaborative local repository</name>
-      		<url>http://projects.iplantcollaborative.org/archiva/repository/internal/
-                  </url>
-      	</repository>
-      	<repository>
-      		<id>sencha-commercial-release</id>
-      		<name>Sencha commercial releases</name>
-      		<url>https://maven.sencha.com/repo/commercial-release/</url>
+      		<url>http://projects.iplantcollaborative.org/archiva/repository/internal/</url>
       	</repository>
    </repositories>
 </project>

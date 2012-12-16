@@ -13,7 +13,6 @@ import com.extjs.gxt.ui.client.core.FastMap;
 import com.extjs.gxt.ui.client.event.WindowListener;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.ActivateHandler;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
@@ -228,9 +227,9 @@ public class DEWindowManager extends IplantWindowManager {
     public JSONObject getActiveWindowStates() {
         JSONObject obj = new JSONObject();
         int index = 0;
-        for (Widget win : getStack()) {
-            JSONObject state = ((IPlantWindowInterface)win).getWindowState();
-            String tag = ((IPlantWindowInterface)win).getTag();
+        for (IPlantWindowInterface win : windows.values()) {
+            JSONObject state = win.getWindowState();
+            String tag = win.getTag();
             state.put("order", new JSONString(index++ + ""));
             state.put("tag", new JSONString(tag));
             obj.put(tag, state);
