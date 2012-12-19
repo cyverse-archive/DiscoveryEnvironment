@@ -1056,4 +1056,29 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return the localized display text
      */
     String saveSettings();
+
+    /**
+     * searching label
+     * 
+     * @return
+     */
+    String searching();
+
+    /**
+     * 
+     * @return
+     */
+    String noCollaboratorsSearchResult();
+
+    /**
+     * 
+     * @return
+     */
+    String collaboratorSearchTruncated();
+
+    /**
+     * 
+     * @return
+     */
+    String searchMinChars();
 }

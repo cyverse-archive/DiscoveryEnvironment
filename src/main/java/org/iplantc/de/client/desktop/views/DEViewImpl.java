@@ -9,6 +9,7 @@ import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.collaborators.views.ManageCollaboratorsDailog;
 import org.iplantc.de.client.dispatchers.WindowDispatcher;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
@@ -258,6 +259,15 @@ public class DEViewImpl implements DEView {
                     @Override
                     public void handleEvent(BaseEvent be) {
                         // buildAndShowPreferencesDialog();
+                        userMenu.hide();
+                    }
+                }, null));
+        userMenu.add(new MenuHyperlink(I18N.DISPLAY.collaborators(), linkStyle, hoverStyle,
+                new Listener<BaseEvent>() {
+                    @Override
+                    public void handleEvent(BaseEvent be) {
+                        ManageCollaboratorsDailog dialog = new ManageCollaboratorsDailog();
+                        dialog.show();
                         userMenu.hide();
                     }
                 }, null));
