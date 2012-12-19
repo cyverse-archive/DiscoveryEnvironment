@@ -9,10 +9,7 @@
 	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar" 
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 	
-   <ui:with type="org.iplantc.core.uiapplications.client.images.Icons" field="icons"/>
-   <ui:with type="org.iplantc.core.uiapplications.client.CommonAppDisplayStrings" field="strings" />
-
-	<!-- Main Panel -->
+ 	<!-- Main Panel -->
 	<ui:with field="listStore" type="com.sencha.gxt.data.shared.ListStore" />
 	<ui:with field="cm"
 		type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
