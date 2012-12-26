@@ -72,6 +72,10 @@
       <when-type-is class="org.iplantc.core.client.widgets.appWizard.view.AppWizardView.Presenter"/>
    </replace-with>
    
+      <replace-with class="org.iplantc.de.client.services.CollaboratorsServiceFacadeImpl">
+      <when-type-is class="org.iplantc.core.uicommons.client.services.CollaboratorsServiceFacade"/>
+   </replace-with>
+   
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />
 </module>

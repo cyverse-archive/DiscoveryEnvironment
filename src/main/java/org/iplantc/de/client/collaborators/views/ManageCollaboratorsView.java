@@ -5,7 +5,7 @@ package org.iplantc.de.client.collaborators.views;
 
 import java.util.List;
 
-import org.iplantc.de.client.collaborators.models.Collaborator;
+import org.iplantc.core.uicommons.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.collaborators.presenter.ManageCollaboratorsPresenter;
 
 import com.google.gwt.user.client.ui.IsWidget;

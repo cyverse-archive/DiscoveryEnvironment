@@ -4,29 +4,21 @@
 package org.iplantc.de.client.collaborators.views;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
+import org.iplantc.core.uicommons.client.models.collaborators.Collaborator;
+import org.iplantc.core.uicommons.client.models.collaborators.CollaboratorKeyProvider;
+
+import org.iplantc.core.uicommons.client.models.collaborators.CollaboratorProperties;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.analysis.models.Analysis;
-import org.iplantc.de.client.analysis.views.cells.AnalysisNameCell;
-import org.iplantc.de.client.collaborators.models.Collaborator;
-import org.iplantc.de.client.collaborators.models.CollaboratorProperties;
 import org.iplantc.de.client.collaborators.presenter.ManageCollaboratorsPresenter;
 import org.iplantc.de.client.collaborators.views.ManageCollaboratorsView.Presenter;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.button.ButtonBar;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -130,15 +122,6 @@ public class ManageCollaboratorsDailog extends Dialog {
         email.setHeader(I18N.DISPLAY.email());
         configs.add(email);
         return new ColumnModel<Collaborator>(configs);
-
-    }
-
-    private class CollaboratorKeyProvider implements ModelKeyProvider<Collaborator> {
-
-        @Override
-        public String getKey(Collaborator item) {
-            return item.getId();
-        }
 
     }
 

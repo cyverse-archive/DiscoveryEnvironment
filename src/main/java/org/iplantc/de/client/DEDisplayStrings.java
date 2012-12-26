@@ -931,13 +931,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
     String unsharePrompt(String name);
 
     /**
-     * Localized display text search collaborators
-     * 
-     * @return a string representing the localized text.
-     */
-    String searchCollab();
-
-    /**
      * The display text for the view raw menu item.
      * 
      * @return the localized display text
@@ -978,30 +971,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return the localized display text
      */
     String disabled();
-
-    /**
-     * 
-     * @return
-     */
-    String collaboratorRemoved();
-
-    /**
-     * 
-     * @return
-     */
-    String collaboratorAdded();
-
-    /**
-     * 
-     * @return
-     */
-    String collaboratorAddConfirm(String name);
-
-    /**
-     * 
-     * @return
-     */
-    String collaboratorRemoveConfirm(String name);
 
     /**
      * The display text for a View Deployed Components label.
@@ -1069,12 +1038,6 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String noCollaboratorsSearchResult();
-
-    /**
-     * 
-     * @return
-     */
-    String collaboratorSearchTruncated();
 
     /**
      * 

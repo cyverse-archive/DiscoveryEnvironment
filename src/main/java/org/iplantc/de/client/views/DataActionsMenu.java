@@ -21,7 +21,6 @@ import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.utils.DataUtils;
 import org.iplantc.de.client.utils.DataUtils.Action;
 import org.iplantc.de.client.views.dialogs.MetadataEditorDialog;
-import org.iplantc.de.client.views.dialogs.SharingDialog;
 import org.iplantc.de.client.views.panels.AddFolderDialogPanel;
 import org.iplantc.de.client.views.panels.DiskresourceMetadataEditorPanel;
 import org.iplantc.de.client.views.panels.MetadataEditorPanel;
@@ -109,8 +108,6 @@ public final class DataActionsMenu extends Menu {
                 Resources.ICONS.folderDelete(), new DeleteListenerImpl());
         itemMetaData = buildLeafMenuItem(MI_METADATA_ID, I18N.DISPLAY.metadata(),
                 Resources.ICONS.metadata(), new MetadataListenerImpl());
-        itemShareResource = buildLeafMenuItem(MI_SHARE_RESOURCE_ID, I18N.DISPLAY.share(),
-                Resources.ICONS.share(), new ShareResourceListenerImpl());
 
         add(itemAddFolder);
         add(itemRenameResource);
@@ -291,19 +288,6 @@ public final class DataActionsMenu extends Menu {
                 }
             }
         }
-    }
-
-    private class ShareResourceListenerImpl extends SelectionListener<MenuEvent> {
-        @Override
-        public void componentSelected(MenuEvent ce) {
-            if (DataUtils.isSharable(resources)) {
-                SharingDialog sd = new SharingDialog(resources);
-                sd.show();
-            } else {
-                showErrorMsg();
-            }
-        }
-
     }
 
     private class BulkDownloadListenerImpl extends SelectionListener<MenuEvent> {

@@ -48,40 +48,6 @@ public class UserSessionServiceFacade {
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
-    public void searchCollaborators(String term, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
-                + "user-search/" + URL.encodeQueryString(term.trim()); //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
-
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-    }
-
-    public void getCollaborators(AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "collaborators";
-        // String address = "http://montosa.iplantcollaborative.org/~dennis/collabs.json";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-    }
-
-    public void addCollaborators(JSONObject users, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "collaborators"; //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-                users.toString());
-
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-    }
-
-    public void removeCollaborators(JSONObject users, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "remove-collaborators"; //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address,
-                users.toString());
-
-        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
-    }
-
     public void postClientNotification(JSONObject notification, AsyncCallback<String> callback) {
         String address = DEProperties.getInstance().getUnproctedMuleServiceBaseUrl()
                 + "send-notification";

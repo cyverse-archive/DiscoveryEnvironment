@@ -2,11 +2,11 @@ package org.iplantc.de.client.collaborators.views;
 
 import java.util.List;
 
+import org.iplantc.core.uicommons.client.models.collaborators.Collaborator;
+import org.iplantc.core.uicommons.client.util.CollaboratorsUtil;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.collaborators.models.Collaborator;
 import org.iplantc.de.client.collaborators.presenter.ManageCollaboratorsPresenter;
 import org.iplantc.de.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.client.collaborators.util.CollaboratorsUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -190,7 +190,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
 
     @Override
     public void unmask() {
-        grid.unmask();
+        collaboratorListPnl.unmask();
     }
 
     @Override

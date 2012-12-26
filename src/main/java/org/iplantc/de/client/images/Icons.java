@@ -284,14 +284,6 @@ public interface Icons extends org.iplantc.core.uicommons.client.images.Icons {
      * 
      * @return image.
      */
-    @Source("group_key.png")
-    ImageResource share();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
     @Source("group.png")
     ImageResource viewCurrentCollabs();
 
