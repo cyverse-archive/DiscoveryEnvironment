@@ -119,8 +119,7 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
     @Override
     public void moveDiskResources(
             final Set<org.iplantc.core.uidiskresource.client.models.autobeans.DiskResource> diskResources,
-            final Folder idDestFolder,
-            AsyncCallback<String> callback) {
+            final Folder idDestFolder, AsyncCallback<String> callback) {
 
         // TODO JDS Mock then implement; moveDiskResources
         String address = serviceNamePrefix + ".move"; //$NON-NLS-1$
@@ -173,6 +172,25 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
                 body.toString());
         callService(callback, wrapper);
+    }
+
+    /**
+     * search data
+     * 
+     * @param term search termt
+     * @param callback
+     */
+    @Override
+    public void search(String term, int size, String type, AsyncCallback<String> callback) {
+        String fullAddress = DEProperties.getInstance().getMuleServiceBaseUrl() + "search?search-term="
+                + URL.encodePathSegment(term) + "&size=" + size;
+
+        if (type != null && !type.isEmpty()) {
+            fullAddress = fullAddress + "&type=" + type;
+        }
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
     @Override
