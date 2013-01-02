@@ -379,6 +379,14 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         callService(callback, wrapper);
     }
 
+    @Override
+    public void getStat(String body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix + ".stat"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
+    }
+
     /**
      * Performs the actual service call.
      * 
