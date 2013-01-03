@@ -6,7 +6,7 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.models.WindowConfig;
 import org.iplantc.de.client.notifications.models.Notification;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.google.gwt.json.client.JSONArray;

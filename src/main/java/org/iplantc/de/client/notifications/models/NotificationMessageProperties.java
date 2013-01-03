@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.client.notifications.models;
 
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;

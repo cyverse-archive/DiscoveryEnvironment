@@ -5,6 +5,8 @@ package org.iplantc.de.client.notifications.views;
 
 import java.util.List;
 
+import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
 
 import com.google.gwt.core.client.GWT;
@@ -59,7 +61,7 @@ public class NotificationViewImpl implements NotificationView {
     BorderLayoutContainer con;
 
     @UiField
-    PagingToolBar toolBar;
+    DEPagingToolbar toolBar;
 
     @UiField
     BorderLayoutData northData;
@@ -119,7 +121,7 @@ public class NotificationViewImpl implements NotificationView {
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-
+        presenter.setRefreshButton(toolBar.getRefreshButton());
     }
 
     /*
@@ -165,6 +167,17 @@ public class NotificationViewImpl implements NotificationView {
     @Override
     public FilterPagingLoadConfig getCurrentLoadConfig() {
         return (FilterPagingLoadConfig)grid.getLoader().getLastLoadConfig();
+    }
+
+    @Override
+    public void mask() {
+        mainPanel.mask(I18N.DISPLAY.loadingMask());
+
+    }
+
+    @Override
+    public void unmask() {
+        mainPanel.unmask();
     }
 
 }

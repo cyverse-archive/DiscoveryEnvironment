@@ -13,7 +13,7 @@ import org.iplantc.de.client.controllers.PipelineController;
 import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.desktop.widget.Desktop;
-import org.iplantc.de.client.utils.MessagePoller;
+import org.iplantc.de.client.periodic.MessagePoller;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.iplantc.de.shared.services.SessionManagementServiceFacade;

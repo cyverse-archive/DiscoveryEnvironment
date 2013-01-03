@@ -1,27 +1,24 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-    xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-    xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-    xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-    xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form" >
+	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
-    <ui:with
-        field="icons"
-        type="org.iplantc.de.client.images.Icons" />
+	<ui:with field="icons" type="org.iplantc.de.client.images.Icons" />
 
-    <ui:with
-        field="strings"
-        type="org.iplantc.de.client.DEDisplayStrings" />
+	<ui:with field="strings" type="org.iplantc.de.client.DEDisplayStrings" />
 
-    <container:SimpleContainer>
-        <toolbar:ToolBar ui:field="menuToolBar" >
-            <button:TextButton
-                icon="{icons.deleteIcon}"
-                text="{strings.delete}"
-                ui:field="btnDelete" 
-                enabled="false"/>
-            <form:SimpleComboBox ui:field="cboFilter" allowBlank="true" forceSelection="true" triggerAction="ALL" />
-        </toolbar:ToolBar>
-    </container:SimpleContainer>
+	<container:SimpleContainer>
+		<toolbar:ToolBar ui:field="menuToolBar">
+
+			<form:SimpleComboBox ui:field="cboFilter"
+				allowBlank="true" forceSelection="true" triggerAction="ALL" />
+			<button:TextButton icon="{icons.deleteIcon}" text="{strings.deleteSelected}"
+				ui:field="btnDelete" enabled="false" />
+				<toolbar:FillToolItem></toolbar:FillToolItem>
+			<button:TextButton icon="{icons.deleteIcon}" text="{strings.deleteAll}"
+				ui:field="btnDeleteAll" enabled="true" />
+		</toolbar:ToolBar>
+	</container:SimpleContainer>
 </ui:UiBinder>

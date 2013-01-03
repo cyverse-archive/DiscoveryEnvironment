@@ -156,4 +156,11 @@ public interface DEDisplayStaticText extends Constants {
      * @return a String representing the text.
      */
     String trees();
+
+    /**
+     * Display text for unseen notifications filter
+     * 
+     * @return a String representing the text.
+     */
+    String notificationCategoryUnseen();
 }

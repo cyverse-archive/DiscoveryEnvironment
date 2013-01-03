@@ -16,8 +16,8 @@ import org.iplantc.de.client.events.NotificationCountUpdateEventHandler;
 import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.NotificationWindowConfig;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 import org.iplantc.de.client.util.WindowUtil;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -68,7 +68,7 @@ public class DEViewImpl implements DEView {
 
     private Presenter presenter;
     private NotificationIndicator lblNotifications;
-    private ViewNotificationMenu actionsMenu;
+    private ViewNotificationMenu notificationsView;
 
     // TODO JDS Reimplement these styles in CssResource
     private final String linkStyle = "de_header_menu_hyperlink"; //$NON-NLS-1$
@@ -101,7 +101,12 @@ public class DEViewImpl implements DEView {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        lblNotifications.setCount(ncue.getTotal());
+                        int new_count = ncue.getTotal();
+                        if (new_count > 0 && new_count > lblNotifications.getCount()) {
+                            notificationsView.fetchUnseenNotifications();
+                        }
+                        notificationsView.setUnseenCount(new_count);
+                        lblNotifications.setCount(new_count);
 
                     }
                 });
@@ -166,11 +171,11 @@ public class DEViewImpl implements DEView {
         lblNotifications = new NotificationIndicator(0);
 
         final PushButton button = new PushButton(menuHeaderText, headerWidth);
-        actionsMenu = new ViewNotificationMenu();
-        actionsMenu.setBorders(false);
-        actionsMenu.setStyleName("de_header_menu_body"); //$NON-NLS-1$
-        actionsMenu.setShadow(false);
-        actionsMenu.addShowHandler(new ShowHandler() {
+        notificationsView = new ViewNotificationMenu();
+        notificationsView.setBorders(false);
+        notificationsView.setStyleName("de_header_menu_body"); //$NON-NLS-1$
+        notificationsView.setShadow(false);
+        notificationsView.addShowHandler(new ShowHandler() {
 
             @Override
             public void onShow(ShowEvent event) {
@@ -179,7 +184,7 @@ public class DEViewImpl implements DEView {
             }
         });
 
-        actionsMenu.addHideHandler(new HideHandler() {
+        notificationsView.addHideHandler(new HideHandler() {
 
             @Override
             public void onHide(HideEvent event) {
@@ -191,8 +196,8 @@ public class DEViewImpl implements DEView {
 
             @Override
             public void onClick(ClickEvent arg0) {
-                showNotificationWindow(Category.ALL);
-                showHeaderActionsMenu(ret, actionsMenu);
+                // showNotificationWindow(Category.ALL);
+                showHeaderActionsMenu(ret, notificationsView);
                 lblNotifications.setCount(0);
             }
         });
@@ -362,6 +367,9 @@ public class DEViewImpl implements DEView {
      * 
      */
     private class NotificationIndicator extends Label {
+
+        int count;
+
         public NotificationIndicator(int initialCount) {
             super();
 
@@ -369,7 +377,12 @@ public class DEViewImpl implements DEView {
             setCount(initialCount);
         }
 
+        public int getCount() {
+            return count;
+        }
+
         public void setCount(int count) {
+            this.count = count;
             if (count > 0) {
                 setText(String.valueOf(count));
                 addStyleName("de_notification_indicator_highlight"); //$NON-NLS-1$

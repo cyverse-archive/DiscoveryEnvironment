@@ -4,7 +4,7 @@ import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uidiskresource.client.models.DiskResource;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 
 import com.google.gwt.json.client.JSONObject;

@@ -7,7 +7,8 @@
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
 	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
 	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar" 
-	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
 	
  	<!-- Main Panel -->
 	<ui:with field="listStore" type="com.sencha.gxt.data.shared.ListStore" />
@@ -67,8 +68,8 @@
 
 							</container:child>
 							<container:child layoutData="{bottomData}">
-								<toolbar:PagingToolBar pageSize="10"
-									ui:field="toolBar"></toolbar:PagingToolBar>
+								<paging:DEPagingToolbar pageSize="10"
+									ui:field="toolBar"></paging:DEPagingToolbar>
 							</container:child>
 						</container:VerticalLayoutContainer>
 					</gxt:FramedPanel>

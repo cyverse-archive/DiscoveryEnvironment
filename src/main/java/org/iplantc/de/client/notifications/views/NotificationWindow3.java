@@ -11,10 +11,10 @@ import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
 import org.iplantc.de.client.notifications.models.NotificationMessageProperties;
 import org.iplantc.de.client.notifications.presenter.NotificationPresenter;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 import org.iplantc.de.client.notifications.views.NotificationView.Presenter;
 import org.iplantc.de.client.notifications.views.cells.NotificationMessageCell;
 import org.iplantc.de.client.notifications.views.cells.NotificationMessageTmestampCell;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.views.windows.Gxt3IplantWindow;
 
 import com.google.gwt.core.shared.GWT;

@@ -1044,4 +1044,47 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      * @return
      */
     String searchMinChars();
+
+    /*
+     * * new notifications
+     * 
+     * @return the localized display text
+     */
+
+    String newNotifications();
+
+    /**
+     * new notifications-generalized alert
+     * 
+     * @return the localized display text
+     */
+    String newNotificationsAlert();
+
+    /**
+     * delete selected text
+     * 
+     * @return
+     */
+    String deleteSelected();
+
+    /**
+     * 
+     * delete all text
+     * 
+     * @return
+     */
+    String deleteAll();
+
+    /**
+     * 
+     * @return
+     */
+    String markAllasSeen();
+
+    /**
+     * 
+     * @return
+     */
+    String markAllasSeenSuccess();
+
 }

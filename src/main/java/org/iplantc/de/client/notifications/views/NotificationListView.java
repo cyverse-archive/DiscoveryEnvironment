@@ -5,23 +5,27 @@ package org.iplantc.de.client.notifications.views;
 
 import java.util.List;
 
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
-import org.iplantc.de.client.events.AnalysisPayloadEvent;
-import org.iplantc.de.client.events.AnalysisPayloadEventHandler;
-import org.iplantc.de.client.events.AnalysisUpdateEvent;
-import org.iplantc.de.client.events.DataPayloadEvent;
-import org.iplantc.de.client.events.DataPayloadEventHandler;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
+import org.iplantc.de.client.dispatchers.WindowDispatcher;
+import org.iplantc.de.client.factories.WindowConfigFactory;
+import org.iplantc.de.client.models.NotificationWindowConfig;
+import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
+import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEventHandler;
+import org.iplantc.de.client.notifications.models.Notification;
 import org.iplantc.de.client.notifications.models.NotificationAutoBeanFactory;
+import org.iplantc.de.client.notifications.models.NotificationList;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
-import org.iplantc.de.client.notifications.models.NotificationPayload;
-import org.iplantc.de.client.utils.NotificationHelper;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.services.MessageServiceFacade;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -31,6 +35,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -43,6 +49,8 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.ListViewCustomAppearance;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
@@ -56,9 +64,12 @@ public class NotificationListView implements IsWidget {
 
     private ListView<NotificationMessage, NotificationMessage> view;
     private ListStore<NotificationMessage> store;
-    private int totalNotificationCount;
+    private int total_unseen;
+    private HorizontalPanel hyperlinkPanel;
 
     private final NotificationAutoBeanFactory factory = GWT.create(NotificationAutoBeanFactory.class);
+
+    public static final int NEW_NOTIFICATIONS_LIMIT = 10;
 
     final Resources resources = GWT.create(Resources.class);
     final Style style = resources.css();
@@ -112,8 +123,28 @@ public class NotificationListView implements IsWidget {
     };
 
     public NotificationListView() {
-        registerEventHandlers();
         resources.css().ensureInjected();
+        initListeners();
+        hyperlinkPanel = new HorizontalPanel();
+        updateNotificationLink();
+    }
+
+    private void initListeners() {
+        EventBus.getInstance().addHandler(DeleteNotificationsUpdateEvent.TYPE,
+                new DeleteNotificationsUpdateEventHandler() {
+
+                    @Override
+                    public void onDelete(DeleteNotificationsUpdateEvent event) {
+                        for (NotificationMessage n : store.getAll()) {
+                            for (NotificationMessage deleted : event.getIds()) {
+                                if (n.getId().equals(deleted.getId())) {
+                                    store.remove(n);
+                                }
+                            }
+                        }
+
+                    }
+                });
     }
 
     public void highlightNewNotifications() {
@@ -152,85 +183,174 @@ public class NotificationListView implements IsWidget {
 
     }
 
-    private void registerEventHandlers() {
-        final EventBus eventbus = EventBus.getInstance();
+    public void fetchUnseenNotifications() {
+        MessageServiceFacade facadeMessageService = new MessageServiceFacade();
+        facadeMessageService.getRecentMessages(new AsyncCallback<String>() {
 
-        // handle data events
-        eventbus.addHandler(DataPayloadEvent.TYPE, new DataPayloadEventHandler() {
             @Override
-            public void onFire(DataPayloadEvent event) {
-                // TODO:Add data context
-                addFromEventHandler(Category.DATA, I18N.DISPLAY.fileUpload(), event.getMessage(), null,
-                        null);
-                highlightNewNotifications();
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
-        });
 
-        // handle analysis events
-        eventbus.addHandler(AnalysisPayloadEvent.TYPE, new AnalysisPayloadEventHandler() {
             @Override
-            public void onFire(AnalysisPayloadEvent event) {
-                JSONObject payload = event.getPayload();
-                AutoBean<NotificationPayload> bean = AutoBeanCodex.decode(factory,
-                        NotificationPayload.class, payload.toString());
-                AnalysisContextBuilder builder = new AnalysisContextBuilder();
-                addFromEventHandler(Category.ANALYSIS, I18N.CONSTANT.analysis(), event.getMessage(),
-                        builder.build(bean.as()), payload);
-                highlightNewNotifications();
+            public void onSuccess(String result) {
+                processMessages(result);
             }
         });
     }
 
-    private void addFromEventHandler(final Category category, final String header,
-            final JSONObject objMessage, final String context, JSONObject payload) {
+    /**
+     * Process method takes in a JSON String, breaks out the individual messages, transforms them into
+     * events, finally the event is fired.
+     * 
+     * @param json string to be processed.
+     */
+    public void processMessages(final String json) {
+        // cache before removing
+        List<NotificationMessage> temp = store.getAll();
+        store.clear();
+        boolean displayInfo = false;
 
-        AutoBean<NotificationMessage> bean = AutoBeanCodex.decode(factory, NotificationMessage.class,
-                objMessage.toString());
+        if (json != null) {
 
-        NotificationMessage nm = bean.as();
-        nm.setCategory(category);
-        nm.setContext(context);
+            AutoBean<NotificationList> bean = AutoBeanCodex
+                    .decode(factory, NotificationList.class, json);
 
-        NotificationMessage existing = view.getStore().findModelWithKey(nm.getTimestamp() + "");
-        if (existing == null) {
-            view.getStore().add(nm);
-            totalNotificationCount = totalNotificationCount + 1;
-            fireEvents(category, payload);
-            NotifyInfo.display(header, nm.getMessage());
+            List<Notification> notifications = bean.as().getNotifications();
+            for (Notification n : notifications) {
+                NotificationMessage nm = n.getMessage();
+                nm.setSeen(n.isSeen());
+                if (nm != null && !isExists(nm)) {
+                    store.add(nm);
+                    if (!isExist(temp, nm)) {
+                        displayNotificationPopup(nm);
+                        displayInfo = true;
+                    }
 
+                }
+            }
+        }
+        if (total_unseen > NEW_NOTIFICATIONS_LIMIT && displayInfo) {
+            NotifyInfo.display(I18N.DISPLAY.newNotifications(), I18N.DISPLAY.newNotificationsAlert());
+        }
+        // store.sort(Notification.PROP_TIMESTAMP, SortDir.DESC);
+        highlightNewNotifications();
+    }
+
+    private void displayNotificationPopup(NotificationMessage n) {
+        if (!n.isSeen()) {
+            if (n.getCategory().equals(Category.DATA)) {
+                NotifyInfo.display(Category.DATA.toString(), n.getMessage());
+            } else if (n.getCategory().equals(Category.ANALYSIS)) {
+                NotifyInfo.display(Category.ANALYSIS.toString(), n.getMessage());
+            }
+        }
+    }
+
+    private boolean isExist(List<NotificationMessage> list, NotificationMessage n) {
+        for (NotificationMessage noti : list) {
+            if (noti.getId().equals(n.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    private boolean isExists(NotificationMessage n) {
+        NotificationMessage temp = store.findModel(n);
+        if (temp == null) {
+            return false;
+        } else {
+            return true;
         }
 
     }
 
-    /**
-     * get total notification count
-     * 
-     * @return
-     */
-    public int getTotalNotificationCount() {
-        return totalNotificationCount;
+    public void setUnseenCount(int count) {
+        this.total_unseen = count;
+        updateNotificationLink();
     }
 
-    /**
-     * reset all notification count
-     * 
-     */
-    public void resetCount() {
-        totalNotificationCount = 0;
-    }
-
-    private void fireEvents(final Category category, JSONObject payload) {
-        NotificationCountUpdateEvent ncue = new NotificationCountUpdateEvent(getTotalNotificationCount());
-        EventBus instance = EventBus.getInstance();
-        instance.fireEvent(ncue);
-        if (category.equals(NotificationHelper.Category.ANALYSIS)) {
-            AnalysisUpdateEvent aue = new AnalysisUpdateEvent(payload);
-            instance.fireEvent(aue);
+    private void updateNotificationLink() {
+        hyperlinkPanel.clear();
+        hyperlinkPanel.add(buildNotificationHyerlink());
+        if (total_unseen > 0) {
+            hyperlinkPanel.add(buildAckAllHyperlink());
         }
+    }
+
+    private Anchor buildAckAllHyperlink() {
+        Anchor link = new Anchor(I18N.DISPLAY.markAllasSeen());
+        link.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                MessageServiceFacade facade = new MessageServiceFacade();
+                facade.acknowledgeAll(new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(caught);
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        Info.display(I18N.DISPLAY.notifications(), I18N.DISPLAY.markAllasSeenSuccess());
+                    }
+                });
+
+            }
+        });
+
+        return link;
+
+    }
+
+    private Anchor buildNotificationHyerlink() {
+        String displayText;
+        if (total_unseen > 0) {
+            displayText = I18N.DISPLAY.newNotifications() + " (" + total_unseen + ")";
+        } else {
+            displayText = I18N.DISPLAY.allNotifications();
+        }
+
+        Anchor link = new Anchor(displayText);
+        link.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                if (total_unseen > 0) {
+                    showNotificationWindow(NotificationHelper.Category.NEW);
+                } else {
+                    showNotificationWindow(NotificationHelper.Category.ALL);
+                }
+
+            }
+        });
+
+        return link;
+    }
+
+    /** Makes the notification window visible and filters by a category */
+    private void showNotificationWindow(final Category category) {
+        NotificationWindowConfig config = new NotificationWindowConfig();
+        config.setCategory(category);
+
+        // Build window config
+        WindowConfigFactory configFactory = new WindowConfigFactory();
+        JSONObject windowConfig = configFactory
+                .buildWindowConfig(Constants.CLIENT.myNotifyTag(), config);
+        WindowDispatcher dispatcher = new WindowDispatcher(windowConfig);
+        dispatcher.dispatchAction(Constants.CLIENT.myNotifyTag());
     }
 
     @Override
     public Widget asWidget() {
+        VerticalLayoutContainer container = new VerticalLayoutContainer();
+        container.setBorders(true);
         store = new ListStore<NotificationMessage>(kp);
         view = new ListView<NotificationMessage, NotificationMessage>(store,
                 new IdentityValueProvider<NotificationMessage>(), appearance);
@@ -257,8 +377,12 @@ public class NotificationListView implements IsWidget {
                     }
                 }));
 
-        view.setSize("250px", "200px");
-        return view;
+        view.setSize("250px", "250px");
+        view.setBorders(false);
+        container.add(view);
+        hyperlinkPanel.setHeight("30px");
+        container.add(hyperlinkPanel);
+        return container;
     }
 
 }

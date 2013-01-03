@@ -1,8 +1,9 @@
 package org.iplantc.de.client.notifications.views;
 
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 
 /**
  * 
@@ -18,10 +19,14 @@ public interface NotificationToolbarView extends IsWidget {
 
         void onDeleteClicked();
 
+        void onDeleteAllClicked();
+
     }
 
     void setDeleteButtonEnabled(boolean enabled);
 
     void setPresenter(Presenter p);
+
+    void setRefreshButton(TextButton refreshBtn);
 
 }

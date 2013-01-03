@@ -3,13 +3,14 @@ package org.iplantc.de.client.notifications.views;
 import java.util.List;
 
 import org.iplantc.de.client.notifications.models.NotificationMessage;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 
 public interface NotificationView extends IsWidget {
     public interface Presenter extends org.iplantc.core.uicommons.client.presenter.Presenter {
@@ -32,6 +33,8 @@ public interface NotificationView extends IsWidget {
          * 
          */
         public void onNotificationSelection(List<NotificationMessage> items);
+
+        void setRefreshButton(TextButton refreshBtn);
     }
 
     /**
@@ -63,5 +66,9 @@ public interface NotificationView extends IsWidget {
             PagingLoader<FilterPagingLoadConfig, PagingLoadResult<NotificationMessage>> loader);
 
     void setNorthWidget(IsWidget widget);
+
+    void mask();
+
+    void unmask();
 
 }

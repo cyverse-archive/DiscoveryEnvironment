@@ -1,7 +1,7 @@
 package org.iplantc.de.client.notifications.views.cells;
 
 import org.iplantc.de.client.notifications.models.NotificationMessage;
-import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;

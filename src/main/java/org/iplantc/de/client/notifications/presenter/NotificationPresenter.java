@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.Services;
 import org.iplantc.de.client.notifications.models.Notification;
 import org.iplantc.de.client.notifications.models.NotificationAutoBeanFactory;
 import org.iplantc.de.client.notifications.models.NotificationList;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
+import org.iplantc.de.client.notifications.services.MessageServiceFacade;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 import org.iplantc.de.client.notifications.views.NotificationToolbarView;
 import org.iplantc.de.client.notifications.views.NotificationToolbarViewImpl;
 import org.iplantc.de.client.notifications.views.NotificationView;
 import org.iplantc.de.client.notifications.views.NotificationView.Presenter;
-import org.iplantc.de.client.utils.NotificationHelper;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
 import org.iplantc.de.client.utils.builders.context.AnalysisContextBuilder;
 
 import com.google.gwt.core.shared.GWT;
@@ -36,6 +38,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 
 /**
  * 
@@ -202,6 +205,32 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
         NotificationHelper.getInstance().delete(view.getSelectedItems(), new Command() {
             @Override
             public void execute() {
+                view.loadNotifications(view.getCurrentLoadConfig());
+            }
+        });
+
+    }
+
+    @Override
+    public void setRefreshButton(TextButton refreshBtn) {
+        toolbar.setRefreshButton(refreshBtn);
+    }
+
+    @Override
+    public void onDeleteAllClicked() {
+        view.mask();
+        MessageServiceFacade facade = new MessageServiceFacade();
+        facade.deleteAll(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmask();
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                view.unmask();
                 view.loadNotifications(view.getCurrentLoadConfig());
             }
         });

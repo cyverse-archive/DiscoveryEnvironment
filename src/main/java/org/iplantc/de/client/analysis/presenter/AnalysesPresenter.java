@@ -22,7 +22,7 @@ import org.iplantc.de.client.analysis.views.AnalysesView.Presenter;
 import org.iplantc.de.client.analysis.views.AnalysisParamView;
 import org.iplantc.de.client.analysis.views.cells.AnalysisParamNameCell;
 import org.iplantc.de.client.analysis.views.cells.AnalysisParamValueCell;
-import org.iplantc.de.client.utils.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 
 import com.google.gwt.core.shared.GWT;

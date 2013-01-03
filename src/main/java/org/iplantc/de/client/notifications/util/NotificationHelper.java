@@ -1,4 +1,4 @@
-package org.iplantc.de.client.utils;
+package org.iplantc.de.client.notifications.util;
 
 import java.util.List;
 
@@ -6,6 +6,8 @@ import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
+import org.iplantc.de.client.utils.AnalysisViewContextExecutor;
+import org.iplantc.de.client.utils.DataViewContextExecutor;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -32,7 +34,10 @@ public class NotificationHelper {
         /** Data notifications */
         DATA(I18N.CONSTANT.notificationCategoryData()),
         /** Analysis notifications */
-        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis());
+        ANALYSIS(I18N.CONSTANT.notificationCategoryAnalysis()),
+
+        /** unseen notifications */
+        NEW(I18N.CONSTANT.notificationCategoryUnseen());
 
         private String displayText;
 

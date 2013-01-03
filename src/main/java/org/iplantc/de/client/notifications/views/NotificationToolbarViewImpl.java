@@ -3,8 +3,8 @@
  */
 package org.iplantc.de.client.notifications.views;
 
-import org.iplantc.de.client.utils.NotificationHelper;
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -18,6 +18,7 @@ import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * @author sriram
@@ -37,16 +38,24 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
     @UiField
     TextButton btnDelete;
 
+    @UiField
+    TextButton btnDeleteAll;
+
+    @UiField
+    ToolBar menuToolBar;
+
     @UiField(provided = true)
     SimpleComboBox<Category> cboFilter = new SimpleComboBox<Category>(
             new StringLabelProvider<Category>());
 
     public NotificationToolbarViewImpl() {
         widget = uiBinder.createAndBindUi(this);
+
         initFilters();
     }
 
     private void initFilters() {
+        cboFilter.add(Category.NEW);
         cboFilter.add(Category.ALL);
         cboFilter.add(Category.ANALYSIS);
         cboFilter.add(Category.DATA);
@@ -76,9 +85,19 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
         presenter.onDeleteClicked();
     }
 
+    @UiHandler("btnDeleteAll")
+    public void deleteAllClicked(SelectEvent event) {
+        presenter.onDeleteAllClicked();
+    }
+
     @Override
     public void setPresenter(Presenter p) {
         this.presenter = p;
 
+    }
+
+    @Override
+    public void setRefreshButton(TextButton refreshBtn) {
+        menuToolBar.add(refreshBtn);
     }
 }

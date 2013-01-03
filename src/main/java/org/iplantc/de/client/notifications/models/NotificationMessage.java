@@ -1,6 +1,6 @@
 package org.iplantc.de.client.notifications.models;
 
-import org.iplantc.de.client.utils.NotificationHelper.Category;
+import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
@@ -39,4 +39,7 @@ public interface NotificationMessage {
 
     void setContext(String context);
 
+    void setSeen(boolean seen);
+
+    boolean isSeen();
 }
