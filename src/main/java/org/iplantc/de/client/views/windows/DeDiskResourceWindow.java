@@ -28,6 +28,7 @@ public class DeDiskResourceWindow extends Gxt3IplantWindow {
         setSize("800", "410");
         presenter.go(this);
         // presenter.setSelectedFolderById("/iplant/home/jstroot/analyses/analysis1-2012-10-15-14-44-02.028/logs");
+        presenter.doRefresh();
 
         if (config != null) {
             if ((config.getFolderId() != null) && !config.getFolderId().isEmpty()) {
