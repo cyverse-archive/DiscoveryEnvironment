@@ -83,7 +83,6 @@ public abstract class Gxt3IplantWindow extends Window implements IPlantWindowInt
 
     public Gxt3IplantWindow(WindowAppearance appearance) {
         super(appearance);
-        // TODO Auto-generated constructor stub
     }
 
     protected Gxt3IplantWindow(final String tag, final WindowConfig config) {
