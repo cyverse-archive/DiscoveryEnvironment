@@ -5,11 +5,70 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 
 /**
  * Provides access to remote services for analyses management operations.
  */
 public class AnalysisServiceFacade {
+
+    /**
+     * Get all the analyses for a given workspace.
+     * 
+     * @param workspaceId unique id for a user's workspace.
+     * @param pagingConfig optional remote paging and sorting configs.
+     * @param callback executed when RPC call completes.
+     */
+    public void getAnalyses(String workspaceId, FilterPagingLoadConfig pagingConfig,
+            AsyncCallback<String> callback) {
+        StringBuilder address = new StringBuilder(DEProperties.getInstance().getMuleServiceBaseUrl());
+
+        address.append("workspaces/"); //$NON-NLS-1$
+        address.append(workspaceId);
+        address.append("/executions/list"); //$NON-NLS-1$
+
+        if (pagingConfig != null) {
+            address.append("?limit="); //$NON-NLS-1$
+            address.append(pagingConfig.getLimit());
+
+            address.append("&offset="); //$NON-NLS-1$
+            address.append(pagingConfig.getOffset());
+
+            // String sortField = pagingConfig.getSortField();
+            // if (sortField != null && !sortField.isEmpty()) {
+            //                address.append("&sort-field="); //$NON-NLS-1$
+            // address.append(sortField);
+            // }
+            //
+            // SortDir sortDir = pagingConfig.getSortDir();
+            // if (sortDir == SortDir.ASC || sortDir == SortDir.DESC) {
+            //                address.append("&sort-order="); //$NON-NLS-1$
+            // address.append(sortDir.toString());
+            // }
+            //
+            // List<FilterConfig> filters = pagingConfig.getFilterConfigs();
+            // if (filters != null && !filters.isEmpty()) {
+            //                address.append("&filter="); //$NON-NLS-1$
+            //
+            // JSONArray jsonFilters = new JSONArray();
+            // int filterIndex = 0;
+            // for (FilterConfig filter : filters) {
+            // JSONObject jsonFilter = new JSONObject();
+            //
+            // jsonFilter.put("field", new JSONString(filter.getField()));
+            // jsonFilter.put("value", new JSONString((String)filter.getValue()));
+            //
+            // jsonFilters.set(filterIndex++, jsonFilter);
+            // }
+            //
+            // address.append(URL.encodeQueryString(jsonFilters.toString()));
+            // }
+        }
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address.toString());
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
     /**
      * Get all the analyses for a given workspace.
      * 
@@ -46,7 +105,8 @@ public class AnalysisServiceFacade {
      * @param callback executed when RPC call completes.
      */
     public void stopAnalysis(String analysisId, AsyncCallback<String> callback) {
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/" + analysisId;
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "stop-analysis/"
+                + analysisId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, callback);

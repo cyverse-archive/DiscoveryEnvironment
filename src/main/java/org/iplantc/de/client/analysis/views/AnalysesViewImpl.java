@@ -26,6 +26,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
@@ -219,7 +222,7 @@ public class AnalysesViewImpl implements AnalysesView {
     }
 
     private void updateEndExecStatus(String id, String status, String resultfolderid, Date enddate) {
-        Analysis ae = listStore.findModelWithKey(id); 
+        Analysis ae = listStore.findModelWithKey(id);
 
         if (ae != null) {
             ae.setStatus(status);
@@ -232,7 +235,7 @@ public class AnalysesViewImpl implements AnalysesView {
     }
 
     private void updateRunExecStatus(String id, String status, Date startdate) {
-        Analysis ae = listStore.findModelWithKey(id); 
+        Analysis ae = listStore.findModelWithKey(id);
 
         if (ae != null) {
             ae.setStatus(status);
@@ -241,5 +244,15 @@ public class AnalysesViewImpl implements AnalysesView {
             }
             listStore.update(ae);
         }
+    }
+
+    @Override
+    public ListStore<Analysis> getListStore() {
+        return listStore;
+    }
+
+    @Override
+    public void setLoader(PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader) {
+
     }
 }

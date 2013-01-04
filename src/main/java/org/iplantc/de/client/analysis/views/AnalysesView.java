@@ -5,6 +5,10 @@ import java.util.List;
 import org.iplantc.de.client.analysis.models.Analysis;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 /**
  * 
@@ -29,5 +33,10 @@ public interface AnalysesView extends IsWidget {
     public List<Analysis> getSelectedAnalyses();
 
     public void removeFromStore(List<Analysis> items);
+
+    public ListStore<Analysis> getListStore();
+
+    public void setLoader(
+            PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> initRemoteLoader);
 
 }
