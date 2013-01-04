@@ -55,7 +55,7 @@
     <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter" />
 
     <bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.base-url}/logout" />
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.base-url}/logout?service=${org.iplantc.belphegor.cas.server-name}/" />
         <constructor-arg index="1">
             <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
         </constructor-arg>

@@ -22,5 +22,6 @@
         <logout logout-success-url="/belphegor/logout" />
         <custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />
         <custom-filter ref="singleLogoutFilter" before="CAS_FILTER" />
+        <access-denied-handler error-page="/belphegor/access-denied" />
     </http>
 </beans:beans>
