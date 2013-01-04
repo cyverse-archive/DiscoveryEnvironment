@@ -98,6 +98,6 @@ public class NotificationToolbarViewImpl implements NotificationToolbarView {
 
     @Override
     public void setRefreshButton(TextButton refreshBtn) {
-        menuToolBar.add(refreshBtn);
+        menuToolBar.insert(refreshBtn, 1);
     }
 }

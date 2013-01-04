@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.Services;
+import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.notifications.models.Notification;
 import org.iplantc.de.client.notifications.models.NotificationAutoBeanFactory;
 import org.iplantc.de.client.notifications.models.NotificationList;
@@ -182,9 +184,9 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
             AutoBean<NotificationList> bean = AutoBeanCodex.decode(factory, NotificationList.class,
                     result);
             int total = 0;
-            Number jsonTotal = JsonUtil.getNumber(JsonUtil.getObject(result), "total");
+            String jsonTotal = JsonUtil.getString(JsonUtil.getObject(result), "total");
             if (jsonTotal != null) {
-                total = jsonTotal.intValue();
+                total = Integer.parseInt(jsonTotal);
             }
 
             List<NotificationMessage> messages = getNotificationMessages(bean);
@@ -192,6 +194,8 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
             callbackResult = new PagingLoadResultBean<NotificationMessage>(messages, total,
                     loadConfig.getOffset());
             callback.onSuccess(callbackResult);
+            NotificationHelper.getInstance().markAsSeen(messages);
+
         }
     }
 
@@ -232,6 +236,8 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
             public void onSuccess(String result) {
                 view.unmask();
                 view.loadNotifications(view.getCurrentLoadConfig());
+                DeleteNotificationsUpdateEvent event = new DeleteNotificationsUpdateEvent(null);
+                EventBus.getInstance().fireEvent(event);
             }
         });
 

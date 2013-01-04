@@ -14,7 +14,7 @@ import com.google.gwt.event.shared.GwtEvent;
  * 
  */
 public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotificationsUpdateEventHandler> {
-    private List<NotificationMessage> ids;
+    private List<NotificationMessage> messages;
 
     /**
      * Defines the GWT Event Type.
@@ -24,7 +24,7 @@ public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotifications
     public static final GwtEvent.Type<DeleteNotificationsUpdateEventHandler> TYPE = new GwtEvent.Type<DeleteNotificationsUpdateEventHandler>();
 
     public DeleteNotificationsUpdateEvent(List<NotificationMessage> ids) {
-        this.setIds(ids);
+        this.setMessages(ids);
     }
 
     @Override
@@ -40,15 +40,15 @@ public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotifications
     /**
      * @return the ids
      */
-    public List<NotificationMessage> getIds() {
-        return ids;
+    public List<NotificationMessage> getMessages() {
+        return messages;
     }
 
     /**
      * @param ids the ids to set
      */
-    public void setIds(List<NotificationMessage> ids) {
-        this.ids = ids;
+    public void setMessages(List<NotificationMessage> ids) {
+        this.messages = ids;
     }
 
 }

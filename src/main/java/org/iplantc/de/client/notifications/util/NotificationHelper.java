@@ -2,9 +2,13 @@ package org.iplantc.de.client.notifications.util;
 
 import java.util.List;
 
+import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
+import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.notifications.models.NotificationMessage;
 import org.iplantc.de.client.utils.AnalysisViewContextExecutor;
 import org.iplantc.de.client.utils.DataViewContextExecutor;
@@ -114,7 +118,8 @@ public class NotificationHelper {
         return instance;
     }
 
-    private void doDelete(final JSONObject json, final Command callback) {
+    private void doDelete(final List<NotificationMessage> notifications, final JSONObject json,
+            final Command callback) {
         if (json != null) {
             Services.MESSAGE_SERVICE.deleteMessages(json, new AsyncCallback<String>() {
                 @Override
@@ -127,10 +132,57 @@ public class NotificationHelper {
                 public void onSuccess(String result) {
                     if (callback != null) {
                         callback.execute();
+                        DeleteNotificationsUpdateEvent event = new DeleteNotificationsUpdateEvent(
+                                notifications);
+                        EventBus.getInstance().fireEvent(event);
                     }
                 }
             });
         }
+    }
+
+    /**
+     * Mark notifications as seen
+     * 
+     */
+    public void markAsSeen(List<NotificationMessage> list) {
+        if (list != null && list.size() > 0) {
+            JSONArray arr = buildSeenServiceRequestBody(list);
+
+            if (arr.size() > 0) {
+                JSONObject obj = new JSONObject();
+                obj.put("uuids", arr);
+                Services.MESSAGE_SERVICE.markAsSeen(obj, new AsyncCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String result) {
+                        JSONObject obj = JsonUtil.getObject(result);
+                        int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
+                        // fire update of the new unseen count;
+                        NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(new_count);
+                        EventBus.getInstance().fireEvent(event);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(caught);
+                    }
+                });
+            }
+        }
+    }
+
+    private JSONArray buildSeenServiceRequestBody(List<NotificationMessage> list) {
+        JSONArray arr = new JSONArray();
+        int i = 0;
+
+        for (NotificationMessage n : list) {
+            if (!n.isSeen()) {
+                arr.set(i++, new JSONString(n.getId()));
+                n.setSeen(true);
+            }
+        }
+        return arr;
     }
 
     /**
@@ -149,7 +201,7 @@ public class NotificationHelper {
             }
             obj.put("uuids", arr);
 
-            doDelete(obj, callback);
+            doDelete(notifications, obj, callback);
         }
     }
 

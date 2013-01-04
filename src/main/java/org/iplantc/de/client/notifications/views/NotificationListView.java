@@ -126,6 +126,7 @@ public class NotificationListView implements IsWidget {
         resources.css().ensureInjected();
         initListeners();
         hyperlinkPanel = new HorizontalPanel();
+        hyperlinkPanel.setSpacing(2);
         updateNotificationLink();
     }
 
@@ -135,12 +136,15 @@ public class NotificationListView implements IsWidget {
 
                     @Override
                     public void onDelete(DeleteNotificationsUpdateEvent event) {
-                        for (NotificationMessage n : store.getAll()) {
-                            for (NotificationMessage deleted : event.getIds()) {
-                                if (n.getId().equals(deleted.getId())) {
-                                    store.remove(n);
+                        if (event.getMessages() != null) {
+                            for (NotificationMessage deleted : event.getMessages()) {
+                                NotificationMessage nm = store.findModel(deleted);
+                                if (nm != null) {
+                                    store.remove(nm);
                                 }
                             }
+                        } else {
+                            store.clear();
                         }
 
                     }
@@ -212,21 +216,17 @@ public class NotificationListView implements IsWidget {
         boolean displayInfo = false;
 
         if (json != null) {
-
             AutoBean<NotificationList> bean = AutoBeanCodex
                     .decode(factory, NotificationList.class, json);
-
             List<Notification> notifications = bean.as().getNotifications();
             for (Notification n : notifications) {
                 NotificationMessage nm = n.getMessage();
                 nm.setSeen(n.isSeen());
-                if (nm != null && !isExists(nm)) {
+                nm.setCategory(Category.fromTypeString(n.getCategory()));
+                if (nm != null && !isExist(temp, nm)) {
                     store.add(nm);
-                    if (!isExist(temp, nm)) {
-                        displayNotificationPopup(nm);
-                        displayInfo = true;
-                    }
-
+                    displayNotificationPopup(nm);
+                    displayInfo = true;
                 }
             }
         }
@@ -255,16 +255,6 @@ public class NotificationListView implements IsWidget {
         }
 
         return false;
-
-    }
-
-    private boolean isExists(NotificationMessage n) {
-        NotificationMessage temp = store.findModel(n);
-        if (temp == null) {
-            return false;
-        } else {
-            return true;
-        }
 
     }
 
@@ -305,6 +295,7 @@ public class NotificationListView implements IsWidget {
             }
         });
 
+        link.setStyleName("de_hyperlink");
         return link;
 
     }
@@ -331,6 +322,7 @@ public class NotificationListView implements IsWidget {
             }
         });
 
+        link.setStyleName("de_hyperlink");
         return link;
     }
 
