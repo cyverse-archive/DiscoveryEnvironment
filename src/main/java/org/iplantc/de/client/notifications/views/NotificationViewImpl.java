@@ -22,6 +22,7 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.FramedPanel;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -121,7 +122,6 @@ public class NotificationViewImpl implements NotificationView {
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-        presenter.setRefreshButton(toolBar.getRefreshButton());
     }
 
     /*
@@ -180,4 +180,8 @@ public class NotificationViewImpl implements NotificationView {
         mainPanel.unmask();
     }
 
+    @Override
+    public TextButton getRefreshButton() {
+        return toolBar.getRefreshButton();
+    }
 }

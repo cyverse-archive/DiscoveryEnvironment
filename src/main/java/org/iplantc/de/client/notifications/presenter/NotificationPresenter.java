@@ -6,6 +6,7 @@ import java.util.List;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.Services;
 import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.notifications.models.Notification;
@@ -56,7 +57,6 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
     private final NotificationAutoBeanFactory factory = GWT.create(NotificationAutoBeanFactory.class);
 
     private PagingLoadResult<NotificationMessage> callbackResult;
-    private final NotificationHelper helper;
     private Category currentCategory;
 
     public NotificationPresenter(NotificationView view) {
@@ -65,7 +65,7 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
         this.view.setPresenter(this);
-        helper = NotificationHelper.getInstance();
+        setRefreshButton(view.getRefreshButton());
         // set default cat
         currentCategory = Category.ALL;
     }
@@ -217,7 +217,10 @@ public class NotificationPresenter implements Presenter, NotificationToolbarView
 
     @Override
     public void setRefreshButton(TextButton refreshBtn) {
-        toolbar.setRefreshButton(refreshBtn);
+        if (refreshBtn != null) {
+            refreshBtn.setText(I18N.DISPLAY.refresh());
+            toolbar.setRefreshButton(refreshBtn);
+        }
     }
 
     @Override

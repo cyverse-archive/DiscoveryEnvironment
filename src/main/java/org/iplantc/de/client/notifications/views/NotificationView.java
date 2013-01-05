@@ -71,4 +71,6 @@ public interface NotificationView extends IsWidget {
 
     void unmask();
 
+    public TextButton getRefreshButton();
+
 }
