@@ -23,7 +23,6 @@ import org.iplantc.de.client.analysis.views.AnalysesView.Presenter;
 import org.iplantc.de.client.analysis.views.AnalysisParamView;
 import org.iplantc.de.client.analysis.views.cells.AnalysisParamNameCell;
 import org.iplantc.de.client.analysis.views.cells.AnalysisParamValueCell;
-import org.iplantc.de.client.notifications.models.NotificationMessage;
 import org.iplantc.de.client.notifications.util.NotificationHelper;
 import org.iplantc.de.client.utils.NotifyInfo;
 
@@ -39,7 +38,6 @@ import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -48,6 +46,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -74,6 +73,7 @@ public class AnalysesPresenter implements Presenter,
         toolbar = new AnalysesToolbarViewImpl();
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
+        setRefreshButton(view.getRefreshButton());
     }
 
     @Override
@@ -195,6 +195,14 @@ public class AnalysesPresenter implements Presenter,
         setButtonState();
     }
 
+    @Override
+    public void setRefreshButton(TextButton refreshBtn) {
+        if (refreshBtn != null) {
+            refreshBtn.setText(I18N.DISPLAY.refresh());
+            toolbar.setRefreshButton(refreshBtn);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private ColumnModel<AnalysisParameter> buildColumnModel() {
         AnalysisParameterProperties props = GWT.create(AnalysisParameterProperties.class);
@@ -221,80 +229,65 @@ public class AnalysesPresenter implements Presenter,
     /**
      * Initializes the RpcProxy and BasePagingLoader to support paging for the AnalysesGrid.
      */
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> initRemoteLoader() {
-        RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Analysis>> proxy = new RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Analysis>>() {
+    private PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> initRemoteLoader() {
+        RpcProxy<PagingLoadConfig, PagingLoadResult<Analysis>> proxy = new RpcProxy<PagingLoadConfig, PagingLoadResult<Analysis>>() {
 
             @Override
-            public void load(FilterPagingLoadConfig loadConfig,
+            public void load(PagingLoadConfig loadConfig,
                     AsyncCallback<PagingLoadResult<Analysis>> callback) {
-                final FilterPagingLoadConfig pagingConfig = (FilterPagingLoadConfig)loadConfig;
-                Services.ANALYSIS_SERVICE
-                        .getAnalyses(UserInfo.getInstance().getWorkspaceId(), pagingConfig,
-                                new GetAnalysesServiceCallback(loadConfig,callback));
-           
-            
+                Services.ANALYSIS_SERVICE.getAnalyses(UserInfo.getInstance().getWorkspaceId(),
+                        loadConfig, new GetAnalysesServiceCallback(loadConfig, callback));
+
             }
         };
-        
 
-        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>(
+        final PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>> loader = new PagingLoader<PagingLoadConfig, PagingLoadResult<Analysis>>(
                 proxy);
         loader.setRemoteSort(true);
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Analysis, PagingLoadResult<Analysis>>(
+        loader.addLoadHandler(new LoadResultListStoreBinding<PagingLoadConfig, Analysis, PagingLoadResult<Analysis>>(
                 view.getListStore()));
 
         return loader;
 
     }
-    
+
     /**
-    * An AsyncCallback for the AnalysisServiceFacade that will load paged results into the AnalysesGrid.
-    *
-    * @author psarando
-    *
-    */
-        private final class GetAnalysesServiceCallback implements AsyncCallback<String> {
-            private final AsyncCallback<PagingLoadResult<Analysis>> callback;
-            
-            private final PagingLoadConfig loadConfig;
-            
-            public GetAnalysesServiceCallback(PagingLoadConfig loadConfig,
-                    AsyncCallback<PagingLoadResult<Analysis>> pagingCallback) {
-                this.callback = pagingCallback;
-                this.loadConfig = loadConfig;
+     * An AsyncCallback for the AnalysisServiceFacade that will load paged results into the AnalysesGrid.
+     * 
+     * @author psarando
+     * 
+     */
+    private final class GetAnalysesServiceCallback implements AsyncCallback<String> {
+        private final AsyncCallback<PagingLoadResult<Analysis>> callback;
+        private final PagingLoadConfig loadConfig;
+
+        public GetAnalysesServiceCallback(PagingLoadConfig loadConfig,
+                AsyncCallback<PagingLoadResult<Analysis>> pagingCallback) {
+            this.callback = pagingCallback;
+            this.loadConfig = loadConfig;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            JSONObject jsonResult = JsonUtil.getObject(result);
+            JSONArray items = JsonUtil.getArray(jsonResult, "analyses"); //$NON-NLS-1$
+            Number total = 0;
+            if (items != null) {
+                total = JsonUtil.getNumber(jsonResult, "total"); //$NON-NLS-1$
             }
+            AutoBean<AnalysesList> bean = AutoBeanCodex.decode(factory, AnalysesList.class, result);
+            List<Analysis> analyses = bean.as().getAnalysisList();
+            callbackResult = new PagingLoadResultBean<Analysis>(analyses, total.intValue(),
+                    loadConfig.getOffset());
+            callback.onSuccess(callbackResult);
 
-            @Override
-            public void onSuccess(String result) {
-                JSONObject jsonResult = JsonUtil.getObject(result);
-                JSONArray items = JsonUtil.getArray(jsonResult, "analyses"); //$NON-NLS-1$
-                Number total = 0;
-                if (items != null) {
-                    total = JsonUtil.getNumber(jsonResult, "total"); //$NON-NLS-1$
-                }
-                AutoBean<AnalysesList> bean = AutoBeanCodex.decode(factory, AnalysesList.class,
-                        result);
-                callbackResult = new PagingLoadResultBean<Analysis>(bean.as().getAnalysisList(), total,
-                        loadConfig.getOffset());
-                callback.onSuccess(callbackResult);
+        }
 
-            }
+        @Override
+        public void onFailure(Throwable caught) {
+            org.iplantc.core.uicommons.client.ErrorHandler.post(caught);
+        }
 
-    private void retrieveData() {
-        Services.ANALYSIS_SERVICE.getAnalyses(UserInfo.getInstance().getWorkspaceId(),
-                new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        AutoBean<AnalysesList> bean = AutoBeanCodex.decode(factory, AnalysesList.class,
-                                result);
-                        view.loadAnalyses(bean.as().getAnalysisList());
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.DISPLAY.analysesRetrievalFailure(), caught);
-                    }
-                });
     }
 
     private final class DeleteSeviceCallback implements AsyncCallback<String> {
@@ -389,11 +382,4 @@ public class AnalysesPresenter implements Presenter,
 
         }
     }
-
-    @Override
-    public void onFailure(Throwable caught) {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

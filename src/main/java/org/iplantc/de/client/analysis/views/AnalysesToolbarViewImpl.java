@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * @author sriram
@@ -35,6 +36,9 @@ public class AnalysesToolbarViewImpl implements AnalysesToolbarView {
 
     @UiField
     TextButton btnDelete;
+
+    @UiField
+    ToolBar menuToolBar;
 
     public AnalysesToolbarViewImpl() {
         this.widget = uiBinder.createAndBindUi(this);
@@ -79,5 +83,11 @@ public class AnalysesToolbarViewImpl implements AnalysesToolbarView {
     @UiHandler("btnViewParam")
     public void viewParamClicked(SelectEvent event) {
         presenter.onViewParamClicked();
+    }
+
+    @Override
+    public void setRefreshButton(TextButton refreshBtn) {
+        menuToolBar.insert(refreshBtn, 1);
+
     }
 }

@@ -5,7 +5,7 @@ import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadConfig;
 
 /**
  * Provides access to remote services for analyses management operations.
@@ -19,7 +19,7 @@ public class AnalysisServiceFacade {
      * @param pagingConfig optional remote paging and sorting configs.
      * @param callback executed when RPC call completes.
      */
-    public void getAnalyses(String workspaceId, FilterPagingLoadConfig pagingConfig,
+    public void getAnalyses(String workspaceId, PagingLoadConfig pagingConfig,
             AsyncCallback<String> callback) {
         StringBuilder address = new StringBuilder(DEProperties.getInstance().getMuleServiceBaseUrl());
 

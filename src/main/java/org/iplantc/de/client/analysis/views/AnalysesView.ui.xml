@@ -6,7 +6,8 @@
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
 	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
 	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar" 
-	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
 	
    <ui:with type="org.iplantc.core.uiapplications.client.images.Icons" field="icons"/>
    <ui:with type="org.iplantc.core.uiapplications.client.CommonAppDisplayStrings" field="strings" />
@@ -66,6 +67,10 @@
 									view="{gridView}" loadMask="true" columnReordering="true"
 									borders="false">
 								</grid:Grid>
+							</container:child>
+							<container:child layoutData="{bottomData}">
+								<paging:DEPagingToolbar pageSize="10"
+									ui:field="toolBar"></paging:DEPagingToolbar>
 							</container:child>
 						</container:VerticalLayoutContainer>
 					</gxt:FramedPanel>
