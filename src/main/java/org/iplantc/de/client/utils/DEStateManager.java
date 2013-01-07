@@ -52,24 +52,8 @@ public class DEStateManager {
     private boolean saveSession;
 
     private DEStateManager() {
-
-        Services.USER_SESSION_SERVICE.getUserPreferences(new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // by default enable save session
-                enableSessionSave();
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                loadPrerences(JsonUtil.getObject(result));
-                checkSettings();
-
-            }
-        });
-
         initListeners();
+        checkSettings();
     }
 
     private void enableSessionSave() {
@@ -81,10 +65,6 @@ public class DEStateManager {
         stop();
         saveSession = false;
         clearSession();
-    }
-
-    private void loadPrerences(JSONObject obj) {
-        UserSettings.getInstance().setValues(obj);
     }
 
     /**
@@ -170,8 +150,7 @@ public class DEStateManager {
             final byte[] tempHash = JsonUtil.generateHash(obj.toString());
             if (!ByteArrayComparer.arraysEqual(hash, tempHash)) {
                 Services.USER_SESSION_SERVICE.saveUserSession(obj, new SaveSessionCallback(savingMask,
-                        tempHash,
-                        callback));
+                        tempHash, callback));
             }
         } else {
             if (callback != null) {
@@ -188,16 +167,16 @@ public class DEStateManager {
         Services.USER_SESSION_SERVICE.saveUserPreferences(UserSettings.getInstance().toJson(),
                 new AsyncCallback<String>() {
 
-            @Override
-            public void onSuccess(String result) {
-                // intentionally do nothing
-            }
+                    @Override
+                    public void onSuccess(String result) {
+                        // intentionally do nothing
+                    }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                // intentionally do nothing, since the user is logging out or reloading the page
-            }
-        });
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // intentionally do nothing, since the user is logging out or reloading the page
+                    }
+                });
     }
 
     /**

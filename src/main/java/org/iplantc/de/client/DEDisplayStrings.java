@@ -1087,4 +1087,11 @@ public interface DEDisplayStrings extends CommonUIDisplayStrings {
      */
     String markAllasSeenSuccess();
 
+    /**
+     * text for default button in pref screen
+     * 
+     * @return
+     */
+    String restoreDefaults();
+
 }

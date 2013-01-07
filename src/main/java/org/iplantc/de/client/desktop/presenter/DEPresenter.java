@@ -7,8 +7,10 @@ import org.iplantc.core.uicommons.client.DEServiceFacade;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.DEProperties;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.models.UserSettings;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.client.I18N;
+import org.iplantc.de.client.Services;
 import org.iplantc.de.client.controllers.PipelineController;
 import org.iplantc.de.client.controllers.TitoController;
 import org.iplantc.de.client.desktop.views.DEView;
@@ -119,7 +121,27 @@ public class DEPresenter implements DEView.Presenter {
             public void onSuccess(Map<String, String> result) {
                 DEProperties.getInstance().initialize(result);
                 getUserInfo();
+                getUserPreferences();
                 setBrowserContextMenuEnabled(DEProperties.getInstance().isContextClickEnabled());
+            }
+        });
+    }
+
+    private void loadPrerences(JSONObject obj) {
+        UserSettings.getInstance().setValues(obj);
+    }
+
+    private void getUserPreferences() {
+        Services.USER_SESSION_SERVICE.getUserPreferences(new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                loadPrerences(JsonUtil.getObject(result));
             }
         });
     }

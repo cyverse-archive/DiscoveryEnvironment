@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+	<ui:with field="strings" type="org.iplantc.de.client.DEDisplayStrings" />
+
+	<ui:style>
+		.user_pref {
+			background-color: #fff;
+		}
+		.session_field {
+		padding-left:5px;
+	}
+	</ui:style>
+	<container:VerticalLayoutContainer ui:field="container" styleName="{style.user_pref}">
+		<g:HorizontalPanel spacing="3">
+
+			<form:CheckBox ui:field="cboNotifyEmail">
+			</form:CheckBox>
+			<form:FieldLabel text="{strings.notifyemail}"
+				labelSeparator="" labelWidth="300"></form:FieldLabel>
+		</g:HorizontalPanel>
+		<g:HorizontalPanel spacing="3">
+			<form:CheckBox ui:field="cboLastPath">
+			</form:CheckBox>
+			<form:FieldLabel text="{strings.rememberFileSectorPath}"
+				labelSeparator="" labelWidth="300">
+			</form:FieldLabel>
+		</g:HorizontalPanel>
+		<g:HorizontalPanel spacing="3" styleName="{style.session_field}">
+			<form:FieldLabel text="{strings.saveSession}"></form:FieldLabel>
+			<form:Radio ui:field="radioSaveSession" boxLabel="{strings.enabled}"
+				name="saveSession" />
+			<form:Radio ui:field="radioNoSaveSession" boxLabel="{strings.disabled}"
+				name="saveSession" />
+		</g:HorizontalPanel>
+	</container:VerticalLayoutContainer>
+</ui:UiBinder> 

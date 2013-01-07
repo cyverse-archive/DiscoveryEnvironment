@@ -17,6 +17,7 @@ import org.iplantc.de.client.factories.WindowConfigFactory;
 import org.iplantc.de.client.images.Resources;
 import org.iplantc.de.client.models.NotificationWindowConfig;
 import org.iplantc.de.client.notifications.util.NotificationHelper.Category;
+import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.client.util.WindowUtil;
 import org.iplantc.de.client.views.panels.ViewNotificationMenu;
 
@@ -263,7 +264,7 @@ public class DEViewImpl implements DEView {
                 new Listener<BaseEvent>() {
                     @Override
                     public void handleEvent(BaseEvent be) {
-                        // buildAndShowPreferencesDialog();
+                        buildAndShowPreferencesDialog();
                         userMenu.hide();
                     }
                 }, null));
@@ -278,6 +279,11 @@ public class DEViewImpl implements DEView {
                 }, null));
 
         return userMenu;
+    }
+
+    private void buildAndShowPreferencesDialog() {
+        PreferencesDialog d = new PreferencesDialog();
+        d.show();
     }
 
     private Menu buildHelpMenu() {
