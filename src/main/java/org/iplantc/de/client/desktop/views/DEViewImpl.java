@@ -4,9 +4,9 @@
 package org.iplantc.de.client.desktop.views;
 
 import org.iplantc.core.client.widgets.MenuHyperlink;
-import org.iplantc.core.client.widgets.PushButton;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.models.UserInfo;
+import org.iplantc.core.uicommons.client.widgets.PushButton;
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.I18N;
 import org.iplantc.de.client.collaborators.views.ManageCollaboratorsDailog;
