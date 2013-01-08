@@ -398,4 +398,19 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
         SharedDataApiServiceFacade.getInstance().getServiceData(wrapper, callback);
     }
 
+    @Override
+    public void getDataSearchHistory(AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "search-history";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void saveDataSearchHistory(String body, AsyncCallback<String> callback) {
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "search-history";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body);
+        DEServiceFacade.getInstance().getServiceData(wrapper, callback);
+
+    }
+
 }
