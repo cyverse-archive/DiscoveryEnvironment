@@ -43,6 +43,7 @@ public class DeDiskResourceWindow extends Gxt3IplantWindow {
         }
 
     }
+
     @Override
     public JSONObject getWindowState() {
         // Build config data
