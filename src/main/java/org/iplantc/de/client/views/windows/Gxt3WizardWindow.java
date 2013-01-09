@@ -39,6 +39,7 @@ public class Gxt3WizardWindow extends Gxt3IplantWindow {
             presenter.setAppTemplateFromJsonString(config.getWizardConfig().toString());
             this.setHeadingText(presenter.getAppTemplate().getLabel());
             presenter.go(this);
+            // KLUDGE JDS This call to forceLayout should not be necessary.
             this.forceLayout();
         } else {
             templateService.getTemplate(tag, new AsyncCallback<String>() {
@@ -52,6 +53,7 @@ public class Gxt3WizardWindow extends Gxt3IplantWindow {
                     presenter.setAppTemplateFromJsonString(json);
                     Gxt3WizardWindow.this.setHeadingText(presenter.getAppTemplate().getLabel());
                     presenter.go(Gxt3WizardWindow.this);
+                    // KLUDGE JDS This call to forceLayout should not be necessary.
                     Gxt3WizardWindow.this.forceLayout();
                 }
             });
