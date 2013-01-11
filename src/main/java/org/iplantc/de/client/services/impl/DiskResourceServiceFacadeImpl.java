@@ -413,4 +413,45 @@ public class DiskResourceServiceFacadeImpl implements DiskResourceServiceFacade 
 
     }
 
+    /**
+     * restore a deleted disk resources
+     * 
+     * @param body
+     * @param callback
+     */
+    @Override
+    public void restoreDiskResource(JSONObject body, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix + ".restore"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
+                body.toString());
+        callService(callback, wrapper);
+    }
+
+    /**
+     * empty user's trash
+     * 
+     * @param user
+     * @param callback
+     */
+    @Override
+    public void emptyTrash(String user, AsyncCallback<String> callback) {
+        String address = serviceNamePrefix + ".empty-trash"; //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
+        callService(callback, wrapper);
+    }
+
+    /**
+     * get users trash path
+     * 
+     * @param userName
+     * @param callback
+     */
+    @Override
+    public void getUserTrashPath(String userName, AsyncCallback<String> callback) {
+        String fullAddress = serviceNamePrefix
+                + ".user-trash-dir" + "?path=" + URL.encodePathSegment(userName); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, fullAddress);
+        callService(callback, wrapper);
+    }
+
 }
