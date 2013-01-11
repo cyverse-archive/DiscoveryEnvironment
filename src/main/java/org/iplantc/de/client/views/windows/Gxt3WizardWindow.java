@@ -17,14 +17,12 @@ public class Gxt3WizardWindow extends Gxt3IplantWindow {
     private final AppUserServiceFacade templateService = Services.USER_APP_SERVICE;
     
     public Gxt3WizardWindow(String tag, WizardWindowConfig config) {
-        super(tag, false, true, true, true, config);
+        super(tag, config);
         setSize("640", "410");
         setBorders(false);
         
-        
         presenter = GWT.create(AppWizardView.Presenter.class);
         init(presenter, config);
-        
     }
 
     /**
@@ -39,9 +37,10 @@ public class Gxt3WizardWindow extends Gxt3IplantWindow {
         
         if (config != null) {
             presenter.setAppTemplateFromJsonString(config.getWizardConfig().toString());
-            presenter.getAppTemplate().getLabel();
-            GWT.log("Wizard Config had template");
+            this.setHeadingText(presenter.getAppTemplate().getLabel());
             presenter.go(this);
+            // KLUDGE JDS This call to forceLayout should not be necessary.
+            this.forceLayout();
         } else {
             templateService.getTemplate(tag, new AsyncCallback<String>() {
                 @Override
@@ -52,8 +51,10 @@ public class Gxt3WizardWindow extends Gxt3IplantWindow {
                 @Override
                 public void onSuccess(String json) {
                     presenter.setAppTemplateFromJsonString(json);
-                    presenter.getAppTemplate().getLabel();
+                    Gxt3WizardWindow.this.setHeadingText(presenter.getAppTemplate().getLabel());
                     presenter.go(Gxt3WizardWindow.this);
+                    // KLUDGE JDS This call to forceLayout should not be necessary.
+                    Gxt3WizardWindow.this.forceLayout();
                 }
             });
         }
