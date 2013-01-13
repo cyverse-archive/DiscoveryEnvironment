@@ -5,11 +5,11 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
-import org.iplantc.core.client.widgets.validator.BasicEmailValidator;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapplications.client.models.autobeans.App;
 import org.iplantc.core.uiapplications.client.util.AnalysisUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.validators.BasicEmailValidator;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
