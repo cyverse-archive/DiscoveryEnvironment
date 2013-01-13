@@ -9,10 +9,10 @@ import org.iplantc.admin.belphegor.client.models.JsReferenceGenome;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
-import org.iplantc.core.client.widgets.Hyperlink;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.core.uicommons.client.widgets.Hyperlink;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
