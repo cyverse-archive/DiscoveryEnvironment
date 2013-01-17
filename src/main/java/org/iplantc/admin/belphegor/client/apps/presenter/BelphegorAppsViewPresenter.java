@@ -18,8 +18,7 @@ import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.core.uiapplications.client.views.AppsView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
-import org.iplantc.core.uicommons.client.views.dialogs.IPlantDialog;
-import org.iplantc.core.uicommons.client.views.panels.IPlantPromptPanel;
+import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantPromptDialog;
 import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
@@ -39,6 +38,8 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.box.PromptMessageBox;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
@@ -121,38 +122,38 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         if (selectedAppGroup.getAppCount() > 0) {
             ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
             return;
-        }
+         }
 
-        IPlantDialog dlg = new IPlantDialog(I18N.DISPLAY.add(), 340, new IPlantPromptPanel(
-                I18N.DISPLAY.addCategoryPrompt()) {
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(I18N.DISPLAY.add(), 0, "", null);
+        dlg.setHeadingText(I18N.DISPLAY.addCategoryPrompt());
+        dlg.addOkButtonSelectHandler(new SelectHandler() {
+
             @Override
-            public void handleOkClick() {
-                final String name = field.getValue();
+            public void onSelect(SelectEvent event) {
+
+                final String name = dlg.getFieldText();
 
                 view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
-                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(),
-                        new AdminServiceCallback() {
-                            @Override
-                            protected void onSuccess(JSONObject jsonResult) {
+                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(), new AdminServiceCallback() {
+                    @Override
+                    protected void onSuccess(JSONObject jsonResult) {
 
-                                // Get result
-                                AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
-                                        AppGroup.class, jsonResult.get("category").toString());
+                        // Get result
+                        AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class, jsonResult.get("category").toString());
 
-                                view.getTreeStore().add(selectedAppGroup, group.as());
-                                view.unMaskCenterPanel();
-                            }
+                        view.getTreeStore().add(selectedAppGroup, group.as());
+                        view.unMaskCenterPanel();
+                    }
 
-                            @Override
-                            protected String getErrorMessage() {
-                                view.unMaskCenterPanel();
-                                return I18N.ERROR.addAppGroupError(name);
-                            }
-                        });
+                    @Override
+                    protected String getErrorMessage() {
+                        view.unMaskCenterPanel();
+                        return I18N.ERROR.addAppGroupError(name);
+                    }
+                });
 
             }
         });
-        dlg.disableOkButton();
         dlg.show();
 
     }
