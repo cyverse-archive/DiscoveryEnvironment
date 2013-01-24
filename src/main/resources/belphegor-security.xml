@@ -17,6 +17,7 @@
 
     <http use-expressions="true" entry-point-ref="casAuthEntryPoint">
         <intercept-url pattern="/belphegor/logout" access="permitAll" />
+        <intercept-url pattern="/belphegor/logged-out" access="permitAll" />
         <intercept-url pattern="/**" access="hasAnyRole(${org.iplantc.belphegor.cas.authorized-groups})" />
         <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
         <logout logout-success-url="/belphegor/logout" />
