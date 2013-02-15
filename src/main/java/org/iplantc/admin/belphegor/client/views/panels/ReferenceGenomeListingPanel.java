@@ -12,9 +12,8 @@ import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallbac
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.I18N;
-import org.iplantc.core.uicommons.client.widgets.Hyperlink;
+import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
-import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -36,6 +35,8 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -141,22 +142,21 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                         + "' src='./images/exclamation.png'/>&nbsp;" + name;
             }
 
-            Hyperlink link = new Hyperlink(name, "link_name"); //$NON-NLS-1$
-            link.addListener(Events.OnClick, new RefNameClickHandler(model));
-            link.setWidth(name.length());
+            IPlantAnchor link = new IPlantAnchor(name, -1, new RefNameClickHandler(model));
             return link;
         }
     }
 
-    private final class RefNameClickHandler implements Listener<BaseEvent> {
+    // private final class RefNameClickHandler implements Listener<BaseEvent> {
+    private final class RefNameClickHandler implements ClickHandler {
         private final ReferenceGenome model;
 
         private RefNameClickHandler(ReferenceGenome model) {
             this.model = model;
         }
-
+        
         @Override
-        public void handleEvent(BaseEvent be) {
+        public void onClick(ClickEvent event) {
             showRefEditDialog(model, RefGenomeFormPanel.MODE.EDIT, new EditCompleteCallback());
         }
     }

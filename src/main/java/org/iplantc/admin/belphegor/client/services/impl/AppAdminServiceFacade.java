@@ -7,7 +7,6 @@ import org.iplantc.core.uiapplications.client.services.AppServiceFacade;
 import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
@@ -209,8 +208,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
     }
 
     @Override
-    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset,
-            SortDir sortDir, AsyncCallback<String> callback) {
+    public void getPagedApps(String appGroupId, int limit, String sortField, int offset, com.sencha.gxt.data.shared.SortDir sortDir, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }

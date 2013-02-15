@@ -3,9 +3,9 @@ package org.iplantc.admin.belphegor.client.services.impl;
 import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.core.uiapplications.client.services.AppUserServiceFacade;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.data.shared.SortDir;
 
 /**
  * This class is a dummy class to satisfy GWT deferred-binding. By design, the Belphegor admin module
