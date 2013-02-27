@@ -1,6 +1,6 @@
 package org.iplantc.admin.belphegor.client.apps.views.cells;
 
-import org.iplantc.core.uiapplications.client.models.autobeans.AppFeedback;
+import org.iplantc.core.uiapps.client.models.autobeans.AppFeedback;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;

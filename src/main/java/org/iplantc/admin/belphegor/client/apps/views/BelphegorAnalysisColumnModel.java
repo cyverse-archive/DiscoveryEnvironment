@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAnalysisUserRatingCell;
-import org.iplantc.core.uiapplications.client.CommonAppDisplayStrings;
-import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.models.autobeans.App;
-import org.iplantc.core.uiapplications.client.models.autobeans.AppFeedback;
-import org.iplantc.core.uiapplications.client.models.autobeans.AppProperties;
-import org.iplantc.core.uiapplications.client.views.AppsView;
-import org.iplantc.core.uiapplications.client.views.cells.AppHyperlinkCell;
+import org.iplantc.core.uiapps.client.CommonAppDisplayStrings;
+import org.iplantc.core.uiapps.client.I18N;
+import org.iplantc.core.uiapps.client.models.autobeans.App;
+import org.iplantc.core.uiapps.client.models.autobeans.AppFeedback;
+import org.iplantc.core.uiapps.client.models.autobeans.AppProperties;
+import org.iplantc.core.uiapps.client.views.AppsView;
+import org.iplantc.core.uiapps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.core.uicommons.client.events.EventBus;
 
 import com.google.gwt.core.client.GWT;

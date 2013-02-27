@@ -1,6 +1,6 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
-import org.iplantc.core.uiapplications.client.views.widgets.AppSearchField3;
+import org.iplantc.core.uiapps.client.views.widgets.AppSearchField3;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

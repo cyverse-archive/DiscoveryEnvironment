@@ -1,9 +1,9 @@
 package org.iplantc.admin.belphegor.client.apps.views.editors;
 
 import org.iplantc.admin.belphegor.client.Constants;
-import org.iplantc.core.uiapplications.client.I18N;
-import org.iplantc.core.uiapplications.client.models.autobeans.App;
-import org.iplantc.core.uiapplications.client.models.autobeans.AppValidators;
+import org.iplantc.core.uiapps.client.I18N;
+import org.iplantc.core.uiapps.client.models.autobeans.App;
+import org.iplantc.core.uiapps.client.models.autobeans.AppValidators;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;

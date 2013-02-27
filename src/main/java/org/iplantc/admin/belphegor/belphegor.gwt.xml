@@ -24,7 +24,7 @@
 
 	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
 	<inherits name="org.iplantc.core.ui-commons"/>
-	<inherits name="org.iplantc.core.applications"/>
+	<inherits name="org.iplantc.core.uiapps.Apps"/>
 	
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
@@ -32,10 +32,10 @@
    
    <!-- ui-applications deferred binding rules -->
    <replace-with class="org.iplantc.admin.belphegor.client.services.impl.AppAdminServiceFacade">
-      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppServiceFacade"/>
+      <when-type-is class="org.iplantc.core.uiapps.client.services.AppServiceFacade"/>
    </replace-with>
    <replace-with class="org.iplantc.admin.belphegor.client.services.impl.AppAdminUserServiceFacade">
-      <when-type-is class="org.iplantc.core.uiapplications.client.services.AppUserServiceFacade"/>
+      <when-type-is class="org.iplantc.core.uiapps.client.services.AppUserServiceFacade"/>
    </replace-with>
    
    <replace-with class="org.iplantc.core.uicommons.client.widgets.IPlantAnchorDefaultAppearance">

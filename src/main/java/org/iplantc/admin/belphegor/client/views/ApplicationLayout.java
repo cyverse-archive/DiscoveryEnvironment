@@ -4,8 +4,8 @@ import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
-import org.iplantc.core.uiapplications.client.views.AppsView;
-import org.iplantc.core.uiapplications.client.views.AppsViewImpl;
+import org.iplantc.core.uiapps.client.views.AppsView;
+import org.iplantc.core.uiapps.client.views.AppsViewImpl;
 import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
