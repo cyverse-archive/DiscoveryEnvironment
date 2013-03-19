@@ -188,7 +188,7 @@ public class ApplicationLayout extends Viewport {
         // Create view and presenter and add it here.
         SimpleContainer appViewContentPanel = new SimpleContainer();
         appViewContentPanel.setPixelSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        presenter.go(appViewContentPanel);
+        presenter.go(appViewContentPanel, null, null);
         appItem.add(appViewContentPanel);
         // appItem.add(panel);
 
