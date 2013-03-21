@@ -30,6 +30,22 @@
         </init-param>
     </servlet>
     <servlet>
+        <servlet-name>loggedOutServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasLoggedOutServlet</servlet-class>
+        <init-param>
+            <param-name>propertyNamePrefix</param-name>
+            <param-value>org.iplantc.belphegor</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>accessDeniedServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasAccessDeniedServlet</servlet-class>
+        <init-param>
+            <param-name>propertyNamePrefix</param-name>
+            <param-value>org.iplantc.belphegor</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
         <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
     </servlet>
@@ -62,6 +78,14 @@
     <servlet-mapping>
         <servlet-name>logoutSuccessServlet</servlet-name>
         <url-pattern>/belphegor/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>loggedOutServlet</servlet-name>
+        <url-pattern>/belphegor/logged-out</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>accessDeniedServlet</servlet-name>
+        <url-pattern>/belphegor/access-denied</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>deServiceDispatcher</servlet-name>

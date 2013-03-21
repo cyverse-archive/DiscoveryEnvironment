@@ -17,10 +17,12 @@
 
     <http use-expressions="true" entry-point-ref="casAuthEntryPoint">
         <intercept-url pattern="/belphegor/logout" access="permitAll" />
+        <intercept-url pattern="/belphegor/logged-out" access="permitAll" />
         <intercept-url pattern="/**" access="hasAnyRole(${org.iplantc.belphegor.cas.authorized-groups})" />
         <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
         <logout logout-success-url="/belphegor/logout" />
         <custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />
         <custom-filter ref="singleLogoutFilter" before="CAS_FILTER" />
+        <access-denied-handler error-page="/belphegor/access-denied" />
     </http>
 </beans:beans>
