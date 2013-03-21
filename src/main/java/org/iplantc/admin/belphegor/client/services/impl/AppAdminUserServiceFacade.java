@@ -88,11 +88,6 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void editApp(String id, AsyncCallback<String> asyncCallback) {
-        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
-    }
-
-    @Override
     public void copyApp(String id, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
