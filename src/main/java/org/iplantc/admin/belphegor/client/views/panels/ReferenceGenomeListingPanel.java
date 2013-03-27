@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.iplantc.admin.belphegor.client.images.Resources;
 import org.iplantc.admin.belphegor.client.models.JsReferenceGenome;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
@@ -85,7 +85,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     private Button buildAddButton() {
         Button b = new Button(I18N.DISPLAY.add());
         b.setId(ID_BTN_ADD);
-        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.category()));
+        b.setIcon(AbstractImagePrototype.create(IplantResources.RESOURCES.category()));
         b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
             @Override

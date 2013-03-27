@@ -8,7 +8,7 @@
              xmlns:MyWidgets="urn:import:org.iplantc.core.uiapps.client.views.widgets">
              
    <ui:with field="icons"
-            type="org.iplantc.core.uiapps.client.images.Icons"/>
+            type="org.iplantc.core.resources.client.IplantResources"/>
    <ui:with field="strings" 
             type="org.iplantc.admin.belphegor.client.DisplayStrings"/>
    <ui:with field="margins0"
@@ -37,7 +37,7 @@
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="renameCategory"
                              text="{strings.rename}"
-                             icon="{icons.requestTool}"/>
+                             icon="{icons.fileRename}"/>
       </toolbar:child>   
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="delete"
