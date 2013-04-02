@@ -10,7 +10,7 @@
    <ui:with field="icons"
             type="org.iplantc.core.resources.client.IplantResources"/>
    <ui:with field="strings" 
-            type="org.iplantc.admin.belphegor.client.DisplayStrings"/>
+            type="org.iplantc.core.resources.client.messages.IplantDisplayStrings"/>
    <ui:with field="margins0"
             type="com.sencha.gxt.core.client.util.Margins">
       <ui:attributes top="0"

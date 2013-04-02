@@ -5,7 +5,7 @@
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button">
-   <ui:with type="org.iplantc.admin.belphegor.client.DisplayStrings" field="strings"/>
+   <ui:with type="org.iplantc.core.resources.client.messages.IplantDisplayStrings" field="strings"/>
    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
             field="verticalLayoutData">
     <ui:attributes width="1" height="-1" />
