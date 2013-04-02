@@ -3,9 +3,8 @@ package org.iplantc.admin.belphegor.client.apps.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAnalysisUserRatingCell;
-import org.iplantc.core.uiapps.client.CommonAppDisplayStrings;
-import org.iplantc.core.uiapps.client.I18N;
 import org.iplantc.core.uiapps.client.models.autobeans.App;
 import org.iplantc.core.uiapps.client.models.autobeans.AppFeedback;
 import org.iplantc.core.uiapps.client.models.autobeans.AppProperties;
@@ -22,11 +21,11 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 public class BelphegorAnalysisColumnModel extends ColumnModel<App> {
 
     public BelphegorAnalysisColumnModel(AppsView view) {
-        super(createColumnConfigList(EventBus.getInstance(), I18N.DISPLAY, view));
+        super(createColumnConfigList(EventBus.getInstance(),  view));
     }
 
     public static List<ColumnConfig<App, ?>> createColumnConfigList(final EventBus eventBus,
- final CommonAppDisplayStrings displayStrings, AppsView view) {
+ AppsView view) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<ColumnConfig<App, ?>>();
 

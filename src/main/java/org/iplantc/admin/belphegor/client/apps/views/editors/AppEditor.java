@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.apps.views.editors;
 
 import org.iplantc.admin.belphegor.client.Constants;
-import org.iplantc.core.uiapps.client.I18N;
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.core.uiapps.client.models.autobeans.App;
 import org.iplantc.core.uiapps.client.models.autobeans.AppValidators;
 

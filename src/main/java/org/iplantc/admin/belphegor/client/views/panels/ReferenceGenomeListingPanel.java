@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.JsReferenceGenome;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
@@ -11,7 +12,6 @@ import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallbac
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -45,11 +45,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * 
+ *
  * A grid panel to display a list of reference genomes
- * 
+ *
  * @author sriram
- * 
+ *
  */
 public class ReferenceGenomeListingPanel extends ContentPanel {
 
@@ -154,7 +154,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         private RefNameClickHandler(ReferenceGenome model) {
             this.model = model;
         }
-        
+
         @Override
         public void onClick(ClickEvent event) {
             showRefEditDialog(model, RefGenomeFormPanel.MODE.EDIT, new EditCompleteCallback());
@@ -183,7 +183,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
         @Override
         protected void onSuccess(JSONObject jsonResult) {
-            updateRefGenome(parseResult(jsonResult)); 
+            updateRefGenome(parseResult(jsonResult));
             closeDialog();
         }
 
@@ -232,7 +232,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
             /**
              * Fires on key press.
-             * 
+             *
              * @param event the component event
              */
             @Override

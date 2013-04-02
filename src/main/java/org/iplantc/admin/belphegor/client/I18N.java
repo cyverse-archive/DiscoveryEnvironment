@@ -1,14 +1,15 @@
 package org.iplantc.admin.belphegor.client;
 
-import com.google.gwt.core.client.GWT;
+import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.core.resources.client.messages.IplantErrorStrings;
 
 /**
  * Provides static access to localized strings.
- * 
+ *
  * @author lenards
- * 
+ *
  */
 public class I18N {
-    public static final DisplayStrings DISPLAY = (DisplayStrings)GWT.create(DisplayStrings.class);
-    public static final ErrorStrings ERROR = (ErrorStrings)GWT.create(ErrorStrings.class);
+    public static final IplantDisplayStrings DISPLAY = org.iplantc.core.resources.client.messages.I18N.DISPLAY;
+    public static final IplantErrorStrings ERROR = org.iplantc.core.resources.client.messages.I18N.ERROR;
 }

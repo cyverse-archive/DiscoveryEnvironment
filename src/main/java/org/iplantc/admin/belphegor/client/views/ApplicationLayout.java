@@ -1,12 +1,12 @@
 package org.iplantc.admin.belphegor.client.views;
 
 import org.iplantc.admin.belphegor.client.Constants;
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
 import org.iplantc.core.uiapps.client.views.AppsView;
 import org.iplantc.core.uiapps.client.views.AppsViewImpl;
-import org.iplantc.core.uicommons.client.I18N;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
@@ -44,7 +44,7 @@ import com.sencha.gxt.widget.core.client.menu.Menu;
 
 /**
  * Defines the overall layout for the root panel of the web application.
- * 
+ *
  * @author sriram
  */
 public class ApplicationLayout extends Viewport {
@@ -115,7 +115,7 @@ public class ApplicationLayout extends Viewport {
 
     /**
      * Replace the contents of the center panel.
-     * 
+     *
      * @param view a new component to set in the center of the BorderLayout.
      */
     public void replaceCenterPanel(Component view) {
@@ -139,7 +139,7 @@ public class ApplicationLayout extends Viewport {
 
     /**
      * Used to place GXT3 widgets inside the center panel.
-     * 
+     *
      * @param view
      */
     public void replaceCenterPanel(com.sencha.gxt.widget.core.client.Component view) {
@@ -311,9 +311,9 @@ public class ApplicationLayout extends Viewport {
 
     /**
      * A custom label class used in header to act/style like a menus
-     * 
+     *
      * @author sriram
-     * 
+     *
      */
     private class CustomLabel extends Label {
 

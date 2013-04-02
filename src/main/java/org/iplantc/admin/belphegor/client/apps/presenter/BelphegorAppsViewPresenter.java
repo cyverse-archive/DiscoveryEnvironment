@@ -19,7 +19,6 @@ import org.iplantc.core.uiapps.client.views.AppsView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantPromptDialog;
-import org.iplantc.de.client.DeCommonI18N;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.gwt.core.client.GWT;
@@ -44,19 +43,19 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  * Presenter class for the Belphegor <code>AppsView</code>.
- * 
+ *
  * The belphegor uses a different {@link AppServiceFacade} implementation than the one used in the
  * Discovery Environment. Through the use of deferred binding, the different {@link AppServiceFacade}
  * implementations are resolved, enabling the ability to reuse code.
- * 
+ *
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
- * 
+ *
  * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
- * 
- * 
+ *
+ *
  * @author jstroot
- * 
+ *
  */
 public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
@@ -133,7 +132,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
                 final String name = dlg.getFieldText();
 
-                view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
+                view.maskCenterPanel(I18N.DISPLAY.loadingMask());
                 Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(), new AdminServiceCallback() {
                     @Override
                     protected void onSuccess(JSONObject jsonResult) {
@@ -178,7 +177,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 Dialog btn = (Dialog)event.getSource();
                 String text = btn.getHideButton().getItemId();
                 if (text.equals(PredefinedButton.OK.name())) {
-                    view.maskWestPanel(DeCommonI18N.DISPLAY.loadingMask());
+                    view.maskWestPanel(I18N.DISPLAY.loadingMask());
                     Services.ADMIN_APP_SERVICE.renameAppGroup(selectedAppGroup.getId(),
                             field.getText(), new AsyncCallback<String>() {
 
@@ -211,22 +210,22 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         // Determine if the current selection is an AnalysisGroup
         if(getSelectedAppGroup() != null){
             final AppGroup selectedAppGroup = getSelectedAppGroup();
-            
+
             // Determine if the selected AnalysisGroup can be deleted.
             if(selectedAppGroup.getAppCount() > 0){
                 ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
-                return; 
+                return;
             }
-            
+
             ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteAppGroup(selectedAppGroup.getName()));
             msgBox.addHideHandler(new HideHandler() {
-                
+
                 @Override
                 public void onHide(HideEvent event) {
                     Dialog btn = (Dialog)event.getSource();
                     String text = btn.getHideButton().getItemId();
                     if (text.equals(PredefinedButton.YES.name())) {
-                        view.maskWestPanel(DeCommonI18N.DISPLAY.loadingMask());
+                        view.maskWestPanel(I18N.DISPLAY.loadingMask());
                         Services.ADMIN_APP_SERVICE.deleteAppGroup(selectedAppGroup.getId(),
                                 new AsyncCallback<String>() {
 
@@ -264,7 +263,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                     Dialog btn = (Dialog)event.getSource();
                     String text = btn.getHideButton().getItemId();
                     if (text.equals(PredefinedButton.YES.name())) {
-                        view.maskCenterPanel(DeCommonI18N.DISPLAY.loadingMask());
+                        view.maskCenterPanel(I18N.DISPLAY.loadingMask());
                         Services.ADMIN_APP_SERVICE.deleteApplication(selectedApp.getId(),
                                 new AsyncCallback<String>() {
 
