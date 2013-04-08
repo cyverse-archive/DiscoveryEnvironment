@@ -4,7 +4,6 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
-import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
@@ -26,6 +25,7 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -43,19 +43,19 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  * Presenter class for the Belphegor <code>AppsView</code>.
- *
+ * 
  * The belphegor uses a different {@link AppServiceFacade} implementation than the one used in the
  * Discovery Environment. Through the use of deferred binding, the different {@link AppServiceFacade}
  * implementations are resolved, enabling the ability to reuse code.
- *
+ * 
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
- *
+ * 
  * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
- *
- *
+ * 
+ * 
  * @author jstroot
- *
+ * 
  */
 public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
@@ -63,11 +63,13 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     private final BelphegorAppsToolbar toolbar;
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
 
-    public BelphegorAppsViewPresenter(final AppsView view) {
-        super(view);
+    @Inject
+    public BelphegorAppsViewPresenter(final AppsView view, final AppGroupProxy proxy,
+            final BelphegorAppsToolbar toolbar) {
+        super(view, proxy, null);
 
-        toolbar = new BelphegorAppsToolbarImpl();
-        view.setNorthWidget(toolbar);
+        this.toolbar = toolbar;
+        view.setNorthWidget(this.toolbar);
         this.toolbar.setPresenter(this);
     }
 
@@ -121,7 +123,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         if (selectedAppGroup.getAppCount() > 0) {
             ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
             return;
-         }
+        }
 
         final IPlantPromptDialog dlg = new IPlantPromptDialog(I18N.DISPLAY.add(), 0, "", null);
         dlg.setHeadingText(I18N.DISPLAY.addCategoryPrompt());
@@ -133,23 +135,25 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 final String name = dlg.getFieldText();
 
                 view.maskCenterPanel(I18N.DISPLAY.loadingMask());
-                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(), new AdminServiceCallback() {
-                    @Override
-                    protected void onSuccess(JSONObject jsonResult) {
+                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(),
+                        new AdminServiceCallback() {
+                            @Override
+                            protected void onSuccess(JSONObject jsonResult) {
 
-                        // Get result
-                        AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class, jsonResult.get("category").toString());
+                                // Get result
+                                AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class,
+                                        jsonResult.get("category").toString());
 
-                        view.getTreeStore().add(selectedAppGroup, group.as());
-                        view.unMaskCenterPanel();
-                    }
+                                view.getTreeStore().add(selectedAppGroup, group.as());
+                                view.unMaskCenterPanel();
+                            }
 
-                    @Override
-                    protected String getErrorMessage() {
-                        view.unMaskCenterPanel();
-                        return I18N.ERROR.addAppGroupError(name);
-                    }
-                });
+                            @Override
+                            protected String getErrorMessage() {
+                                view.unMaskCenterPanel();
+                                return I18N.ERROR.addAppGroupError(name);
+                            }
+                        });
 
             }
         });
@@ -178,8 +182,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 String text = btn.getHideButton().getItemId();
                 if (text.equals(PredefinedButton.OK.name())) {
                     view.maskWestPanel(I18N.DISPLAY.loadingMask());
-                    Services.ADMIN_APP_SERVICE.renameAppGroup(selectedAppGroup.getId(),
-                            field.getText(), new AsyncCallback<String>() {
+                    Services.ADMIN_APP_SERVICE.renameAppGroup(selectedAppGroup.getId(), field.getText(),
+                            new AsyncCallback<String>() {
 
                                 @Override
                                 public void onSuccess(String result) {
@@ -208,16 +212,17 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
     @Override
     public void onDeleteClicked() {
         // Determine if the current selection is an AnalysisGroup
-        if(getSelectedAppGroup() != null){
+        if (getSelectedAppGroup() != null) {
             final AppGroup selectedAppGroup = getSelectedAppGroup();
 
             // Determine if the selected AnalysisGroup can be deleted.
-            if(selectedAppGroup.getAppCount() > 0){
+            if (selectedAppGroup.getAppCount() > 0) {
                 ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
                 return;
             }
 
-            ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.confirmDeleteAppGroup(selectedAppGroup.getName()));
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(),
+                    I18N.DISPLAY.confirmDeleteAppGroup(selectedAppGroup.getName()));
             msgBox.addHideHandler(new HideHandler() {
 
                 @Override
@@ -252,7 +257,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             });
             msgBox.show();
 
-        } else if(getSelectedApp() != null){
+        } else if (getSelectedApp() != null) {
             final App selectedApp = getSelectedApp();
             ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(),
                     I18N.DISPLAY.confirmDeleteAppTitle());
@@ -312,9 +317,9 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                         }
                     }
 
-                    MessageBox msgBox = new MessageBox(
-                            I18N.DISPLAY.restoreAppSucessMsgTitle(), I18N.DISPLAY.restoreAppSucessMsg(
-                                    selectedApp.getName(), names_display.toString()));
+                    MessageBox msgBox = new MessageBox(I18N.DISPLAY.restoreAppSucessMsgTitle(),
+                            I18N.DISPLAY.restoreAppSucessMsg(selectedApp.getName(),
+                                    names_display.toString()));
                     msgBox.setIcon(MessageBox.ICONS.info());
                     msgBox.setPredefinedButtons(PredefinedButton.OK);
                     msgBox.show();
@@ -337,8 +342,6 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
             }
         });
     }
-
-
 
     @Override
     public void onAppNameSelected(final App app) {
