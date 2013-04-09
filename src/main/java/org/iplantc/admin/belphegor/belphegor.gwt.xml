@@ -7,23 +7,11 @@
   "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to='belphegor'>
 	<!-- Inherit the core Web Toolkit stuff. -->
-	<inherits name='com.google.gwt.user.User' />
-
 	<inherits name='com.google.gwt.user.theme.standard.Standard' />
 
-	<inherits name="com.google.gwt.i18n.I18N" />
-	<inherits name="com.google.gwt.resources.Resources" />
-	<inherits name='com.extjs.gxt.ui.GXT' />
-    <inherits name='com.sencha.gxt.ui.GXT' />
     <inherits name="com.google.gwt.editor.Editor" />
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
     
-    <inherits name="com.google.gwt.uibinder.UiBinder" />
-    
-	<inherits name="org.iplantc.core.JsonUtil" />
- <inherits name="com.google.gwt.inject.Inject"/>
-	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
-	<inherits name="org.iplantc.core.ui-commons"/>
 	<inherits name="org.iplantc.core.uiapps.Apps"/>
 	
 	<!-- Specify the paths for translatable code -->
