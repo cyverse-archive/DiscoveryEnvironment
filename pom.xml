@@ -200,7 +200,7 @@
 					<archive>
 						<manifestEntries>
                             <Build-Version>${BUILD_TAG}</Build-Version>
-                            <Jenkins-Build-Number>${buildNumber}</Jenkins-Build-Number>
+                            <Build-Number>${BUILD_NUMBER}</Build-Number>
 						</manifestEntries>
 					</archive>
 				</configuration>
