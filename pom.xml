@@ -200,7 +200,10 @@
 					<archive>
 						<manifestEntries>
                             <Build-Version>${BUILD_TAG}</Build-Version>
+                            <Build-ID>${BUILD_ID}</Build-ID>
                             <Build-Number>${BUILD_NUMBER}</Build-Number>
+                            <Git-Branch>${GIT_BRANCH}</Git-Branch>
+                            <Git-Commit>${GIT_COMMIT}</Git-Commit>
 						</manifestEntries>
 					</archive>
 				</configuration>
