@@ -44,7 +44,7 @@
 		<!-- iPlant Dependencies -->
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
-			<artifactId>applications</artifactId>
+			<artifactId>ui-applications</artifactId>
 			<version>gxt3Sandbox-SNAPSHOT</version>
 		</dependency>
 		<dependency>
