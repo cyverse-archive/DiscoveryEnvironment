@@ -199,7 +199,11 @@
 					</manifest>
 					<archive>
 						<manifestEntries>
-							<Build-Version>${BUILD_TAG}</Build-Version>
+                            <Jenkins-Build-Version>${BUILD_TAG}</Jenkins-Build-Version>
+                            <Jenkins-Build-ID>${BUILD_ID}</Jenkins-Build-ID>
+                            <Jenkins-Build-Number>${BUILD_NUMBER}</Jenkins-Build-Number>
+                            <Git-Branch>${GIT_BRANCH}</Git-Branch>
+                            <Git-Commit>${GIT_COMMIT}</Git-Commit>
 						</manifestEntries>
 					</archive>
 				</configuration>
