@@ -107,4 +107,9 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
+
+    @Override
+    public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+    }
 }
