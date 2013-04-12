@@ -144,7 +144,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                                 AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class,
                                         jsonResult.get("category").toString());
 
-                                view.getTreeStore().add(selectedAppGroup, group.as());
+                                view.addAppGroup(selectedAppGroup, group.as());
                                 view.unMaskCenterPanel();
                             }
 
@@ -190,7 +190,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                                     AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
                                             AppGroup.class, result);
                                     selectedAppGroup.setName(group.as().getName());
-                                    view.getTreeStore().update(selectedAppGroup);
+                                    view.updateAppGroup(selectedAppGroup);
                                     view.unMaskWestPanel();
                                 }
 
