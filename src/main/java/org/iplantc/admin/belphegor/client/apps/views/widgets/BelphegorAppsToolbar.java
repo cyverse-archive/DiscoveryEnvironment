@@ -1,5 +1,7 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
+import org.iplantc.core.uiapps.client.views.widgets.proxy.AppSearchRpcProxy;
+
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface BelphegorAppsToolbar extends IsWidget {
@@ -23,4 +25,6 @@ public interface BelphegorAppsToolbar extends IsWidget {
     void setRestoreButtonEnabled(boolean enabled);
 
     void setPresenter(Presenter presenter);
+
+    AppSearchRpcProxy getAppSearchRpcProxy();
 }

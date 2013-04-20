@@ -27,6 +27,9 @@
             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
       <ui:attributes margins="{margins0}" />
    </ui:with>
+    <ui:with
+        field="loader"
+        type="com.sencha.gxt.data.shared.loader.PagingLoader" />
   
   <toolbar:ToolBar ui:field="toolBar">
       <toolbar:child layoutData="{boxDataNoFlex}">
@@ -51,7 +54,7 @@
                              icon="{icons.submitForPublic}"/>
       </toolbar:child>   
       <toolbar:child layoutData="{boxData}">
-          <MyWidgets:AppSearchField3 ui:field="appSearch"/>
+          <MyWidgets:AppSearchField ui:field="appSearch"/>
       </toolbar:child>   
   </toolbar:ToolBar>
 </ui:UiBinder> 

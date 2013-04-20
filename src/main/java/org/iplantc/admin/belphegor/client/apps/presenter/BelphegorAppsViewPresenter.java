@@ -15,6 +15,7 @@ import org.iplantc.core.uiapps.client.presenter.AppsViewPresenter;
 import org.iplantc.core.uiapps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.core.uiapps.client.services.AppServiceFacade;
 import org.iplantc.core.uiapps.client.views.AppsView;
+import org.iplantc.core.uiapps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
 import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantPromptDialog;
@@ -71,6 +72,11 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         this.toolbar = toolbar;
         view.setNorthWidget(this.toolbar);
         this.toolbar.setPresenter(this);
+    }
+
+    @Override
+    public AppSearchRpcProxy getAppSearchRpcProxy() {
+        return toolbar.getAppSearchRpcProxy();
     }
 
     @Override
