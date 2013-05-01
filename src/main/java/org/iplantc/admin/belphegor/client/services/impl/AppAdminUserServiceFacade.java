@@ -73,11 +73,6 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getTemplate(String tag, AsyncCallback<String> asyncCallback) {
-        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
-    }
-
-    @Override
     public void getDCDetails(String appId, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
