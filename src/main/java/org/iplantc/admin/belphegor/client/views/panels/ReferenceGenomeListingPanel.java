@@ -97,17 +97,15 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenName(), 250);
+        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME, I18N.DISPLAY.refGenName(), 250);
         name.setRenderer(new RefNameCellRenderer());
-        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenPath(), 250);
-        ColumnConfig createdon = new ColumnConfig(ReferenceGenome.CREATED_ON,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdOn(), 150);
+        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH, I18N.DISPLAY.refGenPath(), 250);
+        ColumnConfig createdon = new ColumnConfig(ReferenceGenome.CREATED_ON, I18N.DISPLAY.createdOn(),
+                150);
         createdon.setDateTimeFormat(DateTimeFormat
                 .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM));
-        ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdBy(), 250);
+        ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY, I18N.DISPLAY.createdBy(),
+                250);
         return new ColumnModel(Arrays.asList(name, path, createdon, createdby));
     }
 
@@ -137,7 +135,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                 int rowIndex, int colIndex, ListStore<ReferenceGenome> store, Grid<ReferenceGenome> grid) {
             String name = model.get(ReferenceGenome.NAME);
             if (Boolean.parseBoolean(model.get(ReferenceGenome.DELETED).toString())) {
-                name = "<img title ='" + org.iplantc.admin.belphegor.client.I18N.DISPLAY.deleted()
+                name = "<img title ='" + I18N.DISPLAY.deleted()
                         + "' src='./images/exclamation.png'/>&nbsp;" + name;
             }
 
@@ -172,7 +170,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         @Override
         protected String getErrorMessage() {
             closeDialog();
-            return org.iplantc.admin.belphegor.client.I18N.ERROR.addRefGenomeError();
+            return I18N.ERROR.addRefGenomeError();
         }
 
     }
@@ -188,7 +186,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         @Override
         protected String getErrorMessage() {
             closeDialog();
-            return org.iplantc.admin.belphegor.client.I18N.ERROR.updateRefGenomeError();
+            return I18N.ERROR.updateRefGenomeError();
         }
 
     }
