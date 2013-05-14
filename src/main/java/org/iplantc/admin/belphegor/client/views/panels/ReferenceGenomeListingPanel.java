@@ -12,6 +12,7 @@ import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallbac
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -24,7 +25,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -118,8 +118,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                 genome.get(ReferenceGenome.UUID));
         store.remove(found_genome);
         store.add(genome);
-        Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.updateRefGenome());
+        IplantAnnouncer.schedule(I18N.DISPLAY.updateRefGenome());
     }
 
     private void closeDialog() {
@@ -166,8 +165,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         @Override
         protected void onSuccess(JSONObject result) {
             grid.getStore().add(parseResult(result));
-            Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
-                    org.iplantc.admin.belphegor.client.I18N.DISPLAY.addRefGenome());
+            IplantAnnouncer.schedule(I18N.DISPLAY.addRefGenome());
             closeDialog();
         }
 
