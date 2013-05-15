@@ -5,7 +5,7 @@
 	<groupId>org.iplantc.admin.belphegor</groupId>
 	<artifactId>belphegor</artifactId>
 	<packaging>war</packaging>
-	<version>gxt3Sandbox-SNAPSHOT</version>
+	<version>dev-SNAPSHOT</version>
 	<name>Belphegor - Tool Integration Administrative Interface</name>
 	<url>http://projects.iplantcollaborative.org</url>
 	<properties>
@@ -45,12 +45,12 @@
 		<dependency>
 			<groupId>org.iplantc.core</groupId>
 			<artifactId>ui-applications</artifactId>
-			<version>gxt3Sandbox-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
             <groupId>org.iplantc.de</groupId>
             <artifactId>confluence-client</artifactId>
-            <version>gxt3Sandbox-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
