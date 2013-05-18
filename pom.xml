@@ -13,19 +13,17 @@
 		<jdk.version>1.6</jdk.version>
 		<!-- Current GWT Version -->
 		<gwt.version>2.5.0</gwt.version>
-		<!-- Current ExtGWT Version -->
-		<gxt.version>2.2.5</gxt.version>
 		<!-- Define OS/Platform Independent Character Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.7</version>
-			<scope>test</scope>
-		</dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
 		<!-- GWT deps (from central repo) -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -41,43 +39,23 @@
 		<dependency>
 			<groupId>com.extjs</groupId>
 			<artifactId>gxt</artifactId>
-			<version>${gxt.version}</version>
+			<version>2.2.5</version>
 		</dependency>
 		<!-- iPlant Dependencies -->
 		<dependency>
-			<groupId>org.iplantc.de</groupId>
-			<artifactId>de-common</artifactId>
-			<version>1.6.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.iplantc.core</groupId>
-			<artifactId>jsonutil</artifactId>
-			<version>1.6.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>ui-commons</artifactId>
-			<version>1.6.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>widgets</artifactId>
-			<version>1.6.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.iplantc.core</groupId>
-			<artifactId>applications</artifactId>
-			<version>1.6.2-SNAPSHOT</version>
+			<artifactId>ui-applications</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
             <groupId>org.iplantc.de</groupId>
             <artifactId>confluence-client</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>clavin-java</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 		<!-- Other dependencies -->
 		<dependency>
@@ -221,7 +199,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<extraJvmArgs>-Xmx512M -Xms512M -Xss1024k</extraJvmArgs>
+					<extraJvmArgs>-Xmx1024M -Xms512M -Xss4M</extraJvmArgs>
 					<webappDirectory>${basedir}/war</webappDirectory>
 					<mode>htmlunit</mode>
 				</configuration>

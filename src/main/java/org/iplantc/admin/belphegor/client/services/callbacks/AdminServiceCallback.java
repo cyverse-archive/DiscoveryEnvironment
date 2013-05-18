@@ -1,4 +1,4 @@
-package org.iplantc.admin.belphegor.client.services;
+package org.iplantc.admin.belphegor.client.services.callbacks;
 
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;

@@ -1,10 +1,12 @@
-package org.iplantc.admin.belphegor.client;
+package org.iplantc.admin.belphegor.client.views;
 
+import org.iplantc.admin.belphegor.client.Constants;
+import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
-import org.iplantc.admin.belphegor.client.views.panels.CatalogAdminPanel;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
-import org.iplantc.core.client.widgets.Hyperlink;
-import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -12,7 +14,6 @@ import com.extjs.gxt.ui.client.event.BorderLayoutEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -24,13 +25,21 @@ import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
 import com.extjs.gxt.ui.client.widget.Viewport;
+import com.extjs.gxt.ui.client.widget.WidgetComponent;
 import com.extjs.gxt.ui.client.widget.button.IconButton;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
+import com.sencha.gxt.widget.core.client.container.SimpleContainer;
+import com.sencha.gxt.widget.core.client.event.HideEvent;
+import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.ShowEvent;
+import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
+import com.sencha.gxt.widget.core.client.menu.Menu;
 
 /**
  * Defines the overall layout for the root panel of the web application.
@@ -127,6 +136,15 @@ public class ApplicationLayout extends Viewport {
         }
     }
 
+    /**
+     * Used to place GXT3 widgets inside the center panel.
+     * 
+     * @param view
+     */
+    public void replaceCenterPanel(com.sencha.gxt.widget.core.client.Component view) {
+        replaceCenterPanel(new WidgetComponent(view));
+    }
+
     public void reset() {
         // clear our center
         if (center != null) {
@@ -160,8 +178,20 @@ public class ApplicationLayout extends Viewport {
         ReferenceGenomeListingPanel refPanel = new ReferenceGenomeListingPanel();
         refItem.add(refPanel);
 
-        CatalogAdminPanel panel = new CatalogAdminPanel();
-        appItem.add(panel);
+        // CatalogAdminPanel panel = new CatalogAdminPanel();
+
+        // --------->
+        // AppsView view = new AppsViewImpl();
+
+        // BelphegorAppsViewPresenter presenter = new BelphegorAppsViewPresenter(view);
+
+        BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
+        // Create view and presenter and add it here.
+        SimpleContainer appViewContentPanel = new SimpleContainer();
+        appViewContentPanel.setPixelSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        presenter.go(appViewContentPanel, null, null);
+        appItem.add(appViewContentPanel);
+        // appItem.add(panel);
 
         tabPanel.add(appItem);
         tabPanel.add(refItem);
@@ -211,8 +241,13 @@ public class ApplicationLayout extends Viewport {
 
         private Menu buildUserMenu() {
             Menu userMenu = buildMenu();
-            userMenu.add(new CustomHyperlink(I18N.DISPLAY.logout(), new LogoutSelectionListener(),
-                    I18N.DISPLAY.logoutToolTipText()));
+            userMenu.add(new IPlantAnchor(I18N.DISPLAY.logout(), -1, new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    com.google.gwt.user.client.Window.Location.assign(GWT.getHostPageBaseURL()
+                            + Constants.CLIENT.logoutUrl());
+                }
+            }));
             return userMenu;
         }
 
@@ -241,16 +276,16 @@ public class ApplicationLayout extends Viewport {
             ret.add(icon);
 
             // update header style when menu is shown
-            menu.addListener(Events.Show, new Listener<MenuEvent>() {
+            menu.addShowHandler(new ShowHandler() {
                 @Override
-                public void handleEvent(MenuEvent be) {
+                public void onShow(ShowEvent event) {
                     ret.addStyleName("iplantc_header_menu_selected");
                 }
             });
 
-            menu.addListener(Events.Hide, new Listener<MenuEvent>() {
+            menu.addHideHandler(new HideHandler() {
                 @Override
-                public void handleEvent(MenuEvent be) {
+                public void onHide(HideEvent event) {
                     ret.removeStyleName("iplantc_header_menu_selected");
                 }
             });
@@ -261,7 +296,7 @@ public class ApplicationLayout extends Viewport {
         private Menu buildMenu() {
             Menu menu = new Menu();
 
-            menu.setSize(110, 90);
+            menu.setSize("110", "90");
             menu.setBorders(true);
             menu.setStyleName("iplantc_header_menu_body"); //$NON-NLS-1$
 
@@ -273,15 +308,6 @@ public class ApplicationLayout extends Viewport {
             // and its top is aligned with the anchor's bottom.
             actionsMenu.showAt(anchor.getAbsoluteLeft() + anchor.getWidth() - 110,
                     anchor.getAbsoluteTop() + anchor.getHeight());
-        }
-    }
-
-    private class LogoutSelectionListener implements Listener<BaseEvent> {
-        @Override
-        public void handleEvent(BaseEvent be) {
-            com.google.gwt.user.client.Window.Location.assign(GWT.getHostPageBaseURL()
-                    + Constants.CLIENT.logoutUrl());
-
         }
     }
 
@@ -325,45 +351,4 @@ public class ApplicationLayout extends Viewport {
         }
     }
 
-    /**
-     * A Hyperlink class that can be initialized with a click listener and that adds or removes it's own
-     * style on mouse over or out events.
-     * 
-     * @author psarando
-     * 
-     */
-    private class CustomHyperlink extends Hyperlink {
-
-        public CustomHyperlink(String text, Listener<BaseEvent> clickListener, String toolTipText) {
-            super(text, "iplantc_hyperlink");
-            setToolTipText(toolTipText);
-            initListeners(clickListener);
-        }
-
-        private void setToolTipText(String toolTipText) {
-            if (toolTipText != null && !toolTipText.isEmpty()) {
-                setToolTip(toolTipText);
-            }
-        }
-
-        protected void initListeners(Listener<BaseEvent> clickListener) {
-            if (clickListener != null) {
-                addListener(Events.OnClick, clickListener);
-            }
-
-            addListener(Events.OnMouseOver, new Listener<BaseEvent>() {
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    addStyleName("iplantc_header_hyperlink_hover");
-                }
-            });
-
-            addListener(Events.OnMouseOut, new Listener<BaseEvent>() {
-                @Override
-                public void handleEvent(BaseEvent be) {
-                    removeStyleName("iplantc_header_hyperlink_hover");
-                }
-            });
-        }
-    }
 }

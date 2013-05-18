@@ -1,8 +1,10 @@
-package org.iplantc.admin.belphegor.client.services;
+package org.iplantc.admin.belphegor.client.services.impl;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
-import org.iplantc.core.uiapplications.client.services.AppTemplateServiceFacade;
-import org.iplantc.de.client.DeCommonI18N;
+import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.core.uiapps.client.services.AppServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.widget.Component;
@@ -11,14 +13,14 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
+public class AppAdminServiceFacade implements AppServiceFacade {
     private final Component maskingCaller;
 
-    public AppTemplateAdminServiceFacade() {
+    public AppAdminServiceFacade() {
         this(null);
     }
 
-    public AppTemplateAdminServiceFacade(Component maskingCaller) {
+    public AppAdminServiceFacade(Component maskingCaller) {
         this.maskingCaller = maskingCaller;
     }
 
@@ -26,7 +28,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysisCategories(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
@@ -36,7 +38,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAnalysis(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAppsInCategoryServiceUrl()
                 + "/" + analysisGroupId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
@@ -47,7 +49,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void searchAnalysis(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getSearchAppServiceUrl()
                 + "?search=" + URL.encodeQueryString(search); //$NON-NLS-1$
 
@@ -57,7 +59,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Adds a new Category with the given category name.
-     * 
+     *
      * @param name
      * @param destCategoryId
      * @param callback
@@ -76,12 +78,12 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Renames a Category with the given category ID to the given name.
-     * 
+     *
      * @param categoryId
      * @param name
      * @param callback
      */
-    public void renameCategory(String categoryId, String name, AsyncCallback<String> callback) {
+    public void renameAppGroup(String categoryId, String name, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getRenameCategoryServiceUrl();
 
         JSONObject body = new JSONObject();
@@ -95,7 +97,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Moves a Category with the given category ID to a parent Category with the given parentCategoryId.
-     * 
+     *
      * @param categoryId
      * @param parentCategoryId
      * @param callback
@@ -114,11 +116,11 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Deletes the Category with the given category ID.
-     * 
+     *
      * @param categoryId
      * @param callback
      */
-    public void deleteCategory(String categoryId, AsyncCallback<String> callback) {
+    public void deleteAppGroup(String categoryId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getDeleteCategoryServiceUrl()
                 + "/" + categoryId; //$NON-NLS-1$
 
@@ -128,7 +130,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Updates an app with the given values in application.
-     * 
+     *
      * @param application
      * @param callback
      */
@@ -142,7 +144,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Moves an App with the given applicationId to the category with the given groupId.
-     * 
+     *
      * @param applicationId
      * @param groupId
      * @param callback
@@ -161,7 +163,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     * 
+     *
      * @param applicationId
      * @param callback
      */
@@ -175,7 +177,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     * 
+     *
      * @param applicationId
      * @param callback
      */
@@ -189,7 +191,7 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
 
     /**
      * Performs the actual service call, masking any calling component.
-     * 
+     *
      * @param callback executed when RPC call completes.
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      */
@@ -199,9 +201,15 @@ public class AppTemplateAdminServiceFacade implements AppTemplateServiceFacade {
         }
 
         if (maskingCaller != null) {
-            maskingCaller.mask(DeCommonI18N.DISPLAY.loadingMask());
+            maskingCaller.mask(I18N.DISPLAY.loadingMask());
         }
 
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void getPagedApps(String appGroupId, int limit, String sortField, int offset, com.sencha.gxt.data.shared.SortDir sortDir, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
     }
 }

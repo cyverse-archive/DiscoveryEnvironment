@@ -8,8 +8,8 @@ import java.util.Date;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
-import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;

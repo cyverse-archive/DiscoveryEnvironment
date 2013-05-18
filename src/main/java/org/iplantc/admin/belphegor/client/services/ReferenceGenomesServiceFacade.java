@@ -1,7 +1,8 @@
 package org.iplantc.admin.belphegor.client.services;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
-import org.iplantc.de.client.DeCommonI18N;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.extjs.gxt.ui.client.widget.Component;
@@ -42,7 +43,7 @@ public class ReferenceGenomesServiceFacade {
 
     /**
      * Performs the actual service call, masking any calling component.
-     * 
+     *
      * @param callback executed when RPC call completes.
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      */
@@ -52,7 +53,7 @@ public class ReferenceGenomesServiceFacade {
         }
 
         if (maskingCaller != null) {
-            maskingCaller.mask(DeCommonI18N.DISPLAY.loadingMask());
+            maskingCaller.mask(I18N.DISPLAY.loadingMask());
         }
 
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, callback);

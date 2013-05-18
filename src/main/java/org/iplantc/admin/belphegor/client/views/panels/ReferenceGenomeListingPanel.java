@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.iplantc.admin.belphegor.client.images.Resources;
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.JsReferenceGenome;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
-import org.iplantc.admin.belphegor.client.services.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
-import org.iplantc.core.client.widgets.Hyperlink;
+import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.core.jsonutil.JsonUtil;
+import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.uicommons.client.ErrorHandler;
-import org.iplantc.core.uicommons.client.I18N;
+import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
+import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
-import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -25,7 +25,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -36,6 +35,8 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -44,11 +45,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * 
+ *
  * A grid panel to display a list of reference genomes
- * 
+ *
  * @author sriram
- * 
+ *
  */
 public class ReferenceGenomeListingPanel extends ContentPanel {
 
@@ -84,7 +85,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     private Button buildAddButton() {
         Button b = new Button(I18N.DISPLAY.add());
         b.setId(ID_BTN_ADD);
-        b.setIcon(AbstractImagePrototype.create(Resources.ICONS.category()));
+        b.setIcon(AbstractImagePrototype.create(IplantResources.RESOURCES.category()));
         b.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
             @Override
@@ -96,17 +97,15 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     }
 
     private ColumnModel buildColumnModel() {
-        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenName(), 250);
+        ColumnConfig name = new ColumnConfig(ReferenceGenome.NAME, I18N.DISPLAY.refGenName(), 250);
         name.setRenderer(new RefNameCellRenderer());
-        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.refGenPath(), 250);
-        ColumnConfig createdon = new ColumnConfig(ReferenceGenome.CREATED_ON,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdOn(), 150);
+        ColumnConfig path = new ColumnConfig(ReferenceGenome.PATH, I18N.DISPLAY.refGenPath(), 250);
+        ColumnConfig createdon = new ColumnConfig(ReferenceGenome.CREATED_ON, I18N.DISPLAY.createdOn(),
+                150);
         createdon.setDateTimeFormat(DateTimeFormat
                 .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM));
-        ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY,
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.createdBy(), 250);
+        ColumnConfig createdby = new ColumnConfig(ReferenceGenome.CREATED_BY, I18N.DISPLAY.createdBy(),
+                250);
         return new ColumnModel(Arrays.asList(name, path, createdon, createdby));
     }
 
@@ -117,8 +116,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                 genome.get(ReferenceGenome.UUID));
         store.remove(found_genome);
         store.add(genome);
-        Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
-                org.iplantc.admin.belphegor.client.I18N.DISPLAY.updateRefGenome());
+        IplantAnnouncer.schedule(I18N.DISPLAY.updateRefGenome());
     }
 
     private void closeDialog() {
@@ -130,25 +128,24 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     /**
      * Displays ref genome names as hyperlinks; clicking a link will allow users to edit.
      */
-    public class RefNameCellRenderer implements GridCellRenderer<ReferenceGenome> {
+    private class RefNameCellRenderer implements GridCellRenderer<ReferenceGenome> {
 
         @Override
         public Object render(final ReferenceGenome model, String property, ColumnData config,
                 int rowIndex, int colIndex, ListStore<ReferenceGenome> store, Grid<ReferenceGenome> grid) {
             String name = model.get(ReferenceGenome.NAME);
             if (Boolean.parseBoolean(model.get(ReferenceGenome.DELETED).toString())) {
-                name = "<img title ='" + org.iplantc.admin.belphegor.client.I18N.DISPLAY.deleted()
+                name = "<img title ='" + I18N.DISPLAY.deleted()
                         + "' src='./images/exclamation.png'/>&nbsp;" + name;
             }
 
-            Hyperlink link = new Hyperlink(name, "link_name"); //$NON-NLS-1$
-            link.addListener(Events.OnClick, new RefNameClickHandler(model));
-            link.setWidth(name.length());
+            IPlantAnchor link = new IPlantAnchor(name, -1, new RefNameClickHandler(model));
             return link;
         }
     }
 
-    private final class RefNameClickHandler implements Listener<BaseEvent> {
+    // private final class RefNameClickHandler implements Listener<BaseEvent> {
+    private final class RefNameClickHandler implements ClickHandler {
         private final ReferenceGenome model;
 
         private RefNameClickHandler(ReferenceGenome model) {
@@ -156,7 +153,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         }
 
         @Override
-        public void handleEvent(BaseEvent be) {
+        public void onClick(ClickEvent event) {
             showRefEditDialog(model, RefGenomeFormPanel.MODE.EDIT, new EditCompleteCallback());
         }
     }
@@ -166,15 +163,14 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         @Override
         protected void onSuccess(JSONObject result) {
             grid.getStore().add(parseResult(result));
-            Info.display(org.iplantc.admin.belphegor.client.I18N.DISPLAY.referenceGenomes(),
-                    org.iplantc.admin.belphegor.client.I18N.DISPLAY.addRefGenome());
+            IplantAnnouncer.schedule(I18N.DISPLAY.addRefGenome());
             closeDialog();
         }
 
         @Override
         protected String getErrorMessage() {
             closeDialog();
-            return org.iplantc.admin.belphegor.client.I18N.ERROR.addRefGenomeError();
+            return I18N.ERROR.addRefGenomeError();
         }
 
     }
@@ -183,14 +179,14 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
         @Override
         protected void onSuccess(JSONObject jsonResult) {
-            updateRefGenome(parseResult(jsonResult)); //$NON-NLS-1$
+            updateRefGenome(parseResult(jsonResult));
             closeDialog();
         }
 
         @Override
         protected String getErrorMessage() {
             closeDialog();
-            return org.iplantc.admin.belphegor.client.I18N.ERROR.updateRefGenomeError();
+            return I18N.ERROR.updateRefGenomeError();
         }
 
     }
@@ -232,9 +228,10 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
 
             /**
              * Fires on key press.
-             * 
+             *
              * @param event the component event
              */
+            @Override
             public void componentKeyPress(ComponentEvent event) {
                 if (event.getKeyCode() == 13) {
                     filterGrid(filter.getValue());
