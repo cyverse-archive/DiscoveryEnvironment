@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.iplantc.core</groupId>
             <artifactId>clavin-java</artifactId>
-            <version>dev-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 		<!-- Other dependencies -->
 		<dependency>
