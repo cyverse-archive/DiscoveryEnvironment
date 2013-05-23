@@ -26,8 +26,7 @@
       <when-type-is class="org.iplantc.core.uiapps.client.services.AppUserServiceFacade"/>
    </replace-with>
 
-  <replace-with
-         class="org.iplantc.core.uicommons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
+  <replace-with class="org.iplantc.core.uicommons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
       <when-type-is class="org.iplantc.core.uicommons.client.widgets.IPlantAnchorAppearance"/>
    </replace-with>
 
