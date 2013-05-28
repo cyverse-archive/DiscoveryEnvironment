@@ -1,9 +1,13 @@
 package org.iplantc.admin.belphegor.client.services.impl;
 
+import java.util.List;
+
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
+import org.iplantc.core.uiapps.client.services.AppGroupListCallbackConverter;
 import org.iplantc.core.uiapps.client.services.AppServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -28,10 +32,17 @@ public class AppAdminServiceFacade implements AppServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<List<AppGroup>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        callService(wrapper, callback);
+        callService(wrapper, new AppGroupListCallbackConverter(callback));
+    }
+
+    @Override
+    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getCategoryListSecuredServiceUrl();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        callService(wrapper, new AppGroupListCallbackConverter(callback));
     }
 
     /**

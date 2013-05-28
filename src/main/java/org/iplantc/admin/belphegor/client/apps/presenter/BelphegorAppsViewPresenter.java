@@ -1,12 +1,13 @@
 package org.iplantc.admin.belphegor.client.apps.presenter;
 
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.admin.belphegor.client.Services;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.admin.belphegor.client.services.impl.AppAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.services.impl.AppAdminUserServiceFacade;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapps.client.models.autobeans.App;
 import org.iplantc.core.uiapps.client.models.autobeans.AppAutoBeanFactory;
@@ -63,11 +64,13 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     private final BelphegorAppsToolbar toolbar;
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+    private final AppAdminServiceFacade adminAppService;
 
     @Inject
     public BelphegorAppsViewPresenter(final AppsView view, final AppGroupProxy proxy,
-            final BelphegorAppsToolbar toolbar) {
-        super(view, proxy, null);
+            final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService, AppAdminUserServiceFacade appUserService) {
+        super(view, proxy, null, appService, appUserService);
+        this.adminAppService = appService;
 
         this.toolbar = toolbar;
         view.setNorthWidget(this.toolbar);
@@ -141,7 +144,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 final String name = dlg.getFieldText();
 
                 view.maskCenterPanel(I18N.DISPLAY.loadingMask());
-                Services.ADMIN_APP_SERVICE.addCategory(name, selectedAppGroup.getId(),
+                adminAppService.addCategory(name, selectedAppGroup.getId(),
                         new AdminServiceCallback() {
                             @Override
                             protected void onSuccess(JSONObject jsonResult) {
@@ -188,7 +191,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 String text = btn.getHideButton().getItemId();
                 if (text.equals(PredefinedButton.OK.name())) {
                     view.maskWestPanel(I18N.DISPLAY.loadingMask());
-                    Services.ADMIN_APP_SERVICE.renameAppGroup(selectedAppGroup.getId(), field.getText(),
+                    adminAppService.renameAppGroup(selectedAppGroup.getId(), field.getText(),
                             new AsyncCallback<String>() {
 
                                 @Override
@@ -237,7 +240,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                     String text = btn.getHideButton().getItemId();
                     if (text.equals(PredefinedButton.YES.name())) {
                         view.maskWestPanel(I18N.DISPLAY.loadingMask());
-                        Services.ADMIN_APP_SERVICE.deleteAppGroup(selectedAppGroup.getId(),
+                        adminAppService.deleteAppGroup(selectedAppGroup.getId(),
                                 new AsyncCallback<String>() {
 
                                     @Override
@@ -275,7 +278,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                     String text = btn.getHideButton().getItemId();
                     if (text.equals(PredefinedButton.YES.name())) {
                         view.maskCenterPanel(I18N.DISPLAY.loadingMask());
-                        Services.ADMIN_APP_SERVICE.deleteApplication(selectedApp.getId(),
+                        adminAppService.deleteApplication(selectedApp.getId(),
                                 new AsyncCallback<String>() {
 
                                     @Override
@@ -308,7 +311,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         }
         final App selectedApp = getSelectedApp();
 
-        Services.ADMIN_APP_SERVICE.restoreApplication(selectedApp.getId(), new AsyncCallback<String>() {
+        adminAppService.restoreApplication(selectedApp.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -368,18 +371,18 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
                         @Override
                         public void onSuccess(String result) {
-                            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
+                    adminAppService.updateApplication(jsonObj, editCompleteCallback);
                         }
 
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught.getMessage());
-                            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
+                    adminAppService.updateApplication(jsonObj, editCompleteCallback);
                         }
                     });
             // new ConfluenceServiceMovePageCallback(tmpCallback, jsonObj));
         } else {
-            Services.ADMIN_APP_SERVICE.updateApplication(jsonObj, editCompleteCallback);
+            adminAppService.updateApplication(jsonObj, editCompleteCallback);
         }
 
     }
