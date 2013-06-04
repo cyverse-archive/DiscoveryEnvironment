@@ -26,6 +26,10 @@ public class ToolIntegrationAdminProperties {
      * The URL used to access the App Groups service.
      */
     private static final String SERVICE_URL_CATEGORY_LIST = PROPERTY_NAME_PREFIX + "get-app-groups"; //$NON-NLS-1$
+    /**
+     * The URL used to access the App Groups service.
+     */
+    private static final String SERVICE_URL_CATEGORY_LIST_SEC = PROPERTY_NAME_PREFIX + "app-groups"; //$NON-NLS-1$
 
     /**
      * The URL used to access the Apps by Group service.
@@ -156,7 +160,8 @@ public class ToolIntegrationAdminProperties {
 
         for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD,
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
-                SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE,
+ SERVICE_URL_CATEGORY_LIST,
+                SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE,
                 SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE, SERVICE_URL_APP_RESTORE,
                 SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME, SERVICE_EDIT_REF_GENOME,
                 SERVICE_LIST_REF_GENOME)) {
@@ -336,6 +341,10 @@ public class ToolIntegrationAdminProperties {
         return getServiceUrl(SERVICE_URL_CATEGORY_LIST);
     }
 
+    public String getCategoryListSecuredServiceUrl() {
+        return getServiceUrl(SERVICE_URL_CATEGORY_LIST_SEC);
+    }
+
     /**
      * Gets the Apps-by-Category service URL.
      * 
@@ -344,6 +353,7 @@ public class ToolIntegrationAdminProperties {
     public String getAppsInCategoryServiceUrl() {
         return getServiceUrl(SERVICE_URL_CATEGORY_APPS);
     }
+
 
     /**
      * Gets the Update App service URL.

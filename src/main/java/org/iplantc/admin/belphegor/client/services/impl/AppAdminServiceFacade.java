@@ -1,9 +1,13 @@
 package org.iplantc.admin.belphegor.client.services.impl;
 
+import java.util.List;
+
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
+import org.iplantc.core.uiapps.client.services.AppGroupListCallbackConverter;
 import org.iplantc.core.uiapps.client.services.AppServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -28,10 +32,15 @@ public class AppAdminServiceFacade implements AppServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<List<AppGroup>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        callService(wrapper, callback);
+        callService(wrapper, new AppGroupListCallbackConverter(callback));
+    }
+
+    @Override
+    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
+        getAppGroups("-1", callback);
     }
 
     /**
@@ -59,7 +68,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Adds a new Category with the given category name.
-     *
+     * 
      * @param name
      * @param destCategoryId
      * @param callback
@@ -78,7 +87,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Renames a Category with the given category ID to the given name.
-     *
+     * 
      * @param categoryId
      * @param name
      * @param callback
@@ -97,7 +106,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Moves a Category with the given category ID to a parent Category with the given parentCategoryId.
-     *
+     * 
      * @param categoryId
      * @param parentCategoryId
      * @param callback
@@ -116,7 +125,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes the Category with the given category ID.
-     *
+     * 
      * @param categoryId
      * @param callback
      */
@@ -130,7 +139,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Updates an app with the given values in application.
-     *
+     * 
      * @param application
      * @param callback
      */
@@ -144,7 +153,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Moves an App with the given applicationId to the category with the given groupId.
-     *
+     * 
      * @param applicationId
      * @param groupId
      * @param callback
@@ -163,7 +172,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     *
+     * 
      * @param applicationId
      * @param callback
      */
@@ -177,7 +186,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     *
+     * 
      * @param applicationId
      * @param callback
      */
@@ -191,7 +200,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Performs the actual service call, masking any calling component.
-     *
+     * 
      * @param callback executed when RPC call completes.
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      */
@@ -208,7 +217,8 @@ public class AppAdminServiceFacade implements AppServiceFacade {
     }
 
     @Override
-    public void getPagedApps(String appGroupId, int limit, String sortField, int offset, com.sencha.gxt.data.shared.SortDir sortDir, AsyncCallback<String> callback) {
+    public void getPagedApps(String appGroupId, int limit, String sortField, int offset,
+            com.sencha.gxt.data.shared.SortDir sortDir, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }

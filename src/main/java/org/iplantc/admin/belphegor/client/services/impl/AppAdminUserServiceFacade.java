@@ -1,6 +1,8 @@
 package org.iplantc.admin.belphegor.client.services.impl;
 
-import org.iplantc.admin.belphegor.client.Services;
+import java.util.List;
+
+import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapps.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -9,8 +11,7 @@ import com.sencha.gxt.data.shared.SortDir;
 
 /**
  * This class is a dummy class to satisfy GWT deferred-binding. By design, the Belphegor admin module
- * does not require the methods defined by {@link AppUserServiceFacade}. See {@link Services} for
- * available services within this module.
+ * does not require the methods defined by {@link AppUserServiceFacade}.
  * 
  * @author jstroot
  * 
@@ -29,7 +30,12 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppGroups(String workspaceId, AsyncCallback<String> callback) {
+    public void getAppGroups(String workspaceId, AsyncCallback<List<AppGroup>> callback) {
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+    }
+
+    @Override
+    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -107,4 +113,10 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
+
+    @Override
+    public void getAppDetails(String  id, AsyncCallback<String> callback) {
+    	 assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+    }
+
 }

@@ -116,7 +116,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
                 genome.get(ReferenceGenome.UUID));
         store.remove(found_genome);
         store.add(genome);
-        IplantAnnouncer.schedule(I18N.DISPLAY.updateRefGenome());
+        IplantAnnouncer.getInstance().schedule(I18N.DISPLAY.updateRefGenome());
     }
 
     private void closeDialog() {
@@ -163,7 +163,7 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
         @Override
         protected void onSuccess(JSONObject result) {
             grid.getStore().add(parseResult(result));
-            IplantAnnouncer.schedule(I18N.DISPLAY.addRefGenome());
+            IplantAnnouncer.getInstance().schedule(I18N.DISPLAY.addRefGenome());
             closeDialog();
         }
 

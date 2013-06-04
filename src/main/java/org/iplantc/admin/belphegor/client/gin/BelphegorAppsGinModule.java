@@ -1,12 +1,12 @@
 package org.iplantc.admin.belphegor.client.gin;
 
+import org.iplantc.admin.belphegor.client.apps.views.AdminAppViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.core.uiapps.client.gin.AppGroupTreeProvider;
 import org.iplantc.core.uiapps.client.gin.AppGroupTreeStoreProvider;
 import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapps.client.views.AppsView;
-import org.iplantc.core.uiapps.client.views.AppsViewImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
@@ -23,7 +23,7 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(new TypeLiteral<Tree<AppGroup, String>>() {
         }).toProvider(AppGroupTreeProvider.class).in(Singleton.class);
 
-        bind(AppsView.class).to(AppsViewImpl.class);
+        bind(AppsView.class).to(AdminAppViewImpl.class);
         bind(BelphegorAppsToolbar.class).to(BelphegorAppsToolbarImpl.class);
     }
 }
