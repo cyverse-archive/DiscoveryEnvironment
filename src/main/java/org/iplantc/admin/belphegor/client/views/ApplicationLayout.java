@@ -188,7 +188,7 @@ public class ApplicationLayout extends Viewport {
         BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
         // Create view and presenter and add it here.
         SimpleContainer appViewContentPanel = new SimpleContainer();
-        appViewContentPanel.setPixelSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        appViewContentPanel.setPixelSize(1024, 465);
         presenter.go(appViewContentPanel, null, null);
         appItem.add(appViewContentPanel);
         // appItem.add(panel);
