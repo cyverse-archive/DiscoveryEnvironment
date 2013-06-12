@@ -168,9 +168,6 @@
                 <version>2.2</version>
 				<configuration>
 					<webappDirectory>${basedir}/war</webappDirectory>
-                    <packagingExcludes>
-                        WEB-INF/classes/log4j.properties
-                    </packagingExcludes>
 					<manifest>
 						<addDefaultImplementationEntries>true
 						</addDefaultImplementationEntries>
