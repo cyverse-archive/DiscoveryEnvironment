@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.theme.gray.client.toolbar.GrayToolBarAppearance;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
@@ -26,7 +27,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  */
 public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
 
-    private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT.create(BelphegorAppsViewToolbarUiBinder.class);
+    private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT
+            .create(BelphegorAppsViewToolbarUiBinder.class);
 
     @UiTemplate("BelphegorAppsViewToolbar.ui.xml")
     interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, BelphegorAppsToolbarImpl> {
@@ -72,6 +74,11 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     @UiFactory
     AppSearchField createAppSearchField() {
         return new AppSearchField(loader);
+    }
+
+    @UiFactory
+    ToolBar createToolbar() {
+        return new ToolBar(new GrayToolBarAppearance());
     }
 
     public BelphegorAppsToolbarImpl() {
