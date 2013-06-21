@@ -68,7 +68,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     @Inject
     public BelphegorAppsViewPresenter(final AppsView view, final AppGroupProxy proxy,
-            final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService, AppAdminUserServiceFacade appUserService) {
+            final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService,
+            AppAdminUserServiceFacade appUserService) {
         super(view, proxy, null, appService, appUserService);
         this.adminAppService = appService;
 
@@ -128,9 +129,15 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         }
         final AppGroup selectedAppGroup = getSelectedAppGroup();
 
+        ToolIntegrationAdminProperties props = ToolIntegrationAdminProperties.getInstance();
+
         // Check if a new AppGroup can be created in the target AppGroup.
-        if (selectedAppGroup.getAppCount() > 0) {
-            ErrorHandler.post(I18N.ERROR.deleteCategoryPermissionError());
+        if ((!selectedAppGroup.getName().contains("Public Apps"))
+                && selectedAppGroup.getAppCount() > 0
+                && selectedAppGroup.getGroups().size() == 0
+                || ((props.getDefaultTrashAnalysisGroupId() == selectedAppGroup.getId()) || props
+                        .getDefaultBetaAnalysisGroupId() == selectedAppGroup.getId())) {
+            ErrorHandler.post(I18N.ERROR.addAppGroupError(""));
             return;
         }
 
@@ -144,25 +151,24 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 final String name = dlg.getFieldText();
 
                 view.maskCenterPanel(I18N.DISPLAY.loadingMask());
-                adminAppService.addCategory(name, selectedAppGroup.getId(),
-                        new AdminServiceCallback() {
-                            @Override
-                            protected void onSuccess(JSONObject jsonResult) {
+                adminAppService.addCategory(name, selectedAppGroup.getId(), new AdminServiceCallback() {
+                    @Override
+                    protected void onSuccess(JSONObject jsonResult) {
 
-                                // Get result
-                                AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class,
-                                        jsonResult.get("category").toString());
+                        // Get result
+                        AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class,
+                                jsonResult.get("category").toString());
 
-                                view.addAppGroup(selectedAppGroup, group.as());
-                                view.unMaskCenterPanel();
-                            }
+                        view.addAppGroup(selectedAppGroup, group.as());
+                        view.unMaskCenterPanel();
+                    }
 
-                            @Override
-                            protected String getErrorMessage() {
-                                view.unMaskCenterPanel();
-                                return I18N.ERROR.addAppGroupError(name);
-                            }
-                        });
+                    @Override
+                    protected String getErrorMessage() {
+                        view.unMaskCenterPanel();
+                        return I18N.ERROR.addAppGroupError(name);
+                    }
+                });
 
             }
         });
@@ -371,13 +377,13 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
                         @Override
                         public void onSuccess(String result) {
-                    adminAppService.updateApplication(jsonObj, editCompleteCallback);
+                            adminAppService.updateApplication(jsonObj, editCompleteCallback);
                         }
 
                         @Override
                         public void onFailure(Throwable caught) {
                             ErrorHandler.post(caught.getMessage());
-                    adminAppService.updateApplication(jsonObj, editCompleteCallback);
+                            adminAppService.updateApplication(jsonObj, editCompleteCallback);
                         }
                     });
             // new ConfluenceServiceMovePageCallback(tmpCallback, jsonObj));
