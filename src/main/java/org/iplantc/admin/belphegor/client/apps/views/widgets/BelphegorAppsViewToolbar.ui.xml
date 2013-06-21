@@ -35,26 +35,30 @@
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="addCategory"
                              text="{strings.add}"
-                             icon="{icons.add}"/>
+                             icon="{icons.add}"
+                             debugId="idAddBtn"/>
       </toolbar:child>   
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="renameCategory"
                              text="{strings.rename}"
-                             icon="{icons.fileRename}"/>
+                             icon="{icons.fileRename}"
+                             debugId="idRenameBtn"/>
       </toolbar:child>   
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="delete"
                              text="{strings.delete}"
-                             icon="{icons.delete}"/>
+                             icon="{icons.delete}"
+                             debugId="idDeleteBtn"/>
       </toolbar:child>   
       <menu:SeparatorMenuItem/>
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="restoreApp"
                              text="{strings.restoreApp}"
-                             icon="{icons.submitForPublic}"/>
+                             icon="{icons.submitForPublic}"
+                             debugId="idRestoreBtn"/>
       </toolbar:child>   
       <toolbar:child layoutData="{boxData}">
-          <MyWidgets:AppSearchField ui:field="appSearch"/>
+          <MyWidgets:AppSearchField ui:field="appSearch" debugId="idSearchFld"/>
       </toolbar:child>   
   </toolbar:ToolBar>
 </ui:UiBinder> 
