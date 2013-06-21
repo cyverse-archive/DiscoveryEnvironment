@@ -137,7 +137,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
                 && selectedAppGroup.getGroups().size() == 0
                 || ((props.getDefaultTrashAnalysisGroupId() == selectedAppGroup.getId()) || props
                         .getDefaultBetaAnalysisGroupId() == selectedAppGroup.getId())) {
-            ErrorHandler.post(I18N.ERROR.addAppGroupError(""));
+            ErrorHandler.post(I18N.ERROR.addCategoryPermissionError());
             return;
         }
 
