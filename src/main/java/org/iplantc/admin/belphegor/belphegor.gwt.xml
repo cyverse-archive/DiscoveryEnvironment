@@ -13,6 +13,8 @@
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
 
 	<inherits name="org.iplantc.core.uiapps.Apps"/>
+	
+	 <inherits name="com.google.gwt.user.Debug"/>
 
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
