@@ -34,7 +34,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Element;
-import com.sencha.gxt.widget.core.client.container.SimpleContainer;
+import com.sencha.gxt.theme.gray.client.panel.GrayContentPanelAppearance;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent;
@@ -187,7 +187,9 @@ public class ApplicationLayout extends Viewport {
 
         BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
         // Create view and presenter and add it here.
-        SimpleContainer appViewContentPanel = new SimpleContainer();
+        com.sencha.gxt.widget.core.client.ContentPanel appViewContentPanel = new com.sencha.gxt.widget.core.client.ContentPanel(
+                new GrayContentPanelAppearance());
+        appViewContentPanel.setHeaderVisible(false);
         appViewContentPanel.setPixelSize(1024, 465);
         presenter.go(appViewContentPanel, null, null);
         appItem.add(appViewContentPanel);
