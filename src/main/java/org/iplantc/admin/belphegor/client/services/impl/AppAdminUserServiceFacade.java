@@ -94,7 +94,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppFromWorkspace(String username, String fullUsername, String id,
+    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> id,
             AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
