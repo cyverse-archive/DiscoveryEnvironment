@@ -32,15 +32,15 @@ public class AppAdminServiceFacade implements AppServiceFacade {
      * {@inheritDoc}
      */
     @Override
-    public void getAppGroups(String workspaceId, AsyncCallback<List<AppGroup>> callback) {
+    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, new AppGroupListCallbackConverter(callback));
     }
 
     @Override
-    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
-        getAppGroups("-1", callback);
+    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
+        getAppGroups(callback);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Adds a new Category with the given category name.
-     * 
+     *
      * @param name
      * @param destCategoryId
      * @param callback
@@ -87,7 +87,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Renames a Category with the given category ID to the given name.
-     * 
+     *
      * @param categoryId
      * @param name
      * @param callback
@@ -106,7 +106,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Moves a Category with the given category ID to a parent Category with the given parentCategoryId.
-     * 
+     *
      * @param categoryId
      * @param parentCategoryId
      * @param callback
@@ -125,7 +125,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes the Category with the given category ID.
-     * 
+     *
      * @param categoryId
      * @param callback
      */
@@ -139,7 +139,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Updates an app with the given values in application.
-     * 
+     *
      * @param application
      * @param callback
      */
@@ -153,7 +153,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Moves an App with the given applicationId to the category with the given groupId.
-     * 
+     *
      * @param applicationId
      * @param groupId
      * @param callback
@@ -172,7 +172,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     * 
+     *
      * @param applicationId
      * @param callback
      */
@@ -186,7 +186,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     * 
+     *
      * @param applicationId
      * @param callback
      */
@@ -200,7 +200,7 @@ public class AppAdminServiceFacade implements AppServiceFacade {
 
     /**
      * Performs the actual service call, masking any calling component.
-     * 
+     *
      * @param callback executed when RPC call completes.
      * @param wrapper the wrapper used to get to the actual service via the service proxy.
      */
