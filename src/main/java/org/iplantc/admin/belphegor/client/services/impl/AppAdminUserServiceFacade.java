@@ -12,9 +12,9 @@ import com.sencha.gxt.data.shared.SortDir;
 /**
  * This class is a dummy class to satisfy GWT deferred-binding. By design, the Belphegor admin module
  * does not require the methods defined by {@link AppUserServiceFacade}.
- * 
+ *
  * @author jstroot
- * 
+ *
  */
 public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
@@ -30,7 +30,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppGroups(String workspaceId, AsyncCallback<List<AppGroup>> callback) {
+    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -94,7 +94,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppFromWorkspace(String username, String fullUsername, String id,
+    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> id,
             AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
