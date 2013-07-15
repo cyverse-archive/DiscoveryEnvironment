@@ -365,7 +365,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     @Override
     public void onAppEditorSave(App app) {
-        final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback();
+        final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback(app);
 
         // Serialize App to JSON object
         String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(app)).getPayload();
@@ -395,12 +395,16 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     private class AppEditCompleteCallback implements AsyncCallback<String> {
 
-        public AppEditCompleteCallback() {
+        private App app;
+
+        public AppEditCompleteCallback(App app) {
+            this.app = app;
         }
 
         @Override
         public void onSuccess(String result) {
-            // appRecord.commit(true);
+            // update app in the grid
+            view.getAppsGrid().getStore().update(app);
         }
 
         @Override
