@@ -38,3 +38,7 @@ belphegor-confluence.properties
 
 # Ignore Clavin uberjar files downloaded by bootstrap-config.py
 clavin-*-standalone.jar
+
+# IntelliJ Idea files
+.idea
+*.iml
