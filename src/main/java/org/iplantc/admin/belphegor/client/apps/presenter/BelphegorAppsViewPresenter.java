@@ -59,7 +59,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
+public class BelphegorAppsViewPresenter extends AppsViewPresenter implements AdminAppsViewPresenter,
         BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
 
     private final BelphegorAppsToolbar toolbar;
@@ -395,7 +395,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     private class AppEditCompleteCallback implements AsyncCallback<String> {
 
-        private App app;
+        private final App app;
 
         public AppEditCompleteCallback(App app) {
             this.app = app;
@@ -413,4 +413,88 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         }
     }
 
+    @Override
+    public void moveAppGroup(final AppGroup parentGroup, final AppGroup childGroup) {
+        adminAppService.moveCategory(childGroup.getId(), parentGroup.getId(),
+                new AsyncCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String result) {
+                        fetchApps(getSelectedAppGroup() == null ? parentGroup : getSelectedAppGroup());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.moveCategoryError(childGroup.getName()));
+                    }
+                });
+    }
+
+    @Override
+    public void moveApp(final AppGroup parentGroup, final App app) {
+        adminAppService.moveApplication(app.getId(), parentGroup.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                fetchApps(getSelectedAppGroup() == null ? parentGroup : getSelectedAppGroup());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.moveApplicationError(app.getName()));
+            }
+        });
+    }
+
+    @Override
+    public boolean canMoveAppGroup(AppGroup parentGroup, AppGroup childGroup) {
+        if (parentGroup == null || childGroup == null) {
+            return false;
+        }
+
+        // Don't allow a category drop onto itself.
+        if (childGroup == parentGroup) {
+            return false;
+        }
+
+        // Don't allow a category drop into a category leaf with apps in it.
+        if (isLeaf(parentGroup) && parentGroup.getAppCount() > 0) {
+            return false;
+        }
+
+        // Don't allow a category drop into one of its children.
+        if (childGroup.getGroups().contains(parentGroup)) {
+            return false;
+        }
+
+        // Don't allow a category drop into its own parent.
+        if (parentGroup.getGroups().contains(childGroup)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean canMoveApp(AppGroup parentGroup, App app) {
+        if (parentGroup == null || app == null) {
+            return false;
+        }
+
+        // Apps can only be dropped into leaf categories.
+        if (!isLeaf(parentGroup)) {
+            return false;
+        }
+
+        // FIXME this check will always pass, since app.getGroupId() is always null, currently.
+        if (parentGroup.getId().equals(app.getGroupId())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isLeaf(AppGroup parentGroup) {
+        return parentGroup.getGroups() == null || parentGroup.getGroups().isEmpty();
+    }
 }
