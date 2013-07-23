@@ -4,6 +4,7 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.impl.AppAdminServiceFacade;
@@ -76,6 +77,20 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         this.toolbar = toolbar;
         view.setNorthWidget(this.toolbar);
         this.toolbar.setPresenter(this);
+    }
+
+    @Override
+    protected void initHandlers() {
+        super.initHandlers();
+
+        EventBus.getInstance().addHandler(CatalogCategoryRefreshEvent.TYPE,
+                new CatalogCategoryRefreshEventHandler() {
+
+                    @Override
+                    public void onRefresh(CatalogCategoryRefreshEvent event) {
+                        reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
+                    }
+                });
     }
 
     @Override
@@ -420,7 +435,10 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
 
                     @Override
                     public void onSuccess(String result) {
-                        fetchApps(getSelectedAppGroup() == null ? parentGroup : getSelectedAppGroup());
+                        // Refresh the catalog, so that the proper category counts
+                        // display.
+                        // FIXME JDS These events need to be common to ui-applications.
+                        EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
                     }
 
                     @Override
@@ -436,7 +454,10 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
 
             @Override
             public void onSuccess(String result) {
-                fetchApps(getSelectedAppGroup() == null ? parentGroup : getSelectedAppGroup());
+                // Refresh the catalog, so that the proper category counts
+                // display.
+                // FIXME JDS These events need to be common to ui-applications.
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
             }
 
             @Override
