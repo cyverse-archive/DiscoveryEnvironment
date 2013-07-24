@@ -8,7 +8,6 @@ import org.iplantc.core.uiapps.client.views.AppsViewImpl;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.inject.Inject;
 import com.sencha.gxt.core.client.Style.SelectionMode;
-import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
@@ -18,8 +17,8 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 public class AdminAppViewImpl extends AppsViewImpl {
 
     @Inject
-    public AdminAppViewImpl(Tree<AppGroup, String> tree, TreeStore<AppGroup> treeStore) {
-        super(tree, treeStore);
+    public AdminAppViewImpl(Tree<AppGroup, String> tree) {
+        super(tree);
 
         // Restrict Admin view to single select, since admin services only support one item at a time.
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
