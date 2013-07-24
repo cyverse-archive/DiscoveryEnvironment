@@ -4,6 +4,7 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
+import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.impl.AppAdminServiceFacade;
@@ -59,7 +60,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
+public class BelphegorAppsViewPresenter extends AppsViewPresenter implements AdminAppsViewPresenter,
         BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
 
     private final BelphegorAppsToolbar toolbar;
@@ -76,6 +77,20 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         this.toolbar = toolbar;
         view.setNorthWidget(this.toolbar);
         this.toolbar.setPresenter(this);
+    }
+
+    @Override
+    protected void initHandlers() {
+        super.initHandlers();
+
+        EventBus.getInstance().addHandler(CatalogCategoryRefreshEvent.TYPE,
+                new CatalogCategoryRefreshEventHandler() {
+
+                    @Override
+                    public void onRefresh(CatalogCategoryRefreshEvent event) {
+                        reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
+                    }
+                });
     }
 
     @Override
@@ -365,7 +380,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     @Override
     public void onAppEditorSave(App app) {
-        final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback();
+        final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback(app);
 
         // Serialize App to JSON object
         String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(app)).getPayload();
@@ -395,12 +410,16 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
 
     private class AppEditCompleteCallback implements AsyncCallback<String> {
 
-        public AppEditCompleteCallback() {
+        private final App app;
+
+        public AppEditCompleteCallback(App app) {
+            this.app = app;
         }
 
         @Override
         public void onSuccess(String result) {
-            // appRecord.commit(true);
+            // update app in the grid
+            view.getAppsGrid().getStore().update(app);
         }
 
         @Override
@@ -409,4 +428,94 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements
         }
     }
 
+    @Override
+    public void moveAppGroup(final AppGroup parentGroup, final AppGroup childGroup) {
+        adminAppService.moveCategory(childGroup.getId(), parentGroup.getId(),
+                new AsyncCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String result) {
+                        // Refresh the catalog, so that the proper category counts
+                        // display.
+                        // FIXME JDS These events need to be common to ui-applications.
+                        EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(I18N.ERROR.moveCategoryError(childGroup.getName()));
+                    }
+                });
+    }
+
+    @Override
+    public void moveApp(final AppGroup parentGroup, final App app) {
+        adminAppService.moveApplication(app.getId(), parentGroup.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                // Refresh the catalog, so that the proper category counts
+                // display.
+                // FIXME JDS These events need to be common to ui-applications.
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.moveApplicationError(app.getName()));
+            }
+        });
+    }
+
+    @Override
+    public boolean canMoveAppGroup(AppGroup parentGroup, AppGroup childGroup) {
+        if (parentGroup == null || childGroup == null) {
+            return false;
+        }
+
+        // Don't allow a category drop onto itself.
+        if (childGroup == parentGroup) {
+            return false;
+        }
+
+        // Don't allow a category drop into a category leaf with apps in it.
+        if (isLeaf(parentGroup) && parentGroup.getAppCount() > 0) {
+            return false;
+        }
+
+        // Don't allow a category drop into one of its children.
+        if (childGroup.getGroups().contains(parentGroup)) {
+            return false;
+        }
+
+        // Don't allow a category drop into its own parent.
+        if (parentGroup.getGroups().contains(childGroup)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean canMoveApp(AppGroup parentGroup, App app) {
+        if (parentGroup == null || app == null) {
+            return false;
+        }
+
+        // Apps can only be dropped into leaf categories.
+        if (!isLeaf(parentGroup)) {
+            return false;
+        }
+
+        // FIXME this check will always pass, since app.getGroupId() is always null, currently.
+        if (parentGroup.getId().equals(app.getGroupId())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isLeaf(AppGroup parentGroup) {
+        return parentGroup.getGroups() == null || parentGroup.getGroups().isEmpty();
+    }
 }
