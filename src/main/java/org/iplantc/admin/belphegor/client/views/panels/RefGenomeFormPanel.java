@@ -6,11 +6,11 @@ package org.iplantc.admin.belphegor.client.views.panels;
 import java.util.Date;
 
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.services.ReferenceGenomesServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.util.FormFieldBuilderUtil;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -109,7 +109,7 @@ public class RefGenomeFormPanel extends LayoutContainer {
     }
 
     private void setDefaults() {
-        CASCredentials cas = CASCredentials.getInstance();
+        UserInfo cas = UserInfo.getInstance();
         userName.setValue(cas.getUsername());
         lastModUserName.setValue(cas.getUsername());
         creationDate.setValue(new Date());

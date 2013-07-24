@@ -18,6 +18,11 @@ public class ToolIntegrationAdminProperties {
     private static final String PROPERTY_NAME_PREFIX = "org.iplantc.belphegor."; //$NON-NLS-1$
 
     /**
+     * The base URL used to access the bootstrap.
+     */
+    private static final String SERVICE_URL_BOOTSTRAP = PROPERTY_NAME_PREFIX + "bootstrap"; //$NON-NLS-1$
+
+    /**
      * The base URL used to access the services.
      */
     private static final String SERVICE_URL_BASE = PROPERTY_NAME_PREFIX + "conrad-base"; //$NON-NLS-1$
@@ -160,16 +165,15 @@ public class ToolIntegrationAdminProperties {
 
         for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD,
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
- SERVICE_URL_CATEGORY_LIST,
-                SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS, SERVICE_URL_APP_UPDATE,
-                SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE, SERVICE_URL_APP_RESTORE,
-                SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME, SERVICE_EDIT_REF_GENOME,
-                SERVICE_LIST_REF_GENOME)) {
+                SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS,
+                SERVICE_URL_APP_UPDATE, SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE,
+                SERVICE_URL_APP_RESTORE, SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME,
+                SERVICE_EDIT_REF_GENOME, SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP)) {
             serviceUrlMap.put(key, properties.get(key));
         }
 
-        setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));       
-        
+        setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
+
         contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
         keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
 
@@ -179,17 +183,17 @@ public class ToolIntegrationAdminProperties {
     }
 
     /**
-     * Alert when accessing a property fails. 
+     * Alert when accessing a property fails.
      * 
      * @param e the Exception thrown.
      * @param propName the name of the property that was being accessed.
      */
     private void outputAccessFailure(Exception e, String propName) {
-    	ErrorHandler.post("An attempt to get property failed: " + propName, e);
+        ErrorHandler.post("An attempt to get property failed: " + propName, e);
     }
-    
-    /** 
-     * Gets a list of String values for a property.  
+
+    /**
+     * Gets a list of String values for a property.
      * 
      * The property encodes a comma-separated list of String value.
      * 
@@ -198,18 +202,18 @@ public class ToolIntegrationAdminProperties {
      * @return the list of String values as an array.
      */
     private String[] getStringList(Map<String, String> props, String propName) {
-    	String[] list;
-    	String value = props.get(propName);
-    	if (value == null || value.length() == 0) {
-    		ErrorHandler.post("An attempt to get property failed: " + propName);
-    		value = "";
-    	}
-    	list = value.split(",");
-    	return list;
+        String[] list;
+        String value = props.get(propName);
+        if (value == null || value.length() == 0) {
+            ErrorHandler.post("An attempt to get property failed: " + propName);
+            value = "";
+        }
+        list = value.split(",");
+        return list;
     }
-    
+
     /**
-     * Gets a String property value. 
+     * Gets a String property value.
      * 
      * @param props the properties map.
      * @param propName the name of the property to extract.
@@ -217,14 +221,14 @@ public class ToolIntegrationAdminProperties {
      * @return the property value or the default value if the property value can't be obtained.
      */
     private String getStringProperty(Map<String, String> props, String propName, String defaultValue) {
-    	String value = props.get(propName);
-    	if (value == null || value.length() == 0) {
-    		ErrorHandler.post("An attempt to get property failed: " + propName);
-    		value = defaultValue;
-    	}
-    	return value;
+        String value = props.get(propName);
+        if (value == null || value.length() == 0) {
+            ErrorHandler.post("An attempt to get property failed: " + propName);
+            value = defaultValue;
+        }
+        return value;
     }
-    
+
     /**
      * Gets a Boolean property value.
      * 
@@ -237,7 +241,7 @@ public class ToolIntegrationAdminProperties {
         try {
             return Boolean.parseBoolean(props.get(propName));
         } catch (Exception e) {
-        	outputAccessFailure(e, propName);
+            outputAccessFailure(e, propName);
             return defaultValue;
         }
     }
@@ -254,7 +258,7 @@ public class ToolIntegrationAdminProperties {
         try {
             return Integer.parseInt(props.get(propName));
         } catch (Exception e) {
-        	outputAccessFailure(e, propName);
+            outputAccessFailure(e, propName);
             return defaultValue;
         }
     }
@@ -267,6 +271,10 @@ public class ToolIntegrationAdminProperties {
      */
     private String getServiceUrl(String serviceName) {
         return serviceUrlMap.get(SERVICE_URL_BASE) + serviceUrlMap.get(serviceName);
+    }
+
+    public String getBootStrapUrl() {
+        return serviceUrlMap.get(SERVICE_URL_BOOTSTRAP);
     }
 
     /**
@@ -353,7 +361,6 @@ public class ToolIntegrationAdminProperties {
     public String getAppsInCategoryServiceUrl() {
         return getServiceUrl(SERVICE_URL_CATEGORY_APPS);
     }
-
 
     /**
      * Gets the Update App service URL.

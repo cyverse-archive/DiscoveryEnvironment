@@ -3,13 +3,14 @@ package org.iplantc.admin.belphegor.client;
 import java.util.Map;
 
 import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
-import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
+import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.views.ApplicationLayout;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
-import org.iplantc.de.shared.services.SessionManagementServiceFacade;
+import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
@@ -26,7 +27,7 @@ public class Belphegor implements EntryPoint {
     @Override
     public void onModuleLoad() {
         setEntryPointTitle();
-        initUserInfo();
+        initProperties();
     }
 
     private void initApp() {
@@ -49,23 +50,28 @@ public class Belphegor implements EntryPoint {
     }
 
     private void initUserInfo() {
-        SessionManagementServiceFacade.getInstance().getAttributes(
-                new AsyncCallback<Map<String, String>>() {
+        String address = ToolIntegrationAdminProperties.getInstance().getBootStrapUrl();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper,
+                new AsyncCallback<String>() {
+
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);
+                        ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed(), caught);
+
                     }
 
                     @Override
-                    public void onSuccess(Map<String, String> attributes) {
-                        CASCredentials userInfo = CASCredentials.getInstance();
-                        userInfo.setUsername(attributes.get(CASCredentials.ATTR_USERNAME));
-                        userInfo.setEmail(attributes.get(CASCredentials.ATTR_EMAIL));
-                        userInfo.setFirstName(attributes.get(CASCredentials.ATTR_USERFIRSTNAME));
-                        userInfo.setLastName(attributes.get(CASCredentials.ATTR_USERLASTNAME));
-                        initProperties();
+                    public void onSuccess(String result) {
+                        parseWorkspaceInfo(result);
+                        initApp();
                     }
                 });
+    }
+
+    private void parseWorkspaceInfo(String json) {
+        // Bootstrap the user-info object with workspace info provided in JSON format.
+        UserInfo.getInstance().init(json);
     }
 
     /**
@@ -81,7 +87,7 @@ public class Belphegor implements EntryPoint {
             @Override
             public void onSuccess(Map<String, String> result) {
                 ToolIntegrationAdminProperties.getInstance().initialize(result);
-                initApp();
+                initUserInfo();
             }
         });
     }
