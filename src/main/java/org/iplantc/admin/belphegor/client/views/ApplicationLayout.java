@@ -4,8 +4,8 @@ import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
-import org.iplantc.admin.belphegor.client.models.CASCredentials;
 import org.iplantc.admin.belphegor.client.views.panels.ReferenceGenomeListingPanel;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
@@ -230,9 +230,9 @@ public class ApplicationLayout extends Viewport {
             pnlActions.setStyleName("iplantc_header_actions"); //$NON-NLS-1$
             pnlActions.setSpacing(5);
 
-            String username = CASCredentials.getInstance().getUsername();
-            String firstName = CASCredentials.getInstance().getFirstName();
-            String lastName = CASCredentials.getInstance().getLastName();
+            String username = UserInfo.getInstance().getUsername();
+            String firstName = UserInfo.getInstance().getFirstName();
+            String lastName = UserInfo.getInstance().getLastName();
             String menuLabel = (firstName != null && lastName != null) ? firstName + " " + lastName
                     : username;
             pnlActions.add(buildActionsMenu(menuLabel, buildUserMenu()));
