@@ -226,10 +226,6 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>maven</id>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-		<repository>
 			<id>iplantCollaborative</id>
 			<name>iPlant Collaborative local repository</name>
 			<url>http://projects.iplantcollaborative.org/archiva/repository/internal/</url>

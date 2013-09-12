@@ -10,8 +10,10 @@
 	<inherits name='com.google.gwt.user.theme.standard.Standard' />
 
     <inherits name="com.google.gwt.editor.Editor" />
+    <inherits name='com.extjs.gxt.ui.GXT'/>
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
 
+    <inherits name="org.iplantc.core.diskresource"/>
 	<inherits name="org.iplantc.core.uiapps.Apps"/>
 	
 	 <inherits name="com.google.gwt.user.Debug"/>

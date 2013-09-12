@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.util;
 
-import org.iplantc.core.uicommons.client.widgets.BoundedTextArea;
-import org.iplantc.core.uicommons.client.widgets.BoundedTextField;
+import org.iplantc.admin.belphegor.client.widgets.BoundedTextArea;
+import org.iplantc.admin.belphegor.client.widgets.BoundedTextField;
 
 import com.extjs.gxt.ui.client.widget.form.DateField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
