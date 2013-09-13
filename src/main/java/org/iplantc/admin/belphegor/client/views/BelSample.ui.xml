@@ -1,0 +1,123 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
+             xmlns:con='urn:import:com.sencha.gxt.widget.core.client.container'>
+	<ui:style>
+		.important {
+			font-weight: bold;
+		}
+		.top {
+			position: absolute;
+			border-width: 0px;
+      		left: 0px;
+      		right: 0px;
+   			top: 0px;
+   			background-image: url('images/headerlogo-fill.png');
+   			border-width: 0px;
+   			margin: 0;
+   			padding: 0;
+	    }
+	    .bottom {
+			overflow: visible;
+			position: absolute;
+            background-color: rgb(254, 253, 221);
+            left: 0px;
+            height: 20px;
+            bottom: 0;
+		}
+		.middle{
+			left: 0px;
+			right: 0px;
+			position: absolute;
+			bottom: 20px;
+			top: 143px;
+			background-color: lime;
+		}
+		.iplantc_logo {
+			cursor: pointer;
+			background-image: url('images/headerlogo.png');
+			width: 500px;
+		    height: 140px; 
+		}
+		.iplantc_header_actions{
+			position: fixed;
+			top: 15px;
+			right: 40px;
+		}
+	</ui:style>
+	
+	<ui:with type="org.iplantc.admin.belphegor.client.BelphegorResources" field="res" />
+	<ui:with type="org.iplantc.core.resources.client.messages.IplantDisplayStrings" field="strings" />
+
+	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="centerMargins">
+    	<ui:attributes top="0" right="0" bottom="0" left="0" />
+  	</ui:with>
+	
+	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="northData">
+		<ui:attributes size="143"/>
+	</ui:with>
+	
+	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="centerData">
+		<ui:attributes margins="{centerMargins}"/>
+	</ui:with>
+	
+	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="southData">
+		<ui:attributes size="20"/>
+	</ui:with>
+	
+	<con:Viewport>
+		<con:BorderLayoutContainer>
+			<con:north layoutData="{northData}">
+				<con:HtmlLayoutContainer>
+					<div class="{style.top}">
+						<table>
+							<tbody>
+								<tr>
+									<td role="presentation" align="LEFT" valign="TOP"><div class="{style.iplantc_logo}"></div></td>
+									<td role="presentation" align="LEFT" valign="TOP"><div class="{style.iplantc_header_actions}">Menu</div></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</con:HtmlLayoutContainer>
+			</con:north>
+			
+			<con:center layoutData="{centerData}">
+				<gxt:TabPanel>
+					<gxt:child>
+						<con:SimpleContainer ui:field="appsPanel"/>
+					</gxt:child>
+					<gxt:child>
+						<con:SimpleContainer ui:field="refGenomePanel"/>
+					</gxt:child>
+					<gxt:child>
+						<con:SimpleContainer ui:field="toolRequestPanel"/>
+					</gxt:child>
+					<gxt:child>
+						<con:SimpleContainer ui:field="systemMessagesPanel"/>
+					</gxt:child>
+				</gxt:TabPanel>
+			</con:center>
+			
+			<con:south layoutData="{southData}">
+				<g:HTMLPanel>
+					<div class=" x-component x-border-panel" style="overflow: visible; background-color: rgb(254, 253, 221); left: 0px; top: 682px; width: 1168px; height: 20px;">
+						<table role="presentation" cellpadding="0" cellspacing="0">
+							<tbody role="presentation">
+								<tr role="presentation">
+									<td role="presentation" align="LEFT" valign="TOP">
+										<div class="copyright x-component"><ui:safehtml from="{strings.projectCopyrightStatement}"/></div>
+									</td>
+									<td role="presentation" align="LEFT" valign="TOP">
+										<div class="nsf_text x-component"><ui:safehtml from="{strings.nsfProjectText}"/></div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</g:HTMLPanel>
+			</con:south>
+		</con:BorderLayoutContainer>
+	</con:Viewport>
+</ui:UiBinder>

@@ -102,6 +102,23 @@ public class ToolIntegrationAdminProperties {
     private static final String SERVICE_LIST_REF_GENOME = PROPERTY_NAME_PREFIX + "get-ref-genomes"; //$NON-NLS-1$
 
     /**
+     * The URL used to access the list of tool requests.
+     */
+    private static final String SERVICE_LIST_TOOL_REQUESTS = PROPERTY_NAME_PREFIX + "get-tool-requests"; //$NON-NLS-1$
+
+    /**
+     * The URL used to access the Tool Request endpoint.
+     */
+    private static final String SERVICE_TOOL_REQUEST = PROPERTY_NAME_PREFIX + "tool-request"; //$NON-NLS-1$
+
+    /**
+     * The URL used to access the admin system message endpoint.
+     */
+    private static final String SERVICE_SYSTEM_MESSAGES = PROPERTY_NAME_PREFIX + "notifications.system"; //$NON-NLS-1$  
+
+    private static final String SERVICE_SYSTEM_MESSAGE_TYPES = PROPERTY_NAME_PREFIX + "notifications.system-types"; //$NON-NLS-1$
+
+    /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
@@ -168,7 +185,8 @@ public class ToolIntegrationAdminProperties {
                 SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS,
                 SERVICE_URL_APP_UPDATE, SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE,
                 SERVICE_URL_APP_RESTORE, SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME,
-                SERVICE_EDIT_REF_GENOME, SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP)) {
+                SERVICE_EDIT_REF_GENOME, SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP, SERVICE_LIST_TOOL_REQUESTS, SERVICE_TOOL_REQUEST,
+                SERVICE_SYSTEM_MESSAGES, SERVICE_SYSTEM_MESSAGE_TYPES)) {
             serviceUrlMap.put(key, properties.get(key));
         }
 
@@ -263,16 +281,6 @@ public class ToolIntegrationAdminProperties {
         }
     }
 
-    /**
-     * Obtains the full URL used to access a service.
-     * 
-     * @param serviceName the name of the service.
-     * @return the URL.
-     */
-    private String getServiceUrl(String serviceName) {
-        return serviceUrlMap.get(SERVICE_URL_BASE) + serviceUrlMap.get(serviceName);
-    }
-
     public String getBootStrapUrl() {
         return serviceUrlMap.get(SERVICE_URL_BOOTSTRAP);
     }
@@ -283,7 +291,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getAddRefGenomeServiceUrl() {
-        return getServiceUrl(SERVICE_ADD_REF_GENOME);
+        return serviceUrlMap.get(SERVICE_ADD_REF_GENOME);
     }
 
     /**
@@ -292,7 +300,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getEditRefGenomeServiceUrl() {
-        return getServiceUrl(SERVICE_EDIT_REF_GENOME);
+        return serviceUrlMap.get(SERVICE_EDIT_REF_GENOME);
     }
 
     /**
@@ -301,7 +309,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getListRefGenomeServiceUrl() {
-        return getServiceUrl(SERVICE_LIST_REF_GENOME);
+        return serviceUrlMap.get(SERVICE_LIST_REF_GENOME);
     }
 
     /**
@@ -310,7 +318,25 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getAddCategoryServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_ADD);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_ADD);
+    }
+
+    /**
+     * Gets the List Tool Requests service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getListToolRequestsServiceUrl() {
+        return serviceUrlMap.get(SERVICE_LIST_TOOL_REQUESTS);
+    }
+
+    /**
+     * Gets the Tool Request service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getToolRequestServiceUrl() {
+        return serviceUrlMap.get(SERVICE_TOOL_REQUEST);
     }
 
     /**
@@ -319,7 +345,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getRenameCategoryServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_RENAME);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_RENAME);
     }
 
     /**
@@ -328,7 +354,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getMoveCategoryServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_MOVE);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_MOVE);
     }
 
     /**
@@ -337,7 +363,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getDeleteCategoryServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_DELETE);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_DELETE);
     }
 
     /**
@@ -346,11 +372,11 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getCategoryListServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_LIST);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_LIST);
     }
 
     public String getCategoryListSecuredServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_LIST_SEC);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_LIST_SEC);
     }
 
     /**
@@ -359,7 +385,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getAppsInCategoryServiceUrl() {
-        return getServiceUrl(SERVICE_URL_CATEGORY_APPS);
+        return serviceUrlMap.get(SERVICE_URL_CATEGORY_APPS);
     }
 
     /**
@@ -368,7 +394,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getUpdateAppServiceUrl() {
-        return getServiceUrl(SERVICE_URL_APP_UPDATE);
+        return serviceUrlMap.get(SERVICE_URL_APP_UPDATE);
     }
 
     /**
@@ -377,7 +403,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getMoveAppServiceUrl() {
-        return getServiceUrl(SERVICE_URL_APP_MOVE);
+        return serviceUrlMap.get(SERVICE_URL_APP_MOVE);
     }
 
     /**
@@ -386,7 +412,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getDeleteAppServiceUrl() {
-        return getServiceUrl(SERVICE_URL_APP_DELETE);
+        return serviceUrlMap.get(SERVICE_URL_APP_DELETE);
     }
 
     /**
@@ -395,7 +421,7 @@ public class ToolIntegrationAdminProperties {
      * @return the URL as a string.
      */
     public String getRestoreAppServiceUrl() {
-        return getServiceUrl(SERVICE_URL_APP_RESTORE);
+        return serviceUrlMap.get(SERVICE_URL_APP_RESTORE);
     }
 
     /**
@@ -458,5 +484,23 @@ public class ToolIntegrationAdminProperties {
      */
     public String[] getValidAppWikiUrlPath() {
         return validAppWikiUrlPath;
+    }
+
+    /**
+     * Gets the Admin System message service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getAdminSystemMessageServiceUrl() {
+        return serviceUrlMap.get(SERVICE_SYSTEM_MESSAGES);
+    }
+
+    /**
+     * Gets the Admin System message types service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getAdminSystemMessageTypesUrl() {
+        return serviceUrlMap.get(SERVICE_SYSTEM_MESSAGE_TYPES);
     }
 }
