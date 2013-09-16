@@ -1,4 +1,29 @@
-@sprite .belphegorLogo {
+@sprite .iplantcLogo {
 	gwt-image: "headerLogo";
 	cursor: pointer;
+}
+
+.iplantcHeader {
+    position: absolute;
+	border-width: 0px;
+    left: 0px;
+    right: 0px;
+   	top: 0px;
+   	background-image: url('images/headerlogo-fill.png');
+   	border-width: 0px;
+   	margin: 0;
+   	padding: 0;	
+}
+
+.iplantcHeaderMenu {
+	position: fixed;
+	top: 15px;
+	right: 40px;	
+}
+
+.iplantcHeaderMenuBody {
+	background-color: white;
+	outline: none;
+	border-color: #0098AA;
+	border-width: 3px;
 }

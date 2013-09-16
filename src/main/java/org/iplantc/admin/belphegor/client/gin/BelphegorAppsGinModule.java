@@ -4,6 +4,9 @@ import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
+import org.iplantc.admin.belphegor.client.refGenome.presenter.RefGenomePresenterImpl;
+import org.iplantc.admin.belphegor.client.refGenome.view.RefGenomeViewImpl;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.systemMessage.presenter.SystemMessagePresenterImpl;
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
@@ -36,6 +39,9 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
 
         bind(AppsView.class).to(AdminAppViewImpl.class);
         bind(BelphegorAppsToolbar.class).to(BelphegorAppsToolbarImpl.class);
+
+        bind(RefGenomeView.class).to(RefGenomeViewImpl.class);
+        bind(RefGenomeView.Presenter.class).to(RefGenomePresenterImpl.class);
 
         bind(ToolRequestView.class).to(ToolRequestViewImpl.class);
         bind(ToolRequestView.Presenter.class).to(ToolRequestPresenterImpl.class);

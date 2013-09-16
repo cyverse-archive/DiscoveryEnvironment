@@ -4,5 +4,11 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface BelphegorStyle extends CssResource {
 
-    String belphegorLogo();
+    String iplantcLogo();
+
+    String iplantcHeader();
+
+    String iplantcHeaderMenu();
+
+    String iplantcHeaderMenuBody();
 }

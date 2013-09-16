@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
+import org.iplantc.core.resources.client.IplantResources;
+import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 import org.iplantc.core.uicommons.client.models.sysmsgs.MessageFactory;
 import org.iplantc.core.uicommons.client.models.sysmsgs.MessageProperties;
@@ -34,6 +36,11 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     interface SystemMessageViewImplUiBinder extends UiBinder<Widget, SystemMessageViewImpl> {}
 
+    @UiField(provided = true)
+    IplantResources res;
+    @UiField(provided = true)
+    IplantDisplayStrings strings;
+
     @UiField
     TextButton addBtn, deleteBtn, editBtn;
 
@@ -48,7 +55,9 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     private SystemMessageView.Presenter presenter;
 
     @Inject
-    public SystemMessageViewImpl() {
+    public SystemMessageViewImpl(IplantResources res, IplantDisplayStrings strings) {
+        this.res = res;
+        this.strings = strings;
         initWidget(uiBinder.createAndBindUi(this));
 
         grid.getSelectionModel().addSelectionChangedHandler(this);

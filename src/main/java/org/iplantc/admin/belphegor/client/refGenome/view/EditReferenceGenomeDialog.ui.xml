@@ -1,0 +1,63 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	         xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	         xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container">
+
+	<ui:with field="strings"
+             type="org.iplantc.core.resources.client.messages.IplantDisplayStrings" />
+	<ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="verticalLayoutData">
+    	<ui:attributes width="1" height="-1" />
+    </ui:with>
+	<container:VerticalLayoutContainer>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.name}">
+				<form:widget>
+					<form:TextField ui:field="nameEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.path}">
+				<form:widget>
+					<form:TextField ui:field="pathEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.createdBy}">
+				<form:widget>
+					<form:TextField ui:field="createdByEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.createdOn}">
+				<form:widget>
+					<form:DateField ui:field="createdDateEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.lastModified}">
+				<form:widget>
+					<form:DateField ui:field="lastModifiedDateEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.lastModBy}">
+				<form:widget>
+					<form:TextField ui:field="lastModifiedByEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{verticalLayoutData}">
+			<form:FieldLabel text="{strings.refDeletePrompt}">
+				<form:widget>
+					<form:CheckBox ui:field="deletedEditor"/>
+				</form:widget>
+			</form:FieldLabel>
+		</container:child>
+	</container:VerticalLayoutContainer>
+</ui:UiBinder> 
