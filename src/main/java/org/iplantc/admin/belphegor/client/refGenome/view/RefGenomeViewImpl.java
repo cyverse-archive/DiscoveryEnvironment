@@ -1,11 +1,13 @@
 package org.iplantc.admin.belphegor.client.refGenome.view;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenomeProperties;
+import org.iplantc.admin.belphegor.client.refGenome.view.cells.ReferenceGenomeNameCell;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
 
@@ -19,12 +21,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.Store.StoreFilter;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -32,6 +36,13 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     private static RefGenomeViewImpleUiBinder uiBinder = GWT.create(RefGenomeViewImpleUiBinder.class);
+
+    private final class NameColumnComparatory implements Comparator<ReferenceGenome> {
+        @Override
+        public int compare(ReferenceGenome arg0, ReferenceGenome arg1) {
+            return arg0.getName().compareToIgnoreCase(arg1.getName());
+        }
+    }
 
     private final class FilterByNameStoreFilter implements StoreFilter<ReferenceGenome> {
         private String query;
@@ -64,6 +75,7 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     private final ReferenceGenomeProperties rgProps;
     private final FilterByNameStoreFilter nameFilter;
+    private RefGenomeView.Presenter presenter;
 
     @Inject
     public RefGenomeViewImpl(IplantResources res, IplantDisplayStrings strings, ReferenceGenomeProperties rgProps) {
@@ -82,11 +94,13 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     @UiFactory
     ColumnModel<ReferenceGenome> createColumnModel() {
-        ColumnConfig<ReferenceGenome, String> nameCol = new ColumnConfig<ReferenceGenome, String>(rgProps.name(), 300, strings.name());
+        ColumnConfig<ReferenceGenome, ReferenceGenome> nameCol = new ColumnConfig<ReferenceGenome, ReferenceGenome>(new IdentityValueProvider<ReferenceGenome>("name"), 300, strings.name());
         ColumnConfig<ReferenceGenome, String> pathCol = new ColumnConfig<ReferenceGenome, String>(rgProps.path(), 300, strings.path());
         ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<ReferenceGenome, Date>(rgProps.createdDate(), 192, strings.createdOn());
         ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<ReferenceGenome, String>(rgProps.createdBy(), 160, strings.createdBy());
 
+        nameCol.setCell(new ReferenceGenomeNameCell(presenter));
+        nameCol.setComparator(new NameColumnComparatory());
         createdOnCol.setFixed(true);
 
         @SuppressWarnings("unchecked")
@@ -96,7 +110,14 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
-        EditReferenceGenomeDialog dlg = new EditReferenceGenomeDialog();
+        final EditReferenceGenomeDialog dlg = EditReferenceGenomeDialog.addNewReferenceGenome();
+        dlg.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                presenter.addReferenceGenome(dlg.getReferenceGenome());
+            }
+        });
         dlg.show();
 
     }
@@ -115,6 +136,11 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
     @Override
     public void setReferenceGenomes(List<ReferenceGenome> refGenomes) {
         store.addAll(refGenomes);
+    }
+
+    @Override
+    public void setPresenter(RefGenomeView.Presenter presenter) {
+        this.presenter = presenter;
     }
 
 }

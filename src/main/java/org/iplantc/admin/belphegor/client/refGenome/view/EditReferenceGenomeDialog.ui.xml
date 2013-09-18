@@ -11,14 +11,14 @@
     </ui:with>
 	<container:VerticalLayoutContainer>
 		<container:child layoutData="{verticalLayoutData}">
-			<form:FieldLabel text="{strings.name}">
+			<form:FieldLabel ui:field="nameLabel">
 				<form:widget>
 					<form:TextField ui:field="nameEditor"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{verticalLayoutData}">
-			<form:FieldLabel text="{strings.path}">
+			<form:FieldLabel ui:field="pathLabel">
 				<form:widget>
 					<form:TextField ui:field="pathEditor"/>
 				</form:widget>

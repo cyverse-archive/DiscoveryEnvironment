@@ -18,16 +18,16 @@ public interface ReferenceGenomeServiceFacade {
     /**
      * https://github.com/iPlantCollaborativeOpenSource/Conrad#modifying-a-genome-reference
      * 
-     * @param refGenomes
+     * @param referenceGenome
      * @param callback
      */
-    void editReferenceGenomes(List<ReferenceGenome> refGenomes, AsyncCallback<String> callback);
+    void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<Void> callback);
 
     /**
      * https://github.com/iPlantCollaborativeOpenSource/Conrad#creating-a-new-genome-reference
      * 
-     * @param refGenomes
+     * @param referenceGenome
      * @param callback
      */
-    void createReferenceGenomes(List<ReferenceGenome> refGenomes, AsyncCallback<String> callback);
+    void createReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<Void> callback);
 }
