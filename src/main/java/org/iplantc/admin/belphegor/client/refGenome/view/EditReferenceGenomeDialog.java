@@ -6,21 +6,23 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenomeAutoBeanFactory;
 import org.iplantc.core.uicommons.client.models.UserInfo;
-import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.core.client.XTemplates;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
-public class EditReferenceGenomeDialog extends IPlantDialog implements Editor<ReferenceGenome> {
+public class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGenome>, TakesValue<ReferenceGenome> {
 
     private static EditReferenceGenomeDialogUiBinder uiBinder = GWT.create(EditReferenceGenomeDialogUiBinder.class);
 
@@ -41,8 +43,6 @@ public class EditReferenceGenomeDialog extends IPlantDialog implements Editor<Re
     @UiField
     CheckBox deletedEditor;
 
-    private ReferenceGenome model;
-
     public static EditReferenceGenomeDialog addNewReferenceGenome() {
         ReferenceGenomeAutoBeanFactory factory = GWT.create(ReferenceGenomeAutoBeanFactory.class);
         ReferenceGenome refGenome = factory.referenceGenome().as();
@@ -52,43 +52,45 @@ public class EditReferenceGenomeDialog extends IPlantDialog implements Editor<Re
         refGenome.setCreatedDate(currDate);
         refGenome.setLastModifiedDate(currDate);
 
-        EditReferenceGenomeDialog dlg = new EditReferenceGenomeDialog(refGenome);
-        dlg.setTitle(I18N.DISPLAY.addReferenceGenome());
-        dlg.deletedEditor.setEnabled(false);
-        return dlg;
+        EditReferenceGenomeDialog addRegGenPanel = new EditReferenceGenomeDialog(refGenome);
+        addRegGenPanel.deletedEditor.setEnabled(false);
+        return addRegGenPanel;
     }
 
     public static EditReferenceGenomeDialog editReferenceGenome(ReferenceGenome refGenome) {
-        EditReferenceGenomeDialog dlg = new EditReferenceGenomeDialog(refGenome);
-        dlg.setTitle(refGenome.getName());
-        dlg.deletedEditor.setEnabled(true);
-        return dlg;
+        EditReferenceGenomeDialog editRefGenomePanel = new EditReferenceGenomeDialog(refGenome);
+        editRefGenomePanel.setTitle(refGenome.getName());
+        editRefGenomePanel.deletedEditor.setEnabled(true);
+        return editRefGenomePanel;
     }
 
-    private EditReferenceGenomeDialog(ReferenceGenome refGenome) {
-        add(uiBinder.createAndBindUi(this));
-        getOkButton().setText("Save");
+    interface Templates extends XTemplates {
+        @XTemplate("<span style='color: red;'>*&nbsp</span>{label}")
+        SafeHtml requiredFieldLabel(String label);
+    }
 
-        nameLabel.setHTML(I18N.DISPLAY.requiredFieldLabel(I18N.DISPLAY.name()));
-        pathLabel.setHTML(I18N.DISPLAY.requiredFieldLabel(I18N.DISPLAY.path()));
+    private final Templates templates = GWT.create(Templates.class);
+    private EditReferenceGenomeDialog(ReferenceGenome refGenome) {
+        initWidget(uiBinder.createAndBindUi(this));
+
+        nameLabel.setHTML(templates.requiredFieldLabel(I18N.DISPLAY.name()));
+        pathLabel.setHTML(templates.requiredFieldLabel(I18N.DISPLAY.path()));
 
         editorDriver.initialize(this);
         editorDriver.edit(refGenome);
     }
 
     @Override
-    protected void onButtonPressed(TextButton button) {
-        if (button == getButtonBar().getItemByItemId(PredefinedButton.OK.name())) {
-            model = editorDriver.flush();
-            if (!editorDriver.hasErrors()) {
-                super.onButtonPressed(button);
-            }
-        } else {
-            super.onButtonPressed(button);
-        }
+    public void setValue(ReferenceGenome value) {
+        throw new UnsupportedOperationException();
     }
 
-    public ReferenceGenome getReferenceGenome() {
-        return model;
+    @Override
+    public ReferenceGenome getValue() {
+        return editorDriver.flush();
+    }
+
+    public boolean hasErrors() {
+        return editorDriver.hasErrors();
     }
 }

@@ -33,11 +33,13 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
     private final AppFavoriteCellStyle appFavStyle = IplantResources.RESOURCES.appFavoriteCss();
 
     private final Templates templates = GWT.create(Templates.class);
-    private final RefGenomeView.Presenter presenter;
+    private final RefGenomeView view;
 
-    public ReferenceGenomeNameCell(RefGenomeView.Presenter presenter) {
+    public ReferenceGenomeNameCell(RefGenomeView view) {
         super(CLICK);
-        this.presenter = presenter;
+        diskResourceNameStyle.ensureInjected();
+        appFavStyle.ensureInjected();
+        this.view = view;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
         if (parent.isOrHasChild(eventTarget) 
                 && (Event.as(event).getTypeInt() == Event.ONCLICK)
                 && eventTarget.getAttribute("name").equalsIgnoreCase("rgName")) {
-            presenter.editReferenceGenome(value);
+            view.editReferenceGenome(value);
         }
     }
 

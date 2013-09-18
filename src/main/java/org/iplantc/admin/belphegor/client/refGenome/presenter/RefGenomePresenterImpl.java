@@ -64,7 +64,6 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
             }
 
         });
-
     }
 
     @Override

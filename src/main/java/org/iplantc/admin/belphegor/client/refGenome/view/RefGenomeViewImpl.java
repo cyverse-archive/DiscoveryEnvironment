@@ -4,12 +4,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenome;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenomeProperties;
 import org.iplantc.admin.belphegor.client.refGenome.view.cells.ReferenceGenomeNameCell;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -49,7 +51,11 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
         @Override
         public boolean select(Store<ReferenceGenome> store, ReferenceGenome parent, ReferenceGenome item) {
-            return item.getName().toLowerCase().startsWith(query.toLowerCase());
+            if (Strings.nullToEmpty(query).isEmpty()) {
+                return false;
+            }
+            final boolean startsWith = item.getName().toLowerCase().startsWith(query.toLowerCase());
+            return startsWith;
         }
 
         public void setQuery(String query) {
@@ -84,12 +90,13 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
         this.rgProps = rgProps;
         initWidget(uiBinder.createAndBindUi(this));
         nameFilter = new FilterByNameStoreFilter();
-        store.addFilter(nameFilter);
     }
 
     @UiFactory
     ListStore<ReferenceGenome> createListStore() {
-        return new ListStore<ReferenceGenome>(rgProps.id());
+        final ListStore<ReferenceGenome> listStore = new ListStore<ReferenceGenome>(rgProps.id());
+        listStore.setEnableFilters(true);
+        return listStore;
     }
 
     @UiFactory
@@ -99,7 +106,7 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
         ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<ReferenceGenome, Date>(rgProps.createdDate(), 192, strings.createdOn());
         ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<ReferenceGenome, String>(rgProps.createdBy(), 160, strings.createdBy());
 
-        nameCol.setCell(new ReferenceGenomeNameCell(presenter));
+        nameCol.setCell(new ReferenceGenomeNameCell(this));
         nameCol.setComparator(new NameColumnComparatory());
         createdOnCol.setFixed(true);
 
@@ -110,15 +117,59 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
-        final EditReferenceGenomeDialog dlg = EditReferenceGenomeDialog.addNewReferenceGenome();
-        dlg.addOkButtonSelectHandler(new SelectHandler() {
+        final IPlantDialog iDlg = new IPlantDialog();
+        iDlg.setHideOnButtonClick(false);
+        iDlg.setHeadingText(I18N.DISPLAY.addReferenceGenome());
+        iDlg.getOkButton().setText("Save");
+        final EditReferenceGenomeDialog addRefGenomePanel = EditReferenceGenomeDialog.addNewReferenceGenome();
+        iDlg.add(addRefGenomePanel);
+        iDlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                presenter.addReferenceGenome(dlg.getReferenceGenome());
+                final ReferenceGenome value = addRefGenomePanel.getValue();
+                if (!addRefGenomePanel.hasErrors()) {
+                    iDlg.hide();
+                    presenter.addReferenceGenome(value);
+                }
             }
         });
-        dlg.show();
+        iDlg.addCancelButtonSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) { iDlg.hide(); }
+        });
+
+        iDlg.show();
+
+    }
+
+    @Override
+    public void editReferenceGenome(ReferenceGenome refGenome) {
+        final IPlantDialog iDlg = new IPlantDialog();
+        iDlg.setHideOnButtonClick(false);
+        iDlg.setHeadingText(I18N.DISPLAY.edit() + ": " + refGenome.getName());
+        iDlg.getOkButton().setText("Save");
+        final EditReferenceGenomeDialog addRefGenomePanel = EditReferenceGenomeDialog.editReferenceGenome(refGenome);
+        iDlg.add(addRefGenomePanel);
+        iDlg.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                final ReferenceGenome value = addRefGenomePanel.getValue();
+                if (!addRefGenomePanel.hasErrors()) {
+                    iDlg.hide();
+                    presenter.editReferenceGenome(value);
+                }
+            }
+        });
+        iDlg.addCancelButtonSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                iDlg.hide();
+            }
+        });
+
+        iDlg.show();
 
     }
 
