@@ -1,5 +1,6 @@
 package org.iplantc.admin.belphegor.client.refGenome.view;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.refGenome.model.ReferenceGenome;
 import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
 
@@ -28,6 +29,7 @@ public class EditReferenceGenomeDialog extends IPlantDialog implements Editor<Re
     CheckBox deletedEditor;
 
     public EditReferenceGenomeDialog() {
+        setTitle(I18N.DISPLAY.addReferenceGenome());
         add(uiBinder.createAndBindUi(this));
         getOkButton().setText("Save");
     }
