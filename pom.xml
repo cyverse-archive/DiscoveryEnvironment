@@ -36,11 +36,6 @@
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.extjs</groupId>
-			<artifactId>gxt</artifactId>
-			<version>2.2.5</version>
-		</dependency>
 		<!-- iPlant Dependencies -->
 		<dependency>
 			<groupId>org.iplantc.core</groupId>

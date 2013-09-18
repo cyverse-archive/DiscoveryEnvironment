@@ -1,6 +1,5 @@
 package org.iplantc.admin.belphegor.client.views;
 
-import org.iplantc.admin.belphegor.client.BelphegorConstants;
 import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.BelphegorStyle;
 import org.iplantc.admin.belphegor.client.Constants;
@@ -18,6 +17,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -42,10 +43,10 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
     interface MyTemplate extends XTemplates {
         @XTemplate("<div class='{style.iplantcHeader}'>" + "<table><tbody><tr>"
-                + "<td role='presentation' align='LEFT' valign='TOP'><a style='outline-style: none;' href='{constants.iplantHome}' target='_blank'><div class='{style.iplantcLogo}'></div></a></td>"
+                + "<td role='presentation' align='LEFT' valign='TOP'><a style='outline-style: none;' href='{iplantHome}' target='_blank'><div class='{style.iplantcLogo}'></div></a></td>"
                 + "<td role='presentation' align='LEFT' valign='TOP'><div class='{style.iplantcHeaderMenu}'></div>" 
                 + "</td></tr></tbody></table></div>")
-        SafeHtml getTemplate(BelphegorStyle style, BelphegorConstants constants);
+        SafeHtml getTemplate(BelphegorStyle style, SafeUri iplantHome);
     }
 
     @UiField(provided = true)
@@ -72,7 +73,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
 
     @UiFactory
     HtmlLayoutContainer buildHtmlLayoutContainer() {
-        return new HtmlLayoutContainer(template.getTemplate(res.css(), Constants.CLIENT));
+        return new HtmlLayoutContainer(template.getTemplate(res.css(), UriUtils.fromSafeConstant(Constants.CLIENT.iplantHome())));
     }
 
     private void init() {

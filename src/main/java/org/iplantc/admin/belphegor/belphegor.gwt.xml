@@ -10,7 +10,6 @@
 	<inherits name='com.google.gwt.user.theme.standard.Standard' />
 
     <inherits name="com.google.gwt.editor.Editor" />
-    <inherits name='com.extjs.gxt.ui.GXT'/>
     <inherits name='com.sencha.gxt.ui.GXT' />
     <stylesheet src="reset.css" />
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
