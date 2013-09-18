@@ -11,14 +11,18 @@
 
     <inherits name="com.google.gwt.editor.Editor" />
     <inherits name='com.extjs.gxt.ui.GXT'/>
+    <inherits name='com.sencha.gxt.ui.GXT' />
     <stylesheet src="reset.css" />
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
 
+    <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
     <inherits name="org.iplantc.core.diskresource"/>
 	<inherits name="org.iplantc.core.uiapps.Apps"/>
 	
 	 <inherits name="com.google.gwt.user.Debug"/>
 
+
+    <inherits name="com.google.gwt.rpc.RPC" />
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='shared' />
@@ -31,7 +35,7 @@
       <when-type-is class="org.iplantc.core.uiapps.client.services.AppUserServiceFacade"/>
    </replace-with>
 
-  <replace-with class="org.iplantc.core.uicommons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
+   <replace-with class="org.iplantc.core.uicommons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
       <when-type-is class="org.iplantc.core.uicommons.client.widgets.IPlantAnchorAppearance"/>
    </replace-with>
 

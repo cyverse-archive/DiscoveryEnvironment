@@ -192,7 +192,8 @@ public class ReferenceGenomeListingPanel extends ContentPanel {
     }
 
     private void getGenomes() {
-        ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade(this);
+        ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade();
+        // ReferenceGenomesServiceFacade facade = new ReferenceGenomesServiceFacade(this);
         facade.getReferenceGenomes(new AsyncCallback<String>() {
 
             @Override

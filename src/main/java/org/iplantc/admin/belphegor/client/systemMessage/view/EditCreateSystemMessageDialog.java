@@ -65,14 +65,16 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
 
     private final MessageFactory factory = GWT.create(MessageFactory.class);
 
-    public static EditCreateSystemMessageDialog createSystemMessage() {
-        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(null);
+    private final List<String> announcementTypes = Lists.newArrayList("warning", "announcement", "maintenance");
+
+    public static EditCreateSystemMessageDialog createSystemMessage(List<String> announcementTypes) {
+        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(null, announcementTypes);
         dlg.setHeadingText("Create System Message");
         return dlg;
     }
     
-    public static EditCreateSystemMessageDialog editSystemMessage(Message message) {
-        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(message);
+    public static EditCreateSystemMessageDialog editSystemMessage(Message message, List<String> announcementTypes) {
+        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(message, announcementTypes);
         dlg.messageField.setValue(message.getBody());
         dlg.typeCombo.select(message.getType());
         dlg.typeCombo.setValue(message.getType());
@@ -80,11 +82,17 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
         return dlg;
     }
 
-    private EditCreateSystemMessageDialog(Message message) {
+    private EditCreateSystemMessageDialog(Message message, List<String> announcementTypes) {
         this.message = message;
+        // If the announcement types are not empty, clear local defaults and add them.
+        if (!announcementTypes.isEmpty()) {
+            this.announcementTypes.clear();
+            this.announcementTypes.addAll(announcementTypes);
+        }
         if (this.message == null) {
             message = factory.makeMessage().as();
         }
+        setSize("500", "400");
         add(uiBinder.createAndBindUi(this));
         // JDS Set activation date to current time
         DateWrapper initialDate = (message.getActivationTime() == null) ? new DateWrapper() : new DateWrapper(message.getActivationTime());
@@ -96,10 +104,8 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
 
     @UiFactory
     SimpleComboBox<String> createTypeCombo() {
-        // TODO call out to service to retrieve list of types
-        List<String> typeList = Lists.newArrayList("warning", "announcement", "maintenance");
         SimpleComboBox<String> cb = new SimpleComboBox<String>(new StringLabelProvider<String>());
-        cb.add(typeList);
+        cb.add(announcementTypes);
         return cb;
     }
 

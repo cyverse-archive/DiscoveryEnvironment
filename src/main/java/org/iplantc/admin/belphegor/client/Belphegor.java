@@ -2,10 +2,10 @@ package org.iplantc.admin.belphegor.client;
 
 import java.util.Map;
 
-import org.iplantc.admin.belphegor.client.controllers.ApplicationController;
+import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
-import org.iplantc.admin.belphegor.client.views.ApplicationLayout;
+import org.iplantc.admin.belphegor.client.views.BelphegorView;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.requests.KeepaliveTimer;
@@ -26,57 +26,15 @@ public class Belphegor implements EntryPoint {
      */
     @Override
     public void onModuleLoad() {
+        setBrowserContextMenuEnabled(ToolIntegrationAdminProperties.getInstance().isContextClickEnabled());
         setEntryPointTitle();
         initProperties();
-    }
-
-    private void initApp() {
-        ApplicationLayout layoutApplication = new ApplicationLayout();
-
-        ApplicationController controller = ApplicationController.getInstance();
-        controller.init(layoutApplication);
-
-        RootPanel.get().add(layoutApplication);
-        setBrowserContextMenuEnabled(ToolIntegrationAdminProperties.getInstance()
-                .isContextClickEnabled());
-
-        String keepaliveTarget = ToolIntegrationAdminProperties.getInstance().getKeepaliveTarget();
-        int keepaliveInterval = ToolIntegrationAdminProperties.getInstance().getKeepaliveInterval();
-        KeepaliveTimer.getInstance().start(keepaliveTarget, keepaliveInterval);
     }
 
     private void setEntryPointTitle() {
         Window.setTitle(I18N.DISPLAY.adminApp());
     }
 
-    private void initUserInfo() {
-        String address = ToolIntegrationAdminProperties.getInstance().getBootStrapUrl();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper,
-                new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed(), caught);
-
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        parseWorkspaceInfo(result);
-                        initApp();
-                    }
-                });
-    }
-
-    private void parseWorkspaceInfo(String json) {
-        // Bootstrap the user-info object with workspace info provided in JSON format.
-        UserInfo.getInstance().init(json);
-    }
-
-    /**
-     * Initializes the Tito configuration properties object.
-     */
     private void initProperties() {
         PropertyServiceFacade.getInstance().getProperties(new AsyncCallback<Map<String, String>>() {
             @Override
@@ -90,6 +48,38 @@ public class Belphegor implements EntryPoint {
                 initUserInfo();
             }
         });
+    }
+
+    private void initUserInfo() {
+        String address = ToolIntegrationAdminProperties.getInstance().getBootStrapUrl();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed(), caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                parseWorkspaceInfo(result);
+                initApp();
+            }
+        });
+    }
+
+    private void initApp() {
+        BelphegorView.Presenter belphegorPresenter = BelphegorAppInjector.INSTANCE.getBelphegorPresenter();
+        belphegorPresenter.go(RootPanel.get());
+
+        String keepaliveTarget = ToolIntegrationAdminProperties.getInstance().getKeepaliveTarget();
+        int keepaliveInterval = ToolIntegrationAdminProperties.getInstance().getKeepaliveInterval();
+        KeepaliveTimer.getInstance().start(keepaliveTarget, keepaliveInterval);
+    }
+
+    private void parseWorkspaceInfo(String json) {
+        // Bootstrap the user-info object with workspace info provided in JSON format.
+        UserInfo.getInstance().init(json);
     }
 
     /**

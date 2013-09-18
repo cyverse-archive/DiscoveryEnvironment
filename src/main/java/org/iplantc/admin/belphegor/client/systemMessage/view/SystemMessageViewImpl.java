@@ -7,7 +7,6 @@ import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
-import org.iplantc.core.uicommons.client.models.sysmsgs.MessageFactory;
 import org.iplantc.core.uicommons.client.models.sysmsgs.MessageProperties;
 
 import com.google.common.collect.Lists;
@@ -16,9 +15,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -50,41 +49,17 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @UiField
     ListStore<Message> store;
 
-    private final MessageProperties msgProps = GWT.create(MessageProperties.class);
-    private final MessageFactory factory = GWT.create(MessageFactory.class);
+    private final MessageProperties msgProps;
     private SystemMessageView.Presenter presenter;
 
     @Inject
-    public SystemMessageViewImpl(IplantResources res, IplantDisplayStrings strings) {
+    public SystemMessageViewImpl(IplantResources res, IplantDisplayStrings strings, MessageProperties msgProps) {
         this.res = res;
         this.strings = strings;
+        this.msgProps = msgProps;
         initWidget(uiBinder.createAndBindUi(this));
 
         grid.getSelectionModel().addSelectionChangedHandler(this);
-        String jsonOne = "{ "
-                + "\"activation_date\": \"Tue Apr 09 2013 15:17:54 GMT-0700 (MST)\", "
-                + "\"date_created\": \"Tue Apr 09 2013 22:17:54 GMT-0700 (MST)\", "
-                + "\"deactivation_date\": \"Mon Dec 02 2013 12:00:00 GMT-0700 (MST)\", "
-                + "\"dismissible\": false, "
-                + "\"logins_disabled\": false, "
-                + "\"message\": \"This is a warning\", "
-                + "\"type\": \"warning\", "
-                + "\"uuid\": \"140ee541-9967-47cd-ba2b-3b17d8c19dae\"}";
-        String jsonTwo = "{ "
-                + "\"activation_date\": \"Tue Apr 09 2013 15:17:54 GMT-0700 (MST)\", "
-                + "\"date_created\": \"Tue Apr 09 2013 22:17:54 GMT-0700 (MST)\", "
-                + "\"deactivation_date\": \"Mon Dec 02 2013 12:00:00 GMT-0700 (MST)\", "
-                + "\"dismissible\": false, "
-                + "\"logins_disabled\": false, "
-                + "\"message\": \"Another message\", "
-                + "\"type\": \"notification\", "
-                + "\"uuid\": \"11111111-1111-47cd-ba2b-3b17d8c19dae\"}";
-        Message one = AutoBeanCodex.decode(factory, Message.class, jsonOne).as();
-
-        Message two = AutoBeanCodex.decode(factory, Message.class, jsonTwo).as();
-        
-        store.add(one);
-        store.add(two);
     }
 
     @Override
@@ -107,10 +82,14 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     @UiFactory
     ColumnModel<Message> createColumnModel() {
-        ColumnConfig<Message, Date> activationDateCol = new ColumnConfig<Message, Date>(msgProps.activationTime(), 90, "Activation Date");
-        ColumnConfig<Message, Date> deactivationDateCol = new ColumnConfig<Message, Date>(msgProps.deactivationTime(), 90, "Deactivation Date");
-        ColumnConfig<Message, String> msgCol = new ColumnConfig<Message, String>(msgProps.body(), 90, "Message");
+        ColumnConfig<Message, Date> activationDateCol = new ColumnConfig<Message, Date>(msgProps.activationTime(), 200, "Activation Date");
+        ColumnConfig<Message, Date> deactivationDateCol = new ColumnConfig<Message, Date>(msgProps.deactivationTime(), 200, "Deactivation Date");
+        ColumnConfig<Message, String> msgCol = new ColumnConfig<Message, String>(msgProps.body(), 400, "Message");
         ColumnConfig<Message, String> typeCol = new ColumnConfig<Message, String>(msgProps.type(), 90, "Type");
+        activationDateCol.setFixed(true);
+        deactivationDateCol.setFixed(true);
+        typeCol.setFixed(true);
+        typeCol.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         
         @SuppressWarnings("unchecked")
         List<ColumnConfig<Message, ?>> colList = Lists.<ColumnConfig<Message, ?>> newArrayList(activationDateCol, deactivationDateCol, msgCol, typeCol);
@@ -120,14 +99,13 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
-        final EditCreateSystemMessageDialog createSystemMessage = EditCreateSystemMessageDialog.createSystemMessage();
+        final EditCreateSystemMessageDialog createSystemMessage = EditCreateSystemMessageDialog.createSystemMessage(presenter.getAnnouncementTypes());
         createSystemMessage.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
                 Message msg = createSystemMessage.getMessage();
                 presenter.addSystemMessage(msg);
-//                store.add(msg);
             }
         });
         
@@ -143,7 +121,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @UiHandler("editBtn")
     void editBtnClicked(SelectEvent event) {
         // Call out to service to update, update item in store on success callback.
-        final EditCreateSystemMessageDialog editSystemMessage = EditCreateSystemMessageDialog.editSystemMessage(grid.getSelectionModel().getSelectedItem());
+        final EditCreateSystemMessageDialog editSystemMessage = EditCreateSystemMessageDialog.editSystemMessage(grid.getSelectionModel().getSelectedItem(), presenter.getAnnouncementTypes());
         editSystemMessage.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
@@ -153,6 +131,11 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
             }
         });
         editSystemMessage.show();
+    }
+
+    @Override
+    public void setSystemMessages(List<Message> systemMessages) {
+        store.addAll(systemMessages);
     }
 
 }

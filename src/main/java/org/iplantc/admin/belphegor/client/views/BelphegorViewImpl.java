@@ -1,10 +1,13 @@
 package org.iplantc.admin.belphegor.client.views;
 
+import org.iplantc.admin.belphegor.client.BelphegorConstants;
 import org.iplantc.admin.belphegor.client.BelphegorResources;
+import org.iplantc.admin.belphegor.client.BelphegorStyle;
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
+import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
@@ -14,22 +17,36 @@ import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 
-public class BelSample extends Composite {
+public class BelphegorViewImpl extends Composite implements BelphegorView {
 
-    private static BelSampleUiBinder uiBinder = GWT.create(BelSampleUiBinder.class);
+    private static BelphegorViewUiBinder uiBinder = GWT.create(BelphegorViewUiBinder.class);
 
-    interface BelSampleUiBinder extends UiBinder<Widget, BelSample> {}
+    @UiTemplate("BelphegorView.ui.xml")
+    interface BelphegorViewUiBinder extends UiBinder<Widget, BelphegorViewImpl> {}
+
+    interface MyTemplate extends XTemplates {
+        @XTemplate("<div class='{style.iplantcHeader}'>" + "<table><tbody><tr>"
+                + "<td role='presentation' align='LEFT' valign='TOP'><a style='outline-style: none;' href='{constants.iplantHome}' target='_blank'><div class='{style.iplantcLogo}'></div></a></td>"
+                + "<td role='presentation' align='LEFT' valign='TOP'><div class='{style.iplantcHeaderMenu}'></div>" 
+                + "</td></tr></tbody></table></div>")
+        SafeHtml getTemplate(BelphegorStyle style, BelphegorConstants constants);
+    }
 
     @UiField(provided = true)
     BelphegorResources res = BelphegorAppInjector.INSTANCE.getResources();
@@ -43,10 +60,19 @@ public class BelSample extends Composite {
     @UiField
     SimpleContainer appsPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel;
 
-    public BelSample(String firstName) {
+    private final MyTemplate template;
+
+    @Inject
+    public BelphegorViewImpl(MyTemplate template) {
+        this.template = template;
         res.css().ensureInjected();
         initWidget(uiBinder.createAndBindUi(this));
         init();
+    }
+
+    @UiFactory
+    HtmlLayoutContainer buildHtmlLayoutContainer() {
+        return new HtmlLayoutContainer(template.getTemplate(res.css(), Constants.CLIENT));
     }
 
     private void init() {
@@ -55,6 +81,9 @@ public class BelSample extends Composite {
         BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
         presenter.go(appsPanel);
         
+        RefGenomeView.Presenter refGenPresenter = BelphegorAppInjector.INSTANCE.getReferenceGenomePresenter();
+        refGenPresenter.go(refGenomePanel);
+
         ToolRequestView.Presenter toolReqPresenter = BelphegorAppInjector.INSTANCE.getToolRequestPresenter();
         toolReqPresenter.go(toolRequestPanel);
         
@@ -66,7 +95,6 @@ public class BelSample extends Composite {
 
         Menu userMenu = new Menu();
 
-        userMenu.setSize("110", "90");
         userMenu.setBorders(true);
         userMenu.setStyleName(res.css().iplantcHeaderMenuBody());
         userMenu.add(new IPlantAnchor(I18N.DISPLAY.logout(), -1, new ClickHandler() {
@@ -83,7 +111,7 @@ public class BelSample extends Composite {
         TextButton menuButton = new TextButton(menuLabel);
         menuButton.setMenu(userMenu);
 
-        northCon.add(menuButton, new HtmlData(res.css().iplantcHeaderMenu()));
+        northCon.add(menuButton, new HtmlData("." + res.css().iplantcHeaderMenu()));
     }
 
 }

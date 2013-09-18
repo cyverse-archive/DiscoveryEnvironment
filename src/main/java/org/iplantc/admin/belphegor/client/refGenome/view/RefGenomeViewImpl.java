@@ -82,10 +82,12 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     @UiFactory
     ColumnModel<ReferenceGenome> createColumnModel() {
-        ColumnConfig<ReferenceGenome, String> nameCol = new ColumnConfig<ReferenceGenome, String>(rgProps.name(), 90, strings.name());
-        ColumnConfig<ReferenceGenome, String> pathCol = new ColumnConfig<ReferenceGenome, String>(rgProps.path(), 90, strings.path());
-        ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<ReferenceGenome, Date>(rgProps.createdDate(), 90, strings.createdOn());
-        ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<ReferenceGenome, String>(rgProps.createdBy(), 90, strings.createdBy());
+        ColumnConfig<ReferenceGenome, String> nameCol = new ColumnConfig<ReferenceGenome, String>(rgProps.name(), 300, strings.name());
+        ColumnConfig<ReferenceGenome, String> pathCol = new ColumnConfig<ReferenceGenome, String>(rgProps.path(), 300, strings.path());
+        ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<ReferenceGenome, Date>(rgProps.createdDate(), 192, strings.createdOn());
+        ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<ReferenceGenome, String>(rgProps.createdBy(), 160, strings.createdBy());
+
+        createdOnCol.setFixed(true);
 
         @SuppressWarnings("unchecked")
         List<ColumnConfig<ReferenceGenome, ?>> colList = Lists.<ColumnConfig<ReferenceGenome, ?>> newArrayList(nameCol, pathCol, createdByCol, createdOnCol);
@@ -94,6 +96,8 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
+        EditReferenceGenomeDialog dlg = new EditReferenceGenomeDialog();
+        dlg.show();
 
     }
 
@@ -106,6 +110,11 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
         }
         nameFilter.setQuery(query);
         store.addFilter(nameFilter);
+    }
+
+    @Override
+    public void setReferenceGenomes(List<ReferenceGenome> refGenomes) {
+        store.addAll(refGenomes);
     }
 
 }

@@ -29,6 +29,7 @@ public class EditReferenceGenomeDialog extends IPlantDialog implements Editor<Re
 
     public EditReferenceGenomeDialog() {
         add(uiBinder.createAndBindUi(this));
+        getOkButton().setText("Save");
     }
 
 }

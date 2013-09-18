@@ -126,4 +126,9 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
 
     }
 
+    @Override
+    public void setToolRequests(List<ToolRequest> toolRequests) {
+        store.addAll(toolRequests);
+    }
+
 }

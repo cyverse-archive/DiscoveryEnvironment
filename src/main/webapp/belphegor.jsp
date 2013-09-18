@@ -10,10 +10,6 @@ response.setDateHeader("Expires", 0);
 <head>
 <title>Tool Integration Administration</title>
 
-<link type="text/css" rel="stylesheet" href="gxt/css/gxt-all.css">
-<link type="text/css" rel="stylesheet" href="gxt/css/gxt-gray.css">
-<link type="text/css" rel="stylesheet" href="belphegor.css">
-
 <script type="text/javascript" language="javascript"
 	src="belphegor/belphegor.nocache.js"></script>
 <script type="text/javascript" language="javascript"

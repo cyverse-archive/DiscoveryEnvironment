@@ -11,4 +11,10 @@ public interface BelphegorStyle extends CssResource {
     String iplantcHeaderMenu();
 
     String iplantcHeaderMenuBody();
+
+    String nsfText();
+
+    String copyright();
+
+    String iplantcFooter();
 }

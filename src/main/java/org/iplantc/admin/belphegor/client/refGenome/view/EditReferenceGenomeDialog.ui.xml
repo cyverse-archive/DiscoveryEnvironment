@@ -27,35 +27,40 @@
 		<container:child layoutData="{verticalLayoutData}">
 			<form:FieldLabel text="{strings.createdBy}">
 				<form:widget>
-					<form:TextField ui:field="createdByEditor"/>
+					<form:TextField ui:field="createdByEditor"
+									enabled="false"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{verticalLayoutData}">
 			<form:FieldLabel text="{strings.createdOn}">
 				<form:widget>
-					<form:DateField ui:field="createdDateEditor"/>
+					<form:DateField ui:field="createdDateEditor"
+									enabled="false"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{verticalLayoutData}">
 			<form:FieldLabel text="{strings.lastModified}">
 				<form:widget>
-					<form:DateField ui:field="lastModifiedDateEditor"/>
+					<form:DateField ui:field="lastModifiedDateEditor"
+									enabled="false"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{verticalLayoutData}">
 			<form:FieldLabel text="{strings.lastModBy}">
 				<form:widget>
-					<form:TextField ui:field="lastModifiedByEditor"/>
+					<form:TextField ui:field="lastModifiedByEditor"
+									enabled="false"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{verticalLayoutData}">
 			<form:FieldLabel text="{strings.refDeletePrompt}">
 				<form:widget>
-					<form:CheckBox ui:field="deletedEditor"/>
+					<form:CheckBox ui:field="deletedEditor"
+								   enabled="false"/>
 				</form:widget>
 			</form:FieldLabel>
 		</container:child>

@@ -1,11 +1,15 @@
 package org.iplantc.admin.belphegor.client.systemMessage;
 
+import java.util.List;
+
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
 import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
+import org.iplantc.core.uicommons.client.views.IsMaskable;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.gwt.user.client.ui.IsWidget;
 
-public interface SystemMessageView {
+public interface SystemMessageView extends IsWidget, IsMaskable {
 
     public interface Presenter {
 
@@ -41,8 +45,12 @@ public interface SystemMessageView {
 
         void go(HasOneWidget container);
 
+        List<String> getAnnouncementTypes();
+
     }
 
     void setPresenter(Presenter presenter);
+
+    void setSystemMessages(List<Message> systemMessages);
 
 }

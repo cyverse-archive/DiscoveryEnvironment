@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.iplantc.core.uicommons.client.ErrorHandler;
 
-import com.extjs.gxt.ui.client.core.FastMap;
+import com.sencha.gxt.core.shared.FastMap;
 
 public class ToolIntegrationAdminProperties {
 

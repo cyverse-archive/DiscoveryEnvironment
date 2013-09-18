@@ -1,10 +1,8 @@
 package org.iplantc.admin.belphegor.client.util;
 
-import org.iplantc.admin.belphegor.client.widgets.BoundedTextArea;
 import org.iplantc.admin.belphegor.client.widgets.BoundedTextField;
 
 import com.extjs.gxt.ui.client.widget.form.DateField;
-import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.form.Validator;
 
@@ -52,19 +50,4 @@ public class FormFieldBuilderUtil {
         return field;
     }
 
-    public static TextArea buildTextArea(String label, boolean allowBlank, String defaultVal,
-            String name, int maxLength) {
-        TextArea field = new BoundedTextArea();
-        field.setMaxLength(maxLength);
-        field.setName(name);
-        field.setId(ID + name);
-        field.setFieldLabel(label);
-        field.setAllowBlank(allowBlank);
-        field.setValidateOnBlur(true);
-        field.setStyleAttribute("padding-bottom", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (defaultVal != null) {
-            field.setValue(defaultVal);
-        }
-        return field;
-    }
 }
