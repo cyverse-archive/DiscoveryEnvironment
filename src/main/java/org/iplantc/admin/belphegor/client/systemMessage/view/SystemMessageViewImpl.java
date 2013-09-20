@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -60,6 +61,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         initWidget(uiBinder.createAndBindUi(this));
 
         grid.getSelectionModel().addSelectionChangedHandler(this);
+        grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     @Override
@@ -115,7 +117,6 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @UiHandler("deleteBtn")
     void deleteBtnClicked(SelectEvent event) {
         presenter.deleteSystemMessage(grid.getSelectionModel().getSelectedItem());
-//        store.remove(grid.getSelectionModel().getSelectedItem());
     }
 
     @UiHandler("editBtn")
@@ -136,6 +137,21 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @Override
     public void setSystemMessages(List<Message> systemMessages) {
         store.addAll(systemMessages);
+    }
+
+    @Override
+    public void addSystemMessage(Message systemMessage) {
+        store.add(systemMessage);
+    }
+
+    @Override
+    public void updateSystemMessage(Message updatedSystemMessage) {
+        store.update(updatedSystemMessage);
+    }
+
+    @Override
+    public void deleteSystemMessage(Message msgToDelete) {
+        store.remove(msgToDelete);
     }
 
 }

@@ -19,7 +19,6 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import com.sencha.gxt.core.client.util.DateWrapper;
 import com.sencha.gxt.data.shared.StringLabelProvider;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
@@ -114,7 +113,6 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
         if (button == getButtonBar().getItemByItemId(PredefinedButton.OK.name())) {
             if (FormPanelHelper.isValid(vlc)) {
                 super.onButtonPressed(button);
-                new AlertMessageBox("Congratulations", "You've submitted your stuff to a server").show();
             }
         } else {
             super.onButtonPressed(button);

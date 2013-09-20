@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
-import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestAutoBeanFactory;
+import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestDetails;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestProperties;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestStatus;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestUpdate;
@@ -48,28 +48,14 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     @UiField
     ToolRequestDetailsPanel detailsPanel;
 
-    private final ToolRequestProperties trProps = GWT.create(ToolRequestProperties.class);
-    private final ToolRequestAutoBeanFactory factory = GWT.create(ToolRequestAutoBeanFactory.class);
+    private final ToolRequestProperties trProps;
     private ToolRequestView.Presenter presenter;
 
     @Inject
-    public ToolRequestViewImpl() {
+    public ToolRequestViewImpl(ToolRequestProperties trProps) {
+        this.trProps = trProps;
         initWidget(uiBinder.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
-        List<ToolRequest> tools = Lists.newArrayList();
-        ToolRequest tr = factory.toolRequest().as();
-        tr.setName("Tool One");
-        tr.setId("1");
-        tr.setStatus(ToolRequestStatus.Submitted);
-        tools.add(tr);
-
-        tr = factory.toolRequest().as();
-        tr.setName("Tool Two");
-        tr.setId("2");
-        tr.setStatus(ToolRequestStatus.Evaluation);
-        tools.add(tr);
-
-        store.addAll(tools);
     }
 
     @Override
@@ -121,7 +107,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
         boolean isSingleItemSelected = event.getSelection().size() == 1;
         updateBtn.setEnabled(isSingleItemSelected);
         if (isSingleItemSelected) {
-            presenter.fetchToolRequestDetails();
+            presenter.fetchToolRequestDetails(event.getSelection().get(0));
         }
 
     }
@@ -129,6 +115,21 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     @Override
     public void setToolRequests(List<ToolRequest> toolRequests) {
         store.addAll(toolRequests);
+    }
+
+    @Override
+    public void maskDetailsPanel(String loadingMask) {
+        detailsPanel.mask(loadingMask);
+    }
+
+    @Override
+    public void unmaskDetailsPanel() {
+        detailsPanel.unmask();
+    }
+
+    @Override
+    public void setDetailsPanel(ToolRequestDetails toolRequestDetails) {
+        detailsPanel.edit(toolRequestDetails);
     }
 
 }

@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
@@ -20,6 +21,9 @@ public class ToolRequestDetailsPanel extends Composite implements Editor<ToolReq
 
     interface ToolRequestDetailsPanelUiBinder extends UiBinder<Widget, ToolRequestDetailsPanel> {
     }
+
+    @UiField
+    VerticalLayoutContainer con;
 
     @UiField
     TextField additionalDataFileEditor;
@@ -54,6 +58,7 @@ public class ToolRequestDetailsPanel extends Composite implements Editor<ToolReq
 
     public void edit(ToolRequestDetails details) {
         editorDriver.edit(details);
+        con.forceLayout();
     }
 
 }

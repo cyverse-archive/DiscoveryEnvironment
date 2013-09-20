@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.toolRequest.model.ToolRequestAdminAutoBeanFactory;
 import org.iplantc.admin.belphegor.client.toolRequest.service.ToolRequestServiceFacade;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestDetails;
@@ -12,16 +13,24 @@ import org.iplantc.core.uicommons.client.models.HasId;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
 import com.sencha.gxt.data.shared.SortInfo;
 
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
+    private final ToolRequestAdminAutoBeanFactory factory;
+
+    @Inject
+    public ToolRequestServiceFacadeImpl(ToolRequestAdminAutoBeanFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public void getToolRequestDetails(HasId toolRequest, AsyncCallback<ToolRequestDetails> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getToolRequestServiceUrl();
+        String address = ToolIntegrationAdminProperties.getInstance().getToolRequestServiceUrl() + "/" + toolRequest.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
-        callService(wrapper, new ToolRequestDetailsCallbackConverter(callback));
+        callService(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
     }
 
     @Override
@@ -29,7 +38,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
         String address = ToolIntegrationAdminProperties.getInstance().getToolRequestServiceUrl();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address);
-        callService(wrapper, new ToolRequestDetailsCallbackConverter(callback));
+        callService(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
     }
 
     @Override
@@ -38,7 +47,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
         // TODO Pending rest of endpoint setup. Waiting for generic get all tool requests endpoint.
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
-        callService(wrapper, new ToolRequestListCallbackConverter(callback));
+        callService(wrapper, new ToolRequestListCallbackConverter(callback, factory));
     }
 
     /**

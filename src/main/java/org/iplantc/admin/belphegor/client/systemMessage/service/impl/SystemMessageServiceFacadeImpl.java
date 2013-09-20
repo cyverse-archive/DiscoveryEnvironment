@@ -12,6 +12,10 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
 
@@ -33,23 +37,36 @@ public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacad
     @Override
     public void addSystemMessage(Message msgToAdd, AsyncCallback<Message> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
+        Splittable body = StringQuoter.createSplittable();
+        StringQuoter.create(msgToAdd.getType()).assign(body, "type");
+        StringQuoter.create(msgToAdd.getBody()).assign(body, "message");
+        final Long deActTime = msgToAdd.getDeactivationTime().getTime();
+        final Long actTime = msgToAdd.getActivationTime().getTime();
+        StringQuoter.create(deActTime).assign(body, "deactivation-date");
+        StringQuoter.create(actTime).assign(body, "activation-date");
+        StringQuoter.create(msgToAdd.isDismissible()).assign(body, "dismissible");
+        StringQuoter.create(msgToAdd.isLoginsDisabled()).assign(body, "logins-disabled");
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new SystemMessageCallbackConverter(callback));
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(msgToAdd));
 
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, encode.getPayload());
+        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address,
+        // body.getPayload());
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new SystemMessageCallbackConverter(callback, factory));
     }
 
     @Override
     public void updateSystemMessage(Message updatedMsg, AsyncCallback<Message> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(updatedMsg));
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address);
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new SystemMessageCallbackConverter(callback));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, encode.getPayload());
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new SystemMessageCallbackConverter(callback, factory));
     }
 
     @Override
     public void deleteSystemMessage(Message msgToDelete, AsyncCallback<Void> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
+        String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl() + "/" + msgToDelete.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new StringToVoidCallbackConverter(callback));

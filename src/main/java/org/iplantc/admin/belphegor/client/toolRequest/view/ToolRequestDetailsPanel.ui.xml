@@ -15,7 +15,7 @@
     </ui:with>
 
 	<gxt:ContentPanel>
-        <container:VerticalLayoutContainer>
+        <container:VerticalLayoutContainer ui:field="con">
             <container:child layoutData="{layoutData}">
                 <form:FieldLabel text="Additional Data File">
                     <form:widget>

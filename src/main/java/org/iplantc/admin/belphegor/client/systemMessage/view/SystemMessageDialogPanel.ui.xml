@@ -20,7 +20,8 @@
             <form:FieldLabel text="Type">
                 <form:widget>
                     <form:SimpleComboBox ui:field="typeCombo"
-                                         allowBlank="false"/>
+                                         allowBlank="false"
+                                         triggerAction="ALL"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>

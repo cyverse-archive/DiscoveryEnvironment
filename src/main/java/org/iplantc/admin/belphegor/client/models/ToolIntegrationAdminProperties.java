@@ -503,4 +503,5 @@ public class ToolIntegrationAdminProperties {
     public String getAdminSystemMessageTypesUrl() {
         return serviceUrlMap.get(SERVICE_SYSTEM_MESSAGE_TYPES);
     }
+    
 }

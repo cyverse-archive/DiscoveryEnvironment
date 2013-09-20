@@ -53,4 +53,10 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
 
     void setSystemMessages(List<Message> systemMessages);
 
+    void addSystemMessage(Message systemMessage);
+
+    void updateSystemMessage(Message updatedSystemMessage);
+
+    void deleteSystemMessage(Message msgToDelete);
+
 }

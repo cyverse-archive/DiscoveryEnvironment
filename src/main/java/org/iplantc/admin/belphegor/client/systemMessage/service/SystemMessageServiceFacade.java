@@ -55,4 +55,5 @@ public interface SystemMessageServiceFacade {
      * @param callback
      */
     void getSystemMessageTypes(AsyncCallback<List<String>> callback);
+
 }

@@ -30,7 +30,7 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
          * Upon success, the presenter will refresh the view.
          * 
          */
-        void fetchToolRequestDetails();
+        void fetchToolRequestDetails(ToolRequest toolRequest);
 
         void go(HasOneWidget container);
 
@@ -39,5 +39,11 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
     void setPresenter(Presenter presenter);
 
     void setToolRequests(List<ToolRequest> toolRequests);
+
+    void maskDetailsPanel(String loadingMask);
+
+    void unmaskDetailsPanel();
+
+    void setDetailsPanel(ToolRequestDetails result);
 
 }

@@ -7,8 +7,11 @@ import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
+import org.iplantc.core.uicommons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -18,7 +21,7 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
     private final SystemMessageServiceFacade sysMsgService;
     private final SystemMessageView view;
     private final IplantDisplayStrings strings;
-    private List<String> systemMessageTypes = Collections.emptyList();
+    private List<String> systemMessageTypes = Lists.newArrayList();
 
     @Inject
     public SystemMessagePresenterImpl(SystemMessageView view, SystemMessageServiceFacade sysMsgService, IplantDisplayStrings strings) {
@@ -71,28 +74,55 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
 
     @Override
     public void addSystemMessage(Message msg) {
-        /*
-         * TODO Call service to create message.
-         * Upon success, add message to view's store
-         */
+        sysMsgService.addSystemMessage(msg, new AsyncCallback<Message>() {
+
+            @Override
+            public void onSuccess(Message result) {
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("System message successfully added."));
+                view.addSystemMessage(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
 
     }
 
     @Override
     public void editSystemMessage(Message msg) {
-        /*
-         * TODO Call service to edit message
-         * Upon success, update message in view, and notify user of success.
-         */
+        sysMsgService.updateSystemMessage(msg, new AsyncCallback<Message>() {
+
+            @Override
+            public void onSuccess(Message result) {
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("System message successfully updated."));
+                view.updateSystemMessage(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
 
     }
 
     @Override
-    public void deleteSystemMessage(Message msg) {
-        /*
-         * TODO Call service to delete message
-         * Upon success, remove message from view.
-         */
+    public void deleteSystemMessage(final Message msg) {
+        sysMsgService.deleteSystemMessage(msg, new AsyncCallback<Void>() {
+
+            @Override
+            public void onSuccess(Void result) {
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Message successfully deleted"));
+                view.deleteSystemMessage(msg);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
 
     }
 
@@ -100,4 +130,5 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
     public List<String> getAnnouncementTypes() {
         return systemMessageTypes;
     }
+
 }
