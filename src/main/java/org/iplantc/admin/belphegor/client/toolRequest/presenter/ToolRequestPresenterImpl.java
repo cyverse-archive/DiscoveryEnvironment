@@ -9,6 +9,8 @@ import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestDetails;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestUpdate;
 import org.iplantc.core.uicommons.client.ErrorHandler;
+import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
+import org.iplantc.core.uicommons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -30,11 +32,20 @@ public class ToolRequestPresenterImpl implements ToolRequestView.Presenter {
     }
 
     @Override
-    public void updateToolRequest(ToolRequestUpdate update) {
-        /*
-         * TODO Call server with the update tool request
-         * Upon success, refresh view/store.
-         */
+    public void updateToolRequest(final ToolRequestUpdate update) {
+        toolReqService.updateToolRequest(update, new AsyncCallback<ToolRequestDetails>() {
+
+            @Override
+            public void onSuccess(ToolRequestDetails result) {
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Tool Request updated"));
+                view.update(update, result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+        });
 
     }
 

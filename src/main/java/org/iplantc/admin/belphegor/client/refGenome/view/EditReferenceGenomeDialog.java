@@ -22,7 +22,7 @@ import com.sencha.gxt.widget.core.client.form.DateField;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
-public class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGenome>, TakesValue<ReferenceGenome> {
+class EditReferenceGenomeDialog extends Composite implements Editor<ReferenceGenome>, TakesValue<ReferenceGenome> {
 
     private static EditReferenceGenomeDialogUiBinder uiBinder = GWT.create(EditReferenceGenomeDialogUiBinder.class);
 
@@ -43,7 +43,7 @@ public class EditReferenceGenomeDialog extends Composite implements Editor<Refer
     @UiField
     CheckBox deletedEditor;
 
-    public static EditReferenceGenomeDialog addNewReferenceGenome() {
+    static EditReferenceGenomeDialog addNewReferenceGenome() {
         ReferenceGenomeAutoBeanFactory factory = GWT.create(ReferenceGenomeAutoBeanFactory.class);
         ReferenceGenome refGenome = factory.referenceGenome().as();
         refGenome.setCreatedBy(UserInfo.getInstance().getUsername());
@@ -57,7 +57,7 @@ public class EditReferenceGenomeDialog extends Composite implements Editor<Refer
         return addRegGenPanel;
     }
 
-    public static EditReferenceGenomeDialog editReferenceGenome(ReferenceGenome refGenome) {
+    static EditReferenceGenomeDialog editReferenceGenome(ReferenceGenome refGenome) {
         EditReferenceGenomeDialog editRefGenomePanel = new EditReferenceGenomeDialog(refGenome);
         editRefGenomePanel.setTitle(refGenome.getName());
         editRefGenomePanel.deletedEditor.setEnabled(true);
@@ -90,7 +90,7 @@ public class EditReferenceGenomeDialog extends Composite implements Editor<Refer
         return editorDriver.flush();
     }
 
-    public boolean hasErrors() {
+    boolean hasErrors() {
         return editorDriver.hasErrors();
     }
 }

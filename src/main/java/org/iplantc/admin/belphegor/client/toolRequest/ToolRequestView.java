@@ -46,4 +46,6 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
 
     void setDetailsPanel(ToolRequestDetails result);
 
+    void update(ToolRequestUpdate toolRequestUpdate, ToolRequestDetails toolRequestDetails);
+
 }

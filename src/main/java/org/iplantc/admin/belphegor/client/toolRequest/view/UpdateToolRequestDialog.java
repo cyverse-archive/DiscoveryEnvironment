@@ -1,6 +1,7 @@
 package org.iplantc.admin.belphegor.client.toolRequest.view;
 
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
+import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestAutoBeanFactory;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestStatus;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestUpdate;
 import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
@@ -31,8 +32,11 @@ public class UpdateToolRequestDialog extends IPlantDialog {
 
     private final ToolRequest toolRequest;
 
-    public UpdateToolRequestDialog(ToolRequest toolRequest) {
+    private final ToolRequestAutoBeanFactory factory;
+
+    public UpdateToolRequestDialog(ToolRequest toolRequest, ToolRequestAutoBeanFactory factory) {
         this.toolRequest = toolRequest;
+        this.factory = factory;
         setHeadingText("Update Tool Request");
         getOkButton().setText("Submit");
         add(uiBinder.createAndBindUi(this));
@@ -91,10 +95,10 @@ public class UpdateToolRequestDialog extends IPlantDialog {
     }
 
     public ToolRequestUpdate getToolRequestUpdate() {
-        /*
-         * TODO Create ToolRequestUpdate object
-         */
-        return null;
+        ToolRequestUpdate trUpdate = factory.update().as();
+        trUpdate.setId(toolRequest.getId());
+        trUpdate.setStatus(statusCombo.getCurrentValue());
+        return trUpdate;
     }
 
 }

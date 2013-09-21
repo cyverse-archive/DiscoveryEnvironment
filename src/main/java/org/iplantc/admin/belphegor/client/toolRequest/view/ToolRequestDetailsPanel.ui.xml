@@ -14,12 +14,13 @@
       <ui:attributes width="1" height="-1" margins="{margins}" />
     </ui:with>
 
-	<gxt:ContentPanel>
+	<gxt:ContentPanel headingText="Details">
         <container:VerticalLayoutContainer ui:field="con">
             <container:child layoutData="{layoutData}">
                 <form:FieldLabel text="Additional Data File">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="additionalDataFileEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -28,6 +29,7 @@
                 <form:FieldLabel text="Additional Info">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="additionalInfoEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -36,6 +38,7 @@
                 <form:FieldLabel text="Architecture">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="architectureEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -44,6 +47,7 @@
                 <form:FieldLabel text="Attribution">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="attributionEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -52,6 +56,7 @@
                 <form:FieldLabel text="Cmd Line Description">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="cmdLineDescriptionEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -60,18 +65,21 @@
                 <form:FieldLabel text="Doc Url">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="documentationUrlEditor"/>
                     </form:widget>
                 </form:FieldLabel>
             </container:child>
             <container:child layoutData="{layoutData}">
                 <form:CheckBox ui:field="multiThreadedEditor"
+                			   enabled="false"
                                boxLabel="Multi-Threaded"/>
             </container:child>
             <container:child layoutData="{layoutData}">
                 <form:FieldLabel text="Phone">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="phoneEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -80,6 +88,7 @@
                 <form:FieldLabel text="Source Url">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="sourceUrlEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -88,6 +97,7 @@
                 <form:FieldLabel text="Submitted by">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="submittedByEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -96,6 +106,7 @@
                 <form:FieldLabel text="Test Data Path">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="testDataPathEditor"/>
                     </form:widget>
                 </form:FieldLabel>
@@ -104,6 +115,7 @@
                 <form:FieldLabel text="Version">
                     <form:widget>
                         <form:TextField readOnly="true"
+                        				enabled="false"
                                         ui:field="versionEditor"/>
                     </form:widget>
                 </form:FieldLabel>

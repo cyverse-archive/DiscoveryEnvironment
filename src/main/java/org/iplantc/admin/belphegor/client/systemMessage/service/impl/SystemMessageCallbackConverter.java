@@ -21,7 +21,7 @@ public class SystemMessageCallbackConverter extends AsyncCallbackConverter<Strin
 
     @Override
     protected Message convertFrom(String object) {
-        Splittable split = StringQuoter.create(object);
+        Splittable split = StringQuoter.split(object);
         Message ret = null;
         if (!split.isUndefined("system-notification")) {
             final AutoBean<Message> decode = AutoBeanCodex.decode(factory, Message.class, split.get("system-notification"));

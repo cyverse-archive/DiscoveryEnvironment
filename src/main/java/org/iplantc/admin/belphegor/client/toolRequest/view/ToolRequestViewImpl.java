@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
+import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestAutoBeanFactory;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestDetails;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestProperties;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestStatus;
@@ -18,6 +19,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -51,11 +53,15 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     private final ToolRequestProperties trProps;
     private ToolRequestView.Presenter presenter;
 
+    private final ToolRequestAutoBeanFactory factory;
+
     @Inject
-    public ToolRequestViewImpl(ToolRequestProperties trProps) {
+    public ToolRequestViewImpl(ToolRequestProperties trProps, ToolRequestAutoBeanFactory factory) {
         this.trProps = trProps;
+        this.factory = factory;
         initWidget(uiBinder.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
+        grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     @Override
@@ -90,7 +96,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
 
     @UiHandler("updateBtn")
     void onUpdateBtnClicked(SelectEvent event) {
-        final UpdateToolRequestDialog updateToolRequestDialog = new UpdateToolRequestDialog(grid.getSelectionModel().getSelectedItem());
+        final UpdateToolRequestDialog updateToolRequestDialog = new UpdateToolRequestDialog(grid.getSelectionModel().getSelectedItem(), factory);
         updateToolRequestDialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
@@ -106,6 +112,10 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     public void onSelectionChanged(SelectionChangedEvent<ToolRequest> event) {
         boolean isSingleItemSelected = event.getSelection().size() == 1;
         updateBtn.setEnabled(isSingleItemSelected);
+        if (event.getSelection().size() == 0) {
+            // JDS Send a null to the details panel to clear it.
+            detailsPanel.edit(null);
+        }
         if (isSingleItemSelected) {
             presenter.fetchToolRequestDetails(event.getSelection().get(0));
         }
@@ -129,6 +139,18 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
 
     @Override
     public void setDetailsPanel(ToolRequestDetails toolRequestDetails) {
+        detailsPanel.edit(toolRequestDetails);
+    }
+
+    @Override
+    public void update(ToolRequestUpdate toolRequestUpdate, ToolRequestDetails toolRequestDetails) {
+
+        final ToolRequest findModelWithKey = store.findModelWithKey(toolRequestUpdate.getId());
+        if (findModelWithKey != null) {
+            findModelWithKey.setStatus(toolRequestUpdate.getStatus());
+            findModelWithKey.setDateUpdated(new Date());
+            store.update(findModelWithKey);
+        }
         detailsPanel.edit(toolRequestDetails);
     }
 

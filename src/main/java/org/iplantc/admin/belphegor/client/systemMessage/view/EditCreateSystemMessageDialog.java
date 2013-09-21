@@ -28,7 +28,7 @@ import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TimeField;
 
-public class EditCreateSystemMessageDialog extends IPlantDialog {
+class EditCreateSystemMessageDialog extends IPlantDialog {
 
     private static CreateSystemMessageDialogUiBinder uiBinder = GWT.create(CreateSystemMessageDialogUiBinder.class);
 
@@ -66,13 +66,13 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
 
     private final List<String> announcementTypes = Lists.newArrayList("warning", "announcement", "maintenance");
 
-    public static EditCreateSystemMessageDialog createSystemMessage(List<String> announcementTypes) {
+    static EditCreateSystemMessageDialog createSystemMessage(List<String> announcementTypes) {
         EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(null, announcementTypes);
         dlg.setHeadingText("Create System Message");
         return dlg;
     }
     
-    public static EditCreateSystemMessageDialog editSystemMessage(Message message, List<String> announcementTypes) {
+    static EditCreateSystemMessageDialog editSystemMessage(Message message, List<String> announcementTypes) {
         EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(message, announcementTypes);
         dlg.messageField.setValue(message.getBody());
         dlg.typeCombo.select(message.getType());
@@ -119,7 +119,7 @@ public class EditCreateSystemMessageDialog extends IPlantDialog {
         }
     }
 
-    public Message getMessage() {
+    Message getMessage() {
         Splittable split = StringQuoter.createSplittable();
         StringQuoter.create(messageField.getCurrentValue()).assign(split, "message");
         StringQuoter.create(typeCombo.getCurrentValue()).assign(split, "type");

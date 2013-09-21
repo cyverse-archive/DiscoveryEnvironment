@@ -150,8 +150,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         if ((!selectedAppGroup.getName().contains("Public Apps"))
                 && selectedAppGroup.getAppCount() > 0
                 && selectedAppGroup.getGroups().size() == 0
-                || ((props.getDefaultTrashAnalysisGroupId() == selectedAppGroup.getId()) || props
-                        .getDefaultBetaAnalysisGroupId() == selectedAppGroup.getId())) {
+                || ((props.getDefaultTrashAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId())) 
+                        || props.getDefaultBetaAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))) {
             ErrorHandler.post(I18N.ERROR.addCategoryPermissionError());
             return;
         }

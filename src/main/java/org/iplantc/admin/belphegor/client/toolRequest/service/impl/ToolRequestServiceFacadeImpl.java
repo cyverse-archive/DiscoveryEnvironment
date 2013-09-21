@@ -10,10 +10,14 @@ import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequest;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestDetails;
 import org.iplantc.core.uiapps.client.models.toolrequest.ToolRequestUpdate;
 import org.iplantc.core.uicommons.client.models.HasId;
+import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
 import com.sencha.gxt.data.shared.SortInfo;
 
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
@@ -36,8 +40,10 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
     @Override
     public void updateToolRequest(ToolRequestUpdate trUpdate, AsyncCallback<ToolRequestDetails> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getToolRequestServiceUrl();
+        trUpdate.setUserName(UserInfo.getInstance().getUsername());
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address);
+        final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, encode.getPayload());
         callService(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
     }
 

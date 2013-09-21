@@ -68,7 +68,7 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
 
     @Override
     public void editReferenceGenome(ReferenceGenome referenceGenome) {
-        refGenService.editReferenceGenomes(null, new AsyncCallback<Void>() {
+        refGenService.editReferenceGenomes(referenceGenome, new AsyncCallback<Void>() {
 
             @Override
             public void onSuccess(Void arg0) {
