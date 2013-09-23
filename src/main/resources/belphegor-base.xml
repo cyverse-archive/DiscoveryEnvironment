@@ -2,14 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/util
-           http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+           http://www.springframework.org/schema/util/spring-util-3.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean id="propertyPlaceholderConfigurer" class="org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer">
         <property name="serviceName" value="belphegor" />
@@ -91,6 +90,10 @@
     </bean>
 
     <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+    <task:scheduled-tasks>
+        <task:scheduled ref="proxyGrantingTicketStorage" method="cleanUp" fixed-delay="300000"/>
+    </task:scheduled-tasks>
+
     <bean id="authenticationUserDetailsService" class="org.iplantc.de.server.CasGroupUserDetailsService">
         <constructor-arg index="0" value="${org.iplantc.belphegor.cas.group-attribute-name}" />
     </bean>
