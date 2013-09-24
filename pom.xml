@@ -12,7 +12,7 @@
 		<!-- Target Java Version -->
 		<jdk.version>1.6</jdk.version>
 		<!-- Current GWT Version -->
-		<gwt.version>2.5.0</gwt.version>
+		<gwt.version>2.5.1</gwt.version>
         <!-- Current Spring Security Version -->
         <spring.security.version>3.1.4.RELEASE</spring.security.version>
 		<!-- Define OS/Platform Independent Character Encoding -->
@@ -54,11 +54,6 @@
             <groupId>org.iplantc.core</groupId>
             <artifactId>clavin-java</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-	         <groupId>org.iplantc.de</groupId>
-	         <artifactId>de-common</artifactId>
-	         <version>${project.version}</version>
         </dependency>
 		<!-- Other dependencies -->
 		<dependency>
@@ -221,6 +216,9 @@
 					<filesets>
 						<fileset>
 							<directory>${basedir}/war</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/gwt-unitCache</directory>
 						</fileset>
 					</filesets>
 				</configuration>

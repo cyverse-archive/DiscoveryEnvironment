@@ -4,12 +4,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
 import org.iplantc.core.uicommons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -55,10 +55,10 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
     public void go(HasOneWidget container) {
         view.mask(strings.loadingMask());
         container.setWidget(view);
-        sysMsgService.getSystemMessages(new AsyncCallback<List<Message>>() {
+        sysMsgService.getSystemMessages(new AsyncCallback<List<SystemMessage>>() {
     
             @Override
-            public void onSuccess(List<Message> result) {
+            public void onSuccess(List<SystemMessage> result) {
                 view.unmask();
                 view.setSystemMessages(result);
             }
@@ -73,11 +73,11 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
 
 
     @Override
-    public void addSystemMessage(Message msg) {
-        sysMsgService.addSystemMessage(msg, new AsyncCallback<Message>() {
+    public void addSystemMessage(SystemMessage msg) {
+        sysMsgService.addSystemMessage(msg, new AsyncCallback<SystemMessage>() {
 
             @Override
-            public void onSuccess(Message result) {
+            public void onSuccess(SystemMessage result) {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("System message successfully added."));
                 view.addSystemMessage(result);
             }
@@ -91,11 +91,11 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
     }
 
     @Override
-    public void editSystemMessage(Message msg) {
-        sysMsgService.updateSystemMessage(msg, new AsyncCallback<Message>() {
+    public void editSystemMessage(SystemMessage msg) {
+        sysMsgService.updateSystemMessage(msg, new AsyncCallback<SystemMessage>() {
 
             @Override
-            public void onSuccess(Message result) {
+            public void onSuccess(SystemMessage result) {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("System message successfully updated."));
                 view.updateSystemMessage(result);
             }
@@ -109,7 +109,7 @@ public class SystemMessagePresenterImpl implements SystemMessageView.Presenter {
     }
 
     @Override
-    public void deleteSystemMessage(final Message msg) {
+    public void deleteSystemMessage(final SystemMessage msg) {
         sysMsgService.deleteSystemMessage(msg, new AsyncCallback<Void>() {
 
             @Override

@@ -46,12 +46,6 @@
 		                           icon = "{res.delete}"
 		                           enabled="false"/>
 		    </toolbar:child>
-		    <toolbar:child>
-		        <button:TextButton ui:field="editBtn" 
-		                           text="{strings.edit}"
-		                           icon = "{res.edit}"
-		                           enabled="false"/>
-		    </toolbar:child>
 		</toolbar:ToolBar>
     </container:north>
     <container:center layoutData="{centerData}">

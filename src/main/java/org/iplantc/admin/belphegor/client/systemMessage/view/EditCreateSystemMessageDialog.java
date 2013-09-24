@@ -3,105 +3,126 @@ package org.iplantc.admin.belphegor.client.systemMessage.view;
 import java.util.Date;
 import java.util.List;
 
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
-import org.iplantc.core.uicommons.client.models.sysmsgs.MessageFactory;
-import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessageFactory;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import com.sencha.gxt.core.client.util.DateWrapper;
 import com.sencha.gxt.data.shared.StringLabelProvider;
-import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.DateField;
-import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TimeField;
 
-class EditCreateSystemMessageDialog extends IPlantDialog {
+class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMessage>, TakesValue<SystemMessage> {
 
     private static CreateSystemMessageDialogUiBinder uiBinder = GWT.create(CreateSystemMessageDialogUiBinder.class);
 
     @UiTemplate("SystemMessageDialogPanel.ui.xml")
-    interface CreateSystemMessageDialogUiBinder extends UiBinder<Widget, EditCreateSystemMessageDialog> {
-    }
+    interface CreateSystemMessageDialogUiBinder extends UiBinder<Widget, EditCreateSystemMessageDialog> {}
+    
+    interface EditorDriver extends SimpleBeanEditorDriver<SystemMessage, EditCreateSystemMessageDialog> {}
+    private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @UiField
     VerticalLayoutContainer vlc;
 
     @UiField
+    @Path("type")
     SimpleComboBox<String> typeCombo;
 
     @UiField
+    @Path("body")
     TextArea messageField;
 
     @UiField
-    DateField activationDateField, deActivationDateField;
+    @Path("activationTime")
+    DateField activationDateField;
+    @UiField
+    @Path("activationTime")
+    TimeField activationTimeField;
 
     @UiField
-    TimeField activationTimeField, deActivationTimeField;
+    @Path("deactivationTime")
+    DateField deActivationDateField;
+    @UiField
+    @Path("deactivationTime")
+    TimeField deActivationTimeField;
 
     @UiField
-    CheckBox dismissibleField, loginsDisabledField;
+    @Path("dismissible")
+    CheckBox dismissibleField;
+
+    @UiField
+    @Path("loginsDisabled")
+    CheckBox loginsDisabledField;
 
     @UiField(provided = true)
+    @Ignore
     Date minTime = new DateWrapper().clearTime().asDate();
 
     @UiField(provided = true)
+    @Ignore
     Date maxTime = new DateWrapper().clearTime().addHours(23).addSeconds(46).asDate();
-
-    private final Message message;
-
-    private final MessageFactory factory = GWT.create(MessageFactory.class);
 
     private final List<String> announcementTypes = Lists.newArrayList("warning", "announcement", "maintenance");
 
     static EditCreateSystemMessageDialog createSystemMessage(List<String> announcementTypes) {
-        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(null, announcementTypes);
-        dlg.setHeadingText("Create System Message");
+        SystemMessageFactory factory = GWT.create(SystemMessageFactory.class);
+        final Splittable createSplittable = StringQuoter.createSplittable();
+        final Date date = new Date();
+        final String currentDateAsEpochString = Long.toString(date.getTime());
+
+        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, "date_created");
+        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, "activation_date");
+
+        final DateWrapper addDays = new DateWrapper().addDays(7);
+        final String oneWeekFromNowAsEpochString = Long.toString(addDays.getTime());
+        StringQuoter.create(oneWeekFromNowAsEpochString).assign(createSplittable, "deactivation_date");
+        SystemMessage newSysMessage = factory.systemMessage().as();
+        newSysMessage.setCreationTime(new Date());
+        newSysMessage.setActivationTime(new Date());
+        newSysMessage.setDeactivationTime(addDays.asDate());
+
+        EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(newSysMessage, announcementTypes);
         return dlg;
     }
     
-    static EditCreateSystemMessageDialog editSystemMessage(Message message, List<String> announcementTypes) {
+    static EditCreateSystemMessageDialog editSystemMessage(SystemMessage message, List<String> announcementTypes) {
         EditCreateSystemMessageDialog dlg = new EditCreateSystemMessageDialog(message, announcementTypes);
-        dlg.messageField.setValue(message.getBody());
-        dlg.typeCombo.select(message.getType());
-        dlg.typeCombo.setValue(message.getType());
-        dlg.setHeadingText("Edit System Message");
         return dlg;
     }
 
-    private EditCreateSystemMessageDialog(Message message, List<String> announcementTypes) {
-        this.message = message;
+    private EditCreateSystemMessageDialog(SystemMessage message, List<String> announcementTypes) {
         // If the announcement types are not empty, clear local defaults and add them.
         if (!announcementTypes.isEmpty()) {
             this.announcementTypes.clear();
             this.announcementTypes.addAll(announcementTypes);
         }
-        if (this.message == null) {
-            message = factory.makeMessage().as();
-        }
-        setSize("500", "400");
-        add(uiBinder.createAndBindUi(this));
-        // JDS Set activation date to current time
-        DateWrapper initialDate = (message.getActivationTime() == null) ? new DateWrapper() : new DateWrapper(message.getActivationTime());
-        getOkButton().setText("Submit");
-
-        activationTimeField.setValue(initialDate.asDate());
-        activationDateField.setValue(initialDate.clearTime().asDate());
+        initWidget(uiBinder.createAndBindUi(this));
+        
+        editorDriver.initialize(this);
+        editorDriver.edit(message);
     }
 
     @UiFactory
+    @Ignore
     SimpleComboBox<String> createTypeCombo() {
         SimpleComboBox<String> cb = new SimpleComboBox<String>(new StringLabelProvider<String>());
         cb.add(announcementTypes);
@@ -109,34 +130,51 @@ class EditCreateSystemMessageDialog extends IPlantDialog {
     }
 
     @Override
-    protected void onButtonPressed(TextButton button) {
-        if (button == getButtonBar().getItemByItemId(PredefinedButton.OK.name())) {
-            if (FormPanelHelper.isValid(vlc)) {
-                super.onButtonPressed(button);
-            }
-        } else {
-            super.onButtonPressed(button);
-        }
+    public void setValue(SystemMessage value) {
+        throw new UnsupportedOperationException();
     }
 
-    Message getMessage() {
-        Splittable split = StringQuoter.createSplittable();
-        StringQuoter.create(messageField.getCurrentValue()).assign(split, "message");
-        StringQuoter.create(typeCombo.getCurrentValue()).assign(split, "type");
-        DateWrapper actD = new DateWrapper(activationDateField.getCurrentValue());
-        actD.clearTime();
-        DateWrapper subA = new DateWrapper(activationTimeField.getCurrentValue());
-        actD.addHours(subA.getHours());
-        actD.addMinutes(subA.getMinutes());
+    @UiHandler({"activationDateField"})
+    void onActivationDateValueChange(ValueChangeEvent<Date> event) {
+        DateWrapper activationTime = new DateWrapper(activationTimeField.getValue());
+        final DateWrapper newActivationDate = new DateWrapper(event.getValue())
+            .addHours(activationTime.getHours())
+            .addMinutes(activationTime.getMinutes())
+            .addSeconds(activationTime.getSeconds());
+        activationDateField.setValue(newActivationDate.asDate(), false);
+        activationTimeField.setValue(newActivationDate.asDate(), false);
+    }
 
-        DateWrapper deActD = new DateWrapper(deActivationDateField.getCurrentValue());
-        deActD.clearTime();
-        DateWrapper subB = new DateWrapper(deActivationTimeField.getValue());
-        deActD.addHours(subB.getHours());
-        deActD.addMinutes(subB.getMinutes());
-        StringQuoter.create(actD.getTime()).assign(split, "activation_date");
-        StringQuoter.create(deActD.getTime()).assign(split, "deactivation_date");
-        return AutoBeanCodex.decode(factory, Message.class, split).as();
+    @UiHandler({"activationTimeField"})
+    void onActivationTimeValueChange(ValueChangeEvent<Date> event) {
+        activationDateField.setValue(activationTimeField.getValue(), false);
+    }
+
+    @UiHandler({"deActivationDateField"})
+    void onDeActivationDateValueChange(ValueChangeEvent<Date> event) {
+        DateWrapper deactivationTime = new DateWrapper(activationTimeField.getValue());
+        final DateWrapper newDeActivationDate = new DateWrapper(event.getValue())
+            .addHours(deactivationTime.getHours())
+            .addMinutes(deactivationTime.getMinutes())
+            .addSeconds(deactivationTime.getSeconds());
+        activationDateField.setValue(newDeActivationDate.asDate(), false);
+        activationTimeField.setValue(newDeActivationDate.asDate(), false);
+    }
+
+    @UiHandler({"deActivationTimeField"})
+    void onDeActivationTimeValueChange(ValueChangeEvent<Date> event) {
+        deActivationDateField.setValue(deActivationTimeField.getValue(), false);
+    }
+
+    @Override
+    public SystemMessage getValue() {
+        typeCombo.finishEditing();
+        editorDriver.flush();
+        return editorDriver.flush();
+    }
+
+    public boolean hasErrors() {
+        return editorDriver.hasErrors();
     }
 
 }

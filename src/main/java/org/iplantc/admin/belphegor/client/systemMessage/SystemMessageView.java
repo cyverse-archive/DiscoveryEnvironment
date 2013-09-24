@@ -2,8 +2,8 @@ package org.iplantc.admin.belphegor.client.systemMessage;
 
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 import org.iplantc.core.uicommons.client.views.IsMaskable;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -21,7 +21,7 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * 
          * @param msg
          */
-        void addSystemMessage(Message msg);
+        void addSystemMessage(SystemMessage msg);
 
         /**
          * Submits the given systems message to be updated by calling the
@@ -31,7 +31,7 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * 
          * @param msg
          */
-        void editSystemMessage(Message msg);
+        void editSystemMessage(SystemMessage msg);
 
         /**
          * Submits the given system message to be deleted by calling the
@@ -41,7 +41,7 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * 
          * @param msg
          */
-        void deleteSystemMessage(Message msg);
+        void deleteSystemMessage(SystemMessage msg);
 
         void go(HasOneWidget container);
 
@@ -51,12 +51,14 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
 
     void setPresenter(Presenter presenter);
 
-    void setSystemMessages(List<Message> systemMessages);
+    void setSystemMessages(List<SystemMessage> systemMessages);
 
-    void addSystemMessage(Message systemMessage);
+    void addSystemMessage(SystemMessage systemMessage);
 
-    void updateSystemMessage(Message updatedSystemMessage);
+    void updateSystemMessage(SystemMessage updatedSystemMessage);
 
-    void deleteSystemMessage(Message msgToDelete);
+    void editSystemMessage(SystemMessage sysMsgToEdit);
+
+    void deleteSystemMessage(SystemMessage msgToDelete);
 
 }

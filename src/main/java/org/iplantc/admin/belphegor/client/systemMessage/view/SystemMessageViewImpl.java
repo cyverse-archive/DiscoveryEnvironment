@@ -1,13 +1,16 @@
 package org.iplantc.admin.belphegor.client.systemMessage.view;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
+import org.iplantc.admin.belphegor.client.systemMessage.view.cells.SystemMessageNameCell;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 import org.iplantc.core.uicommons.client.models.sysmsgs.MessageProperties;
+import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -18,6 +21,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -30,9 +34,16 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
-public class SystemMessageViewImpl extends Composite implements SystemMessageView, SelectionChangedHandler<Message> {
+public class SystemMessageViewImpl extends Composite implements SystemMessageView, SelectionChangedHandler<SystemMessage> {
 
     private static SystemMessageViewImplUiBinder uiBinder = GWT.create(SystemMessageViewImplUiBinder.class);
+
+    private final class MsgColComparator implements Comparator<SystemMessage> {
+        @Override
+        public int compare(SystemMessage o1, SystemMessage o2) {
+            return o1.getBody().compareToIgnoreCase(o2.getBody());
+        }
+    }
 
     interface SystemMessageViewImplUiBinder extends UiBinder<Widget, SystemMessageViewImpl> {}
 
@@ -42,13 +53,13 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     IplantDisplayStrings strings;
 
     @UiField
-    TextButton addBtn, deleteBtn, editBtn;
+    TextButton addBtn, deleteBtn;
 
     @UiField
-    Grid<Message> grid;
+    Grid<SystemMessage> grid;
 
     @UiField
-    ListStore<Message> store;
+    ListStore<SystemMessage> store;
 
     private final MessageProperties msgProps;
     private SystemMessageView.Presenter presenter;
@@ -70,48 +81,68 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     }
 
     @Override
-    public void onSelectionChanged(SelectionChangedEvent<Message> event) {
+    public void onSelectionChanged(SelectionChangedEvent<SystemMessage> event) {
         boolean isSingleItemSelected = event.getSelection().size() == 1;
         deleteBtn.setEnabled(isSingleItemSelected);
-        editBtn.setEnabled(isSingleItemSelected);
     }
 
     @UiFactory
-    ListStore<Message> createListStore() {
-        ListStore<Message> listStore = new ListStore<Message>(msgProps.id());
+    ListStore<SystemMessage> createListStore() {
+        ListStore<SystemMessage> listStore = new ListStore<SystemMessage>(msgProps.id());
         return listStore;
     }
 
     @UiFactory
-    ColumnModel<Message> createColumnModel() {
-        ColumnConfig<Message, Date> activationDateCol = new ColumnConfig<Message, Date>(msgProps.activationTime(), 200, "Activation Date");
-        ColumnConfig<Message, Date> deactivationDateCol = new ColumnConfig<Message, Date>(msgProps.deactivationTime(), 200, "Deactivation Date");
-        ColumnConfig<Message, String> msgCol = new ColumnConfig<Message, String>(msgProps.body(), 400, "Message");
-        ColumnConfig<Message, String> typeCol = new ColumnConfig<Message, String>(msgProps.type(), 90, "Type");
+    ColumnModel<SystemMessage> createColumnModel() {
+        ColumnConfig<SystemMessage, Date> activationDateCol = new ColumnConfig<SystemMessage, Date>(msgProps.activationTime(), 200, "Activation Date");
+        ColumnConfig<SystemMessage, Date> deactivationDateCol = new ColumnConfig<SystemMessage, Date>(msgProps.deactivationTime(), 200, "Deactivation Date");
+        ColumnConfig<SystemMessage, SystemMessage> msgCol = new ColumnConfig<SystemMessage, SystemMessage>(new IdentityValueProvider<SystemMessage>("body"), 400, "Message");
+        ColumnConfig<SystemMessage, String> typeCol = new ColumnConfig<SystemMessage, String>(msgProps.type(), 90, "Type");
+        ColumnConfig<SystemMessage, Boolean> dismissibleColumn = new ColumnConfig<SystemMessage, Boolean>(msgProps.dismissible(), 90, "Is Dismissible?");
         activationDateCol.setFixed(true);
         deactivationDateCol.setFixed(true);
+        msgCol.setCell(new SystemMessageNameCell(this));
+        msgCol.setComparator(new MsgColComparator());
         typeCol.setFixed(true);
         typeCol.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         
         @SuppressWarnings("unchecked")
-        List<ColumnConfig<Message, ?>> colList = Lists.<ColumnConfig<Message, ?>> newArrayList(activationDateCol, deactivationDateCol, msgCol, typeCol);
+        List<ColumnConfig<SystemMessage, ?>> colList = Lists.<ColumnConfig<SystemMessage, ?>> newArrayList(msgCol, activationDateCol, deactivationDateCol, dismissibleColumn, typeCol);
         
-        return new ColumnModel<Message>(colList);
+        return new ColumnModel<SystemMessage>(colList);
     }
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
-        final EditCreateSystemMessageDialog createSystemMessage = EditCreateSystemMessageDialog.createSystemMessage(presenter.getAnnouncementTypes());
-        createSystemMessage.addOkButtonSelectHandler(new SelectHandler() {
+        final IPlantDialog createSystemMessageDlg = new IPlantDialog();
+        createSystemMessageDlg.setHeadingText("Create System Message");
+        createSystemMessageDlg.setHideOnButtonClick(false);
+        createSystemMessageDlg.getOkButton().setText("Submit");
+        createSystemMessageDlg.setSize("500", "400");
+        createSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                createSystemMessageDlg.hide();
+            }
+        });
+
+        final EditCreateSystemMessageDialog createSystemMessagePanel = EditCreateSystemMessageDialog.createSystemMessage(presenter.getAnnouncementTypes());
+        createSystemMessageDlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                Message msg = createSystemMessage.getMessage();
-                presenter.addSystemMessage(msg);
+
+                final SystemMessage value = createSystemMessagePanel.getValue();
+                if (!createSystemMessagePanel.hasErrors()) {
+                    presenter.addSystemMessage(value);
+                    createSystemMessageDlg.hide();
+                }
             }
         });
         
-        createSystemMessage.show();
+        createSystemMessageDlg.add(createSystemMessagePanel);
+
+        createSystemMessageDlg.show();
     }
 
     @UiHandler("deleteBtn")
@@ -119,39 +150,55 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         presenter.deleteSystemMessage(grid.getSelectionModel().getSelectedItem());
     }
 
-    @UiHandler("editBtn")
-    void editBtnClicked(SelectEvent event) {
-        // Call out to service to update, update item in store on success callback.
-        final EditCreateSystemMessageDialog editSystemMessage = EditCreateSystemMessageDialog.editSystemMessage(grid.getSelectionModel().getSelectedItem(), presenter.getAnnouncementTypes());
-        editSystemMessage.addOkButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                Message msg = editSystemMessage.getMessage();
-                presenter.editSystemMessage(msg);
-            }
-        });
-        editSystemMessage.show();
-    }
 
     @Override
-    public void setSystemMessages(List<Message> systemMessages) {
+    public void setSystemMessages(List<SystemMessage> systemMessages) {
         store.addAll(systemMessages);
     }
 
     @Override
-    public void addSystemMessage(Message systemMessage) {
+    public void addSystemMessage(SystemMessage systemMessage) {
         store.add(systemMessage);
     }
 
     @Override
-    public void updateSystemMessage(Message updatedSystemMessage) {
+    public void updateSystemMessage(SystemMessage updatedSystemMessage) {
         store.update(updatedSystemMessage);
     }
 
     @Override
-    public void deleteSystemMessage(Message msgToDelete) {
+    public void deleteSystemMessage(SystemMessage msgToDelete) {
         store.remove(msgToDelete);
+    }
+
+    @Override
+    public void editSystemMessage(SystemMessage sysMsgToEdit) {
+        final IPlantDialog editSystemMessageDlg = new IPlantDialog();
+        editSystemMessageDlg.setHeadingText("Edit System Message");
+        editSystemMessageDlg.setHideOnButtonClick(false);
+        editSystemMessageDlg.getOkButton().setText("Submit");
+        editSystemMessageDlg.setSize("500", "400");
+        editSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                editSystemMessageDlg.hide();
+            }
+        });
+        // Call out to service to update, update item in store on success callback.
+        final EditCreateSystemMessageDialog editSystemMessagePanel = EditCreateSystemMessageDialog.editSystemMessage(sysMsgToEdit, presenter.getAnnouncementTypes());
+        editSystemMessageDlg.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                final SystemMessage value = editSystemMessagePanel.getValue();
+                if (!editSystemMessagePanel.hasErrors()) {
+                    presenter.editSystemMessage(value);
+                    editSystemMessageDlg.hide();
+                }
+            }
+        });
+        editSystemMessageDlg.add(editSystemMessagePanel);
+        editSystemMessageDlg.show();
     }
 
 }

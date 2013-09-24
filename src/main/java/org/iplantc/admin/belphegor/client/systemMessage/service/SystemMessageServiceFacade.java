@@ -2,7 +2,7 @@ package org.iplantc.admin.belphegor.client.systemMessage.service;
 
 import java.util.List;
 
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,7 +15,7 @@ public interface SystemMessageServiceFacade {
      * 
      * @param callback
      */
-    void getSystemMessages(AsyncCallback<List<Message>> callback);
+    void getSystemMessages(AsyncCallback<List<SystemMessage>> callback);
 
     /**
      * <a href=
@@ -25,7 +25,7 @@ public interface SystemMessageServiceFacade {
      * @param msgToAdd
      * @param callback
      */
-    void addSystemMessage(Message msgToAdd, AsyncCallback<Message> callback);
+    void addSystemMessage(SystemMessage msgToAdd, AsyncCallback<SystemMessage> callback);
 
     /**
      * <a href=
@@ -35,7 +35,7 @@ public interface SystemMessageServiceFacade {
      * @param updatedMsg
      * @param callback
      */
-    void updateSystemMessage(Message updatedMsg, AsyncCallback<Message> callback);
+    void updateSystemMessage(SystemMessage updatedMsg, AsyncCallback<SystemMessage> callback);
 
     /**
      * <a href=
@@ -45,7 +45,7 @@ public interface SystemMessageServiceFacade {
      * @param msgToDelete
      * @param callback
      */
-    void deleteSystemMessage(Message msgToDelete, AsyncCallback<Void> callback);
+    void deleteSystemMessage(SystemMessage msgToDelete, AsyncCallback<Void> callback);
 
     /**
      * <a href=

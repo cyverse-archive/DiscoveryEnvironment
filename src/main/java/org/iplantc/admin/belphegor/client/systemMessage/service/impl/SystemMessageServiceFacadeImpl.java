@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
+import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessage;
 import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessageFactory;
 import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
-import org.iplantc.core.uicommons.client.models.sysmsgs.Message;
 import org.iplantc.core.uicommons.client.services.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -15,7 +15,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
 
@@ -27,7 +26,7 @@ public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacad
     }
 
     @Override
-    public void getSystemMessages(AsyncCallback<List<Message>> callback) {
+    public void getSystemMessages(AsyncCallback<List<SystemMessage>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
@@ -35,29 +34,17 @@ public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacad
     }
 
     @Override
-    public void addSystemMessage(Message msgToAdd, AsyncCallback<Message> callback) {
+    public void addSystemMessage(SystemMessage msgToAdd, AsyncCallback<SystemMessage> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
-        Splittable body = StringQuoter.createSplittable();
-        StringQuoter.create(msgToAdd.getType()).assign(body, "type");
-        StringQuoter.create(msgToAdd.getBody()).assign(body, "message");
-        final Long deActTime = msgToAdd.getDeactivationTime().getTime();
-        final Long actTime = msgToAdd.getActivationTime().getTime();
-        StringQuoter.create(deActTime).assign(body, "deactivation-date");
-        StringQuoter.create(actTime).assign(body, "activation-date");
-        StringQuoter.create(msgToAdd.isDismissible()).assign(body, "dismissible");
-        StringQuoter.create(msgToAdd.isLoginsDisabled()).assign(body, "logins-disabled");
-
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(msgToAdd));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, encode.getPayload());
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address,
-        // body.getPayload());
         ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new SystemMessageCallbackConverter(callback, factory));
     }
 
     @Override
-    public void updateSystemMessage(Message updatedMsg, AsyncCallback<Message> callback) {
-        String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl();
+    public void updateSystemMessage(SystemMessage updatedMsg, AsyncCallback<SystemMessage> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl() + "/" + updatedMsg.getId();
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(updatedMsg));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, encode.getPayload());
@@ -65,7 +52,7 @@ public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacad
     }
 
     @Override
-    public void deleteSystemMessage(Message msgToDelete, AsyncCallback<Void> callback) {
+    public void deleteSystemMessage(SystemMessage msgToDelete, AsyncCallback<Void> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAdminSystemMessageServiceUrl() + "/" + msgToDelete.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.DELETE, address);

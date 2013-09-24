@@ -10,4 +10,6 @@ public interface SystemMessageFactory extends MessageFactory {
 
     AutoBean<SystemMessageTypesList> systemMessageTypesList();
 
+    AutoBean<SystemMessage> systemMessage();
+
 }
