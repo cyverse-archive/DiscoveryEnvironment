@@ -508,9 +508,9 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         }
 
         // FIXME this check will always pass, since app.getGroupId() is always null, currently.
-        if (parentGroup.getId().equals(app.getGroupId())) {
-            return false;
-        }
+        // if (parentGroup.getId().equals(app.getGroupId())) {
+        // return false;
+        // }
 
         return true;
     }
