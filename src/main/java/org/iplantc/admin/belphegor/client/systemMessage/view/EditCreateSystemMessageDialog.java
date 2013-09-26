@@ -55,14 +55,14 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
     @Path("activationTime")
     DateField activationDateField;
     @UiField
-    @Path("activationTime")
+    @Ignore
     TimeField activationTimeField;
 
     @UiField
     @Path("deactivationTime")
     DateField deActivationDateField;
     @UiField
-    @Path("deactivationTime")
+    @Ignore
     TimeField deActivationTimeField;
 
     @UiField
@@ -119,6 +119,8 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
         
         editorDriver.initialize(this);
         editorDriver.edit(message);
+        deActivationTimeField.setValue(new Date(), false);
+        activationTimeField.setValue(new Date(), false);
     }
 
     @UiFactory
@@ -134,7 +136,7 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
         throw new UnsupportedOperationException();
     }
 
-    @UiHandler({"activationDateField"})
+    @UiHandler("activationDateField")
     void onActivationDateValueChange(ValueChangeEvent<Date> event) {
         DateWrapper activationTime = new DateWrapper(activationTimeField.getValue());
         final DateWrapper newActivationDate = new DateWrapper(event.getValue())
@@ -145,25 +147,37 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
         activationTimeField.setValue(newActivationDate.asDate(), false);
     }
 
-    @UiHandler({"activationTimeField"})
+    @SuppressWarnings("deprecation")
+    @UiHandler("activationTimeField")
     void onActivationTimeValueChange(ValueChangeEvent<Date> event) {
-        activationDateField.setValue(activationTimeField.getValue(), false);
+        final DateWrapper newActivationTime = new DateWrapper(activationDateField.getValue())
+                .clearTime()
+                .addHours(event.getValue().getHours())
+                .addMinutes(event.getValue().getMinutes())
+                .addSeconds(event.getValue().getSeconds());
+        activationDateField.setValue(newActivationTime.asDate(), false);
     }
 
-    @UiHandler({"deActivationDateField"})
+    @UiHandler("deActivationDateField")
     void onDeActivationDateValueChange(ValueChangeEvent<Date> event) {
-        DateWrapper deactivationTime = new DateWrapper(activationTimeField.getValue());
+        DateWrapper deactivationTime = new DateWrapper(deActivationTimeField.getValue());
         final DateWrapper newDeActivationDate = new DateWrapper(event.getValue())
             .addHours(deactivationTime.getHours())
             .addMinutes(deactivationTime.getMinutes())
             .addSeconds(deactivationTime.getSeconds());
-        activationDateField.setValue(newDeActivationDate.asDate(), false);
-        activationTimeField.setValue(newDeActivationDate.asDate(), false);
+        deActivationDateField.setValue(newDeActivationDate.asDate(), false);
+        deActivationTimeField.setValue(newDeActivationDate.asDate(), false);
     }
 
-    @UiHandler({"deActivationTimeField"})
+    @SuppressWarnings("deprecation")
+    @UiHandler("deActivationTimeField")
     void onDeActivationTimeValueChange(ValueChangeEvent<Date> event) {
-        deActivationDateField.setValue(deActivationTimeField.getValue(), false);
+        final DateWrapper newDeActivationTime = new DateWrapper(deActivationDateField.getValue())
+                .clearTime()
+                .addHours(event.getValue().getHours())
+                .addMinutes(event.getValue().getMinutes())
+                .addSeconds(event.getValue().getSeconds());
+        deActivationDateField.setValue(newDeActivationTime.asDate(), false);
     }
 
     @Override
