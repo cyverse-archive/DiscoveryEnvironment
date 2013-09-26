@@ -3,9 +3,9 @@ package org.iplantc.admin.belphegor.client.services.callbacks;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 
-import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.widget.core.client.Component;
 
 /**
  * A common callback for administrative service calls that implements common onSuccess and onFailure

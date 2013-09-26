@@ -5,13 +5,6 @@ import org.iplantc.core.uicommons.client.CommonUiConstants;
 public interface BelphegorConstants extends CommonUiConstants {
 
     /**
-     * A valid URL sample for DE help files.
-     * 
-     * @return A sample help file URL
-     */
-    String appWikiUrl();
-
-    /**
      * The path to the wiki page "Creating Documentation for Tools"
      * 
      * @return path to help file
@@ -24,14 +17,4 @@ public interface BelphegorConstants extends CommonUiConstants {
      */
     String logoutUrl();
 
-    /**
-     * 
-     * @return
-     */
-    String iplantLogo();
-
-    /**
-     * @return
-     */
-    String tagBelphegorCatalog();
 }

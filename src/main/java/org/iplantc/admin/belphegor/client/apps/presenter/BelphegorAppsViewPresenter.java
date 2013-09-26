@@ -150,8 +150,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         if ((!selectedAppGroup.getName().contains("Public Apps"))
                 && selectedAppGroup.getAppCount() > 0
                 && selectedAppGroup.getGroups().size() == 0
-                || ((props.getDefaultTrashAnalysisGroupId() == selectedAppGroup.getId()) || props
-                        .getDefaultBetaAnalysisGroupId() == selectedAppGroup.getId())) {
+                || ((props.getDefaultTrashAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId())) 
+                        || props.getDefaultBetaAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))) {
             ErrorHandler.post(I18N.ERROR.addCategoryPermissionError());
             return;
         }
@@ -508,9 +508,9 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         }
 
         // FIXME this check will always pass, since app.getGroupId() is always null, currently.
-        if (parentGroup.getId().equals(app.getGroupId())) {
-            return false;
-        }
+        // if (parentGroup.getId().equals(app.getGroupId())) {
+        // return false;
+        // }
 
         return true;
     }

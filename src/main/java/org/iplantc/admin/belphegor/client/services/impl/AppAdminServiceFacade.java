@@ -11,11 +11,11 @@ import org.iplantc.core.uiapps.client.services.AppGroupListCallbackConverter;
 import org.iplantc.core.uiapps.client.services.AppServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.extjs.gxt.ui.client.widget.Component;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.widget.core.client.Component;
 
 public class AppAdminServiceFacade implements AppServiceFacade {
     private final Component maskingCaller;

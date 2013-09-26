@@ -1,8 +1,27 @@
 package org.iplantc.admin.belphegor.client.gin;
 
+import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.presenter.BelphegorPresenterImpl;
+import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
+import org.iplantc.admin.belphegor.client.refGenome.presenter.RefGenomePresenterImpl;
+import org.iplantc.admin.belphegor.client.refGenome.service.ReferenceGenomeServiceFacade;
+import org.iplantc.admin.belphegor.client.refGenome.service.impl.ReferenceGenomeServiceFacadeImpl;
+import org.iplantc.admin.belphegor.client.refGenome.view.RefGenomeViewImpl;
+import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
+import org.iplantc.admin.belphegor.client.systemMessage.presenter.SystemMessagePresenterImpl;
+import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageServiceFacade;
+import org.iplantc.admin.belphegor.client.systemMessage.service.impl.SystemMessageServiceFacadeImpl;
+import org.iplantc.admin.belphegor.client.systemMessage.view.SystemMessageViewImpl;
+import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
+import org.iplantc.admin.belphegor.client.toolRequest.presenter.ToolRequestPresenterImpl;
+import org.iplantc.admin.belphegor.client.toolRequest.service.ToolRequestServiceFacade;
+import org.iplantc.admin.belphegor.client.toolRequest.service.impl.ToolRequestServiceFacadeImpl;
+import org.iplantc.admin.belphegor.client.toolRequest.view.ToolRequestViewImpl;
+import org.iplantc.admin.belphegor.client.views.BelphegorView;
+import org.iplantc.admin.belphegor.client.views.BelphegorViewImpl;
 import org.iplantc.core.uiapps.client.gin.AppGroupTreeProvider;
 import org.iplantc.core.uiapps.client.gin.AppGroupTreeStoreProvider;
 import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
@@ -17,6 +36,9 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 public class BelphegorAppsGinModule extends AbstractGinModule {
     @Override
     protected void configure() {
+        bind(BelphegorView.class).to(BelphegorViewImpl.class);
+        bind(BelphegorView.Presenter.class).to(BelphegorPresenterImpl.class).in(Singleton.class);
+
         bind(new TypeLiteral<TreeStore<AppGroup>>() {
         }).toProvider(AppGroupTreeStoreProvider.class).in(Singleton.class);
 
@@ -25,5 +47,19 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
 
         bind(AppsView.class).to(AdminAppViewImpl.class);
         bind(BelphegorAppsToolbar.class).to(BelphegorAppsToolbarImpl.class);
+
+        bind(RefGenomeView.class).to(RefGenomeViewImpl.class);
+        bind(RefGenomeView.Presenter.class).to(RefGenomePresenterImpl.class);
+        bind(ReferenceGenomeServiceFacade.class).to(ReferenceGenomeServiceFacadeImpl.class);
+
+        bind(ToolRequestView.class).to(ToolRequestViewImpl.class);
+        bind(ToolRequestView.Presenter.class).to(ToolRequestPresenterImpl.class);
+        bind(ToolRequestServiceFacade.class).to(ToolRequestServiceFacadeImpl.class);
+
+        bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
+        bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);
+        bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
+
+        bind(BelphegorResources.class).in(Singleton.class);
     }
 }

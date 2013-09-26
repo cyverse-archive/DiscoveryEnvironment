@@ -12,7 +12,9 @@
 		<!-- Target Java Version -->
 		<jdk.version>1.6</jdk.version>
 		<!-- Current GWT Version -->
-		<gwt.version>2.5.0</gwt.version>
+		<gwt.version>2.5.1</gwt.version>
+        <!-- Current Spring Security Version -->
+        <spring.security.version>3.1.4.RELEASE</spring.security.version>
 		<!-- Define OS/Platform Independent Character Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -35,11 +37,7 @@
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.extjs</groupId>
-			<artifactId>gxt</artifactId>
-			<version>2.2.5</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- iPlant Dependencies -->
 		<dependency>
@@ -108,22 +106,22 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>3.1.2.RELEASE</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-cas-client</artifactId>
-			<version>3.0.7.RELEASE</version>
+			<artifactId>spring-security-cas</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -218,6 +216,9 @@
 					<filesets>
 						<fileset>
 							<directory>${basedir}/war</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/gwt-unitCache</directory>
 						</fileset>
 					</filesets>
 				</configuration>
