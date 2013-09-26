@@ -8,8 +8,9 @@ import org.iplantc.admin.belphegor.client.systemMessage.model.SystemMessageFacto
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
+import com.google.gwt.editor.client.EditorDelegate;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.ValueAwareEditor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -30,7 +31,7 @@ import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TimeField;
 
-class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMessage>, TakesValue<SystemMessage> {
+class EditCreateSystemMessageDialog extends Composite implements ValueAwareEditor<SystemMessage>, TakesValue<SystemMessage> {
 
     private static CreateSystemMessageDialogUiBinder uiBinder = GWT.create(CreateSystemMessageDialogUiBinder.class);
 
@@ -119,8 +120,6 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
         
         editorDriver.initialize(this);
         editorDriver.edit(message);
-        deActivationTimeField.setValue(new Date(), false);
-        activationTimeField.setValue(new Date(), false);
     }
 
     @UiFactory
@@ -133,7 +132,9 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
 
     @Override
     public void setValue(SystemMessage value) {
-        throw new UnsupportedOperationException();
+        activationTimeField.setValue(value.getActivationTime(), false);
+        deActivationTimeField.setValue(value.getDeactivationTime(), false);
+
     }
 
     @UiHandler("activationDateField")
@@ -189,6 +190,24 @@ class EditCreateSystemMessageDialog extends Composite implements Editor<SystemMe
 
     public boolean hasErrors() {
         return editorDriver.hasErrors();
+    }
+
+    @Override
+    public void setDelegate(EditorDelegate<SystemMessage> delegate) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void flush() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onPropertyChange(String... paths) {
+        // TODO Auto-generated method stub
+
     }
 
 }
