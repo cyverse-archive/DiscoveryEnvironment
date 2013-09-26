@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
+import com.sencha.gxt.widget.core.client.form.TextArea;
 
 public class UpdateToolRequestDialog extends IPlantDialog {
 
@@ -27,8 +28,11 @@ public class UpdateToolRequestDialog extends IPlantDialog {
     @UiField
     Label currentStatusLabel;
 
-    @UiField()
+    @UiField
     SimpleComboBox<ToolRequestStatus> statusCombo;
+
+    @UiField
+    TextArea commentsEditor;
 
     private final ToolRequest toolRequest;
 
@@ -98,6 +102,7 @@ public class UpdateToolRequestDialog extends IPlantDialog {
         ToolRequestUpdate trUpdate = factory.update().as();
         trUpdate.setId(toolRequest.getId());
         trUpdate.setStatus(statusCombo.getCurrentValue());
+        trUpdate.setComments(commentsEditor.getCurrentValue());
         return trUpdate;
     }
 
