@@ -32,26 +32,24 @@ public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceF
     }
 
     @Override
-    public void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<Void> callback) {
+    public void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getEditRefGenomeServiceUrl();
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(referenceGenome.getName()).assign(body, ReferenceGenome.NAME);
         StringQuoter.create(referenceGenome.getPath()).assign(body, ReferenceGenome.PATH);
         StringQuoter.create(referenceGenome.isDeleted()).assign(body, ReferenceGenome.DELETED);
-        StringQuoter.create(referenceGenome.getId()).assign(body, ReferenceGenome.UUID);
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, body.getPayload());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
-
+        StringQuoter.create(referenceGenome.getUuid()).assign(body, ReferenceGenome.UUID);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body.getPayload());
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new ReferenceGenomeListCallbackConverter(callback, factory));
     }
 
     @Override
-    public void createReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<Void> callback) {
+    public void createReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getAddRefGenomeServiceUrl();
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(referenceGenome.getName()).assign(body, ReferenceGenome.NAME);
         StringQuoter.create(referenceGenome.getPath()).assign(body, ReferenceGenome.PATH);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.PUT, address, body.getPayload());
-        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
+        ToolIntegrationAdminServiceFacade.getInstance().getServiceData(wrapper, new ReferenceGenomeListCallbackConverter(callback, factory));
     }
-
 }
