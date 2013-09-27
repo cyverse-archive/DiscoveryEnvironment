@@ -22,6 +22,10 @@ public interface RefGenomeView extends IsWidget, IsMaskable {
 
     void setReferenceGenomes(List<ReferenceGenome> refGenomes);
 
+    void addReferenceGenome(ReferenceGenome referenceGenome);
+
+    void updateReferenceGenome(ReferenceGenome referenceGenome);
+
     void setPresenter(RefGenomeView.Presenter presenter);
 
     void editReferenceGenome(ReferenceGenome refGenome);

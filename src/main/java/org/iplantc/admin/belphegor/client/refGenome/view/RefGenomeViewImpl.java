@@ -190,8 +190,17 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
     }
 
     @Override
+    public void addReferenceGenome(ReferenceGenome referenceGenome) {
+        store.add(referenceGenome);
+    }
+
+    @Override
+    public void updateReferenceGenome(ReferenceGenome referenceGenome) {
+        store.update(referenceGenome);
+    }
+
+    @Override
     public void setPresenter(RefGenomeView.Presenter presenter) {
         this.presenter = presenter;
     }
-
 }
