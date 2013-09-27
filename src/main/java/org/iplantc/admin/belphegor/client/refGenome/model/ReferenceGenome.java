@@ -45,4 +45,6 @@ public interface ReferenceGenome extends HasId, HasName, HasPath {
 
     String getUuid();
 
+    void setPath(String path);
+
 }
