@@ -57,6 +57,9 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     TextButton restoreApp;
 
     @UiField
+    TextButton categorizeApp;
+
+    @UiField
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @UiFactory
@@ -115,6 +118,11 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
         presenter.onRestoreAppClicked();
     }
 
+    @UiHandler("categorizeApp")
+    public void categorizeAppClicked(SelectEvent event) {
+        presenter.onCategorizeAppClicked();
+    }
+
     @Override
     public void setAddAppGroupButtonEnabled(boolean enabled) {
         addCategory.setEnabled(enabled);
@@ -133,6 +141,11 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     @Override
     public void setRestoreButtonEnabled(boolean enabled) {
         restoreApp.setEnabled(enabled);
+    }
+
+    @Override
+    public void setCategorizeButtonEnabled(boolean enabled) {
+        categorizeApp.setEnabled(enabled);
     }
 
     @Override

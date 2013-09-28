@@ -82,6 +82,16 @@ public class ToolIntegrationAdminProperties {
     private static final String SERVICE_URL_APP_DELETE = PROPERTY_NAME_PREFIX + "delete-app"; //$NON-NLS-1$
 
     /**
+     * The URL used to access the categorize App service.
+     */
+    private static final String SERVICE_URL_APP_CATEGORIZE = PROPERTY_NAME_PREFIX + "categorize-app"; //$NON-NLS-1$
+
+    /**
+     * The URL used to access the App details service.
+     */
+    private static final String SERVICE_URL_APP_DETAILS = PROPERTY_NAME_PREFIX + "app-details"; //$NON-NLS-1$
+
+    /**
      * The URL used to access the App Search service.
      */
     private static final String SERVICE_URL_APP_SEARCH = PROPERTY_NAME_PREFIX + "search-apps"; //$NON-NLS-1$
@@ -184,9 +194,10 @@ public class ToolIntegrationAdminProperties {
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
                 SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS,
                 SERVICE_URL_APP_UPDATE, SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE,
-                SERVICE_URL_APP_RESTORE, SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME,
-                SERVICE_EDIT_REF_GENOME, SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP, SERVICE_LIST_TOOL_REQUESTS, SERVICE_TOOL_REQUEST,
-                SERVICE_SYSTEM_MESSAGES, SERVICE_SYSTEM_MESSAGE_TYPES)) {
+                SERVICE_URL_APP_RESTORE, SERVICE_URL_APP_CATEGORIZE, SERVICE_URL_APP_DETAILS,
+                SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME, SERVICE_EDIT_REF_GENOME,
+                SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP, SERVICE_LIST_TOOL_REQUESTS,
+                SERVICE_TOOL_REQUEST, SERVICE_SYSTEM_MESSAGES, SERVICE_SYSTEM_MESSAGE_TYPES)) {
             serviceUrlMap.put(key, properties.get(key));
         }
 
@@ -422,6 +433,24 @@ public class ToolIntegrationAdminProperties {
      */
     public String getRestoreAppServiceUrl() {
         return serviceUrlMap.get(SERVICE_URL_APP_RESTORE);
+    }
+
+    /**
+     * Gets the Categorize App service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getCategorizeAppServiceUrl() {
+        return serviceUrlMap.get(SERVICE_URL_APP_CATEGORIZE);
+    }
+
+    /**
+     * Gets the App Details service URL.
+     * 
+     * @return the URL as a string.
+     */
+    public String getAppDetailsServiceUrl() {
+        return serviceUrlMap.get(SERVICE_URL_APP_DETAILS);
     }
 
     /**
