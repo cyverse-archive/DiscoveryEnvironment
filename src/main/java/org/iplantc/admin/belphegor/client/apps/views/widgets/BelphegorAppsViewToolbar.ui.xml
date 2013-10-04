@@ -61,8 +61,8 @@
       </toolbar:child>   
       <toolbar:child layoutData="{boxDataNoFlex}">
           <button:TextButton ui:field="categorizeApp"
-                             text="Categorize"
-                             icon="{icons.add}"
+                             text="{strings.categorize}"
+                             icon="{icons.category}"
                              debugId="idCategorizeBtn"/>
       </toolbar:child>
       <toolbar:child layoutData="{boxData}">

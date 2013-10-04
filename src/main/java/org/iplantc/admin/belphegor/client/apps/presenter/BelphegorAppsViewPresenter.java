@@ -422,14 +422,14 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
             public void onSelect(SelectEvent event) {
                 List<AppGroup> groups = presenter.getSelectedGroups();
                 if (groups == null || groups.isEmpty()) {
-                    ErrorHandler.post("No Categories selected");
+                    ErrorHandler.post(I18N.ERROR.noCategoriesSelected());
                 } else {
                     doCategorizeSelectedApp(selectedApp, groups);
                 }
             }
         });
 
-        dlg.setHeadingText("Select Categories for " + selectedApp.getName());
+        dlg.setHeadingText(I18N.DISPLAY.selectCategories(selectedApp.getName()));
         dlg.setResizable(true);
         dlg.setOkButtonText(I18N.DISPLAY.submit());
 
