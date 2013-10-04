@@ -30,7 +30,6 @@ public class AppCategorizePresenter implements AppCategorizeView.Presenter {
 
         // Remove trash and beta from the store.
         ToolIntegrationAdminProperties props = ToolIntegrationAdminProperties.getInstance();
-        view.removeGroupWithId(props.getDefaultBetaAnalysisGroupId());
         view.removeGroupWithId(props.getDefaultTrashAnalysisGroupId());
 
         if (app.getGroups() != null) {
