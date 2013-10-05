@@ -3,6 +3,7 @@ package org.iplantc.admin.belphegor.client.apps.views;
 import java.util.Comparator;
 import java.util.List;
 
+import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.core.resources.client.IplantResources;
 import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
 
@@ -17,6 +18,10 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.CheckNodes;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
@@ -36,11 +41,29 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     @UiField(provided = true)
     Tree<AppGroup, String> tree;
 
+    @UiField
+    ContentPanel con;
+
     final private Widget widget;
 
     public AppCategorizeViewImpl() {
         initCategoryTree();
+
         widget = uiBinder.createAndBindUi(this);
+
+        addClearButton();
+    }
+
+    private void addClearButton() {
+        TextButton btnClear = new TextButton(I18N.DISPLAY.clearSelection(), new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                tree.setCheckedSelection(null);
+            }
+        });
+
+        con.getHeader().addTool(btnClear);
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.iplantc.core.uiapps.client.views.AppsView;
 import org.iplantc.core.uiapps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
 import org.iplantc.core.uicommons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.core.uicommons.client.models.CommonModelUtils;
@@ -67,8 +68,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * 
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
- * 
- * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
  * 
  * 
  * @author jstroot
@@ -422,7 +421,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
             public void onSelect(SelectEvent event) {
                 List<AppGroup> groups = presenter.getSelectedGroups();
                 if (groups == null || groups.isEmpty()) {
-                    ErrorHandler.post(I18N.ERROR.noCategoriesSelected());
+                    IplantAnnouncer.getInstance().schedule(
+                            new ErrorAnnouncementConfig(I18N.ERROR.noCategoriesSelected()));
                 } else {
                     doCategorizeSelectedApp(selectedApp, groups);
                 }

@@ -2,7 +2,7 @@
 <ui:UiBinder
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+    xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
     xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
 
     <ui:with
@@ -26,9 +26,7 @@
             margins="{centerMargins}" />
     </ui:with>
 
-    <con:VerticalLayoutContainer scrollMode="AUTOY" width="400" height="400">
-        <con:child layoutData="{layoutData}">
-            <tree:Tree ui:field="tree" />
-        </con:child>
-    </con:VerticalLayoutContainer>
+    <gxt:ContentPanel ui:field="con" width="400" height="400">
+        <tree:Tree ui:field="tree" />
+    </gxt:ContentPanel>
 </ui:UiBinder>
