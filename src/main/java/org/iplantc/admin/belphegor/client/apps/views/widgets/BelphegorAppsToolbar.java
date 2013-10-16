@@ -14,6 +14,8 @@ public interface BelphegorAppsToolbar extends IsWidget {
         void onDeleteClicked();
 
         void onRestoreAppClicked();
+
+        void onCategorizeAppClicked();
     }
 
     void setAddAppGroupButtonEnabled(boolean enabled);
@@ -23,6 +25,8 @@ public interface BelphegorAppsToolbar extends IsWidget {
     void setDeleteButtonEnabled(boolean enabled);
 
     void setRestoreButtonEnabled(boolean enabled);
+
+    void setCategorizeButtonEnabled(boolean enabled);
 
     void setPresenter(Presenter presenter);
 

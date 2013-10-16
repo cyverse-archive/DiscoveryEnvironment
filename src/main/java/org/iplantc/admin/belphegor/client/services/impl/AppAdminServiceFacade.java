@@ -6,6 +6,7 @@ import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.ToolIntegrationAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
+import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
 import org.iplantc.core.uiapps.client.models.autobeans.AppGroup;
 import org.iplantc.core.uiapps.client.services.AppGroupListCallbackConverter;
 import org.iplantc.core.uiapps.client.services.AppServiceFacade;
@@ -15,6 +16,8 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.sencha.gxt.widget.core.client.Component;
 
 public class AppAdminServiceFacade implements AppServiceFacade {
@@ -193,6 +196,22 @@ public class AppAdminServiceFacade implements AppServiceFacade {
     public void restoreApplication(String applicationId, AsyncCallback<String> callback) {
         String address = ToolIntegrationAdminProperties.getInstance().getRestoreAppServiceUrl() + "/" //$NON-NLS-1$
                 + applicationId;
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
+        callService(wrapper, callback);
+    }
+
+    public void categorizeApp(AppCategorizeRequest request, AsyncCallback<String> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getCategorizeAppServiceUrl();
+        String body = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body);
+        callService(wrapper, callback);
+    }
+
+    public void getAppDetails(String appId, AsyncCallback<String> callback) {
+        String address = ToolIntegrationAdminProperties.getInstance().getAppDetailsServiceUrl() + "/" //$NON-NLS-1$
+                + appId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.GET, address);
         callService(wrapper, callback);

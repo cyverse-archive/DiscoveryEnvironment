@@ -1,6 +1,10 @@
 package org.iplantc.admin.belphegor.client.apps.presenter;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.apps.views.AppCategorizeViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
@@ -9,6 +13,10 @@ import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.impl.AppAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.impl.AppAdminUserServiceFacade;
+import org.iplantc.admin.belphegor.client.services.model.AppAdminServiceRequestAutoBeanFactory;
+import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
+import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryPath;
+import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryRequest;
 import org.iplantc.core.jsonutil.JsonUtil;
 import org.iplantc.core.uiapps.client.models.autobeans.App;
 import org.iplantc.core.uiapps.client.models.autobeans.AppAutoBeanFactory;
@@ -20,9 +28,16 @@ import org.iplantc.core.uiapps.client.views.AppsView;
 import org.iplantc.core.uiapps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.core.uicommons.client.ErrorHandler;
 import org.iplantc.core.uicommons.client.events.EventBus;
+import org.iplantc.core.uicommons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.core.uicommons.client.info.IplantAnnouncer;
+import org.iplantc.core.uicommons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.core.uicommons.client.models.CommonModelUtils;
+import org.iplantc.core.uicommons.client.models.HasId;
+import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.core.uicommons.client.views.gxt3.dialogs.IPlantPromptDialog;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -54,8 +69,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
  * 
- * FIXME JDS DND Implement drag and drop reordering of AppGroups and Apps for belphegor only.
- * 
  * 
  * @author jstroot
  * 
@@ -65,6 +78,8 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
 
     private final BelphegorAppsToolbar toolbar;
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+    private final AppAdminServiceRequestAutoBeanFactory serviceFactory = GWT
+            .create(AppAdminServiceRequestAutoBeanFactory.class);
     private final AppAdminServiceFacade adminAppService;
 
     @Inject
@@ -113,6 +128,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         toolbar.setRenameAppGroupButtonEnabled(true);
         toolbar.setDeleteButtonEnabled(true);
         toolbar.setRestoreButtonEnabled(false);
+        toolbar.setCategorizeButtonEnabled(false);
         fetchApps(ag);
     }
 
@@ -121,20 +137,18 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
         if (app == null)
             return;
 
-        AppGroup currentAppGroup = getSelectedAppGroup();
         view.deSelectAllAppGroups();
 
         toolbar.setAddAppGroupButtonEnabled(false);
         toolbar.setRenameAppGroupButtonEnabled(false);
         toolbar.setDeleteButtonEnabled(true);
-        // Determine if the app is in the trash. If so, enable restore button
-        if ((currentAppGroup != null)
-                && currentAppGroup.getId().equals(
-                        ToolIntegrationAdminProperties.getInstance().getDefaultTrashAnalysisGroupId())) {
-            toolbar.setRestoreButtonEnabled(true);
-        } else {
-            toolbar.setRestoreButtonEnabled(false);
-        }
+
+        // Determine if the app is in the trash.
+        AppGroup currentAppGroup = getSelectedAppGroup();
+        String trashGroupId = ToolIntegrationAdminProperties.getInstance().getDefaultTrashAnalysisGroupId();
+        boolean inTrash = (currentAppGroup != null) && currentAppGroup.getId().equals(trashGroupId);
+        toolbar.setRestoreButtonEnabled(inTrash);
+        toolbar.setCategorizeButtonEnabled(!inTrash);
     }
 
     @Override
@@ -371,6 +385,117 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
                 }
             }
         });
+    }
+
+    @Override
+    public void onCategorizeAppClicked() {
+        App selectedApp = view.getSelectedApp();
+        view.maskCenterPanel(I18N.DISPLAY.loadingMask());
+
+        adminAppService.getAppDetails(selectedApp.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                App appDetails = AutoBeanCodex.decode(factory, App.class, result).as();
+                showCategorizeAppDialog(appDetails);
+                view.unMaskCenterPanel();
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unMaskCenterPanel();
+            }
+        });
+    }
+
+    private void showCategorizeAppDialog(final App selectedApp) {
+        final AppCategorizePresenter presenter = new AppCategorizePresenter(new AppCategorizeViewImpl(),
+                selectedApp);
+        presenter.setAppGroups(view.getAppGroupRoots());
+
+        final IPlantDialog dlg = new IPlantDialog();
+        dlg.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                List<AppGroup> groups = presenter.getSelectedGroups();
+                if (groups == null || groups.isEmpty()) {
+                    IplantAnnouncer.getInstance().schedule(
+                            new ErrorAnnouncementConfig(I18N.ERROR.noCategoriesSelected()));
+                } else {
+                    doCategorizeSelectedApp(selectedApp, groups);
+                }
+            }
+        });
+
+        dlg.setHeadingText(I18N.DISPLAY.selectCategories(selectedApp.getName()));
+        dlg.setResizable(true);
+        dlg.setOkButtonText(I18N.DISPLAY.submit());
+
+        presenter.go(dlg);
+        dlg.show();
+    }
+
+    private void doCategorizeSelectedApp(final App selectedApp, final List<AppGroup> groups) {
+        view.maskCenterPanel(I18N.DISPLAY.loadingMask());
+        AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, groups);
+
+        adminAppService.categorizeApp(request, new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                view.unMaskCenterPanel();
+
+                List<String> groupNames = Lists.newArrayList();
+                for (AppGroup group : groups) {
+                    groupNames.add(group.getName());
+                }
+                Collections.sort(groupNames, String.CASE_INSENSITIVE_ORDER);
+
+                String successMsg = I18N.DISPLAY.appCategorizeSuccess(selectedApp.getName(), groupNames);
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(successMsg));
+
+                EventBus.getInstance().fireEvent(new CatalogCategoryRefreshEvent());
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // TODO Add error message for user
+                ErrorHandler.post(caught);
+                view.unMaskCenterPanel();
+            }
+        });
+    }
+
+    private AppCategorizeRequest buildAppCategorizeRequest(App selectedApp, List<AppGroup> groups) {
+        HasId analysis = CommonModelUtils.createHasIdFromString(selectedApp.getId());
+        List<CategoryRequest> categories = Lists.newArrayList();
+        for (AppGroup group : groups) {
+
+            List<String> path = Lists.newArrayList();
+            while (group != null) {
+                path.add(group.getName());
+                group = view.getParent(group);
+            }
+
+            Collections.reverse(path);
+
+            CategoryPath groupPath = serviceFactory.categoryPath().as();
+            groupPath.setUsername("<public>"); //$NON-NLS-1$
+            groupPath.setPath(path);
+
+            CategoryRequest categoryRequest = serviceFactory.categoryRequest().as();
+            categoryRequest.setAnalysis(analysis);
+            categoryRequest.setCategoryPath(groupPath);
+
+            categories.add(categoryRequest);
+        }
+
+        AppCategorizeRequest request = serviceFactory.appCategorizeRequest().as();
+        request.setCategories(categories);
+
+        return request;
     }
 
     @Override
