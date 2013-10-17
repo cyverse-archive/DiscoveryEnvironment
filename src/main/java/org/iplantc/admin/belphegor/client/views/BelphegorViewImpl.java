@@ -6,10 +6,13 @@ import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
 import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
+import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.core.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.core.uicommons.client.models.CommonModelUtils;
+import org.iplantc.core.uicommons.client.models.HasId;
 import org.iplantc.core.uicommons.client.models.UserInfo;
 import org.iplantc.core.uicommons.client.widgets.IPlantAnchor;
 
@@ -80,7 +83,10 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         buildUserMenu();
 
         BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
-        presenter.go(appsPanel);
+        String betaGroupId = ToolIntegrationAdminProperties.getInstance()
+                .getDefaultBetaAnalysisGroupId();
+        HasId betaGroup = CommonModelUtils.createHasIdFromString(betaGroupId);
+        presenter.go(appsPanel, betaGroup, null);
         
         RefGenomeView.Presenter refGenPresenter = BelphegorAppInjector.INSTANCE.getReferenceGenomePresenter();
         refGenPresenter.go(refGenomePanel);
