@@ -120,8 +120,9 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
 
     @Override
     public void onAppGroupSelected(final AppGroup ag) {
-        if (ag == null)
+        if (ag == null) {
             return;
+        }
 
         view.setCenterPanelHeading(ag.getName());
         toolbar.setAddAppGroupButtonEnabled(true);
@@ -134,21 +135,17 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
 
     @Override
     public void onAppSelected(final App app) {
-        if (app == null)
+        if (app == null) {
             return;
+        }
 
         view.deSelectAllAppGroups();
 
         toolbar.setAddAppGroupButtonEnabled(false);
         toolbar.setRenameAppGroupButtonEnabled(false);
         toolbar.setDeleteButtonEnabled(true);
-
-        // Determine if the app is in the trash.
-        AppGroup currentAppGroup = getSelectedAppGroup();
-        String trashGroupId = ToolIntegrationAdminProperties.getInstance().getDefaultTrashAnalysisGroupId();
-        boolean inTrash = (currentAppGroup != null) && currentAppGroup.getId().equals(trashGroupId);
-        toolbar.setRestoreButtonEnabled(inTrash);
-        toolbar.setCategorizeButtonEnabled(!inTrash);
+        toolbar.setRestoreButtonEnabled(app.isDeleted());
+        toolbar.setCategorizeButtonEnabled(!app.isDeleted());
     }
 
     @Override
