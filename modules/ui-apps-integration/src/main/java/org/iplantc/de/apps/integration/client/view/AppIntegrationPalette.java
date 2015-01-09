@@ -56,17 +56,37 @@ public class AppIntegrationPalette extends Composite {
 
     interface AppIntegrationPaletteUiBinder extends UiBinder<Widget, AppIntegrationPalette> {}
 
-    @UiField
-    ToolButton fileFolderCategoryHelpBtn, listsCategoryHelpBtn, textNumericalInputCategoryHelpBtn, outputCategoryHelpBtn, referenceGenomeCategoryHelpBtn;
+    @UiField ToolButton fileFolderCategoryHelpBtn,
+        listsCategoryHelpBtn,
+        textNumericalInputCategoryHelpBtn,
+        outputCategoryHelpBtn,
+        referenceGenomeCategoryHelpBtn;
 
-    @UiField
-    Image flag, environmentVariable, multiFileSelector, fileInput, group, integerInput, treeSelection, singleSelect, multiLineText, text;
+    @UiField Image flag,
+        environmentVariable,
+        multiFileSelector,
+        fileInput,
+        group,
+        integerInput,
+        treeSelection,
+        singleSelect,
+        multiLineText,
+        text;
 
     // Expose group drag source for special case handling in AppsIntegrationViewImpl
     DragSource grpDragSource;
 
-    @UiField
-    Image info, folderInput, integerSelection, doubleSelection, doubleInput, fileOutput, folderOutput, multiFileOutput, referenceGenome, referenceSequence, referenceAnnotation;
+    @UiField Image info,
+        folderInput,
+        integerSelection,
+        doubleSelection,
+        doubleInput,
+        fileOutput,
+        folderOutput,
+        multiFileOutput,
+        referenceGenome,
+        referenceSequence,
+        referenceAnnotation;
 
     private final AppTemplateWizardAppearance appearance;
 
@@ -78,15 +98,20 @@ public class AppIntegrationPalette extends Composite {
 
     private boolean onlyLabelEditMode;
     private final IplantContextualHelpAccessStyle style;
+    private final AppTemplateUtils appTemplateUtils;
     private final AppIntegrationPaletteUiBinder uiBinder = GWT.create(AppIntegrationPaletteUiBinder.class);
 
     @Inject
-    public AppIntegrationPalette(final AppTemplateWizardAppearance appearance, final AppsWidgetsDefaultLabels defaultLabels, final AppTemplateAutoBeanFactory factory,
-            final IplantContextualHelpAccessStyle style) {
+    public AppIntegrationPalette(final AppTemplateWizardAppearance appearance,
+                                 final AppsWidgetsDefaultLabels defaultLabels,
+                                 final AppTemplateAutoBeanFactory factory,
+                                 final IplantContextualHelpAccessStyle style,
+                                 final AppTemplateUtils appTemplateUtils) {
         this.appearance = appearance;
         this.defaultLabels = defaultLabels;
         this.factory = factory;
         this.style = style;
+        this.appTemplateUtils = appTemplateUtils;
         style.ensureInjected();
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -230,10 +255,10 @@ public class AppIntegrationPalette extends Composite {
         argument.setRequired(false);
         argument.setOmitIfBlank(false);
 
-        if (AppTemplateUtils.isSimpleSelectionArgumentType(type)) {
+        if (appTemplateUtils.isSimpleSelectionArgumentType(type)) {
             argument.setSelectionItems(Lists.<SelectionItem> newArrayList());
         } else if (type.equals(ArgumentType.TreeSelection)) {
-            SelectionItemGroup sig = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
+            SelectionItemGroup sig = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
 
             sig.setSingleSelect(false);
             sig.setSelectionCascade(CheckCascade.CHILDREN);
@@ -241,7 +266,7 @@ public class AppIntegrationPalette extends Composite {
             sig.setGroups(Lists.<SelectionItemGroup> newArrayList());
             argument.setSelectionItems(Lists.<SelectionItem> newArrayList(sig));
 
-        } else if (AppTemplateUtils.isDiskResourceArgumentType(type) || AppTemplateUtils.isDiskResourceOutputType(type)) {
+        } else if (appTemplateUtils.isDiskResourceArgumentType(type) || appTemplateUtils.isDiskResourceOutputType(type)) {
             FileParameters dataObj = factory.fileParameters().as();
             dataObj.setFormat("Unspecified");
             dataObj.setDataSource(DataSourceEnum.file);

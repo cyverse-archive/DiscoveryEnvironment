@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Event;
 /**
  * FIXME Factor out appearance
  * FIXME Consolidate with DiskResourceNameCell, CORE-5959
+ * @author jstroot
  */
 public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     /**
@@ -45,6 +46,7 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     final Templates templates = GWT.create(Templates.class);
     private static final DiskResourceNameCellStyle CSS = IplantResources.RESOURCES.diskResourceNameCss();
     private String baseID;
+    private final DiskResourceUtil diskResourceUtil;
 
     public DiskResourcePathCell() {
         this(true);
@@ -53,6 +55,7 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     public DiskResourcePathCell(boolean previewEnabled) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         CSS.ensureInjected();
+        diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
     @Override
@@ -100,7 +103,7 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     private void doOnClick(Element eventTarget,
                            DiskResource value,
                            ValueUpdater<DiskResource> valueUpdater) {
-        OpenFolderEvent openEvent = new OpenFolderEvent(DiskResourceUtil.parseParent(value.getPath()));
+        OpenFolderEvent openEvent = new OpenFolderEvent(diskResourceUtil.parseParent(value.getPath()));
         openEvent.requestNewView(true);
         EventBus.getInstance().fireEvent(openEvent);
     }

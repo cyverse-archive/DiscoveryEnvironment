@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
 import com.google.common.collect.Lists;
@@ -162,8 +162,11 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     private int uniqeIdNum = 0;
 
     private ColumnConfig<SelectionItem, String> valueCol;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems, final ArgumentType type) {
+    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems,
+                                       final ArgumentType type) {
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
         initWidget(BINDER.createAndBindUi(this));
         grid.getView().setEmptyText(labels.selectionCreateWidgetEmptyText());
@@ -193,9 +196,10 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
         };
         
         editing.setClicksToEdit(ClicksToEdit.TWO);
-  
-        editing.addEditor(valueCol, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineArgCharsExclNewline())));
-        editing.addEditor(nameCol, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars())));
+
+        IplantValidationConstants validationConstants = GWT.create(IplantValidationConstants.class);
+        editing.addEditor(valueCol, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineArgCharsExclNewline())));
+        editing.addEditor(nameCol, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars())));
         
 
         // Add selection handler to grid to control enabled state of "delete" button
@@ -205,7 +209,7 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
         initColumns(type);
         List<SelectionItem> taggedItems = Lists.newArrayList();
         for(SelectionItem si : selectionItems){
-            taggedItems.add(AppTemplateUtils.addSelectionItemAutoBeanIdTag(si, "tmpId-" + uniqeIdNum++));
+            taggedItems.add(appTemplateUtils.addSelectionItemAutoBeanIdTag(si, "tmpId-" + uniqeIdNum++));
         }
         selectionItemsEditor.setValue(taggedItems);
     }
@@ -254,7 +258,7 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     @UiHandler("add")
     void onAddButtonClicked(@SuppressWarnings("unused") SelectEvent event) {
         AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-        final SelectionItem sa = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqeIdNum++);
+        final SelectionItem sa = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqeIdNum++);
 
 
         // JDS Set up a default id to satisfy ListStore's ModelKeyProvider

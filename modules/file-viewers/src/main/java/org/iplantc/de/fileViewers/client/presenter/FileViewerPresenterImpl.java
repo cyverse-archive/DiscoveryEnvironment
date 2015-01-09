@@ -115,9 +115,9 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         public void onSuccess(String result) {
             asyncCallback.onSuccess(null);
 
-            JSONObject manifest = JsonUtil.getObject(result);
-            String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
-            MimeType contentType = MimeType.fromTypeString(JsonUtil.getString(manifest, "content-type"));
+            JSONObject manifest = jsonUtil.getObject(result);
+            String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+            MimeType contentType = MimeType.fromTypeString(jsonUtil.getString(manifest, "content-type"));
             checkNotNull(contentType);
             presenter.setTitle(file.getName());
             presenter.setManifest(manifest);
@@ -136,6 +136,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
     @Inject UserSessionServiceFacade userSessionService;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject JsonUtil jsonUtil;
 
     private MimeType contentType;
     /**
@@ -314,7 +316,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         setTitle(title);
         setManifest(manifest);
         setContentType(contentType);
-        String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+        String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
         composeView(null, parentFolder, manifest, contentType, infoType, editing, vizTabFirst);
     }
 
@@ -474,10 +476,10 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
         viewers.addAll(viewers_list);
 
-        Splittable infoTypeSplittable = DiskResourceUtil.createInfoTypeSplittable(infoType);
-        boolean treeViewer = DiskResourceUtil.isTreeTab(infoTypeSplittable);
-        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(infoTypeSplittable);
-        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
+        Splittable infoTypeSplittable = diskResourceUtil.createInfoTypeSplittable(infoType);
+        boolean treeViewer = diskResourceUtil.isTreeTab(infoTypeSplittable);
+        boolean cogeViewer = diskResourceUtil.isGenomeVizTab(infoTypeSplittable);
+        boolean ensembleViewer = diskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType);

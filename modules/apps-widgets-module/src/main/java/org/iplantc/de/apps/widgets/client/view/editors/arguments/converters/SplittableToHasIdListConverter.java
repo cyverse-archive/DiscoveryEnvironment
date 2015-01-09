@@ -12,11 +12,14 @@ import com.sencha.gxt.data.shared.Converter;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SplittableToHasIdListConverter implements Converter<Splittable, List<HasId>> {
 
     @Override
     public Splittable convertFieldValue(List<HasId> object) {
-        return DiskResourceUtil.createStringIdListSplittable(object);
+        return DiskResourceUtil.getInstance().createStringIdListSplittable(object);
     }
 
     @Override
@@ -28,7 +31,7 @@ public class SplittableToHasIdListConverter implements Converter<Splittable, Lis
         List<HasId> hasIdList = Lists.newArrayList();
         for (int i = 0; i < object.size(); i++) {
             String asString = object.get(i).asString();
-            hasIdList.add(CommonModelUtils.createHasIdFromString(asString));
+            hasIdList.add(CommonModelUtils.getInstance().createHasIdFromString(asString));
         }
 
         return hasIdList;

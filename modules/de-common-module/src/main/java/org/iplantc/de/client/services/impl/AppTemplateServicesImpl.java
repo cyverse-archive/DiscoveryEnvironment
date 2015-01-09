@@ -48,21 +48,28 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final List<ReferenceGenome> refGenList = Lists.newArrayList();
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
+    private final AppTemplateUtils appTemplateUtils;
+    private final JsonUtil jsonUtil;
 
     private static final Logger LOG = Logger.getLogger(AppTemplateServicesImpl.class.getName());
 
     @Inject
     public AppTemplateServicesImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
-                                   final AppTemplateAutoBeanFactory factory) {
+                                   final AppTemplateAutoBeanFactory factory,
+                                   final AppTemplateUtils appTemplateUtils,
+                                   final JsonUtil jsonUtil) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.factory = factory;
+        this.appTemplateUtils = appTemplateUtils;
+        this.jsonUtil = jsonUtil;
     }
 
     @Override
     public void cmdLinePreview(AppTemplate at, AsyncCallback<String> callback) {
         String address = ARG_PREVIEW;
+
         AppTemplate cleaned = doCmdLinePreviewCleanup(at);
         // SS: Service wont accept string values for dates
         cleaned.setEditedDate(null);
@@ -130,7 +137,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
         String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
-        LOG.info("LaunchAnalysis Json:\n" + JsonUtil.prettyPrint(assembledPayload));
+        LOG.info("LaunchAnalysis Json:\n" + jsonUtil.prettyPrint(assembledPayload));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
@@ -193,8 +200,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
             for (Argument arg : ag.getArguments()) {
                 if (arg.getType().equals(ArgumentType.TreeSelection)) {
                     if ((arg.getSelectionItems() != null) && (arg.getSelectionItems().size() == 1)) {
-                        SelectionItemGroup sig = AppTemplateUtils.selectionItemToSelectionItemGroup(arg.getSelectionItems().get(0));
-                        Splittable split = AppTemplateUtils.getSelectedTreeItemsAsSplittable(sig);
+                        SelectionItemGroup sig = appTemplateUtils.selectionItemToSelectionItemGroup(arg.getSelectionItems().get(0));
+                        Splittable split = appTemplateUtils.getSelectedTreeItemsAsSplittable(sig);
                         arg.setValue(split);
                     }
                 }
@@ -211,8 +218,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         for (ArgumentGroup ag : at.getArgumentGroups()) {
             for (Argument arg : ag.getArguments()) {
                 Splittable value = arg.getValue();
-                final boolean diskResourceArgumentType = AppTemplateUtils.isDiskResourceArgumentType(arg.getType());
-                final boolean simpleSelectionArgumentType = AppTemplateUtils.isSimpleSelectionArgumentType(arg.getType());
+                final boolean diskResourceArgumentType = appTemplateUtils.isDiskResourceArgumentType(arg.getType());
+                final boolean simpleSelectionArgumentType = appTemplateUtils.isSimpleSelectionArgumentType(arg.getType());
 
                 if (value == null) {
                     continue;
@@ -283,12 +290,12 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     }
 
     AppTemplate doCmdLinePreviewCleanup(AppTemplate templateToClean) {
-        AppTemplate copy = AppTemplateUtils.copyAppTemplate(templateToClean);
+        AppTemplate copy = appTemplateUtils.copyAppTemplate(templateToClean);
         // JDS Transform any Argument's value which contains a full SelectionItem obj to the
         // SelectionItem's value
         for (ArgumentGroup ag : copy.getArgumentGroups()) {
             for (Argument arg : ag.getArguments()) {
-                if (AppTemplateUtils.isSimpleSelectionArgumentType(arg.getType())) {
+                if (appTemplateUtils.isSimpleSelectionArgumentType(arg.getType())) {
 
                     if ((arg.getValue() != null) && arg.getValue().isKeyed() && !arg.getValue().isUndefined("value")) {
                         arg.setValue(arg.getValue().get("value"));
@@ -297,8 +304,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                     }
                 } else if (arg.getType().equals(ArgumentType.TreeSelection)) {
                     if ((arg.getSelectionItems() != null) && (arg.getSelectionItems().size() == 1)) {
-                        SelectionItemGroup sig = AppTemplateUtils.selectionItemToSelectionItemGroup(arg.getSelectionItems().get(0));
-                        List<SelectionItem> siList = AppTemplateUtils.getSelectedTreeItems(sig);
+                        SelectionItemGroup sig = appTemplateUtils.selectionItemToSelectionItemGroup(arg.getSelectionItems().get(0));
+                        List<SelectionItem> siList = appTemplateUtils.getSelectedTreeItems(sig);
                         String retVal = "";
                         for (SelectionItem si : siList) {
                             if (si.getValue() != null) {
@@ -311,7 +318,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                     // Exclude environment variables from the command line
                     arg.setValue(null);
                     arg.setName("");
-                } else if (AppTemplateUtils.isDiskResourceOutputType(arg.getType())) {
+                } else if (appTemplateUtils.isDiskResourceOutputType(arg.getType())) {
                     if (arg.getFileParameters().isImplicit()) {
                         arg.setValue(null);
                         arg.setName("");

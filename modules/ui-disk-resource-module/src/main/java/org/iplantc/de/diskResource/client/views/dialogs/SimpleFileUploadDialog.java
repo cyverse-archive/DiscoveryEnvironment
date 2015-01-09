@@ -55,6 +55,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SimpleFileUploadDialog extends IPlantDialog {
 
     private static final String FORM_WIDTH = "475";
@@ -71,20 +74,11 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     interface SimpleFileUploadPanelUiBinder extends UiBinder<Widget, SimpleFileUploadDialog> {
     }
 
-    @UiField
-    HTML htmlDestText;
-
-    @UiField
-    FormPanel form0, form1, form2, form3, form4;
-
-    @UiField
-    IPCFileUploadField fuf0, fuf1, fuf2, fuf3, fuf4;
-
-    @UiField
-    TextButton btn0, btn1, btn2, btn3, btn4;
-
-    @UiField
-    Status status0, status1, status2, status3, status4;
+    @UiField HTML htmlDestText;
+    @UiField FormPanel form0, form1, form2, form3, form4;
+    @UiField IPCFileUploadField fuf0, fuf1, fuf2, fuf3, fuf4;
+    @UiField TextButton btn0, btn1, btn2, btn3, btn4;
+    @UiField Status status0, status1, status2, status3, status4;
 
     private final List<FormPanel> formList;
     private final List<IPCFileUploadField> fufList;
@@ -96,12 +90,18 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private final SafeUri fileUploadServlet;
     private final String userName;
     private final EventBus eventBus;
+    private final DiskResourceUtil diskResourceUtil;
 
-    public SimpleFileUploadDialog(Folder uploadDest, DiskResourceServiceFacade drService,
-            EventBus eventBus, SafeUri fileUploadServlet, String userName) {
+    public SimpleFileUploadDialog(final Folder uploadDest,
+                                  final DiskResourceServiceFacade drService,
+                                  final EventBus eventBus,
+                                  final DiskResourceUtil diskResourceUtil,
+                                  final SafeUri fileUploadServlet,
+                                  final String userName) {
         this.uploadDest = uploadDest;
         this.drService = drService;
         this.eventBus = eventBus;
+        this.diskResourceUtil = diskResourceUtil;
         this.fileUploadServlet = fileUploadServlet;
         this.userName = userName;
         setAutoHide(false);
@@ -135,7 +135,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         String destPath = uploadDest.getPath();
 
         htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory
@@ -265,7 +265,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     }
 
     private void doUpload() {
-        FastMap<IPCFileUploadField> destResourceMap = new FastMap<IPCFileUploadField>();
+        FastMap<IPCFileUploadField> destResourceMap = new FastMap<>();
         for (IPCFileUploadField field : fufList) {
             String fileName = field.getValue().replaceAll(".*[\\\\/]", "");
             field.setEnabled(!Strings.isNullOrEmpty(fileName) && !fileName.equalsIgnoreCase("null"));

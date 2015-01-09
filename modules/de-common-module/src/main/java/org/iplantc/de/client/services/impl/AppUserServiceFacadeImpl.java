@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Provides access to remote services for operations related to analysis submission templates.
  * 
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
@@ -46,10 +46,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
     private final EmailServiceAsync emailService;
-    @Inject
-    IplantErrorStrings errorStrings;
-    @Inject
-    IplantDisplayStrings displayStrings;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -230,7 +230,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                                          final AsyncCallback<?> callback) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
-            Number avg = JsonUtil.getNumber(json, "average"); //$NON-NLS-1$
+            Number avg = jsonUtil.getNumber(json, "average"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
             confluenceService.updatePage(appName, avgRounded, new AsyncCallback<Void>() {
 
@@ -332,7 +332,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         if (Strings.isNullOrEmpty(url)) {
             return url;
         }
-        return URL.decode(DiskResourceUtil.parseNameFromPath(url));
+        return URL.decode(diskResourceUtil.parseNameFromPath(url));
     }
 
     @Override
@@ -341,7 +341,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         String address = APPS + "/" + appId + "/favorite";
 
         JSONObject body = new JSONObject();
-        ServiceCallWrapper wrapper = null;
+        ServiceCallWrapper wrapper;
 
         if (fav) {
             wrapper = new ServiceCallWrapper(Type.PUT, address, body.toString());
@@ -369,7 +369,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         String address = APPS + "/" + "shredder"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("app_ids", JsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
+        body.put("app_ids", jsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }

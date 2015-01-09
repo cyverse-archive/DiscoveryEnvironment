@@ -37,10 +37,9 @@ public class MimeTypeViewerResolverFactory {
 
     public final Map<MimeType, String> modeMap = new HashMap<>();
     Logger LOG = Logger.getLogger(MimeTypeViewerResolverFactory.class.getName());
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    FileEditorServiceFacade fileEditorService;
+    @Inject IplantAnnouncer announcer;
+    @Inject FileEditorServiceFacade fileEditorService;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public MimeTypeViewerResolverFactory() {
@@ -134,7 +133,7 @@ public class MimeTypeViewerResolverFactory {
             default:
                 Integer columns = null;
                 if(manifest.containsKey(FileViewer.COLUMNS_KEY)){
-                    columns = JsonUtil.getNumber(manifest, FileViewer.COLUMNS_KEY).intValue();
+                    columns = jsonUtil.getNumber(manifest, FileViewer.COLUMNS_KEY).intValue();
                     LOG.fine("Columns are defined: " + columns);
                 }
                 if(CSV.toString().equals(infoType)

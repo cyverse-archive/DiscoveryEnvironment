@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.FileParameters;
+import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.resources.client.IplantContextualHelpAccessStyle;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDefaultLabels;
 
@@ -16,10 +17,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.sencha.gxt.dnd.core.client.DragSource;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +35,10 @@ public class AppIntegrationPaletteTest {
     @Mock AutoBean<FileParameters> mockAbDataObject;
     @Mock DragSource mockDragSource;
 
-	private AppIntegrationPalette uut;
+    private AppIntegrationPalette uut;
 
-	@Before public void setUp() {
-        uut = new AppIntegrationPalette(mockAppearance, mockLabels, mockFactory, mockStyle){
+    @Before public void setUp() {
+        uut = new AppIntegrationPalette(mockAppearance, mockLabels, mockFactory, mockStyle, AppTemplateUtils.getInstance()){
 
             @Override
             DragSource createGrpDragSource(Widget widget, final AppTemplateAutoBeanFactory factory) {
@@ -53,10 +51,9 @@ public class AppIntegrationPaletteTest {
             }
             
         };
-	}
+    }
 
-    @Test
-    public void testCreateNewArgument_FileOutput() {
+    @Test public void testCreateNewArgument_FileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
@@ -73,10 +70,9 @@ public class AppIntegrationPaletteTest {
         verify(mockLabels).defFileOutput();
 
         verifyNoMoreInteractions(mockFactory, mockLabels);
-	}
+    }
 
-    @Test
-    public void testCreateNewArgument_FolderOutput() {
+    @Test public void testCreateNewArgument_FolderOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
@@ -95,10 +91,10 @@ public class AppIntegrationPaletteTest {
         verifyNoMoreInteractions(mockFactory, mockLabels);
     }
 
-    @Test
-    public void testCreateNewArgument_MultiFileOutput() {
+    @Test public void testCreateNewArgument_MultiFileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
+
 
         Argument mockArgument = mock(Argument.class);
         FileParameters mockDataObject = mock(FileParameters.class);

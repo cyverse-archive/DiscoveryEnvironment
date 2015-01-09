@@ -36,56 +36,44 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar,
                                                                       DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                                                       FolderSelectionEvent.FolderSelectionEventHandler {
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> { }
-    @UiField
-    TextButton downloadMenu;
-    @UiField
-    TextButton editMenu;
-    @UiField
-    TextButton fileMenu;
-    @UiField
-    MenuItem newFileMi;
+    @UiField TextButton downloadMenu;
+    @UiField TextButton editMenu;
+    @UiField TextButton fileMenu;
+    @UiField MenuItem newFileMi;
 
-    @UiField
-    MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
- duplicateMi, newPlainTextFileMi,
-            newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
-            newShellScriptFileMi, newMdFileMi;
-    @UiField
-    MenuItem openTrashMi, restoreMi, emptyTrashMi;
-    @UiField
-    TextButton refreshButton;
-    @UiField
-    MenuItem renameMi, moveMi, deleteMi,
-            editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
-    @UiField
-    DiskResourceSearchField searchField;
-    @UiField
-    TextButton shareMenu;
-    @UiField
-    MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
-            sendToEnsemblMi, sendToTreeViewerMi;
-    @UiField
-    MenuItem simpleDownloadMi, bulkDownloadMi;
-    @UiField
-    MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
-    @UiField
-    TextButton trashMenu;
-    @UiField
-    TextButton uploadMenu;
-    @UiField
-    MenuItem shareFolderLocationMi;
-    @UiField
-    MenuItem newPathListMi;
+    @UiField MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
+        duplicateMi, newPlainTextFileMi,
+        newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
+        newShellScriptFileMi, newMdFileMi;
+    @UiField MenuItem openTrashMi, restoreMi, emptyTrashMi;
+    @UiField TextButton refreshButton;
+    @UiField MenuItem renameMi, moveMi, deleteMi,
+        editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
+    @UiField DiskResourceSearchField searchField;
+    @UiField TextButton shareMenu;
+    @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
+        sendToEnsemblMi, sendToTreeViewerMi;
+    @UiField MenuItem simpleDownloadMi, bulkDownloadMi;
+    @UiField MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
+    @UiField TextButton trashMenu;
+    @UiField TextButton uploadMenu;
+    @UiField MenuItem shareFolderLocationMi;
+    @UiField MenuItem newPathListMi;
+
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
     private DiskResourceView view;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     public DiskResourceViewToolbarImpl(final UserInfo userInfo) {
@@ -270,11 +258,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     boolean canUploadTo(DiskResource folder){
-        return DiskResourceUtil.canUploadTo(folder);
+        return diskResourceUtil.canUploadTo(folder);
     }
 
     boolean containsFile(final List<DiskResource> selection) {
-        return DiskResourceUtil.containsFile(selection);
+        return diskResourceUtil.containsFile(selection);
     }
 
     boolean containsOnlyFolders(List<DiskResource> selection) {
@@ -286,11 +274,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     boolean isOwner(final List<DiskResource> selection){
-        return DiskResourceUtil.isOwner(selection);
+        return diskResourceUtil.isOwner(selection);
     }
 
     boolean isReadable(final DiskResource item){
-        return DiskResourceUtil.isReadable(item);
+        return diskResourceUtil.isReadable(item);
     }
 
     boolean isSelectionInTrash(final List<DiskResource> selection){

@@ -69,7 +69,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
             List<AnalysisParameter> parsedList = new ArrayList<>();
             for (AnalysisParameter ap : paramList) {
-                if (AppTemplateUtils.isTextType(ap.getType()) || ap.getType().equals(ArgumentType.Flag)) {
+                if (appTemplateUtils.isTextType(ap.getType()) || ap.getType().equals(ArgumentType.Flag)) {
                     parsedList.addAll(parseStringValue(ap));
                 } else if (isInputType(ap.getType()) || isReferenceGenomeType(ap.getType().toString())) {
                     if (!isReferenceGenomeType(ap.getType().toString())) {
@@ -77,7 +77,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
                     } else {
                         parsedList.addAll(parseSelectionValue(ap));
                     }
-                } else if (AppTemplateUtils.isSelectionArgumentType(ap.getType())) {
+                } else if (appTemplateUtils.isSelectionArgumentType(ap.getType())) {
                     parsedList.addAll(parseSelectionValue(ap));
                 }
             }
@@ -123,17 +123,28 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     }
 
     private final AnalysesAutoBeanFactory factory;
+    private final AppTemplateUtils appTemplateUtils;
+    private final DiskResourceUtil diskResourceUtil;
     private final DiscEnvApiService deServiceFacade;
     public static final String ANALYSES = "org.iplantc.services.analyses";
 
 
     @Inject
     public AnalysisServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
-                                     final AnalysesAutoBeanFactory factory) {
+                                     final AnalysesAutoBeanFactory factory,
+                                     final AppTemplateUtils appTemplateUtils,
+                                     final DiskResourceUtil diskResourceUtil) {
         this.deServiceFacade = deServiceFacade;
         this.factory = factory;
+        this.appTemplateUtils = appTemplateUtils;
+        this.diskResourceUtil = diskResourceUtil;
     }
 
+    /**
+     * FIXME move service call into service facade.
+     * @param loadConfig optional remote paging and sorting configs.
+     * @param callback executed when RPC call completes.
+     */
     @Override
     public void getAnalyses(final FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback) {
         StringBuilder address = new StringBuilder(ANALYSES);
@@ -204,7 +215,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     @Override
     public void deleteAnalyses(List<Analysis> analysesToBeDeleted, AsyncCallback<String> callback) {
         String address = ANALYSES + "/shredder"; //$NON-NLS-1$ //$NON-NLS-2$
-        final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
+        final Splittable stringIdListSplittable = diskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
         final Splittable payload = StringQuoter.createSplittable();
         stringIdListSplittable.assign(payload, "analyses");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());

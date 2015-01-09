@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
@@ -170,12 +171,15 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
     private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
+    private final IplantValidationConstants validationConstants = GWT.create(IplantValidationConstants.class);
     private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
     private int countArgLabel = 1;
     private int countGroupLabel = 1;
     private int uniqueIdNum = 0;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
+    public SelectionItemTreePropertyEditor(final List<SelectionItem> selectionItems) {
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         buildTreeGrid();
         initWidget(BINDER.createAndBindUi(this));
         treeGrid.getView().setEmptyText(labels.selectionCreateWidgetEmptyText());
@@ -215,7 +219,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             }
         }
 
-        final SelectionItemGroup selectionItemGroup = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
+        final SelectionItemGroup selectionItemGroup = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
         AutoBean<SelectionItemGroup> rootAb = AutoBeanUtils.getAutoBean(selectionItemGroup);
         rootAb.as().setGroups(groups);
         rootAb.as().setArguments(arguments);
@@ -257,7 +261,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
             if (root.getArguments() != null) {
                 for (SelectionItem ruleArg : root.getArguments()) {
-                    SelectionItem tagged = AppTemplateUtils.addSelectionItemAutoBeanIdTag(ruleArg, "tmpId-" + uniqueIdNum++);
+                    SelectionItem tagged = appTemplateUtils.addSelectionItemAutoBeanIdTag(ruleArg, "tmpId-" + uniqueIdNum++);
                     store.add(tagged);
                 }
             }
@@ -534,8 +538,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         };
         editing.addEditor(defaultColumn, new CheckBox());
         editing.addEditor(displayConfig, buildEditorField(null));
-        editing.addEditor(nameConfig, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars())));
-        editing.addEditor(valueConfig, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineArgCharsExclNewline())));
+        editing.addEditor(nameConfig, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars())));
+        editing.addEditor(valueConfig, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineArgCharsExclNewline())));
         editing.addEditor(descriptionConfig, buildEditorField(null));
         editing.setClicksToEdit(ClicksToEdit.TWO);
 
@@ -544,7 +548,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     }
 
     private SelectionItem createArgument() {
-        SelectionItem argString = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqueIdNum++);
+        SelectionItem argString = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqueIdNum++);
 
         argString.setDisplay("Argument" + countArgLabel++);
 
@@ -552,7 +556,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     }
 
     private SelectionItemGroup createGroup() {
-        SelectionItemGroup group = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
+        SelectionItemGroup group = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
 
         group.setDisplay("Group " + countGroupLabel++);
 

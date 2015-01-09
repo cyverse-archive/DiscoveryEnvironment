@@ -71,7 +71,7 @@ public abstract class NotificationCallback implements AsyncCallback<String> {
                         List<String> paths = dataPayload.getPaths();
                         if (paths != null && !paths.isEmpty()) {
                             String path = paths.get(0);
-                            Splittable file = CommonModelUtils.createHasPathSplittableFromString(path);
+                            Splittable file = CommonModelUtils.getInstance().createHasPathSplittableFromString(path);
                             msg.setContext(file.getPayload());
                         }
                     }
@@ -104,7 +104,7 @@ public abstract class NotificationCallback implements AsyncCallback<String> {
 
     protected List<Notification> getNotifications() {
         if (notifications == null) {
-            return Collections.<Notification> emptyList();
+            return Collections.emptyList();
         } else {
             return notifications;
         }

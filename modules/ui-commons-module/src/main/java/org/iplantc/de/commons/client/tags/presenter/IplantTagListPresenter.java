@@ -30,6 +30,7 @@ import java.util.List;
 
 public class IplantTagListPresenter implements TagListHandlers {
 
+    private final JsonUtil jsonUtil;
     private final CustomIplantTagResources resources;
     private final IplantTagListView tagListView;
     private final List<TagItem> tagItems = new ArrayList<TagItem>();
@@ -119,14 +120,15 @@ public class IplantTagListPresenter implements TagListHandlers {
      * Use {@link TagList#setEditable(boolean)} to enable/disable tag creation on an existing TagList.
      * You have to set a {@link TagCreationCodex} to successfully enable tag creation.
      */
-    public IplantTagListPresenter(Taggable taggable) {
+    public IplantTagListPresenter(final Taggable taggable) {
         this(taggable, CustomIplantTagResources.INSTANCE);
     }
 
     /**
      * Creates a TagList with custom styles.
      */
-    public IplantTagListPresenter(Taggable taggable, CustomIplantTagResources resources) {
+    public IplantTagListPresenter(final Taggable taggable,
+                                  final CustomIplantTagResources resources) {
         super();
         this.taggable = taggable;
         this.resources = resources;
@@ -135,13 +137,13 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.tagListView = CommonsInjector.INSTANCE.getIplantTagListView();
         this.getTagListView().setUiHandlers(this);
         this.mdataService = ServicesInjector.INSTANCE.getMetadataService();
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     /**
      * A method t build view containing tags for selected resource. No associated call backs and events
      * will be called.
      * 
-     * @param tags
      */
     public void buildTagCloudForSelectedResource(List<IplantTag> tags) {
         if (tags != null) {
@@ -312,8 +314,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     @Override
     public void onEditTag(TagView tagView) {
-        for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
-            TagItem tagItem = tagItemIt.next();
+        for (TagItem tagItem : this.tagItems) {
             if (tagItem.getTagView().equals(tagView)) {
                 final IplantTag tag = tagItem.tag;
                 final String tagId = tag.getId();
@@ -371,8 +372,8 @@ public class IplantTagListPresenter implements TagListHandlers {
 
             @Override
             public void onSuccess(String result) {
-                JSONObject resultObj = JsonUtil.getObject(result);
-                tag.setId(JsonUtil.getString(resultObj, "id"));
+                JSONObject resultObj = jsonUtil.getObject(result);
+                tag.setId(jsonUtil.getString(resultObj, "id"));
                 // this is a side-effect ?!?
                 onAddTag(tag);
             }
@@ -396,8 +397,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     @Override
     public void onSelectTag(TagView tagView) {
-        for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
-            TagItem tagItem = tagItemIt.next();
+        for (TagItem tagItem : this.tagItems) {
             if (tagItem.getTagView().equals(tagView)) {
                 taggable.selectTag(tagItem.getTag());
                 break;

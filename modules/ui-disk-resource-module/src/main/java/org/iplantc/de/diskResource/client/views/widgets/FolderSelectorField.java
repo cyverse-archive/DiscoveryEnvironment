@@ -60,6 +60,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     final IplantDisplayStrings displayStrings;
     private final DiskResourceServiceFacade diskResourceService;
@@ -108,7 +109,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         if (value == null && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if (path != null) {
-                value = CommonModelUtils.createHasPathFromString(path);
+                value = CommonModelUtils.getInstance().createHasPathFromString(path);
             }
         }
         folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);
@@ -123,7 +124,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         if ((dropData == null)
                 || dropData.size() != 1) {
             isValid = false;
-        } else if (DiskResourceUtil.containsFolder(dropData)){
+        } else if (diskResourceUtil.containsFolder(dropData)){
             isValid = true;
         } else {
             DiskResource droppedResource = dropData.iterator().next();

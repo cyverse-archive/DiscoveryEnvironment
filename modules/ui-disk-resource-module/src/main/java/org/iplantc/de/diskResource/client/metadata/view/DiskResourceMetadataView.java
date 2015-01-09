@@ -105,6 +105,7 @@ import java.util.Set;
 /**
  * FIXME REFACTOR Segregate programmatic view construction to a different UIBinder, class, etc
  * FIXME REFACTOR Factor out an appearance for this class
+ * @author jstroot
  */
 public class DiskResourceMetadataView extends Composite {
 
@@ -231,16 +232,12 @@ public class DiskResourceMetadataView extends Composite {
 
     }
 
-    @UiField
-    TextButton addMetadataButton;
-    @UiField
-    BorderLayoutContainer con;
-    @UiField
-    TextButton deleteMetadataButton;
-    @UiField
-    ComboBox<MetadataTemplateInfo> templateCombo;
-    @UiField
-    ToolBar toolbar;
+    @UiField TextButton addMetadataButton;
+    @UiField BorderLayoutContainer con;
+    @UiField TextButton deleteMetadataButton;
+    @UiField ComboBox<MetadataTemplateInfo> templateCombo;
+    @UiField ToolBar toolbar;
+
     private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
     private static DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
     private final AccordionLayoutContainer alc;
@@ -270,7 +267,7 @@ public class DiskResourceMetadataView extends Composite {
     private ContentPanel userMetadataPanel;
     private boolean valid;
 
-    public DiskResourceMetadataView(DiskResource dr) {
+    public DiskResourceMetadataView(final DiskResource dr) {
         htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
         autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
@@ -278,7 +275,7 @@ public class DiskResourceMetadataView extends Composite {
         iplantResources = IplantResources.RESOURCES;
         diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
         appearance = GWT.create(AccordionLayoutAppearance.class);
-        writable = DiskResourceUtil.isWritable(dr);
+        writable = DiskResourceUtil.getInstance().isWritable(dr);
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         valid = true;

@@ -23,19 +23,32 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * FIXME Convert methods to non-static methods.
  * @author jstroot
  */
 public class AppTemplateUtils {
-    private static final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-    private static final AppsWidgetsDisplayMessages displayMessages = I18N.APPS_MESSAGES;
+    private final AppTemplateAutoBeanFactory factory;
+    private final AppsWidgetsDisplayMessages displayMessages;
 
     private static Argument EMPTY_GROUP_ARG;
 
     public static final String EMPTY_GROUP_ARG_ID = "emptyArgumentGroupInfoArgumentId"; //$NON-NLS-1$
     public static final String NEW_ENV_VAR_NAME = "NEW_ENV_VAR"; //$NON-NLS-1$
 
-    public static Argument getEmptyGroupArgument() {
+    private static AppTemplateUtils INSTANCE;
+
+    AppTemplateUtils(){
+        factory = GWT.create(AppTemplateAutoBeanFactory.class);
+        displayMessages = I18N.APPS_MESSAGES;
+    }
+
+    public static AppTemplateUtils getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new AppTemplateUtils();
+        }
+        return INSTANCE;
+    }
+
+    public Argument getEmptyGroupArgument() {
         if (EMPTY_GROUP_ARG == null) {
             EMPTY_GROUP_ARG = factory.argument().as();
             EMPTY_GROUP_ARG.setId(EMPTY_GROUP_ARG_ID);
@@ -48,26 +61,27 @@ public class AppTemplateUtils {
         return EMPTY_GROUP_ARG;
     }
 
-    public static AppTemplate removeEmptyGroupArguments(final AppTemplate at) {
+    public AppTemplate removeEmptyGroupArguments(final AppTemplate at) {
         AppTemplate copy = copyAppTemplate(at);
         for (ArgumentGroup ag : copy.getArgumentGroups()) {
             List<Argument> arguments = ag.getArguments();
-            if ((arguments.size() == 1) && (arguments.get(0).getId() != null) && (arguments.get(0).getId().equals(EMPTY_GROUP_ARG_ID))) {
+            if ((arguments.size() == 1)
+                    && (arguments.get(0).getId() != null)
+                    && (arguments.get(0).getId().equals(EMPTY_GROUP_ARG_ID))) {
                 arguments.clear();
             }
         }
         return copy;
     }
 
-    public static AppTemplate copyAppTemplate(AppTemplate value) {
+    public AppTemplate copyAppTemplate(AppTemplate value) {
         AutoBean<AppTemplate> argAb = AutoBeanUtils.getAutoBean(value);
 
         final String payload = AutoBeanCodex.encode(argAb).getPayload();
-        return new AppTemplateCallbackConverter(factory, null)
-                .convertFrom(payload, false);
+        return new AppTemplateCallbackConverter(factory, null).convertFrom(payload, false);
     }
 
-    public static ArgumentGroup copyArgumentGroup(ArgumentGroup value) {
+    public ArgumentGroup copyArgumentGroup(ArgumentGroup value) {
         AutoBean<ArgumentGroup> argGrpAb = AutoBeanUtils.getAutoBean(value);
         Splittable splitCopy = AutoBeanCodex.encode(argGrpAb);
 
@@ -82,17 +96,18 @@ public class AppTemplateUtils {
      * Determines if the given items are equal by serializing them and comparing their
      * <code>Splittable</code> payloads.
      */
-    public static boolean areEqual(SelectionItem a, SelectionItem b) {
+    public boolean areEqual(SelectionItem a, SelectionItem b) {
         Splittable aSplit = getSplittable(AutoBeanUtils.getAutoBean(a));
         Splittable bSplit = getSplittable(AutoBeanUtils.getAutoBean(b));
         return aSplit.getPayload().equals(bSplit.getPayload());
     }
     
-    public static boolean isSelectionArgumentType(ArgumentType type) {
-        return isSimpleSelectionArgumentType(type) || type.equals(ArgumentType.TreeSelection);
+    public boolean isSelectionArgumentType(ArgumentType type) {
+        return isSimpleSelectionArgumentType(type)
+                   || type.equals(ArgumentType.TreeSelection);
     }
     
-    public static boolean isSimpleSelectionArgumentType(ArgumentType t) {
+    public boolean isSimpleSelectionArgumentType(ArgumentType t) {
         return t.equals(ArgumentType.TextSelection)
                 || t.equals(ArgumentType.IntegerSelection)
                 || t.equals(ArgumentType.DoubleSelection)
@@ -100,25 +115,25 @@ public class AppTemplateUtils {
                 || t.equals(ArgumentType.ValueSelection);
     }
 
-    private static Splittable getSplittable(AutoBean<?> autoBean) {
+    private Splittable getSplittable(AutoBean<?> autoBean) {
         return AutoBeanCodex.encode(autoBean);
     }
 
-    public static boolean isDiskResourceArgumentType(ArgumentType type) {
+    public boolean isDiskResourceArgumentType(ArgumentType type) {
         return type.equals(ArgumentType.FileInput)
                    || type.equals(ArgumentType.FolderInput)
                    || type.equals(ArgumentType.MultiFileSelector)
                    || type.equals(ArgumentType.FileFolderInput);
     }
 
-    public static boolean isDiskResourceOutputType(ArgumentType type) {
+    public boolean isDiskResourceOutputType(ArgumentType type) {
         return type.equals(ArgumentType.FileOutput)
                    || type.equals(ArgumentType.FolderOutput)
                    || type.equals(ArgumentType.MultiFileOutput)
                    || type.equals(ArgumentType.FileFolderInput);
     }
 
-    public static boolean isTextType(ArgumentType type) {
+    public boolean isTextType(ArgumentType type) {
         return type.equals(ArgumentType.Text)
                    || type.equals(ArgumentType.MultiLineText)
                    || type.equals(ArgumentType.EnvironmentVariable)
@@ -128,13 +143,13 @@ public class AppTemplateUtils {
                    || type.equals(ArgumentType.Double);
     }
 
-    public static boolean typeSupportsValidators(ArgumentType type) {
+    public boolean typeSupportsValidators(ArgumentType type) {
         return type.equals(ArgumentType.Text)
                    || type.equals(ArgumentType.Double)
                    || type.equals(ArgumentType.Integer);
     }
 
-    public static List<SelectionItem> getSelectedTreeItems(SelectionItemGroup sig) {
+    public List<SelectionItem> getSelectedTreeItems(SelectionItemGroup sig) {
         if ((sig == null) || (sig.getArguments() == null)) {
             return Collections.emptyList();
         }
@@ -154,7 +169,7 @@ public class AppTemplateUtils {
         return ret;
     }
 
-    public static Splittable getSelectedTreeItemsAsSplittable(SelectionItemGroup sig) {
+    public Splittable getSelectedTreeItemsAsSplittable(SelectionItemGroup sig) {
         List<SelectionItem> selectedItems = getSelectedTreeItems(sig);
         Splittable splitArr = StringQuoter.createIndexed();
         int i = 0;
@@ -166,18 +181,18 @@ public class AppTemplateUtils {
         return splitArr;
     }
 
-    public static SelectionItemGroup selectionItemToSelectionItemGroup(SelectionItem selectionItem) {
+    public SelectionItemGroup selectionItemToSelectionItemGroup(SelectionItem selectionItem) {
         Splittable split = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(selectionItem));
         return AutoBeanCodex.decode(factory, SelectionItemGroup.class, split).as();
     }
 
-    public static AppTemplate removeDateFields(AppTemplate at) {
+    public AppTemplate removeDateFields(AppTemplate at) {
         at.setEditedDate(null);
         at.setPublishedDate(null);
         return at;
     }
 
-    public static <M extends SelectionItem> M addSelectionItemAutoBeanIdTag(M model, String id){
+    public <M extends SelectionItem> M addSelectionItemAutoBeanIdTag(M model, String id){
         AutoBean<M> autoBean = AutoBeanUtils.getAutoBean(model);
         autoBean.setTag(SelectionItem.TMP_ID_TAG, id);
         return autoBean.as();

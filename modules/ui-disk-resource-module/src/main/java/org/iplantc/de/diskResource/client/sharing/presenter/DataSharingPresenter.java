@@ -11,8 +11,8 @@ import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.models.sharing.Sharing;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.collaborators.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingPermissionsPanel;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingView;
@@ -54,7 +54,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
                 for (String userName : usernames) {
                     Collaborator user = results.get(userName);
                     if (user == null) {
-                        user = CollaboratorsUtil.getDummyCollaborator(userName);
+                        user = collaboratorsUtil.getDummyCollaborator(userName);
                     }
 
                     List<DataSharing> dataShares = new ArrayList<>();
@@ -62,7 +62,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
                     dataSharingMap.put(userName, dataShares);
 
                     for (JSONObject share : sharingList.get(userName)) {
-                        String path = JsonUtil.getString(share, "path"); //$NON-NLS-1$
+                        String path = jsonUtil.getString(share, "path"); //$NON-NLS-1$
                         DataSharing dataSharing = new DataSharing(user,
                                                                   buildPermissionFromJson(share),
                                                                   path);
@@ -83,19 +83,19 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
 
         @Override
         public void onSuccess(String result) {
-            JSONArray permissionsArray = JsonUtil.getArray(JsonUtil.getObject(result), "paths"); //$NON-NLS-1$
+            JSONArray permissionsArray = jsonUtil.getArray(jsonUtil.getObject(result), "paths"); //$NON-NLS-1$
             if (permissionsArray != null) {
                 sharingList = new FastMap<>();
                 for (int i = 0; i < permissionsArray.size(); i++) {
                     JSONObject user_perm_obj = permissionsArray.get(i).isObject();
-                    String path = JsonUtil.getString(user_perm_obj, "path"); //$NON-NLS-1$
-                    JSONArray user_arr = JsonUtil.getArray(user_perm_obj, "user-permissions"); //$NON-NLS-1$
+                    String path = jsonUtil.getString(user_perm_obj, "path"); //$NON-NLS-1$
+                    JSONArray user_arr = jsonUtil.getArray(user_perm_obj, "user-permissions"); //$NON-NLS-1$
                     loadPermissions(path, user_arr);
                 }
 
                 final List<String> usernames = new ArrayList<>();
                 usernames.addAll(sharingList.keySet());
-                CollaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
+                collaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
             }
         }
     }
@@ -106,13 +106,18 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private final List<DiskResource> selectedResources;
     private FastMap<List<DataSharing>> dataSharingMap;
     private FastMap<List<JSONObject>> sharingList;
+    private final JsonUtil jsonUtil;
+    private final CollaboratorsUtil collaboratorsUtil;
 
 
     public DataSharingPresenter(final DiskResourceServiceFacade diskResourceService,
-                                List<DiskResource> selectedResources, DataSharingView view) {
+                                final List<DiskResource> selectedResources,
+                                final DataSharingView view) {
         this.diskResourceService = diskResourceService;
         this.view = view;
         this.selectedResources = selectedResources;
+        this.jsonUtil = JsonUtil.getInstance();
+        this.collaboratorsUtil = CollaboratorsUtil.getInstance();
         view.setPresenter(this);
         permissionsPanel = new DataSharingPermissionsPanel(this, getSelectedResourcesAsMap(selectedResources));
         view.addShareWidget(permissionsPanel.asWidget());
@@ -205,7 +210,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     }
 
     private PermissionValue buildPermissionFromJson(JSONObject perm) {
-        return PermissionValue.valueOf(JsonUtil.getString(perm, "permission"));
+        return PermissionValue.valueOf(jsonUtil.getString(perm, "permission"));
     }
 
     private JSONObject buildPermissionsRequestBody() {
@@ -308,10 +313,10 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
 
     private void loadPermissions(String path, JSONArray user_arr) {
         for (int i = 0; i < user_arr.size(); i++) {
-            JSONObject userPermission = JsonUtil.getObjectAt(user_arr, i);
+            JSONObject userPermission = jsonUtil.getObjectAt(user_arr, i);
             JSONObject perm = new JSONObject();
-            String permVal = JsonUtil.getString(userPermission, "permission"); //$NON-NLS-1$
-            String userName = JsonUtil.getString(userPermission, "user"); //$NON-NLS-1$
+            String permVal = jsonUtil.getString(userPermission, "permission"); //$NON-NLS-1$
+            String userName = jsonUtil.getString(userPermission, "user"); //$NON-NLS-1$
 
             List<JSONObject> shareList = sharingList.get(userName);
             if (shareList == null) {

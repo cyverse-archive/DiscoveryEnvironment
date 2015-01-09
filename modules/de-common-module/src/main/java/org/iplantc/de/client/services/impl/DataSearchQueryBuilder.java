@@ -54,6 +54,7 @@ public class DataSearchQueryBuilder {
     private final UserInfo userinfo;
     private final Splittable mustList;
     private final Splittable mustNotList;
+    private final SearchModelUtils searchModelUtils;
 
     Splittable query = StringQuoter.createSplittable();
     Splittable bool = addChild(query, BOOL);
@@ -63,6 +64,7 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder(DiskResourceQueryTemplate dsf, UserInfo userinfo) {
         this.dsf = dsf;
         this.userinfo = userinfo;
+        this.searchModelUtils = SearchModelUtils.getInstance();
         mustList = StringQuoter.createIndexed();
         mustNotList = StringQuoter.createIndexed();
     }
@@ -107,8 +109,6 @@ public class DataSearchQueryBuilder {
     /**
      * {"nested":{"path":"userPermissions", "query":{"bool":{"must":[{"term":{"permission":"own"}},
      * {"wildcard":{"user":(some query)}}]}}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder ownedBy() {
         String queryContent = dsf.getOwnedBy();
@@ -120,8 +120,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"dateModified": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder createdWithin() {
         if ((dsf.getCreatedWithin() != null)) {
@@ -146,8 +144,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"wildcard":{"label":(some query)}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder file() {
         String content = dsf.getFileQuery();
@@ -162,15 +158,13 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"fileSize": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder fileSizeRange() {
         FileSizeRange fileSizeRange = dsf.getFileSizeRange();
         if (fileSizeRange != null) {
-            Double minSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMin(),
+            Double minSize = searchModelUtils.convertFileSizeToBytes(fileSizeRange.getMin(),
                                                                      fileSizeRange.getMinUnit());
-            Double maxSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMax(),
+            Double maxSize = searchModelUtils.convertFileSizeToBytes(fileSizeRange.getMax(),
                                                                      fileSizeRange.getMaxUnit());
 
             if ((minSize != null) && (maxSize != null)) {
@@ -197,9 +191,6 @@ public class DataSearchQueryBuilder {
         return toString();
     }
 
-    /**
-     * @return
-     */
     public DataSearchQueryBuilder metadataAttribute() {
         String content = dsf.getMetadataAttributeQuery();
         if (!Strings.isNullOrEmpty(content)) {
@@ -234,8 +225,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"dateModified": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder modifiedWithin() {
         if ((dsf.getModifiedWithin() != null)) {
@@ -259,11 +248,6 @@ public class DataSearchQueryBuilder {
         return this;
     }
 
-    /**
-     * 
-     * 
-     * @return
-     */
     public DataSearchQueryBuilder negatedFile() {
         String content = dsf.getNegatedFileQuery();
         if (!Strings.isNullOrEmpty(content)) {
@@ -310,7 +294,6 @@ public class DataSearchQueryBuilder {
      * \
      * </pre>
      * 
-     * @param searchText
      * @return a string whose space-delimited terms are prepended and appended with "*" if the given
      *         string does not contain *, ?, nor /.
      */
@@ -339,9 +322,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * Join multiple search text using '|'
-     * 
-     * @param searchText
-     * @return
      */
     String applyOROperator(final String searchText) {
         String implicitSearchText = "";

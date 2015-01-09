@@ -24,20 +24,28 @@ import com.sencha.gxt.fx.client.DragMoveEvent;
 import java.util.Collection;
 import java.util.Set;
 
-class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler, DndDragMoveHandler,
-        DndDragEnterHandler {
+/**
+ * @author jstroot
+ */
+class DiskResourceViewDnDHandler implements DndDragStartHandler,
+                                            DndDropHandler,
+                                            DndDragMoveHandler,
+                                            DndDragEnterHandler {
 
     private final Presenter presenter;
     private final DiskResourceView view;
+    private final DiskResourceUtil diskResourceUtil;
 
     /**
      * Guard against rapid clicks triggering drag+drop events.
      */
     private boolean moved;
 
-    public DiskResourceViewDnDHandler(final DiskResourceView view, final DiskResourceView.Presenter presenter) {
+    public DiskResourceViewDnDHandler(final DiskResourceView view,
+                                      final DiskResourceView.Presenter presenter) {
         this.view = view;
         this.presenter = presenter;
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
     private boolean validateDropStatus(Folder targetFolder, Set<DiskResource> dropData,
@@ -63,7 +71,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
         }
 
         // Check for permissions
-        if (!(DiskResourceUtil.isMovable(targetFolder, dropData))) {
+        if (!(diskResourceUtil.isMovable(targetFolder, dropData))) {
             status.setStatus(false);
             status.update(I18N.ERROR.permissionErrorMessage());
             return false;
@@ -170,7 +178,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
                 && ((Collection<?>)data).iterator().next() instanceof DiskResource)) {
             return null;
         }
-        Set<DiskResource> dropData = null;
+        Set<DiskResource> dropData;
         dropData = Sets.newHashSet((Collection<DiskResource>)data);
 
         return dropData;

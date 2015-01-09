@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  When updating your version of GWT, you should also update this DTD reference,
-  so that your app can take advantage of the latest GWT module capabilities.
--->
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.0//EN"
-        "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
-<module rename-to='discoveryenvironment'>
+<module rename-to="discoveryenvironment">
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="com.google.gwt.json.JSON"/>
@@ -41,18 +34,15 @@
 
     <extend-property name="user.agent.os" values="unknown"/>
 
-    <!-- Common Service Interfaces -->
-    <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon'/>
-    <inherits name="org.iplantc.de.apps.Apps"/>
-    <inherits name="org.iplantc.de.apps.widgets.Widgets"/>
-    <inherits name="org.iplantc.de.apps.integration.AppsIntegration"/>
-    <inherits name="org.iplantc.de.diskResource.diskresource"/>
-    <inherits name="org.iplantc.de.pipelines.pipelines"/>
-    <inherits name="org.iplantc.de.analysis.Analysis"/>
-    <inherits name="org.iplantc.de.fileViewers.FileViewers" />
 
+    <!-- Common Service Interfaces -->
+    <inherits name="org.iplantc.de.desktop.Desktop"/>
     <!-- iPlant Theme -->
-    <inherits name="org.iplantc.de.theme.base.Base" />
+    <inherits name="org.iplantc.de.theme.base.Desktop" />
+    <inherits name="org.iplantc.de.theme.base.FileViewers" />
+    <inherits name="org.iplantc.de.theme.base.DiskResource" />
+    <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
+
 
     <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance"/>
@@ -66,8 +56,8 @@
     <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
         <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>
     </replace-with>
-    <replace-with class="org.iplantc.de.client.sysmsgs.view.DefaultFactory">
-        <when-type-is class="org.iplantc.de.client.sysmsgs.view.Factory"/>
+    <replace-with class="org.iplantc.de.systemMessages.client.view.DefaultFactory">
+        <when-type-is class="org.iplantc.de.systemMessages.client.view.Factory"/>
     </replace-with>
 
     <!-- Specify the app entry point class.                         -->

@@ -6,6 +6,9 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.services.*;
 import org.iplantc.de.client.services.impl.*;
 import org.iplantc.de.client.services.stubs.*;
+import org.iplantc.de.client.util.AppTemplateUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -54,21 +57,27 @@ final class ServicesModule extends AbstractGinModule {
         bind(DiscEnvApiService.class).in(Singleton.class);
     }
 
-    @Provides
-    @Singleton
-    public DEProperties createDeProperties() {
+    @Provides public JsonUtil createJsonUtil() {
+        return JsonUtil.getInstance();
+    }
+
+    @Provides public AppTemplateUtils createAppTemplateUtils() {
+        return AppTemplateUtils.getInstance();
+    }
+
+    @Provides public DiskResourceUtil createDiskResourceUtil() {
+        return DiskResourceUtil.getInstance();
+    }
+
+    @Provides @Singleton public DEProperties createDeProperties() {
         return DEProperties.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public UserInfo createUserInfo() {
+    @Provides @Singleton public UserInfo createUserInfo() {
         return UserInfo.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public EventBus createEventBus() {
+    @Provides @Singleton public EventBus createEventBus() {
         return EventBus.getInstance();
     }
 

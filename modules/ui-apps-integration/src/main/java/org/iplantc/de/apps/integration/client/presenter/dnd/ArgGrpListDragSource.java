@@ -18,6 +18,9 @@ import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public final class ArgGrpListDragSource extends DragSource {
 
     private final AccordionLayoutContainer container;
@@ -26,7 +29,9 @@ public final class ArgGrpListDragSource extends DragSource {
     private final HasLabelOnlyEditMode hasLabelOnlyEditMode;
     private final ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> listEditor;
 
-    public ArgGrpListDragSource(AccordionLayoutContainer container, ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> listEditor, HasLabelOnlyEditMode hasLabelOnlyEditMode) {
+    public ArgGrpListDragSource(final AccordionLayoutContainer container,
+                                final ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> listEditor,
+                                final HasLabelOnlyEditMode hasLabelOnlyEditMode) {
         super(container);
         this.container = container;
         this.listEditor = listEditor;

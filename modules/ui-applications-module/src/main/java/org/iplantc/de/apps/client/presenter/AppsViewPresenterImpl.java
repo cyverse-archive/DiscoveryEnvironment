@@ -16,7 +16,7 @@ import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
-import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
+import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
@@ -120,6 +120,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -268,15 +269,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         if (props.getPrivateWorkspaceItems() != null) {
             JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
         }
     }
 
     /**
      * Sets a string which is a place holder for selection after a call to {@link #fetchApps(org.iplantc.de.client.models.apps.AppCategory)}
-     * 
-     * @param selectedApp
      */
     private void setDesiredSelectedApp(HasId selectedApp) {
         this.desiredSelectedAppId = selectedApp;
@@ -298,8 +297,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     /**
      * Retrieves the apps for the given group by updating and executing the list loader
-     * 
-     * @param ag
      */
     protected void fetchApps(final AppCategory ag) {
         view.maskCenterPanel(displayStrings.loadingMask());
@@ -456,7 +453,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 if (usersAppsGrp != null) {
                     view.updateAppCategoryAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
                 }
-                HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result).get("id").asString());
+                HasId hasId = CommonModelUtils.getInstance().createHasIdFromString(StringQuoter.split(result).get("id").asString());
                 if (!hasId.getId().isEmpty()) {
                     AppCategory selectedAppCategory = getSelectedAppCategory();
                     if (selectedAppCategory != null) {

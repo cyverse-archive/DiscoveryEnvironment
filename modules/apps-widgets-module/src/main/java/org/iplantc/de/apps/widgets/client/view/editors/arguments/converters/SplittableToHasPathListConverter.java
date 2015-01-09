@@ -12,11 +12,14 @@ import com.sencha.gxt.data.shared.Converter;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SplittableToHasPathListConverter implements Converter<Splittable, List<HasPath>> {
 
     @Override
     public Splittable convertFieldValue(List<HasPath> object) {
-        return DiskResourceUtil.createStringPathListSplittable(object);
+        return DiskResourceUtil.getInstance().createStringPathListSplittable(object);
     }
 
     @Override
@@ -28,7 +31,7 @@ public class SplittableToHasPathListConverter implements Converter<Splittable, L
         List<HasPath> hasPathList = Lists.newArrayList();
         for (int i = 0; i < object.size(); i++) {
             String asString = object.get(i).asString();
-            hasPathList.add(CommonModelUtils.createHasPathFromString((asString)));
+            hasPathList.add(CommonModelUtils.getInstance().createHasPathFromString((asString)));
         }
 
         return hasPathList;
