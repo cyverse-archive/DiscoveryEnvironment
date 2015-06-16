@@ -5,6 +5,9 @@ buildscript {
         maven {
             url 'http://dl.bintray.com/steffenschaefer/maven'
         }
+        maven {
+            url 'https://maven.sencha.com/repo/support-commercial-release'
+ }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
@@ -31,8 +34,11 @@ subprojects {
 
     repositories {
         mavenCentral()
-    }
-
+        mavenLocal()
+   maven {
+            url 'https://maven.sencha.com/repo/support-commercial-release'
+        }
+}
     group = 'org.iplantc.de'
 
     // Exclude all GwtTests from normal java compiles
