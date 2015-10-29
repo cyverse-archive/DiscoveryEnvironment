@@ -48,6 +48,10 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="Metadata Templates"/>
     </ui:with>
+    <ui:with field="toolAdminConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Tool Admin"/>
+    </ui:with>
     <con:Viewport>
         <con:BorderLayoutContainer>
             <con:north layoutData="{northData}">
@@ -70,6 +74,10 @@
                     </gxt:child>
                      <gxt:child config="{detemplateConfig}">
                         <con:SimpleContainer ui:field="metadataPanel">
+                        </con:SimpleContainer>
+                    </gxt:child>
+                    <gxt:child config="{toolAdminConfig}">
+                        <con:SimpleContainer ui:field="toolAdminPanel">
                         </con:SimpleContainer>
                     </gxt:child>
                 </gxt:TabPanel>
