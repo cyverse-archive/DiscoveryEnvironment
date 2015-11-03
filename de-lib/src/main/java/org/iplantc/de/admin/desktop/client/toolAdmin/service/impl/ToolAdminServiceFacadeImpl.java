@@ -5,9 +5,11 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
+import org.iplantc.de.client.models.tool.ToolContainer;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -39,12 +41,24 @@ public class ToolAdminServiceFacadeImpl implements ToolAdminServiceFacade {
     }
 
     @Override
+    public void getToolDetails(Tool tool, AsyncCallback<ToolContainer> callback) {
+        String address = TOOLS + "/" + tool.getId() + "/container?";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, new ToolContainerCallbackConverter(callback, factory));
+    }
+
+    @Override
     public void addTool(Tool tool, AsyncCallback<Tool> callback) {
+
 
     }
 
     @Override
     public void updateTool(Tool tool, AsyncCallback<Tool> callback) {
+
+        String address = TOOLS_ADMIN + "/" + tool.getId();
+
+
 
     }
 }

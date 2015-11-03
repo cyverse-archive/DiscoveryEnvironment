@@ -5,27 +5,34 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.sencha.gxt.core.client.Style;
+import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.FlowLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.models.tool.ToolAutoBeanFactory;
-import org.iplantc.de.client.models.toolRequest.ToolRequest;
+import org.iplantc.de.client.models.tool.ToolContainer;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import java.util.List;
 
 /**
  * Created by aramsey on 10/27/15.
  */
-public class ToolAdminViewImpl extends Composite  implements ToolAdminView {
+
+
+
+public class ToolAdminViewImpl extends Composite implements ToolAdminView, SelectionChangedEvent.SelectionChangedHandler<Tool> {
 
     private static ToolAdminViewImplUiBinder uiBinder = GWT.create(ToolAdminViewImplUiBinder.class);
 
@@ -34,7 +41,7 @@ public class ToolAdminViewImpl extends Composite  implements ToolAdminView {
     }
 
     @UiField
-    TextButton addButton, deleteButton;
+    TextButton addButton;
     @UiField
     Grid<Tool> grid;
     @UiField
@@ -49,7 +56,8 @@ public class ToolAdminViewImpl extends Composite  implements ToolAdminView {
         this.appearance = appearance;
         this.toolProps = toolProps;
         initWidget(uiBinder.createAndBindUi(this));
-        //Selection Changed Handler?
+        grid.getSelectionModel().addSelectionChangedHandler(this);
+        grid.getSelectionModel().setSelectionMode(Style.SelectionMode.SINGLE);
     }
 
     //Sencha required method that has to exist (see below snippet)
@@ -71,7 +79,9 @@ public class ToolAdminViewImpl extends Composite  implements ToolAdminView {
 
     @UiFactory
     ListStore<Tool> createListStore(){
-        return new ListStore<>(toolProps.id());
+        final ListStore<Tool> listStore = new ListStore<>(toolProps.id());
+        listStore.setEnableFilters(true);
+        return listStore;
     }
 
     //Sencha required method that has to exist (see above snippet as example)
@@ -104,6 +114,56 @@ public class ToolAdminViewImpl extends Composite  implements ToolAdminView {
     @Override
     public void setToolList(List<Tool> tools) {
         listStore.addAll(tools);
+    }
+
+    @Override
+    public void setToolDetails(ToolContainer toolContainer) {
+        final IPlantDialog dialogWindow = new IPlantDialog();
+        dialogWindow.setHideOnButtonClick(false);
+        dialogWindow.setHeadingText(appearance.dialogWindowName());
+        dialogWindow.getOkButton().setText(appearance.dialogWindowUpdateBtnText());
+        dialogWindow.getOkButton().disable();
+        dialogWindow.addCancelButtonSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                dialogWindow.hide();
+            }
+        });
+        FlowLayoutContainer container = new FlowLayoutContainer();
+        container.getScrollSupport().setScrollMode(ScrollSupport.ScrollMode.AUTO);
+        ToolAdminDetailsWindow detailsPanel = ToolAdminDetailsWindow.addToolDetails();
+        detailsPanel.edit(toolContainer);
+        container.add(detailsPanel);
+        dialogWindow.add(container);
+        dialogWindow.setPixelSize(500, 500);
+        dialogWindow.show();
+    }
+
+    @Override
+    public void onSelectionChanged(SelectionChangedEvent<Tool> event) {
+        presenter.getToolDetails(event.getSelection().get(0));
+    }
+
+    @UiHandler("addButton")
+    void addButtonClicked (SelectEvent event){
+        final IPlantDialog dialogWindow = new IPlantDialog();
+        dialogWindow.setHideOnButtonClick(false);
+        dialogWindow.setHeadingText(appearance.dialogWindowName());
+        dialogWindow.getOkButton().setText(appearance.dialogWindowUpdateBtnText());
+        dialogWindow.getOkButton().disable();
+        dialogWindow.addCancelButtonSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                dialogWindow.hide();
+            }
+        });
+        FlowLayoutContainer container = new FlowLayoutContainer();
+        container.getScrollSupport().setScrollMode(ScrollSupport.ScrollMode.AUTO);
+        ToolAdminDetailsWindow detailsPanel = ToolAdminDetailsWindow.addToolDetails();
+        container.add(detailsPanel);
+        dialogWindow.add(container);
+        dialogWindow.setPixelSize(500, 500);
+        dialogWindow.show();
     }
 
 }

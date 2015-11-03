@@ -15,4 +15,6 @@ public interface ToolAutoBeanFactory extends AutoBeanFactory {
     AutoBean<Tool> getTool();
 
     AutoBean<ToolList> getToolList();
+
+    AutoBean<ToolContainer> getToolContainer();
 }

@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.client.models.tool.ToolContainer;
 
 import java.util.List;
 
@@ -18,10 +19,6 @@ public interface ToolAdminView extends IsWidget, IsMaskable{
         String add();
 
         ImageResource addIcon();
-
-        String delete();
-
-        ImageResource deleteIcon();
 
         String nameColumnLabel();
 
@@ -109,6 +106,12 @@ public interface ToolAdminView extends IsWidget, IsMaskable{
 
         String testToolOutputFilesLabel();
 
+        String dialogWindowName();
+
+        String dialogWindowUpdateBtnText();
+
+        String dialogWindowDisableBtnText();
+
     }
 
     public interface Presenter {
@@ -121,13 +124,15 @@ public interface ToolAdminView extends IsWidget, IsMaskable{
          */
         void addTool(Tool tool);
 
-
+        void getToolDetails(Tool tool);
 
     }
 
     void setPresenter (Presenter presenter);
 
     void setToolList(List<Tool> tools);
+
+    void setToolDetails(ToolContainer toolContainer);
 
 
 }

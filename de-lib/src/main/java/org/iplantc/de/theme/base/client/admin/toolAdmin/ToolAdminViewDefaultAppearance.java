@@ -36,16 +36,6 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     }
 
     @Override
-    public String delete(){
-        return displayStrings.delete();
-    }
-
-    @Override
-    public ImageResource deleteIcon(){
-        return iplantResources.delete();
-    }
-
-    @Override
     public String nameColumnLabel () {
         return displayStrings.nameColumnLabel();
     }
@@ -258,6 +248,21 @@ public class ToolAdminViewDefaultAppearance implements ToolAdminView.ToolAdminVi
     @Override
     public String testToolOutputFilesLabel () {
         return displayStrings.testToolOutputFilesLabel();
+    }
+
+    @Override
+    public String dialogWindowName() {
+        return displayStrings.dialogWindowName();
+    }
+
+    @Override
+    public String dialogWindowUpdateBtnText() {
+        return displayStrings.dialogWindowUpdateBtnText();
+    }
+
+    @Override
+    public String dialogWindowDisableBtnText() {
+        return displayStrings.dialogWindowDisableBtnText();
     }
 
 }

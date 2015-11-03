@@ -36,12 +36,6 @@
                                        text="{appearance.add}"
                                        icon="{appearance.addIcon}"/>
                 </toolbar:child>
-                <toolbar:child>
-                    <button:TextButton ui:field="deleteButton"
-                                       text="{appearance.delete}"
-                                       icon="{appearance.deleteIcon}"
-                                       enabled="false"/>
-                </toolbar:child>
             </toolbar:ToolBar>
         </container:north>
         <container:center layoutData="{centerData}">

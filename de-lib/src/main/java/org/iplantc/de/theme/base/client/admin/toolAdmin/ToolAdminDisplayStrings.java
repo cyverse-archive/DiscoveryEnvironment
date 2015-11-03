@@ -1,8 +1,5 @@
 package org.iplantc.de.theme.base.client.admin.toolAdmin;
 
-
-import com.google.gwt.i18n.client.LocalizableResource;
-
 import com.google.gwt.i18n.client.Messages;
 
 
@@ -14,118 +11,123 @@ public interface ToolAdminDisplayStrings extends Messages {
     @Key("add")
     String add();
 
-    @Key("delete")
-    String delete();
-
     @Key("nameColumnLabel")
-	String nameColumnLabel();
+    String nameColumnLabel();
 
     @Key("descriptionColumnLabel")
-	String descriptionColumnLabel();
+    String descriptionColumnLabel();
 
     @Key("attributionColumnLabel")
-	String attributionColumnLabel();
+    String attributionColumnLabel();
 
     @Key("locationColumnInfoLabel")
-	String locationColumnInfoLabel();
+    String locationColumnInfoLabel();
 
     @Key("versionColumnInfoLabel")
-	String versionColumnInfoLabel();
+    String versionColumnInfoLabel();
 
     @Key("typeColumnInfoLabel")
-	String typeColumnInfoLabel();
+    String typeColumnInfoLabel();
 
     @Key("searchLabel")
-	String searchLabel();
+    String searchLabel();
 
     @Key("toolImportDescriptionLabel")
-	String toolImportDescriptionLabel();
+    String toolImportDescriptionLabel();
 
     @Key("toolImportNameLabel")
-	String toolImportNameLabel();
+    String toolImportNameLabel();
 
     @Key("toolImportTypeLabel")
-	String toolImportTypeLabel();
+    String toolImportTypeLabel();
 
     @Key("toolImportIDLabel")
-	String toolImportIDLabel();
+    String toolImportIDLabel();
 
     @Key("containerDevicesHostPathLabel")
-	String containerDevicesHostPathLabel();
+    String containerDevicesHostPathLabel();
 
     @Key("containerDevicesContainerPathLabel")
-	String containerDevicesContainerPathLabel();
+    String containerDevicesContainerPathLabel();
 
     @Key("containerNameLabel")
-	String containerNameLabel();
+    String containerNameLabel();
 
     @Key("containerWorkingDirLabel")
-	String containerWorkingDirLabel();
+    String containerWorkingDirLabel();
 
     @Key("containerEntryPointLabel")
-	String containerEntryPointLabel();
+    String containerEntryPointLabel();
 
     @Key("containerMemoryLimitLabel")
-	String containerMemoryLimitLabel();
+    String containerMemoryLimitLabel();
 
     @Key("containerCPUSharesLabel")
-	String containerCPUSharesLabel();
+    String containerCPUSharesLabel();
 
     @Key("containerVolumesHostPathLabel")
-	String containerVolumesHostPathLabel();
+    String containerVolumesHostPathLabel();
 
     @Key("containerVolumesContainerPathLabel")
-	String containerVolumesContainerPathLabel();
+    String containerVolumesContainerPathLabel();
 
     @Key("containerNetworkModeLabel")
-	String containerNetworkModeLabel();
+    String containerNetworkModeLabel();
 
     @Key("containerImageNameLabel")
-	String containerImageNameLabel();
+    String containerImageNameLabel();
 
     @Key("containerImageTagLabel")
-	String containerImageTagLabel();
+    String containerImageTagLabel();
 
     @Key("containerImageURLLabel")
-	String containerImageURLLabel();
+    String containerImageURLLabel();
 
     @Key("containerVolumesFromNameLabel")
-	String containerVolumesFromNameLabel();
+    String containerVolumesFromNameLabel();
 
     @Key("containerVolumesFromTagLabel")
-	String containerVolumesFromTagLabel();
+    String containerVolumesFromTagLabel();
 
     @Key("containerVolumesFromURLLabel")
-	String containerVolumesFromURLLabel();
+    String containerVolumesFromURLLabel();
 
     @Key("containerVolumesFromNamePrefixLabel")
-	String containerVolumesFromNamePrefixLabel();
+    String containerVolumesFromNamePrefixLabel();
 
     @Key("containerVolumesFromReadyOnlyLabel")
-	String containerVolumesFromReadyOnlyLabel();
+    String containerVolumesFromReadyOnlyLabel();
 
     @Key("toolImportAttributionLabel")
-	String toolImportAttributionLabel();
+    String toolImportAttributionLabel();
 
     @Key("toolImportVersionLabel")
-	String toolImportVersionLabel();
+    String toolImportVersionLabel();
 
     @Key("toolImportLocationLabel")
-	String toolImportLocationLabel();
+    String toolImportLocationLabel();
 
     @Key("toolImplementationImplementorLabel")
-	String toolImplementationImplementorLabel();
+    String toolImplementationImplementorLabel();
 
     @Key("toolImplementationImplementorEmailLabel")
-	String toolImplementationImplementorEmailLabel();
+    String toolImplementationImplementorEmailLabel();
 
     @Key("testToolDataParamsLabel")
-	String testToolDataParamsLabel();
+    String testToolDataParamsLabel();
 
     @Key("testToolDataInputFilesLabel")
-	String testToolDataInputFilesLabel();
+    String testToolDataInputFilesLabel();
 
     @Key("testToolOutputFilesLabel")
-	String testToolOutputFilesLabel();
+    String testToolOutputFilesLabel();
 
+    @Key("dialogWindowName")
+    String dialogWindowName();
+
+    @Key("dialogWindowUpdateBtnText")
+    String dialogWindowUpdateBtnText();
+
+    @Key("dialogWindowDisableBtnText")
+    String dialogWindowDisableBtnText();
 }

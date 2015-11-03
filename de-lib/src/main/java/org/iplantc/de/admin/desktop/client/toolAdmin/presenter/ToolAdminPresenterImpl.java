@@ -8,6 +8,7 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView;
 import org.iplantc.de.admin.desktop.client.toolAdmin.service.ToolAdminServiceFacade;
 import org.iplantc.de.client.models.tool.Tool;
+import org.iplantc.de.client.models.tool.ToolContainer;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import java.util.List;
@@ -50,6 +51,21 @@ public class ToolAdminPresenterImpl implements ToolAdminView.Presenter, Selectio
     @Override
     public void addTool(Tool tool) {
 
+    }
+
+    @Override
+    public void getToolDetails(Tool tool) {
+        toolAdminServiceFacade.getToolDetails(tool, new AsyncCallback<ToolContainer>() {
+            @Override
+            public void onFailure(Throwable caught) {
+
+            }
+
+            @Override
+            public void onSuccess(ToolContainer result) {
+                view.setToolDetails(result);
+            }
+        });
     }
 
     @Override

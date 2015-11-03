@@ -1,0 +1,293 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.toolAdmin.ToolAdminView.ToolAdminViewAppearance"/>
+
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="5" bottom="5" left="5"/>
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1" margins="{margins}"/>
+    </ui:with>
+
+    <gxt:ContentPanel headingText="{appearance.dialogWindowName}">
+        <container:VerticalLayoutContainer ui:field="layoutContainer">
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportDescriptionLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="descriptionEditor"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportNameLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportNameLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportTypeLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportTypeLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportIDLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportIDLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerDevicesHostPathLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerDevicesHostPathLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerDevicesContainerPathLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerDevicesContainerPathLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerNameLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerNameLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerWorkingDirLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerWorkingDirLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerEntryPointLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerEntryPointLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerMemoryLimitLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerMemoryLimitLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerCPUSharesLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerCPUSharesLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesHostPathLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesHostPathLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesContainerPathLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesContainerPathLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerNetworkModeLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerNetworkModeLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerImageNameLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerImageNameLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerImageTagLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerImageTagLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerImageURLLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerImageURLLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesFromNameLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesFromNameLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesFromTagLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesFromTagLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesFromURLLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesFromURLLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesFromNamePrefixLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesFromNamePrefixLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.containerVolumesFromReadyOnlyLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="containerVolumesFromReadyOnlyLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportAttributionLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportAttributionLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportVersionLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportVersionLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImportLocationLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImportLocationLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImplementationImplementorLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImplementationImplementorLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.toolImplementationImplementorEmailLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="toolImplementationImplementorEmailLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.testToolDataParamsLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="testToolDataParamsLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.testToolDataInputFilesLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="testToolDataInputFilesLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+            <container:child layoutData="{layoutData}">
+                <form:FieldLabel text="{appearance.testToolOutputFilesLabel}">
+                    <form:widget>
+                        <form:TextField readOnly="false"
+                                        enabled="true"
+                                        ui:field="testToolOutputFilesLabel"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+        </container:VerticalLayoutContainer>
+    </gxt:ContentPanel>
+</ui:UiBinder> 
